@@ -41,7 +41,7 @@ func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 
 	response := Response{
 		ID:       user.ID,
-		Username: user.Username,
+		Username: user.Nickname,
 		Email:    user.Email,
 	}
 
@@ -51,7 +51,7 @@ func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 		"User retrieved from session",
 		map[string]string{
 			"userId": user.ID,
-			"name":   user.Username,
+			"name":   user.Nickname,
 		},
 	)
 }

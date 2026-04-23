@@ -32,7 +32,7 @@ func newUserRegisterTestCases() []userRegisterTestCase {
 		{
 			name: "successful registration",
 			request: UserRegisterRequest{
-				Name:     "testuser",
+				Nickname: "testuser",
 				Password: "password123",
 				Email:    "test@example.com",
 			},
@@ -44,7 +44,7 @@ func newUserRegisterTestCases() []userRegisterTestCase {
 			wantErr: nil,
 			wantUser: &user.User{
 				ID:       "test-uuid",
-				Username: "testuser",
+				Nickname: "testuser",
 				Email:    "test@example.com",
 				Password: "hashed_password",
 			},
@@ -52,7 +52,7 @@ func newUserRegisterTestCases() []userRegisterTestCase {
 		{
 			name: "encryption fails",
 			request: UserRegisterRequest{
-				Name:     "testuser",
+				Nickname: "testuser",
 				Password: "password123",
 				Email:    "test@example.com",
 			},
@@ -67,7 +67,7 @@ func newUserRegisterTestCases() []userRegisterTestCase {
 		{
 			name: "repository fails",
 			request: UserRegisterRequest{
-				Name:     "testuser",
+				Nickname: "testuser",
 				Password: "password123",
 				Email:    "test@example.com",
 			},
@@ -82,7 +82,7 @@ func newUserRegisterTestCases() []userRegisterTestCase {
 		{
 			name: "email validation fails",
 			request: UserRegisterRequest{
-				Name:     "testuser",
+				Nickname: "testuser",
 				Password: "password123",
 				Email:    "invalid-email",
 			},

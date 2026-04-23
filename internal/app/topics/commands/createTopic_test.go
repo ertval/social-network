@@ -34,7 +34,7 @@ func newCreateTopicTestCases() []createTopicTestCase {
 			request: CreateTopicRequest{
 				User: &user.User{
 					ID:       "test-user-id",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "testuser@example.com",
 					Password: "testpassword",
 				},
@@ -60,7 +60,7 @@ func newCreateTopicTestCases() []createTopicTestCase {
 			request: CreateTopicRequest{
 				User: &user.User{
 					ID:       "test-user-id",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "testuser@example.com",
 					Password: "testpassword",
 				},
