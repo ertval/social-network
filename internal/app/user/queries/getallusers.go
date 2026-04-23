@@ -36,7 +36,7 @@ func (r getAllUsersRequestHandler) Handle(ctx context.Context) ([]GetAllUsersRes
 	for _, u := range users {
 		results = append(results, GetAllUsersResult{
 			ID:        u.ID,
-			Name:      u.Username,
+			Name:      u.Nickname,
 			Role:      u.Role,
 			CreatedAt: u.CreatedAt,
 		})

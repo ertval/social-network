@@ -15,9 +15,13 @@ import (
 )
 
 type RegisterUserReguestModel struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+	Nickname  string `json:"nickname"`
+	Password  string `json:"password"`
+	Email     string `json:"email"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Age       int    `json:"age"`
+	Gender    string `json:"gender"`
 }
 
 type RegisterUserResponse struct {
@@ -83,9 +87,13 @@ func (h Handler) UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := h.UserServices.UserServices.Commands.UserRegister.Handle(ctx, usercommands.UserRegisterRequest{
-		Name:     userToRegister.Username,
-		Password: userToRegister.Password,
-		Email:    strings.ToLower(userToRegister.Email),
+		Nickname:  userToRegister.Nickname,
+		Password:  userToRegister.Password,
+		FirstName: userToRegister.FirstName,
+		LastName:  userToRegister.LastName,
+		Age:       userToRegister.Age,
+		Gender:    userToRegister.Gender,
+		Email:     strings.ToLower(userToRegister.Email),
 	})
 	if err != nil {
 		helpers.RespondWithError(
@@ -116,7 +124,7 @@ func (h Handler) UserRegister(w http.ResponseWriter, r *http.Request) {
 		map[string]string{
 			"userId": user.ID,
 			"email":  user.Email,
-			"name":   user.Username,
+			"name":   user.Nickname,
 		},
 	)
 }

@@ -35,7 +35,7 @@ func (r *Repo) GetUserByProviderID(ctx context.Context, provider oauth.Provider,
 
 	err = stmt.QueryRowContext(ctx, string(provider), providerUserID).Scan(
 		&u.ID,
-		&u.Username,
+		&u.Nickname,
 		&u.Email,
 		&u.Password,
 		&u.CreatedAt,
@@ -101,7 +101,7 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
 
 	return &user.User{
 		ID:       oauthUser.UserID,
-		Username: oauthUser.Username,
+		Nickname: oauthUser.Username,
 		Email:    oauthUser.Email,
 		Password: "",
 	}, nil

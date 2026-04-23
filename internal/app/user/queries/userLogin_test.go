@@ -38,7 +38,7 @@ func newUserLoginTestCases() []userLoginTestCase {
 				repo.GetUserByEmailFunc = func(ctx context.Context, email string) (*user.User, error) {
 					return &user.User{
 						ID:       "test-uuid",
-						Username: "testuser",
+						Nickname: "testuser",
 						Email:    "test@example.com",
 					}, nil
 				}
@@ -49,7 +49,7 @@ func newUserLoginTestCases() []userLoginTestCase {
 			wantErr: nil,
 			wantUser: &user.User{
 				ID:       "test-uuid",
-				Username: "testuser",
+				Nickname: "testuser",
 				Email:    "test@example.com",
 			},
 		},
@@ -76,7 +76,7 @@ func newUserLoginTestCases() []userLoginTestCase {
 				repo.GetUserByEmailFunc = func(ctx context.Context, email string) (*user.User, error) {
 					return &user.User{
 						ID:       "test-uuid",
-						Username: "testuser",
+						Nickname: "testuser",
 						Email:    "test@example.com",
 					}, nil
 				}
@@ -97,7 +97,7 @@ func newUserLoginTestCases() []userLoginTestCase {
 				repo.GetUserByEmailFunc = func(ctx context.Context, email string) (*user.User, error) {
 					return &user.User{
 						ID:       "test-uuid",
-						Username: "testuser",
+						Nickname: "testuser",
 						Email:    "test@example.com",
 					}, nil
 				}

@@ -181,7 +181,7 @@ func (sm *Manager) GetUserFromSession(sessionID string) (*user.User, error) {
 	err = row.Scan(
 		&User.ID,
 		&User.Email,
-		&User.Username,
+		&User.Nickname,
 		&User.CreatedAt,
 		&User.AvatarURL,
 		&User.Password,

@@ -115,13 +115,13 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	if user.ID != topic.UserID {
 		notification := &notification.Notification{
-			ActorID:     user.Username,
+			ActorID:     user.Nickname,
 			UserID:      topic.UserID,
 			RelatedID:   strconv.Itoa(comment.TopicID),
 			RelatedType: "topic",
 			Type:        notification.NotificationTypeReply,
 			Title:       "New comment",
-			Message:     fmt.Sprintf("%s commented on your Topic %s", user.Username, topic.Title),
+			Message:     fmt.Sprintf("%s commented on your Topic %s", user.Nickname, topic.Title),
 		}
 
 		err = h.Notification.CreateNotification(ctx, notification)

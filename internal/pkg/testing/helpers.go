@@ -31,8 +31,8 @@ func CompareUserFields(t *testing.T, got, want *user.User) {
 	if got.ID != want.ID {
 		t.Errorf("Handle() got ID = %v, want %v", got.ID, want.ID)
 	}
-	if got.Username != want.Username {
-		t.Errorf("Handle() got Username = %v, want %v", got.Username, want.Username)
+	if got.Nickname != want.Nickname {
+		t.Errorf("Handle() got Username = %v, want %v", got.Nickname, want.Nickname)
 	}
 	if got.Email != want.Email {
 		t.Errorf("Handle() got Email = %v, want %v", got.Email, want.Email)

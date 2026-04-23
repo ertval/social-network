@@ -157,7 +157,7 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		"User logged in via "+h.provider.Name(),
 		map[string]string{
 			"user_id":  user.ID,
-			"username": user.Username,
+			"username": user.Nickname,
 			"provider": h.provider.Name(),
 		})
 }
