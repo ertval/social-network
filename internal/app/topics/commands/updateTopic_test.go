@@ -34,7 +34,7 @@ func newUpdateTopicTestCases() []updateTopicTestCase {
 			request: UpdateTopicRequest{
 				User: &user.User{
 					ID:       "test-user-id",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "testuser@example.com",
 					Password: "testpassword",
 				},
@@ -62,7 +62,7 @@ func newUpdateTopicTestCases() []updateTopicTestCase {
 			request: UpdateTopicRequest{
 				User: &user.User{
 					ID:       "test-user-id",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "testuser@example.com",
 					Password: "testpassword",
 				},

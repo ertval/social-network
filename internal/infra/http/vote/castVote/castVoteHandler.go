@@ -108,7 +108,7 @@ func (h *Handler) CastVote(w http.ResponseWriter, r *http.Request) {
 
 	h.sendVoteNotification(
 		ctx,
-		user.Username,
+		user.Nickname,
 		user.ID,
 		req,
 	)

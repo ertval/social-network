@@ -92,7 +92,7 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 
 	loginResponse := LoginResponse{
 		UserID:       user.ID,
-		Username:     user.Username,
+		Username:     user.Nickname,
 		AccessToken:  newSession.AccessToken,
 		RefreshToken: newSession.RefreshToken,
 	}
@@ -108,7 +108,7 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 		"User login successfully",
 		map[string]string{
 			"userId": user.ID,
-			"name":   user.Username,
+			"name":   user.Nickname,
 		},
 	)
 }

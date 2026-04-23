@@ -37,7 +37,7 @@ func newUserLoginEmailTestCases() []userLoginEmailTestCase {
 			setupMocks: func(repo *testhelpers.MockRepository, enc *testhelpers.MockEncryptionProvider) {
 				storedUser := &user.User{
 					ID:       "test-uuid",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "test@example.com",
 					Password: "hashed_password",
 				}
@@ -60,7 +60,7 @@ func newUserLoginEmailTestCases() []userLoginEmailTestCase {
 			wantErr: nil,
 			wantUser: &user.User{
 				ID:       "test-uuid",
-				Username: "testuser",
+				Nickname: "testuser",
 				Email:    "test@example.com",
 				Password: "hashed_password",
 			},
@@ -88,7 +88,7 @@ func newUserLoginEmailTestCases() []userLoginEmailTestCase {
 			setupMocks: func(repo *testhelpers.MockRepository, enc *testhelpers.MockEncryptionProvider) {
 				storedUser := &user.User{
 					ID:       "test-uuid",
-					Username: "testuser",
+					Nickname: "testuser",
 					Email:    "test@example.com",
 					Password: "hashed_password",
 				}

@@ -92,9 +92,13 @@ Notes:
 
 ```json
 {
-  "username": "string",
+  "nickname": "string",
   "password": "string",
-  "email": "string"
+  "email": "string",
+  "firstname": "string",
+  "lastname": "string",
+  "age": int,
+  "gender": "string"
 }
 ```
 

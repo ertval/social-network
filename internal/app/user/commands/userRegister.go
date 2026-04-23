@@ -11,9 +11,13 @@ import (
 )
 
 type UserRegisterRequest struct {
-	Name     string
-	Password string
-	Email    string
+	Nickname  string
+	Age       int
+	Gender    string
+	FirstName string
+	LastName  string
+	Password  string
+	Email     string
 }
 
 type UserRegisterRequestHandler interface {
@@ -39,8 +43,12 @@ func (h userRegisterRequestHandler) Handle(ctx context.Context, req UserRegister
 		CreatedAt: time.Now(),
 		Password:  req.Password,
 		AvatarURL: nil,
-		Username:  req.Name,
+		Nickname:  req.Nickname,
 		Email:     req.Email,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Age:       req.Age,
+		Gender:    req.Gender,
 		ID:        h.uuidiProvider.NewUUID(),
 	}
 
