@@ -50,7 +50,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.PrintInfo("User logged out successfully", map[string]string{
 		"userId": user.ID,
-		"name":   user.Username,
+		"name":   user.Nickname,
 	})
 
 	helpers.RespondWithJSON(w, http.StatusOK, nil, map[string]string{

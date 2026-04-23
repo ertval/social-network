@@ -26,8 +26,8 @@ func (r Repo) GetAll(_ context.Context) ([]user.User, error) {
 
 func (r Repo) UserRegister(ctx context.Context, user *user.User) error {
 	query := `
-	INSERT INTO users (username, password_hash, email, id)
-	VALUES (?, ?, ?, ?)`
+	INSERT INTO users (username, password_hash, email, id, first_name, last_name, age, gender)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
 	stmt, err := r.DB.PrepareContext(ctx, query)
 	if err != nil {
@@ -38,10 +38,14 @@ func (r Repo) UserRegister(ctx context.Context, user *user.User) error {
 	_, err = r.DB.ExecContext(
 		ctx,
 		query,
-		user.Username,
+		user.Nickname,
 		user.Password,
 		user.Email,
 		user.ID,
+		user.FirstName,
+		user.LastName,
+		user.Age,
+		user.Gender,
 	)
 
 	mapErr := MapSQLiteError(err)
@@ -61,7 +65,7 @@ func (r Repo) GetUserByIdentifier(ctx context.Context, identifier string) (*user
 	var user user.User
 	err := r.DB.QueryRowContext(ctx, query, identifier, identifier).Scan(
 		&user.ID,
-		&user.Username,
+		&user.Nickname,
 		&user.Email,
 		&user.Password,
 		&user.CreatedAt,
@@ -88,7 +92,7 @@ func (r Repo) GetUserByEmail(ctx context.Context, email string) (*user.User, err
 	var user user.User
 	err := r.DB.QueryRowContext(ctx, query, email).Scan(
 		&user.ID,
-		&user.Username,
+		&user.Nickname,
 		&user.Password,
 	)
 
@@ -112,7 +116,7 @@ func (r Repo) GetUserByUsername(ctx context.Context, username string) (*user.Use
 	var user user.User
 	err := r.DB.QueryRowContext(ctx, query, username).Scan(
 		&user.ID,
-		&user.Username,
+		&user.Nickname,
 		&user.Email,
 		&user.Password,
 		&user.CreatedAt,
