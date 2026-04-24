@@ -36,3 +36,9 @@ go.work.sum
 
 # Certificate files
 *.pem
+
+node_modules/
+.env
+dist/
+build/
+coverage/
