@@ -12,6 +12,7 @@ type Manager interface {
 	SetCookies(w http.ResponseWriter, session *Session)
 	GetSession(sessionID string) (*Session, error)
 	DeleteSession(sessionID string) error
+	DeleteCookies(r *http.Request, w http.ResponseWriter) (sessiontoken string)
 	GetUserFromSession(sessionID string) (*user.User, error)
 	GetSessionFromSessionTokens(sessionToken, refreshToken string) (*Session, error)
 	ValidateSession(sessionID string) error
