@@ -26,7 +26,7 @@ html {
 
 body {
   min-height: 100vh;
-  font-family: "Rubik", Arial, Helvetica, sans-serif;
+  font-family: 'Rubik', Arial, Helvetica, sans-serif;
   line-height: 1.4;
   background: linear-gradient(to right bottom, #0072ff, #00c6ff);
 }
@@ -34,8 +34,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: "Poppins", Impact, Haettenschweiler, "Arial Narrow Bold",
-    sans-serif;
+  font-family: 'Poppins', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 h1 {
