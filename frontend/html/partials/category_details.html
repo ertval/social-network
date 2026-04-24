@@ -7,10 +7,7 @@
       {{ range . }}
       <a href="/topics?search=&category={{ .ID }}" class="details-category-link">
         <div class="details-text-box">
-          <span
-            class="category-title-color"
-            style="background-color: {{ .Color }}"
-          ></span>
+          <span class="category-title-color" style="background-color: {{ .Color }}"></span>
           <span class="details-category-title">{{ .Name }}</span>
         </div>
         <span class="category-count">{{ .TopicCount }}</span>

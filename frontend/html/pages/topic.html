@@ -3,28 +3,20 @@
   <div class="topic-container">
     <div class="topic-header">
       <div class="topic-categories">
-        {{ if .Topic.CategoryColors }} {{ $categoryNames := .Topic.CategoryNames
-        }} {{ range $index, $color := .Topic.CategoryColors }}
+        {{ if .Topic.CategoryColors }} {{ $categoryNames := .Topic.CategoryNames }} {{ range $index,
+        $color := .Topic.CategoryColors }}
         <a
           href="/topics?category={{ index $.Topic.CategoryIDs $index }}"
           class="topic-category-link"
         >
           <div class="topic-category">
-            <span
-              class="topic-category-color"
-              style="background-color: {{ $color }}"
-            ></span>
-            <span class="topic-category-name"
-              >{{ index $categoryNames $index }}</span
-            >
+            <span class="topic-category-color" style="background-color: {{ $color }}"></span>
+            <span class="topic-category-name">{{ index $categoryNames $index }}</span>
           </div>
         </a>
         {{ end }} {{ else }}
         <!-- Fallback to single category -->
-        <a
-          href="/topics?category={{ .Topic.CategoryID }}"
-          class="topic-category-link"
-        >
+        <a href="/topics?category={{ .Topic.CategoryID }}" class="topic-category-link">
           <div class="topic-category">
             <span
               class="topic-category-color"
@@ -43,11 +35,7 @@
       <div class="topic-head">
         <div class="post-meta">
           <div class="topic-user-box">
-            <img
-              src="/static/images/user-avatar.png"
-              alt="Author Avatar"
-              class="author-avatar"
-            />
+            <img src="/static/images/user-avatar.png" alt="Author Avatar" class="author-avatar" />
           </div>
           <span class="post-author-name">{{ .Topic.OwnerUsername }}</span>
         </div>
@@ -65,11 +53,7 @@
           <!-- Optional Image -->
           {{ if .Topic.ImagePath }}
           <div class="img-box">
-            <img
-              src="{{ .Topic.ImagePath }}"
-              alt="Post Image"
-              class="post-image"
-            />
+            <img src="{{ .Topic.ImagePath }}" alt="Post Image" class="post-image" />
           </div>
           {{ end }}
         </div>
@@ -78,11 +62,7 @@
         <div class="reactions">
           <div class="reaction-box">
             <button class="btn like-btn" {{ if not .User }}disabled{{ end }}>
-              <img
-                class="like-icon"
-                src="/static/images/icons/icon-like.png"
-                alt="Like the post"
-              />
+              <img class="like-icon" src="/static/images/icons/icon-like.png" alt="Like the post" />
             </button>
             <span class="like-count">{{ .Topic.UpvoteCount }}</span>
           </div>
@@ -117,14 +97,10 @@
     {{ if and .User (eq .User.ID .Topic.UserID) }}
     <div class="post-actions">
       <div class="author-choices">
-        <button class="action-btn btn-edit" data-type="topic">
-          Edit Topic
-        </button>
+        <button class="action-btn btn-edit" data-type="topic">Edit Topic</button>
         <form action="/topics/delete" method="POST">
           <input type="hidden" name="topic_id" value="{{.Topic.ID}}" />
-          <button type="submit" class="action-btn btn-delete">
-            Delete Topic
-          </button>
+          <button type="submit" class="action-btn btn-delete">Delete Topic</button>
         </form>
       </div>
     </div>
@@ -144,11 +120,7 @@
         data-topic-id="{{ .Topic.ID }}"
       >
         <input type="hidden" name="topic_id" value="{{ .Topic.ID }}" />
-        <input
-          type="hidden"
-          name="current_image_path"
-          value="{{ .Topic.ImagePath }}"
-        />
+        <input type="hidden" name="current_image_path" value="{{ .Topic.ImagePath }}" />
         <div class="comment-form-field">
           <label>Categories:</label>
           <div class="categories-checkboxes">
@@ -169,10 +141,7 @@
                 }}
               />
               <label for="category-{{ .ID }}" class="category-label">
-                <span
-                  class="category-color"
-                  style="background-color: #{{ .Color }}"
-                ></span>
+                <span class="category-color" style="background-color: #{{ .Color }}"></span>
                 {{ .Name }}
               </label>
             </div>
@@ -260,11 +229,7 @@
         <div class="comment-head">
           <div class="comment-meta">
             <div class="comment-img-box">
-              <img
-                src="/static/images/user-avatar.png"
-                alt="User Avatar"
-                class="comment-avatar"
-              />
+              <img src="/static/images/user-avatar.png" alt="User Avatar" class="comment-avatar" />
             </div>
             <span class="comment-author">{{ .OwnerUsername }}</span>
           </div>
@@ -277,16 +242,7 @@
 
             <div class="reactions">
               <div class="reaction-box">
-                <button
-                  class="btn like-btn"
-                  {{
-                  if
-                  not
-                  $.User
-                  }}disabled{{
-                  end
-                  }}
-                >
+                <button class="btn like-btn" {{ if not $.User }}disabled{{ end }}>
                   <img
                     class="like-icon"
                     src="/static/images/icons/icon-like.png"
@@ -297,16 +253,7 @@
               </div>
 
               <div class="reaction-box">
-                <button
-                  class="btn dislike-btn"
-                  {{
-                  if
-                  not
-                  $.User
-                  }}disabled{{
-                  end
-                  }}
-                >
+                <button class="btn dislike-btn" {{ if not $.User }}disabled{{ end }}>
                   <img
                     class="dislike-icon"
                     src="/static/images/icons/icon-dislike.png"
@@ -320,19 +267,13 @@
             <!-- Comment Actions (only show if user is the owner) -->
             {{ if and $.User (eq $.User.ID .UserID) }}
             <div class="comment-actions">
-              <button
-                class="action-btn btn-edit"
-                data-type="comment"
-                data-comment-id="{{ .ID }}"
-              >
+              <button class="action-btn btn-edit" data-type="comment" data-comment-id="{{ .ID }}">
                 Edit
               </button>
               <form method="POST" action="/comments/delete" class="inline-form">
                 <input type="hidden" name="topic_id" value="{{ $.Topic.ID }}" />
                 <input type="hidden" name="comment_id" value="{{ .ID }}" />
-                <button type="submit" class="action-btn btn-delete">
-                  Delete
-                </button>
+                <button type="submit" class="action-btn btn-delete">Delete</button>
               </form>
             </div>
             {{ end }}

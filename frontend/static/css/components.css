@@ -322,7 +322,7 @@
 }
 
 .category-details summary::after {
-  content: "▶";
+  content: '▶';
   font-size: 0.8rem;
   position: absolute;
   margin-right: 0.5rem;
