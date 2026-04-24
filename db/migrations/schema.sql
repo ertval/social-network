@@ -111,13 +111,13 @@ CREATE TABLE IF NOT EXISTS notifications (
 -- Direct_chats
 CREATE TABLE IF NOT EXISTS direct_chats (
     id TEXT PRIMARY KEY,
-    user1_id TEXT NOT NULL,
-    user2_id TEXT NOT NULL,
+    user_low_id TEXT NOT NULL,
+    user_high_id TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_message_id INTEGER,
     last_message_at DATETIME,
-    UNIQUE(user1_id, user2_id)
+    UNIQUE(user_low_id, user_high_id)
 );
 
 -- Chat messages
@@ -191,10 +191,10 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 -- Get all messages in a chat, ordered by creation for pagination
 CREATE INDEX IF NOT EXISTS idx_chat_messages_chat_id ON chat_messages(chat_id, created_at DESC);
 
--- Find all chats for a user (since they can be user1 or user2)
+-- Find all chats for a user (since they can be user_low or user_high)
 -- Helps build chat list for current user
-CREATE INDEX IF NOT EXISTS idx_direct_chats_user1_id ON direct_chats(user1_id);
-CREATE INDEX IF NOT EXISTS idx_direct_chats_user2_id ON direct_chats(user2_id);
+CREATE INDEX IF NOT EXISTS idx_direct_chats_user_low_id ON direct_chats(user_low_id);
+CREATE INDEX IF NOT EXISTS idx_direct_chats_user_high_id ON direct_chats(user_high_id);
 
 -- Order chat list by most recent message (Discord-like behavior)
 -- Essential for "sort by last message" requirement
