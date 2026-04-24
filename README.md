@@ -27,30 +27,36 @@ The architecture is divided into **three main layers**, organized from the most 
 **Purpose:**  
 Contains the core business entities and models that define the fundamental concepts of the system.
 
-**Characteristics:**  
-- Does *not* depend on any other layer.  
-- Contains only pure business rules and data structures.  
+**Characteristics:**
+
+- Does _not_ depend on any other layer.
+- Contains only pure business rules and data structures.
 - No external dependencies.
 
-**Examples of Entities:**  
-- `UserModel`  
-- `PostModel`  
+**Examples of Entities:**
+
+- `UserModel`
+- `PostModel`
 - Other domain-specific structs or classes.
 
 ---
+
 k
+
 ### 2. Application Layer
 
 **Purpose:**  
 Defines all the use cases and application-specific operations. This is where business workflows are implemented by orchestrating the entities from the Domain layer.
 
-**Characteristics:**  
-- Depends only on the Domain layer.  
-- Contains application logic and use case definitions.  
+**Characteristics:**
+
+- Depends only on the Domain layer.
+- Contains application logic and use case definitions.
 - Does not include infrastructure concerns such as frameworks or databases.
 
-**Examples of Use Cases:**  
-- Creating, updating, or deleting posts (CRUD operations)  
+**Examples of Use Cases:**
+
+- Creating, updating, or deleting posts (CRUD operations)
 - User registration or authentication logic.
 
 ---
@@ -60,17 +66,17 @@ Defines all the use cases and application-specific operations. This is where bus
 **Purpose:**  
 Connects the application to external resources and delivery mechanisms, such as web servers, databases, file systems, or APIs.
 
-**Characteristics:**  
-- Depends on the Application layer to invoke business workflows.  
-- Implements interfaces defined in inner layers to fulfill dependencies.  
+**Characteristics:**
+
+- Depends on the Application layer to invoke business workflows.
+- Implements interfaces defined in inner layers to fulfill dependencies.
 - Contains adapters, frameworks, and runtime infrastructure.
 
-**Examples of Responsibilities:**  
-- HTTP handlers and request routing  
-- Dependency injection setup  
-- Database repositories  
+**Examples of Responsibilities:**
+
+- HTTP handlers and request routing
+- Dependency injection setup
+- Database repositories
 - Server configuration.
 
 ---
-
-

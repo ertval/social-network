@@ -1,4 +1,4 @@
--- Users table
+/* Users table */
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     email TEXT NOT NULL UNIQUE CHECK(email LIKE '%_@__%.__%'),
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url TEXT
 );
 
--- OAuth
+/* OAuth */
 CREATE TABLE IF NOT EXISTS oauth_providers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
@@ -23,12 +23,12 @@ CREATE TABLE IF NOT EXISTS oauth_providers (
     username TEXT,
     avatar_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DATETIME CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(provider, provider_user_id)
 );
 
--- Sessions
+/* Sessions */
 CREATE TABLE IF NOT EXISTS sessions (
     token TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Categories
+/* Categories */
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS categories (
     created_by TEXT NOT NULL REFERENCES users(id)
 );
 
--- Topics
+/* Topics */
 CREATE TABLE IF NOT EXISTS topics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS topics (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Topic/Category junction
+/* Topic/Category junction */
 CREATE TABLE IF NOT EXISTS topic_categories (
     topic_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS topic_categories (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
--- Comments
+/* Comments */
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS comments (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Votes
+/* Votes */
 CREATE TABLE IF NOT EXISTS votes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS votes (
     UNIQUE (user_id, comment_id)
 );
 
--- Notifications
+/* Notifications */
 CREATE TABLE IF NOT EXISTS notifications (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Direct_chats
+/* Direct_chats */
 CREATE TABLE IF NOT EXISTS direct_chats (
     id TEXT PRIMARY KEY,
     user1_id TEXT NOT NULL,
@@ -120,18 +120,18 @@ CREATE TABLE IF NOT EXISTS direct_chats (
     UNIQUE(user1_id, user2_id)
 );
 
--- Chat messages
+/* Chat messages */
 CREATE TABLE IF NOT EXISTS chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     chat_id TEXT NOT NULL REFERENCES direct_chats(id) ON DELETE CASCADE,
     sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    client_message_id TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(sender_id, client_message_id),
-    client_message_id TEXT
+    UNIQUE(sender_id, client_message_id)
 );
 
--- Chat reads - tracks read status and unread counts per user per chat
+/* Chat reads */
 CREATE TABLE IF NOT EXISTS chat_reads (
     chat_id TEXT NOT NULL REFERENCES direct_chats(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -142,75 +142,63 @@ CREATE TABLE IF NOT EXISTS chat_reads (
     PRIMARY KEY (chat_id, user_id)
 );
 
--- Chat Indexes
-
---Topic/category junction table indexes
+/* Topic/category junction table indexes */
 CREATE INDEX IF NOT EXISTS idx_topic_categories_topic_id ON topic_categories(topic_id);
 CREATE INDEX IF NOT EXISTS idx_topic_categories_category_id ON topic_categories(category_id);
--- Users table indexes
+
+/* Users table indexes */
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
--- Sessions table indexes  
+/* Sessions table indexes */
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 
--- Categories table indexes
+/* Categories table indexes */
 CREATE INDEX IF NOT EXISTS idx_categories_created_by ON categories(created_by);
 
--- Topics table indexes
+/* Topics table indexes */
 CREATE INDEX IF NOT EXISTS idx_topics_user ON topics(user_id);
 CREATE INDEX IF NOT EXISTS idx_topics_created ON topics(created_at DESC);
 
--- Comments table indexes
+/* Comments table indexes */
 CREATE INDEX IF NOT EXISTS idx_comments_topic ON comments(topic_id);
 CREATE INDEX IF NOT EXISTS idx_comments_user ON comments(user_id);
 
--- Votes table indexes
--- Prevent duplicate votes
-CREATE UNIQUE INDEX IF NOT EXISTS idx_topic_votes 
-ON votes(user_id, topic_id) WHERE comment_id IS NULL;
+/* Votes table indexes – prevent duplicate votes */
+CREATE UNIQUE INDEX IF NOT EXISTS idx_topic_votes ON votes(user_id, topic_id) WHERE comment_id IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_comment_votes ON votes(user_id, comment_id) WHERE comment_id IS NOT NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_comment_votes 
-ON votes(user_id, comment_id) WHERE comment_id IS NOT NULL;
+/* Fast vote counting and lookups */
+CREATE INDEX IF NOT EXISTS idx_votes_topic_reaction ON votes(topic_id, reaction_type) WHERE comment_id IS NULL;
+CREATE INDEX IF NOT EXISTS idx_votes_comment_reaction ON votes(comment_id, reaction_type) WHERE comment_id IS NOT NULL;
 
--- Fast vote counting and lookups
-CREATE INDEX IF NOT EXISTS idx_votes_topic_reaction 
-ON votes(topic_id, reaction_type) WHERE comment_id IS NULL;
-
-CREATE INDEX IF NOT EXISTS idx_votes_comment_reaction 
-ON votes(comment_id, reaction_type) WHERE comment_id IS NOT NULL;
-
--- User activity lookup
+/* User activity lookup */
 CREATE INDEX IF NOT EXISTS idx_votes_user ON votes(user_id);
 
--- Notifications table indexes
+/* Notifications table indexes */
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 
--- Chat table indexes
--- Get all messages in a chat, ordered by creation for pagination
+/* Chat table indexes – get all messages in a chat, ordered for pagination */
 CREATE INDEX IF NOT EXISTS idx_chat_messages_chat_id ON chat_messages(chat_id, created_at DESC);
 
--- Find all chats for a user (since they can be user1 or user2)
--- Helps build chat list for current user
+/* Find all chats for a user (since they can be user1 or user2) */
 CREATE INDEX IF NOT EXISTS idx_direct_chats_user1_id ON direct_chats(user1_id);
 CREATE INDEX IF NOT EXISTS idx_direct_chats_user2_id ON direct_chats(user2_id);
 
--- Order chat list by most recent message (Discord-like behavior)
--- Essential for "sort by last message" requirement
+/* Order chat list by most recent message (Discord-like behavior) */
 CREATE INDEX IF NOT EXISTS idx_direct_chats_last_message_at ON direct_chats(last_message_at DESC);
 
--- Optional: Fast sender lookup for activity tracking
+/* Fast sender lookup for activity tracking */
 CREATE INDEX IF NOT EXISTS idx_chat_messages_sender_id ON chat_messages(sender_id, created_at DESC);
 
--- Chat reads table indexes
--- Fast lookup of read state for a user in a specific chat
+/* Chat reads table indexes – fast lookup of read state for a user in a specific chat */
 CREATE INDEX IF NOT EXISTS idx_chat_reads_user_id ON chat_reads(user_id);
 
--- Find all unread chats for a user (for navbar badge and chat list)
+/* Find all unread chats for a user (for navbar badge and chat list) */
 CREATE INDEX IF NOT EXISTS idx_chat_reads_unread ON chat_reads(user_id, unread_count) WHERE unread_count > 0;
 
--- Fast check of what user has read in specific chat (less common but useful for read receipts)
+/* Fast check of what user has read in specific chat */
 CREATE INDEX IF NOT EXISTS idx_chat_reads_chat_user ON chat_reads(chat_id, user_id);
 
 CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);

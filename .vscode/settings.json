@@ -1,9 +1,25 @@
 {
-    "postman.settings.dotenv-detection-notification-visibility": false,
-    "github.copilot.chat.codesearch.enabled": true,
-    "github.copilot.chat.newWorkspaceCreation.enabled": false,
-    "github.copilot.chat.terminalChatLocation": "chatView",
-    "chat.tools.edits.autoApprove": {
-        "**/*": false
-    }
+  "postman.settings.dotenv-detection-notification-visibility": false,
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.newWorkspaceCreation.enabled": false,
+  "github.copilot.chat.terminalChatLocation": "chatView",
+  "chat.tools.edits.autoApprove": {
+    "**/*": false
+  },
+
+  "editor.formatOnSave": true,
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
 }
