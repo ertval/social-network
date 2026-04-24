@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/arnald/forum/internal/app"
@@ -104,6 +105,10 @@ func (server *Server) AddHTTPRoutes() {
 			health.NewHandler(server.logger, server.notifications).HealthCheck,
 			server.middleware.Authorization.Optional,
 		))
+
+	server.router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("frontend/static"))))
+
+	server.router.HandleFunc("/", spaHandler("frontend/static/index.html"))
 
 	// User routes
 	server.router.HandleFunc(apiContext+"/login/email",
@@ -395,5 +400,24 @@ func (server *Server) initOAuthServices() {
 			server.config.OAuth.Google.TokenURL,
 			server.config.OAuth.Google.Scopes,
 		),
+	}
+}
+
+func spaHandler(indexPath string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Let API routes pass through
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			http.NotFound(w, r)
+			return
+		}
+
+		// Skip static routes (let the dedicated static handler process them)
+		if strings.HasPrefix(r.URL.Path, "/static/") {
+			http.NotFound(w, r)
+			return
+		}
+
+		// For all other routes (including root and client-side routes), serve index.html
+		http.ServeFile(w, r, indexPath)
 	}
 }
