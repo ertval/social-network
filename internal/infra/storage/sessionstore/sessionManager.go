@@ -254,6 +254,33 @@ func (sm *Manager) SetCookies(w http.ResponseWriter, session *session.Session) {
 	http.SetCookie(w, accessCookie)
 	http.SetCookie(w, refreshCookie)
 }
+func (sm *Manager) DeleteCookies(r *http.Request, w http.ResponseWriter) (sessiontoken string) {
+	cookie, err := r.Cookie(sm.sessionConfig.AccessCookieName)
+	if err == nil {
+		sessiontoken = cookie.Value
+		http.SetCookie(w, &http.Cookie{
+			Name:     sm.sessionConfig.AccessCookieName,
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1,
+			HttpOnly: true,
+		})
+	}
+
+	cookie, err = r.Cookie(sm.sessionConfig.RefreshCookieName)
+	if err == nil {
+		cookie.MaxAge = -1
+		http.SetCookie(w, &http.Cookie{
+			Name:     sm.sessionConfig.RefreshCookieName,
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1,
+			HttpOnly: true,
+		})
+	}
+
+	return sessiontoken
+}
 func (sm *Manager) ValidateSession(sessionID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
 	defer cancel()
