@@ -9,6 +9,7 @@ import {
   buildCategoriesListHTML,
   buildCategoriesSkeletonHTML,
 } from '../components/categoryCard.js';
+import { buildPaginationHTML } from '../components/pagination.js';
 
 export async function renderCategoriesPage(user) {
   const root = document.getElementById('app-root');
@@ -110,59 +111,6 @@ function buildFilterSectionHTML(filters) {
           </div>
         </div>
       </form>
-    </div>
-  `;
-}
-
-function buildPaginationHTML(pagination, filters) {
-  // 3. Only show pagination if there is more than one page
-  if (!pagination.total_pages || pagination.total_pages <= 1) {
-    return '';
-  }
-
-  const buildPageUrl = (page) => {
-    const params = new URLSearchParams();
-    params.set('page', page);
-    if (filters.search) params.set('search', filters.search);
-    if (filters.order_by) params.set('order_by', filters.order_by);
-    if (filters.order) params.set('order', filters.order);
-    return `/categories?${params.toString()}`;
-  };
-
-  const prevBtn = pagination.prev_page
-    ? `<a href="${buildPageUrl(pagination.prev_page)}" class="pagination-btn prev-btn" data-link>
-         <span class="pagination-arrow previous-arrow">
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/><path d="M13.293 7.293 8.586 12l4.707 4.707 1.414-1.414L11.414 12l3.293-3.293-1.414-1.414z"/></svg>
-         </span> Previous
-       </a>`
-    : `<span class="pagination-btn prev-btn disabled">
-         <span class="pagination-arrow previous-arrow">
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/><path d="M13.293 7.293 8.586 12l4.707 4.707 1.414-1.414L11.414 12l3.293-3.293-1.414-1.414z"/></svg>
-         </span> Previous
-       </span>`;
-
-  const nextBtn = pagination.next_page
-    ? `<a href="${buildPageUrl(pagination.next_page)}" class="pagination-btn next-btn" data-link>
-         Next <span class="pagination-arrow next-arrow">
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/><path d="M9.293 8.707 12.586 12l-3.293 3.293 1.414 1.414L15.414 12l-4.707-4.707-1.414 1.414z"/></svg>
-         </span>
-       </a>`
-    : `<span class="pagination-btn next-btn disabled">
-         Next <span class="pagination-arrow next-arrow">
-           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/><path d="M9.293 8.707 12.586 12l-3.293 3.293 1.414 1.414L15.414 12l-4.707-4.707-1.414 1.414z"/></svg>
-         </span>
-       </span>`;
-
-  return /* html */ `
-    <div class="pagination-container">
-      <div class="pagination">
-        ${prevBtn}
-        <span class="page-number active">${pagination.page}</span>
-        ${nextBtn}
-      </div>
-      <div class="pagination-info">
-        Page ${pagination.page} of ${pagination.total_pages} (${pagination.total_items} categories total)
-      </div>
     </div>
   `;
 }
