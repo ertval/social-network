@@ -212,7 +212,7 @@
   color: var(--white-background-light);
 }
 .btn-signup::after {
-  content: "→";
+  content: '→';
   font-size: 1.6rem;
   position: absolute;
   top: 50%;

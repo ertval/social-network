@@ -1,16 +1,12 @@
 {{ define "create_post" }}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Create Topic - Forum</title>
     <!-- Icon -->
-    <link
-      rel="icon"
-      type="image/png"
-      href="/static/images/icons/logo-icon.png"
-    />
+    <link rel="icon" type="image/png" href="/static/images/icons/logo-icon.png" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -70,16 +66,9 @@
                 {{ range .Categories }}
                 <li class="option">
                   <label>
-                    <input
-                      type="checkbox"
-                      name="categories"
-                      value="{{ .ID }}"
-                    />
+                    <input type="checkbox" name="categories" value="{{ .ID }}" />
                     <span class="option-label">{{ .Name }}</span>
-                    <span
-                      class="option-color"
-                      style="background-color: {{ .Color }}"
-                    ></span>
+                    <span class="option-color" style="background-color: {{ .Color }}"></span>
                   </label>
                 </li>
                 {{ end }}
@@ -119,9 +108,7 @@
 
           <!-- Image Upload (Optional) -->
           <div class="field">
-            <label class="label" for="image-upload"
-              >Attach an image (optional)</label
-            >
+            <label class="label" for="image-upload">Attach an image (optional)</label>
             <div class="upload-box" id="uploadBox">
               <input
                 class="input"
