@@ -2,9 +2,9 @@ package chat
 
 import "context"
 
-type ChatRepository interface {
+type Repository interface {
 	// Get or create chat between two users
-	GerOrCreateChat(ctx context.Context, userID1, userID2 string) (*Chat, error)
+	GetOrCreateChat(ctx context.Context, userID1, userID2 string) (*Chat, error)
 
 	// Get chat by ID
 	GetChat(ctx context.Context, chatID string) (*Chat, error)
