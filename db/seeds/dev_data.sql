@@ -43,3 +43,27 @@ INSERT OR IGNORE INTO votes (user_id, topic_id, comment_id, reaction_type) VALUE
 ('f1433622-9c10-44e5-94b1-1f6a148c9131', 3, NULL, -1),
 ('000dec3a-51af-4e7c-ae0c-21436a0a2395', 1, NULL, 1),
 ('f1433622-9c10-44e5-94b1-1f6a148c9131', 1, NULL, -1);
+
+-- Chat Threads
+INSERT OR IGNORE INTO direct_chats (user1_id, user2_id, last_message_id, last_message_at) VALUES
+('df16d238-e4dd-4645-9101-54aed9c0fbf4', '000dec3a-51af-4e7c-ae0c-21436a0a2395', NULL, NULL),
+('df16d238-e4dd-4645-9101-54aed9c0fbf4', 'f1433622-9c10-44e5-94b1-1f6a148c9131', NULL, NULL),
+('000dec3a-51af-4e7c-ae0c-21436a0a2395', 'f1433622-9c10-44e5-94b1-1f6a148c9131', NULL, NULL);
+
+-- Chat Messages
+INSERT OR IGNORE INTO chat_messages (chat_id, sender_id, content, client_message_id) VALUES
+(1, 'df16d238-e4dd-4645-9101-54aed9c0fbf4', 'Hello, this is a message from dev_user1 to dev_user2.', 'msg1'),
+(1, '000dec3a-51af-4e7c-ae0c-21436a0a2395', 'Hi dev_user1, this is a reply from dev_user2.', 'msg2'),
+(2, 'df16d238-e4dd-4645-9101-54aed9c0fbf4', 'Hello, this is a message from dev_user1 to forum_admin.', 'msg3'),
+(2, 'f1433622-9c10-44e5-94b1-1f6a148c9131', 'Hi dev_user1, this is a reply from forum_admin.', 'msg4'),
+(3, '000dec3a-51af-4e7c-ae0c-21436a0a2395', 'Hello, this is a message from dev_user2 to forum_admin.', 'msg5'),
+(3, 'f1433622-9c10-44e5-94b1-1f6a148c9131', 'Hi dev_user2, this is a reply from forum_admin.', 'msg6'); 
+
+-- Chat reads
+INSERT OR IGNORE INTO chat_reads (chat_id, user_id, last_read_message_id) VALUES
+(1, 'df16d238-e4dd-4645-9101-54aed9c0fbf4', 2),
+(1, '000dec3a-51af-4e7c-ae0c-21436a0a2395', 2),
+(2, 'df16d238-e4dd-4645-9101-54aed9c0fbf4', 4),
+(2, 'f1433622-9c10-44e5-94b1-1f6a148c9131', 4),
+(3, '000dec3a-51af-4e7c-ae0c-21436a0a2395', 6),
+(3, 'f1433622-9c10-44e5-94b1-1f6a148c9131', 6);
