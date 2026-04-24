@@ -108,6 +108,42 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Direct_chats
+CREATE TABLE IF NOT EXISTS direct_chats (
+    id TEXT PRIMARY KEY,
+    user1_id TEXT NOT NULL,
+    user2_id TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_message_id INTEGER,
+    last_message_at DATETIME,
+    UNIQUE(user1_id, user2_id)
+);
+
+-- Chat messages
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id TEXT NOT NULL REFERENCES direct_chats(id) ON DELETE CASCADE,
+    sender_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(sender_id, client_message_id),
+    client_message_id TEXT
+);
+
+-- Chat reads - tracks read status and unread counts per user per chat
+CREATE TABLE IF NOT EXISTS chat_reads (
+    chat_id TEXT NOT NULL REFERENCES direct_chats(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    last_read_message_id INTEGER REFERENCES chat_messages(id) ON DELETE SET NULL,
+    last_read_at DATETIME,
+    unread_count INTEGER DEFAULT 0,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (chat_id, user_id)
+);
+
+-- Chat Indexes
+
 --Topic/category junction table indexes
 CREATE INDEX IF NOT EXISTS idx_topic_categories_topic_id ON topic_categories(topic_id);
 CREATE INDEX IF NOT EXISTS idx_topic_categories_category_id ON topic_categories(category_id);
@@ -150,4 +186,31 @@ CREATE INDEX IF NOT EXISTS idx_votes_user ON votes(user_id);
 
 -- Notifications table indexes
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+
+-- Chat table indexes
+-- Get all messages in a chat, ordered by creation for pagination
+CREATE INDEX IF NOT EXISTS idx_chat_messages_chat_id ON chat_messages(chat_id, created_at DESC);
+
+-- Find all chats for a user (since they can be user1 or user2)
+-- Helps build chat list for current user
+CREATE INDEX IF NOT EXISTS idx_direct_chats_user1_id ON direct_chats(user1_id);
+CREATE INDEX IF NOT EXISTS idx_direct_chats_user2_id ON direct_chats(user2_id);
+
+-- Order chat list by most recent message (Discord-like behavior)
+-- Essential for "sort by last message" requirement
+CREATE INDEX IF NOT EXISTS idx_direct_chats_last_message_at ON direct_chats(last_message_at DESC);
+
+-- Optional: Fast sender lookup for activity tracking
+CREATE INDEX IF NOT EXISTS idx_chat_messages_sender_id ON chat_messages(sender_id, created_at DESC);
+
+-- Chat reads table indexes
+-- Fast lookup of read state for a user in a specific chat
+CREATE INDEX IF NOT EXISTS idx_chat_reads_user_id ON chat_reads(user_id);
+
+-- Find all unread chats for a user (for navbar badge and chat list)
+CREATE INDEX IF NOT EXISTS idx_chat_reads_unread ON chat_reads(user_id, unread_count) WHERE unread_count > 0;
+
+-- Fast check of what user has read in specific chat (less common but useful for read receipts)
+CREATE INDEX IF NOT EXISTS idx_chat_reads_chat_user ON chat_reads(chat_id, user_id);
+
 CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
