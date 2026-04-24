@@ -9,8 +9,7 @@
   flex-wrap: wrap;
 }
 .post-title {
-  font-family: "Poppins", Impact, Haettenschweiler, "Arial Narrow Bold",
-    sans-serif;
+  font-family: 'Poppins', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: 2.2rem;
   font-weight: 700;
   text-decoration: underline 2px solid var(--secondary-color);
@@ -175,12 +174,12 @@
   background-color: rgba(244, 67, 54, 0.1);
 }
 .like-btn.active .like-icon {
-  filter: brightness(0) saturate(100%) invert(55%) sepia(73%) saturate(471%)
-    hue-rotate(76deg) brightness(95%) contrast(87%);
+  filter: brightness(0) saturate(100%) invert(55%) sepia(73%) saturate(471%) hue-rotate(76deg)
+    brightness(95%) contrast(87%);
 }
 .dislike-btn.active .dislike-icon {
-  filter: brightness(0) saturate(100%) invert(35%) sepia(96%) saturate(3249%)
-    hue-rotate(347deg) brightness(95%) contrast(93%);
+  filter: brightness(0) saturate(100%) invert(35%) sepia(96%) saturate(3249%) hue-rotate(347deg)
+    brightness(95%) contrast(93%);
 }
 .like-icon,
 .dislike-icon {
@@ -390,7 +389,7 @@
   border-top: 3px solid var(--primary-color-light);
 }
 .comment-content::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;

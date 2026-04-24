@@ -178,7 +178,7 @@ textarea::placeholder {
   align-items: center;
   cursor: pointer;
 }
-.option input[type="checkbox"] {
+.option input[type='checkbox'] {
   cursor: pointer;
 }
 .option-color {
