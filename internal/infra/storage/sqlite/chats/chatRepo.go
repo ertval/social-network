@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/arnald/forum/internal/domain/chat"
 	"github.com/arnald/forum/internal/pkg/uuid"
@@ -185,4 +186,84 @@ func (r *Repo) GetChatsForUser(ctx context.Context, userID string) ([]*chat.Chat
 	}
 
 	return chats, nil
+}
+
+func nullableString(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
+}
+
+func (r *Repo) SendMessage(ctx context.Context, chatID, senderID, content, clientMessageID string) (*chat.Message, error) {
+	if chatID == "" || senderID == "" || content == "" {
+		return nil, errors.New("chatID, senderID, and content cannot be empty")
+	}
+
+	now := time.Now()
+
+	tx, err := r.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Insert message
+	result, err := tx.ExecContext(ctx, `
+		INSERT INTO chat_messages (chat_id, sender_id, content, created_at, client_message_id)
+		VALUES (?, ?, ?, ?, ?)
+		`, chatID, senderID, content, now, nullableString(clientMessageID))
+	if err != nil {
+		return nil, err
+	}
+
+	messageID, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	// Update direct_chats with last message info
+	_, err = tx.ExecContext(ctx, `
+		UPDATE direct_chats
+		SET last_message_id = ?, last_message_at = ?, updated_at = ?
+		WHERE id = ?
+	`, messageID, now, now, chatID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Upsert chat_reads for recipient - increment their unread count
+	_, err = tx.ExecContext(ctx, `
+		INSERT INTO chat_reads (chat_id, user_id, unread_count, updated_at
+		VALUES (?, (
+			SELECT CASE
+				WHEN user_low_id = ? THEN user_high_id
+				ELSE user_low_id
+			END
+			FROM direct_chats WHERE id = ?
+		), 1, ?)
+		ON CONFLICT (chat_id, user_id) DO UPDATE SET 
+			unread_count = unread_count + 1, 
+			updated_at = excluded.updated_at
+	`, chatID, senderID, chatID, now)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	m := &chat.Message{
+		ID:        int(messageID),
+		ChatID:    chatID,
+		SenderID:  senderID,
+		Content:   content,
+		CreatedAt: now,
+	}
+	if clientMessageID != "" {
+		m.ClientMessageID = &clientMessageID
+	}
+
+	return m, nil
 }
