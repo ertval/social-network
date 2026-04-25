@@ -94,7 +94,7 @@ type SessionManagerConfig struct {
 	CookiePath         string
 	CookieDomain       string
 	SameSite           string
-	DefaultExpiry      time.Duration //minutes
+	DefaultExpiry      time.Duration
 	CleanupInterval    time.Duration
 	MaxSessionsPerUser int
 	SessionIDLength    int
@@ -102,7 +102,7 @@ type SessionManagerConfig struct {
 	HTTPOnlyCookie     bool
 	EnablePersistence  bool
 	LogSessions        bool
-	RefreshTokenExpiry time.Duration //days
+	RefreshTokenExpiry time.Duration
 }
 
 type TimeoutsConfig struct {
