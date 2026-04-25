@@ -146,7 +146,7 @@ func LoadConfig() (*ServerConfig, error) {
 			DefaultExpiry:      helpers.GetEnvDuration("SESSION_DEFAULT_EXPIRY", envMap, defaultExpiry),
 			SecureCookie:       helpers.GetEnvBool("SESSION_SECURE_COOKIE", envMap, false),
 			AccessCookieName:   helpers.GetEnv("SESSION_ACCESS_COOKIE_NAME", envMap, "access_token"),
-			RefreshCookieName:  helpers.GetEnv("SESSION_REFRESH_COOKIE_NAME", envMap, "refreash_token"),
+			RefreshCookieName:  helpers.GetEnv("SESSION_REFRESH_COOKIE_NAME", envMap, "refresh_token"),
 			CookiePath:         helpers.GetEnv("SESSION_COOKIE_PATH", envMap, "/"),
 			CookieDomain:       helpers.GetEnv("SESSION_COOKIE_DOMAIN", envMap, ""),
 			HTTPOnlyCookie:     helpers.GetEnvBool("SESSION_HTTPONLY_COOKIE", envMap, true),
