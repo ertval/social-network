@@ -150,6 +150,37 @@ func (sm *Manager) GetSessionFromSessionTokens(sessionToken, refreshToken string
 	return &session, nil
 }
 
+func (sm *Manager) GetSessionByRefreshToken(refreshToken string) (*session.Session, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
+	defer cancel()
+
+	query := `
+	SELECT token, user_id, expires_at, refresh_token, refresh_token_expires_at
+	FROM sessions
+	WHERE refresh_token = ?`
+
+	stmt, err := sm.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("prepare failed: %w", err)
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRowContext(ctx, refreshToken)
+
+	var session session.Session
+
+	err = row.Scan(&session.AccessToken, &session.UserID, &session.Expiry,
+		&session.RefreshToken, &session.RefreshTokenExpiry)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrSessionNotFound
+		}
+		return nil, err
+	}
+
+	return &session, nil
+}
+
 func (sm *Manager) GetUserFromSession(sessionID string) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
 	defer cancel()

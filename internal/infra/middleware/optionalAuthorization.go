@@ -3,6 +3,8 @@ package middleware
 import (
 	"context"
 	"net/http"
+
+	"github.com/arnald/forum/internal/domain/session"
 )
 
 // type optionalAuthMiddleware struct {
@@ -27,22 +29,41 @@ func (a authorization) Optional(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		session, err := a.sessionManager.GetSessionFromSessionTokens(sessionToken, refreshToken)
+		var (
+			session *session.Session
+			err     error
+		)
+
+		if sessionToken == "" && refreshToken != "" {
+			session, err = a.sessionManager.GetSessionByRefreshToken(refreshToken)
+		} else {
+			session, err = a.sessionManager.GetSessionFromSessionTokens(sessionToken, refreshToken)
+		}
 		if err != nil || session == nil {
 			next.ServeHTTP(w, r)
 			return
 		}
 
 		sessionExpired, refreshTokenExpired := CheckTokenExpiration(session)
-		if sessionExpired && !refreshTokenExpired {
-			_ = a.sessionManager.DeleteSession(session.AccessToken)
-			session, _ = a.sessionManager.CreateSession(r.Context(), session.UserID)
-		} else if sessionExpired && refreshTokenExpired {
-			_ = a.sessionManager.DeleteSession(session.AccessToken)
+
+		// If refresh token expired, continue without authentication
+		if refreshTokenExpired {
 			next.ServeHTTP(w, r)
 			return
 		}
 
+		// If access token expired but refresh is valid, create new session
+		if sessionExpired {
+			_ = a.sessionManager.DeleteSession(session.AccessToken)
+			session, err = a.sessionManager.CreateSession(r.Context(), session.UserID)
+			if err != nil || session == nil {
+				next.ServeHTTP(w, r)
+				return
+			}
+			a.sessionManager.SetCookies(w, session)
+		}
+
+		// Both tokens valid, or just refreshed - get user and proceed with context
 		user, err := a.sessionManager.GetUserFromSession(session.AccessToken)
 		if err != nil || user == nil {
 			next.ServeHTTP(w, r)

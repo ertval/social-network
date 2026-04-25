@@ -15,6 +15,7 @@ type Manager interface {
 	DeleteCookies(r *http.Request, w http.ResponseWriter) (sessiontoken string)
 	GetUserFromSession(sessionID string) (*user.User, error)
 	GetSessionFromSessionTokens(sessionToken, refreshToken string) (*Session, error)
+	GetSessionByRefreshToken(refreshToken string) (*Session, error)
 	ValidateSession(sessionID string) error
 	DeleteSessionWhenNewCreated(ctx context.Context, sessionID string, userID string) error
 }
