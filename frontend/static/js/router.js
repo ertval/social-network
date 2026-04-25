@@ -17,7 +17,7 @@
  *   3. Done — no server changes needed
  */
 
-import { getUser, requireAuth } from './auth.js';
+import { getUser } from './auth.js';
 import { renderNavbar } from './navbar.js';
 import { renderFooter } from './footer.js';
 
@@ -36,28 +36,28 @@ const ROUTES = [
     path: '/',
     loader: () => import('./pages/home.js'),
     render: 'renderHomePage',
-    protected: false,
+    protected: true,
     title: 'Forum — Home',
   },
   {
     path: '/categories',
     loader: () => import('./pages/categories.js'),
     render: 'renderCategoriesPage',
-    protected: false,
+    protected: true,
     title: 'Forum — Categories',
   },
   {
     path: '/topics',
     loader: () => import('./pages/topics.js'),
     render: 'renderTopicsPage',
-    protected: false,
+    protected: true,
     title: 'Forum — Topics',
   },
   {
     path: '/topic/*',
     loader: () => import('./pages/topic.js'),
     render: 'renderTopicPage',
-    protected: false,
+    protected: true,
     title: 'Forum — Topic',
   },
   {
@@ -167,7 +167,7 @@ async function handleRoute(fullPath) {
 
   // Auth guard — mirrors RequireAuth middleware
   if (route.protected && !user) {
-    requireAuth(); // this will navigate("/login")
+    navigate('/login');
     return;
   }
 
