@@ -88,3 +88,101 @@ func (r *Repo) GetOrCreateChat(ctx context.Context, userID1, userID2 string) (*c
 	return &c, nil
 
 }
+
+func (r *Repo) GetChat(ctx context.Context, chatID string) (*chat.Chat, error) {
+	if chatID == "" {
+		return nil, errors.New("chatID cannot be empty")
+	}
+
+	var c chat.Chat
+	var lastMessageID sql.NullInt64
+	var lastMessageAt sql.NullTime
+
+	err := r.DB.QueryRowContext(ctx, `
+		SELECT id, user_low_id, user_high_id, created_at, updated_at, last_message_id, last_message_at
+		FROM direct_chats
+		WHERE id = ?
+	`, chatID).Scan(
+		&c.ID,
+		&c.UserLowID,
+		&c.UserHighID,
+		&c.CreatedAt,
+		&c.UpdatedAt,
+		&lastMessageID,
+		&lastMessageAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.New("chat not found")
+		}
+		return nil, err
+	}
+
+	if lastMessageID.Valid {
+		id := int(lastMessageID.Int64)
+		c.LastMessageID = &id
+	}
+	if lastMessageAt.Valid {
+		t := lastMessageAt.Time
+		c.LastMessageAt = &t
+	}
+
+	return &c, nil
+}
+
+func (r *Repo) GetChatsForUser(ctx context.Context, userID string) ([]*chat.Chat, error) {
+	if userID == "" {
+		return nil, errors.New("userID cannot be empty")
+	}
+
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT id, user_low_id, user_high_id, created_at, updated_at, last_message_id, last_message_at
+		FROM direct_chats
+		WHERE user_low_id = ? OR user_high_id = ?
+		ORDER BY
+			CASE WHEN last_message_at IS NULL THEN 1 ELSE 0 END ASC,
+			last_message_at DESC
+	`, userID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var chats []*chat.Chat
+
+	for rows.Next() {
+		var c chat.Chat
+		var lastMessageID sql.NullInt64
+		var lastMessageAt sql.NullTime
+
+		err := rows.Scan(
+			&c.ID,
+			&c.UserLowID,
+			&c.UserHighID,
+			&c.CreatedAt,
+			&c.UpdatedAt,
+			&lastMessageID,
+			&lastMessageAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if lastMessageID.Valid {
+			id := int(lastMessageID.Int64)
+			c.LastMessageID = &id
+		}
+		if lastMessageAt.Valid {
+			t := lastMessageAt.Time
+			c.LastMessageAt = &t
+		}
+
+		chats = append(chats, &c)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return chats, nil
+}
