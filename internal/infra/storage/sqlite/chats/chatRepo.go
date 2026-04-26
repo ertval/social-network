@@ -343,3 +343,92 @@ func scanMessages(rows *sql.Rows) ([]*chat.Message, error) {
 
 	return messages, nil
 }
+
+func (r *Repo) MarkAsRead(ctx context.Context, chatID, userID string, upToMessageID int) error {
+	if chatID == "" || userID == "" {
+		return errors.New("chatID and userID are required")
+	}
+
+	now := time.Now()
+
+	_, err := r.DB.ExecContext(ctx, `
+		INSERT INTO chat_reads (chat_id, user_id, last_read_message_id, last_read_at, unread_count, updated_at)
+		VALUES (?, ?, ?, ?, 0, ?)
+		ON CONFLICT (chat_id, user_id) DO UPDATE SET
+			last_read_message_id = excluded.last_read_message_id,
+			last_read_at = excluded.last_read_at,
+			unread_count = 0,
+			updated_at = excluded.updated_at
+			`, chatID, userID, upToMessageID, now, now)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Repo) GetUnreadCount(ctx context.Context, chatID, userID string) (int, error) {
+	if chatID == "" || userID == "" {
+		return 0, errors.New("chatID and userID are required")
+	}
+
+	var count int
+
+	err := r.DB.QueryRowContext(ctx, `
+		SELECT unread_count
+		FROM chat_reads
+		WHERE chat_id = ? AND user_id = ?
+		`, chatID, userID).Scan(&count)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// No row means user has never opened this chat, all messages are unread
+			// but we return 0 here — let the caller decide what to do
+			return 0, nil
+		}
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (r *Repo) GetAllUnreadCounts(ctx context.Context, userID string) (map[string]int, error) {
+	if userID == "" {
+		return nil, errors.New("userID cannot be empty")
+	}
+
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT chat_id, unread_count
+		FROM chat_reads
+		WHERE user_id = ? AND unread_count > 0
+		`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	counts := make(map[string]int)
+
+	for rows.Next() {
+		var count int
+		var chatID string
+
+		err = rows.Scan(
+			&chatID,
+			&count,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		counts[chatID] = count
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return counts, nil
+
+}
