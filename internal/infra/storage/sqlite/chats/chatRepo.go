@@ -267,3 +267,79 @@ func (r *Repo) SendMessage(ctx context.Context, chatID, senderID, content, clien
 
 	return m, nil
 }
+
+func (r *Repo) GetMessagesForChat(ctx context.Context, chatID string, limit int) ([]*chat.Message, error) {
+	if chatID == "" {
+		return nil, errors.New("chatID cannot be empty")
+	}
+
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT id, chat_id, sender_id, content, created_at, client_message_id
+		FROM chat_messages
+		WHERE chat_id = ?
+		ORDER BY created_at DESC
+		LIMIT ?
+		`, chatID, limit)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	return scanMessages(rows)
+}
+
+func (r *Repo) GetMessagesForChatBefore(ctx context.Context, chatID string, beforeMessageID int, limit string) ([]*chat.Message, error) {
+	if chatID == "" {
+		return nil, errors.New("chatID cannot be empty")
+	}
+
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT id, chat_id, sender_id, content, created_at, client_message_id
+		FROM chat_messages
+		WHERE chat_id = ? AND id < ?
+		ORDER BY created_at DESC
+		LIMIT
+		`, chatID, beforeMessageID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	return scanMessages(rows)
+}
+
+func scanMessages(rows *sql.Rows) ([]*chat.Message, error) {
+	var messages []*chat.Message
+
+	for rows.Next() {
+		var m chat.Message
+		var clientMessageID sql.NullString
+
+		err := rows.Scan(
+			&m.ID,
+			&m.ChatID,
+			&m.SenderID,
+			&m.Content,
+			&m.CreatedAt,
+			&m.ClientMessageID,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if clientMessageID.Valid {
+			m.ClientMessageID = &clientMessageID.String
+		}
+
+		messages = append(messages, &m)
+	}
+
+	err := rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
