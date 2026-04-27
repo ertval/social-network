@@ -35,7 +35,7 @@ func Handler(
 			return
 		}
 
-		client := NewCient(userID, hub, conn)
+		client := NewClient(userID, hub, conn)
 		hub.Register(client)
 
 		go client.WritePump()
