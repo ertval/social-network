@@ -41,6 +41,7 @@ import (
 	castvote "github.com/arnald/forum/internal/infra/http/vote/castVote"
 	deletevote "github.com/arnald/forum/internal/infra/http/vote/deleteVote"
 	getCounts "github.com/arnald/forum/internal/infra/http/vote/getVoteCounts"
+	"github.com/arnald/forum/internal/infra/http/ws"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/infra/storage/notifications"
@@ -68,6 +69,7 @@ type Server struct {
 	middleware     *middleware.Middleware
 	db             *sql.DB
 	logger         logger.Logger
+	hub            *ws.Hub
 }
 
 type OAuth struct {
@@ -88,6 +90,7 @@ func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appSe
 	httpServer.initNotifications()
 	httpServer.initOAuthServices()
 	httpServer.initMiddleware(httpServer.sessionManager)
+	httpServer.hub = ws.NewHub()
 	httpServer.AddHTTPRoutes()
 	return httpServer
 }
@@ -326,6 +329,14 @@ func (server *Server) AddHTTPRoutes() {
 			server.middleware.Authorization.Required,
 		),
 	)
+
+	// WebSocket route — chat and presence
+	server.router.HandleFunc(apiContext+"/ws",
+		middlewareChain(
+			ws.Handler(server.hub, server.getUserIDFromRequest, ws.MessageHandler(server.hub, server.appServices.ChatRepo)),
+			server.middleware.Authorization.Required,
+		),
+	)
 }
 
 func (server *Server) ListenAndServe() {
@@ -374,6 +385,22 @@ func (server *Server) ListenAndServe() {
 
 func (server *Server) initSessionManager() {
 	server.sessionManager = sessionstore.NewSessionManager(server.db, server.config.SessionManager)
+}
+
+// getUserIDFromRequest extracts and validates the session cookie,
+// returning the authenticated user's ID. Used by the WebSocket upgrade handler.
+func (server *Server) getUserIDFromRequest(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		return "", errors.New("no session cookie")
+	}
+
+	sess, err := server.sessionManager.GetSession(cookie.Value)
+	if err != nil || sess == nil {
+		return "", errors.New("invalid or expired session")
+	}
+
+	return sess.UserID, nil
 }
 
 func (server *Server) initNotifications() {
