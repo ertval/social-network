@@ -15,6 +15,7 @@ import (
 	voteQueries "github.com/arnald/forum/internal/app/votes/queries"
 	"github.com/arnald/forum/internal/domain/activity"
 	"github.com/arnald/forum/internal/domain/category"
+	"github.com/arnald/forum/internal/domain/chat"
 	"github.com/arnald/forum/internal/domain/comment"
 	"github.com/arnald/forum/internal/domain/oauth"
 	"github.com/arnald/forum/internal/domain/topic"
@@ -60,12 +61,14 @@ type UserServices struct {
 
 type Services struct {
 	UserServices UserServices
+	ChatRepo     chat.Repository
 }
 
-func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository) Services {
+func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
+		ChatRepo: chatRepo,
 		UserServices: UserServices{
 			Queries: Queries{
 				*oauthservice.NewOAuthService(oauthRepo, uuidProvider),
