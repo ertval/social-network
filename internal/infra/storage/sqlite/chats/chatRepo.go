@@ -206,6 +206,7 @@ func (r *Repo) SendMessage(ctx context.Context, chatID, senderID, content, clien
 	if err != nil {
 		return nil, err
 	}
+	defer tx.Rollback()
 
 	// Insert message
 	result, err := tx.ExecContext(ctx, `
@@ -233,7 +234,7 @@ func (r *Repo) SendMessage(ctx context.Context, chatID, senderID, content, clien
 
 	// Upsert chat_reads for recipient - increment their unread count
 	_, err = tx.ExecContext(ctx, `
-		INSERT INTO chat_reads (chat_id, user_id, unread_count, updated_at
+		INSERT INTO chat_reads (chat_id, user_id, unread_count, updated_at)
 		VALUES (?, (
 			SELECT CASE
 				WHEN user_low_id = ? THEN user_high_id
@@ -290,7 +291,7 @@ func (r *Repo) GetMessagesForChat(ctx context.Context, chatID string, limit int)
 	return scanMessages(rows)
 }
 
-func (r *Repo) GetMessagesForChatBefore(ctx context.Context, chatID string, beforeMessageID int, limit string) ([]*chat.Message, error) {
+func (r *Repo) GetMessagesForChatBefore(ctx context.Context, chatID string, beforeMessageID int, limit int) ([]*chat.Message, error) {
 	if chatID == "" {
 		return nil, errors.New("chatID cannot be empty")
 	}
@@ -300,7 +301,7 @@ func (r *Repo) GetMessagesForChatBefore(ctx context.Context, chatID string, befo
 		FROM chat_messages
 		WHERE chat_id = ? AND id < ?
 		ORDER BY created_at DESC
-		LIMIT
+		LIMIT ?
 		`, chatID, beforeMessageID, limit)
 	if err != nil {
 		return nil, err
@@ -323,7 +324,7 @@ func scanMessages(rows *sql.Rows) ([]*chat.Message, error) {
 			&m.SenderID,
 			&m.Content,
 			&m.CreatedAt,
-			&m.ClientMessageID,
+			&clientMessageID,
 		)
 		if err != nil {
 			return nil, err
