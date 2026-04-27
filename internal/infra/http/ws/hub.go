@@ -50,26 +50,26 @@ func (h *Hub) Unregister(client *Client) {
 
 // Send delivers a message to all connections of a specific user.
 func (h *Hub) Send(toUserID string, msg []byte) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
+	h.mu.RLock()
+	defer h.mu.RUnlock()
 
 	for client := range h.clients[toUserID] {
 		client.send <- msg
 	}
 }
 
-// IsOnline returns true if a user has at least one acttive connection.
+// IsOnline returns true if a user has at least one active connection.
 func (h *Hub) IsOnline(userID string) bool {
-	h.mu.Lock()
-	defer h.mu.Unlock()
+	h.mu.RLock()
+	defer h.mu.RUnlock()
 
 	return len(h.clients[userID]) > 0
 }
 
 // OnlineUserIDs returns the set of currently connected user IDs.
 func (h *Hub) OnlineUserIDs() []string {
-	h.mu.Lock()
-	defer h.mu.Unlock()
+	h.mu.RLock()
+	defer h.mu.RUnlock()
 
 	ids := make([]string, 0, len(h.clients))
 	for id := range h.clients {
