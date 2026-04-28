@@ -35,7 +35,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken, _ := middleware.GetTokensFromRequest(r)
+	sessionToken := h.sessionManager.DeleteCookies(r, w)
 	if sessionToken == "" {
 		helpers.RespondWithError(w, http.StatusUnauthorized, "No session found")
 		return

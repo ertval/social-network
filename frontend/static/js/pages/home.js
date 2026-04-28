@@ -18,6 +18,7 @@
  */
 
 import { fetchCategories } from '../api.js';
+import { navigate } from '../router.js';
 import { prepareCategories, escapeHTML } from '../helpers.js';
 import {
   buildCategoriesListHTML,
@@ -35,6 +36,12 @@ import {
 export async function renderHomePage(user) {
   const root = document.getElementById('app-root');
   if (!root) return;
+
+  // If not logged in, redirect to login
+  if (!user) {
+    navigate('/login');
+    return;
+  }
 
   // Show skeleton while loading
   root.innerHTML = buildSkeletonHTML();
