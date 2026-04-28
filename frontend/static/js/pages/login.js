@@ -8,7 +8,6 @@
 
 import { api } from '../api.js';
 import { navigate } from '../router.js';
-import { clearUser, initAuth, setUser } from '../auth.js';
 import { escapeHTML } from '../helpers.js';
 
 export async function renderLoginPage(user) {
@@ -233,12 +232,7 @@ function initLoginBehaviour() {
         // Backend /login/username handler reads field "username"
         await api.post('/login/username', { username: nickname, password });
       }
-
-      // Re-resolve auth from /me so the navbar reflects the real session
-      clearUser();
-      const user = await initAuth();
-      if (user) setUser(user);
-
+      //once the cookies are set, navigate to homepage, over there the middlware will get the user
       navigate('/');
     } catch (err) {
       const msg = err?.message || String(err);

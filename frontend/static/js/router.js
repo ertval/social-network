@@ -17,7 +17,7 @@
  *   3. Done — no server changes needed
  */
 
-import { getUser } from './auth.js';
+import { getUser, authMiddleware } from './auth.js';
 import { renderNavbar } from './navbar.js';
 import { renderFooter } from './footer.js';
 
@@ -152,6 +152,7 @@ async function handleRoute(fullPath) {
 
   const route = matchRoute(pathname);
 
+  await authMiddleware()
   // Always re-render the navbar so it reflects the latest auth state
   const user = getUser();
   renderNavbar(user);
