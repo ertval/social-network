@@ -45,7 +45,7 @@ INSERT OR IGNORE INTO votes (user_id, topic_id, comment_id, reaction_type) VALUE
 ('f1433622-9c10-44e5-94b1-1f6a148c9131', 1, NULL, -1);
 
 -- Chat Threads (provide explicit IDs)
-INSERT OR IGNORE INTO direct_chats (id, user1_id, user2_id, last_message_id, last_message_at) VALUES
+INSERT OR IGNORE INTO direct_chats (id, user_low_id, user_high_id, last_message_id, last_message_at) VALUES
 ('chat_1', 'df16d238-e4dd-4645-9101-54aed9c0fbf4', '000dec3a-51af-4e7c-ae0c-21436a0a2395', NULL, NULL),
 ('chat_2', 'df16d238-e4dd-4645-9101-54aed9c0fbf4', 'f1433622-9c10-44e5-94b1-1f6a148c9131', NULL, NULL),
 ('chat_3', '000dec3a-51af-4e7c-ae0c-21436a0a2395', 'f1433622-9c10-44e5-94b1-1f6a148c9131', NULL, NULL);
