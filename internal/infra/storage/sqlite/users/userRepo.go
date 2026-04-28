@@ -34,19 +34,25 @@ func (r Repo) GetAll(ctx context.Context) ([]user.User, error) {
 	var users []user.User
 	for rows.Next() {
 		var u user.User
+		var firstName, lastName, gender sql.NullString
+		var age sql.NullInt64
 		err := rows.Scan(
 			&u.ID,
 			&u.Nickname,
 			&u.Email,
-			&u.FirstName,
-			&u.LastName,
-			&u.Age,
-			&u.Gender,
+			&firstName,
+			&lastName,
+			&age,
+			&gender,
 			&u.CreatedAt,
 		)
 		if err != nil {
 			return nil, err
 		}
+		u.FirstName = firstName.String
+		u.LastName = lastName.String
+		u.Age = int(age.Int64)
+		u.Gender = gender.String
 		users = append(users, u)
 	}
 	err = rows.Err()

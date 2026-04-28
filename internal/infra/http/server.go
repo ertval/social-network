@@ -17,6 +17,7 @@ import (
 	getallcategories "github.com/arnald/forum/internal/infra/http/category/getAllCategories"
 	getcategorybyid "github.com/arnald/forum/internal/infra/http/category/getCategoryByID"
 	updatecategory "github.com/arnald/forum/internal/infra/http/category/updateCategory"
+	getchatusers "github.com/arnald/forum/internal/infra/http/chat/getChatUsers"
 	createcomment "github.com/arnald/forum/internal/infra/http/comment/createComment"
 	deletecomment "github.com/arnald/forum/internal/infra/http/comment/deleteComment"
 	getcomment "github.com/arnald/forum/internal/infra/http/comment/getComment"
@@ -337,6 +338,18 @@ func (server *Server) AddHTTPRoutes() {
 			server.middleware.Authorization.Required,
 		),
 	)
+
+	// Chat routes
+	server.router.HandleFunc(apiContext+"/chat/users",
+		middlewareChain(
+			getchatusers.NewHandler(
+				server.appServices,
+				server.appServices.ChatRepo,
+				server.hub,
+				server.logger,
+			).GetChatUsers,
+			server.middleware.Authorization.Required,
+		))
 }
 
 func (server *Server) ListenAndServe() {
