@@ -20,8 +20,40 @@ func NewRepo(db *sql.DB) *Repo {
 }
 
 // TODO: retrieves all users from the repository.
-func (r Repo) GetAll(_ context.Context) ([]user.User, error) {
-	return nil, nil
+func (r Repo) GetAll(ctx context.Context) ([]user.User, error) {
+	rows, err := r.DB.QueryContext(ctx, `
+		SELECT id, username, email, first_name, last_name, age, gender, created_at
+		FROM users
+		ORDER BY username ASC
+		`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []user.User
+	for rows.Next() {
+		var u user.User
+		err := rows.Scan(
+			&u.ID,
+			&u.Nickname,
+			&u.Email,
+			&u.FirstName,
+			&u.LastName,
+			&u.Age,
+			&u.Gender,
+			&u.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (r Repo) UserRegister(ctx context.Context, user *user.User) error {
