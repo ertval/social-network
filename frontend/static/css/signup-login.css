@@ -144,6 +144,19 @@
 .input-box input::placeholder {
   color: var(--grey-color);
 }
+.form-select {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--grey-color-dark);
+  border-radius: 5px;
+  background-color: var(--white-background-light);
+  color: var(--dark-background);
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
 .password-wrapper {
   position: relative;
 }

@@ -6,7 +6,7 @@
 }
 
 /*----- Header Layout -----*/
-header {
+#navbar-root {
   position: sticky;
   top: 0;
   z-index: 100;
