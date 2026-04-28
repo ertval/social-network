@@ -15,9 +15,7 @@
  */
 
 import { api } from '../api.js';
-import { clearUser } from '../auth.js';
 import { navigate } from '../router.js';
-import { renderNavbar } from '../navbar.js';
 
 export async function renderLogoutPage(user) {
   const root = document.getElementById('app-root');
@@ -34,19 +32,10 @@ export async function renderLogoutPage(user) {
     // POST /api/v1/logout — backend deletes the session and clears cookies
     await api.post('/logout');
   } catch (err) {
-    // Even if the backend call fails, clear client state and go home.
-    // This matches the BFF behaviour: it logged the error but still cleared
-    // cookies and redirected.
     console.warn('Backend logout failed, clearing client state anyway:', err.message);
   }
 
-  // Clear in-memory user so the navbar switches to guest state immediately
-  clearUser();
-
-  // Re-render the navbar in guest mode before navigating so there's no flash
-  // of the logged-in nav on the destination page
-  renderNavbar(null);
-
+  //the cookies are deleted from the backend response, so we just go to the home page and the middleware will get the user and render the navbar
   navigate('/');
 }
 
@@ -59,13 +48,12 @@ function buildHTML(message, showRetry = false) {
       <p style="margin-top:1.5rem;color:var(--white-background-light);font-size:1.1rem">
         ${message}
       </p>
-      ${
-        showRetry
-          ? `<div style="margin-top:1.5rem">
+      ${showRetry
+      ? `<div style="margin-top:1.5rem">
              <button id="logout-retry" class="btn-signup">Retry</button>
            </div>`
-          : ''
-      }
+      : ''
+    }
     </div>
   `;
 }
