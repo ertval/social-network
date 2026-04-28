@@ -8,7 +8,7 @@
 
 import { api } from '../api.js';
 import { navigate } from '../router.js';
-import { setUser } from '../auth.js';
+import { clearUser, initAuth, setUser } from '../auth.js';
 import { escapeHTML } from '../helpers.js';
 
 export async function renderLoginPage(user) {
@@ -22,114 +22,93 @@ export async function renderLoginPage(user) {
 
 function buildLoginHTML() {
   return /* html */ `
-    <header>
+    <div class="page-title-box">
       <h1>Welcome Back</h1>
-    </header>
-    <main>
-      <div class="signup-container">
-        <div class="signup-wrapper">
-          <h2 class="signup-title">Sign In</h2>
-          <div class="text-base">
-            Don't have an account?
-            <a href="/register" data-link>Sign Up</a>
+    </div>
+    <div class="signup-container">
+      <div class="signup-wrapper">
+        <h2 class="signup-title">Sign In</h2>
+        <div class="text-base">
+          Don't have an account?
+          <a href="/register" data-link>Sign Up</a>
+        </div>
+ 
+        <div class="btn-box">
+          <a class="signup-provider-btn google" href="/auth/google/login">
+            <img src="/static/images/icons/google-logo.png" alt="Google Logo" />
+            <p>Continue with Google</p>
+          </a>
+          <a class="signup-provider-btn github" href="/auth/github/login">
+            <img src="/static/images/icons/github-white-logo.png" alt="Github Logo" />
+            <p>Continue with Github</p>
+          </a>
+        </div>
+ 
+        <div class="border">
+          <span class="border-text">or</span>
+        </div>
+ 
+        <form class="signup">
+          <div class="input-wrapper">
+ 
+            <div class="login-type-selector">
+              <p class="login-type-title">Choose Type of Login</p>
+              <label class="login-radio-label">
+                <input type="radio" name="loginType" id="loginTypeUsername"
+                       value="username" class="login-type-radio" checked />
+                <span>Username</span>
+              </label>
+              <label class="login-radio-label">
+                <input type="radio" name="loginType" id="loginTypeEmail"
+                       value="email" class="login-type-radio" />
+                <span>Email</span>
+              </label>
+            </div>
+ 
+            <div class="input-box" id="nicknameBox">
+              <label for="nickname">Nickname</label>
+              <input type="text" name="nickname" id="nickname"
+                     class="form-input" placeholder="Enter your nickname" />
+              <span class="error-message" id="nickname-error"></span>
+            </div>
+ 
+            <div class="input-box" id="emailBox" style="display:none">
+              <label for="email">Email address</label>
+              <input type="email" name="email" id="email"
+                     class="form-input" placeholder="Enter your email" />
+              <span class="error-message" id="email-error"></span>
+            </div>
+ 
+            <div class="input-box">
+              <div class="password-wrapper">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password"
+                       class="form-input" placeholder="Enter your password" />
+                <label for="togglePassword" class="togglePassword">
+                  <img src="/static/images/icons/eye.png"    alt="Show password"
+                       id="eye-icon"    class="eye-icon" />
+                  <img src="/static/images/icons/hidden.png" alt="Hide password"
+                       id="hidden-icon" class="hidden-icon" style="display:none" />
+                </label>
+                <input type="checkbox" id="togglePassword"
+                       class="hidden-checkbox" aria-label="show/hide password" />
+              </div>
+              <span class="error-message" id="password-error"></span>
+            </div>
+ 
           </div>
+ 
           <div class="btn-box">
-            <a class="signup-provider-btn google" href="/auth/google/login">
-              <img src="/static/images/icons/google-logo.png" alt="Google Logo" />
-              <p>Continue with Google</p>
-            </a>
-            <a class="signup-provider-btn github" href="/auth/github/login">
-              <img src="/static/images/icons/github-white-logo.png" alt="Github Logo" />
-              <p>Continue with Github</p>
-            </a>
+            <button type="reset" class="btn-reset-form">Reset Form</button>
+            <button type="submit" class="btn-signup">Sign In</button>
           </div>
-
-          <div class="border">
-            <span class="border-text">or</span>
-          </div>
-
-          <form class="signup" method="post" action="/login">
-            <div class="input-wrapper">
-              <div class="login-type-selector">
-                <p class="login-type-title">Choose Type of Login</p>
-                <label class="login-radio-label">
-                  <input
-                    type="radio"
-                    name="loginType"
-                    id="loginTypeNickname"
-                    value="username"
-                    class="login-type-radio"
-                    checked
-                  />
-                  <span>Nickname</span>
-                </label>
-                <label class="login-radio-label">
-                  <input
-                    type="radio"
-                    name="loginType"
-                    id="loginTypeEmail"
-                    value="email"
-                    class="login-type-radio"
-                  />
-                  <span>Email</span>
-                </label>
-              </div>
-
-              <div class="input-box" id="nicknameBox">
-                <label for="nickname">Nickname</label>
-                <input
-                  type="text"
-                  name="nickname"
-                  id="nickname"
-                  class="form-input"
-                  placeholder="Enter your nickname"
-                />
-                <span class="error-message" id="nickname-error"></span>
-              </div>
-
-              <div class="input-box" id="emailBox" style="display:none">
-                <label for="email">Email address</label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  class="form-input"
-                  placeholder="Enter your email"
-                />
-                <span class="error-message" id="email-error"></span>
-              </div>
-
-              <div class="input-box">
-                <div class="password-wrapper">
-                  <label for="password">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    class="form-input"
-                    placeholder="Enter your password"
-                  />
-                  <label for="togglePassword" class="togglePassword">
-                    <img src="/static/images/icons/eye.png" alt="Toggle Password Icon" id="eye-icon" class="eye-icon" />
-                    <img src="/static/images/icons/hidden.png" alt="Toggle Password Icon" id="hidden-icon" class="hidden-icon" />
-                  </label>
-                  <input type="checkbox" id="togglePassword" class="hidden-checkbox" aria-label="show/hide password" />
-                </div>
-                <span class="error-message" id="password-error"></span>
-              </div>
-            </div>
-
-            <div class="btn-box">
-              <button type="reset" class="btn-reset-form">Reset Form</button>
-              <button type="submit" class="btn-signup">Sign In</button>
-            </div>
-          </form>
-        </div>
-        <div class="home-link-container">
-          <a href="/" class="home-link" data-link>Go to Homepage</a>
-        </div>
+        </form>
       </div>
-    </main>
+ 
+      <div class="home-link-container">
+        <a href="/" class="home-link" data-link>Go to Homepage</a>
+      </div>
+    </div>
   `;
 }
 
@@ -137,7 +116,7 @@ function initLoginBehaviour() {
   const form = document.querySelector('.signup');
   if (!form) return;
 
-  const loginTypeNickname = document.getElementById('loginTypeNickname');
+  const loginTypeUsername = document.getElementById('loginTypeUsername');
   const loginTypeEmail = document.getElementById('loginTypeEmail');
   const nicknameBox = document.getElementById('nicknameBox');
   const emailBox = document.getElementById('emailBox');
@@ -150,28 +129,73 @@ function initLoginBehaviour() {
   const emailError = document.getElementById('email-error');
   const passwordError = document.getElementById('password-error');
 
+  // ---Login type toggle---
   function updateVisibility() {
-    if (loginTypeEmail.checked) {
+    const useEmail = loginTypeEmail.checked;
+
+    if (useEmail) {
       nicknameBox.style.display = 'none';
-      emailBox.style.display = '';
+      emailBox.style.display = 'block';
+      nicknameError.textContent = '';
+      nicknameInput.value = '';
     } else {
       nicknameBox.style.display = '';
       emailBox.style.display = 'none';
+      emailError.textContent = '';
+      emailInput.value = '';
     }
   }
 
-  loginTypeNickname.addEventListener('change', updateVisibility);
+  loginTypeUsername.addEventListener('change', updateVisibility);
   loginTypeEmail.addEventListener('change', updateVisibility);
 
+  // ---Password toggle---
   const toggle = document.getElementById('togglePassword');
+  const eyeIcon = document.getElementById('eye-icon');
+  const hiddenIcon = document.getElementById('hidden-icon');
+
   toggle?.addEventListener('change', () => {
-    passwordInput.type = toggle.checked ? 'text' : 'password';
+    if (toggle.checked) {
+      passwordInput.type = 'text';
+      eyeIcon.style.display = 'none';
+      hiddenIcon.style.display = 'block';
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.style.display = 'block';
+      hiddenIcon.style.display = 'none';
+    }
   });
 
+  // ---Clear errors on input---
+  nicknameInput?.addEventListener('input', () => {
+    nicknameError.textContent = '';
+  });
+  emailInput?.addEventListener('input', () => {
+    emailError.textContent = '';
+  });
+  passwordInput?.addEventListener('input', () => {
+    passwordError.textContent = '';
+  });
+
+  // ---Reset button---
+  form.querySelector('button[type="reset"]').addEventListener('click', () => {
+    nicknameError.textContent = '';
+    emailError.textContent = '';
+    passwordError.textContent = '';
+
+    passwordInput.type = 'password';
+    eyeIcon.style.display = 'block';
+    hiddenIcon.style.display = 'none';
+    if (toggle) toggle.checked = false;
+
+    loginTypeUsername.checked = true;
+    updateVisibility();
+  });
+
+  // ---Submit---
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // clear errors
     nicknameError.textContent = '';
     emailError.textContent = '';
     passwordError.textContent = '';
@@ -181,24 +205,21 @@ function initLoginBehaviour() {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
+    // Client-side validation
     if (!password) {
       passwordError.textContent = 'Please enter your password.';
       passwordInput.focus();
       return;
     }
-
-    if (useEmail) {
-      if (!email) {
-        emailError.textContent = 'Please enter your email address.';
-        emailInput.focus();
-        return;
-      }
-    } else {
-      if (!nickname) {
-        nicknameError.textContent = 'Please enter your nickname.';
-        nicknameInput.focus();
-        return;
-      }
+    if (useEmail && !email) {
+      emailError.textContent = 'Please enter your email address.';
+      emailInput.focus();
+      return;
+    }
+    if (!useEmail && !nickname) {
+      nicknameError.textContent = 'Please enter your nickname.';
+      nicknameInput.focus();
+      return;
     }
 
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -206,37 +227,30 @@ function initLoginBehaviour() {
     submitBtn.textContent = 'Signing in...';
 
     try {
-      let res;
       if (useEmail) {
-        res = await api.post('/login/email', { email, password });
+        await api.post('/login/email', { email, password });
       } else {
-        // backend expects field `username` for username login handler
-        res = await api.post('/login/username', { username: nickname, password });
+        // Backend /login/username handler reads field "username"
+        await api.post('/login/username', { username: nickname, password });
       }
 
-      // Successful login returns tokens and username; set in-memory user
-      const user = {
-        id: res.userId || res.UserID || null,
-        username: res.username || res.Username || res.username || null,
-        email: res.email || null,
-      };
-      try {
-        setUser(user);
-      } catch (err) {
-        // ignore if setUser not available
-      }
+      // Re-resolve auth from /me so the navbar reflects the real session
+      clearUser();
+      const user = await initAuth();
+      if (user) setUser(user);
 
       navigate('/');
     } catch (err) {
       const msg = err?.message || String(err);
-      const lower = String(msg).toLowerCase();
+      const lower = msg.toLowerCase();
+
       if (lower.includes('email')) {
         emailError.textContent = escapeHTML(msg);
         emailInput.focus();
       } else if (
-        lower.includes('username') ||
+        lower.includes('nickname') ||
         lower.includes('nick') ||
-        lower.includes('nickname')
+        lower.includes('username')
       ) {
         nicknameError.textContent = escapeHTML(msg);
         nicknameInput.focus();
@@ -250,13 +264,6 @@ function initLoginBehaviour() {
     }
   });
 
-  const resetBtn = form.querySelector('button[type="reset"]');
-  resetBtn?.addEventListener('click', () => {
-    nicknameError.textContent = '';
-    emailError.textContent = '';
-    passwordError.textContent = '';
-  });
-
-  // ensure initial visibility
+  // Ensure initial visibility is correct
   updateVisibility();
 }

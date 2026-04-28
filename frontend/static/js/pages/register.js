@@ -254,7 +254,7 @@ function initFormBehaviour() {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Signing up...';
     try {
-      await api.post('register', {
+      await api.post('/register', {
         nickname,
         email,
         password,
