@@ -48,6 +48,10 @@ func NewCreateTopicHandler(repo topic.Repository) CreateTopicRequestHandler {
 
 func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicRequest) (*topic.Topic, error) {
 
+	err := os.MkdirAll(savingDir, uploadDirPerm)
+	if err != nil {
+		return nil, err
+	}
 	destPath := filepath.Join(savingDir, req.ImagePath)
 	destPath = filepath.Clean(destPath)
 
@@ -56,7 +60,7 @@ func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicR
 	}
 
 	var destFile *os.File
-	destFile, err := os.Create(destPath)
+	destFile, err = os.Create(destPath)
 	if err != nil {
 		return nil, err
 	}
