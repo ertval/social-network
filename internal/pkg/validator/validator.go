@@ -87,6 +87,29 @@ func ValidateStruct(v *Validator, data any, rules []ValidationRule) {
 		}
 	}
 }
+
+func validCategory(value any) (bool, string) {
+	if value == nil {
+		return false, "must choose at least one category"
+	}
+
+	rv := reflect.ValueOf(value)
+	// unwrap pointers and interfaces
+	for rv.Kind() == reflect.Ptr || rv.Kind() == reflect.Interface {
+		if rv.IsNil() {
+			return false, "must choose at least one category"
+		}
+		rv = rv.Elem()
+	}
+
+	switch rv.Kind() {
+	case reflect.Slice, reflect.Array:
+		return rv.Len() > 0, "must choose at least one category"
+	default:
+		return false, InvalidType
+	}
+}
+
 func validateImageFile(value any) (bool, string) {
 	// Allowed content types mirror client-side checks
 	allowed := map[string]bool{
