@@ -26,21 +26,6 @@ let _resolved = false;
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
-/**
- * Initialises auth state by calling /me.
- * Called once at app startup before the first render.
- * Safe to call multiple times — resolves immediately after the first call.
- *
- * @returns {Promise<object|null>} The logged-in user, or null.
- */
-export async function initAuth() {
-  if (_resolved) return _currentUser;
-
-  _currentUser = await fetchCurrentUser();
-  _resolved = true;
-
-  return _currentUser;
-}
 
 /**
  * Returns the currently logged-in user synchronously.
@@ -79,20 +64,29 @@ export function setUser(user) {
   _resolved = true;
 }
 
-/**
- * Guard for protected routes. Mirrors the Go BFF RequireAuth middleware.
- * If no user is logged in, redirects to /login using the SPA router and
- * returns false. Returns true if the user is authenticated.
- *
- * Usage inside a page's render() function:
- *   if (!requireAuth()) return;
- *
- * @returns {boolean}
- */
-export function requireAuth() {
-  if (_currentUser !== null) return true;
 
-  // Lazy-import the router to avoid circular dependency.
-  import('./router.js').then(({ navigate }) => navigate('/login'));
-  return false;
+let _authCallInProgress = null;
+
+export async function authMiddleware() {
+  if (_authCallInProgress) {
+    return _authCallInProgress
+  }
+
+  _authCallInProgress = (async () => {
+    try {
+      const user = await fetchCurrentUser();
+      _currentUser = user
+      _resolved = true
+      return _currentUser
+    } catch (err) {
+      console.log('Auth Middleware: Failed to resolve current User:', err?.message ?? err)
+      _currentUser = null;
+      _resolved = true
+      return null;
+    } finally {
+      _authCallInProgress = null;
+    }
+  })();
+
+  return _authCallInProgress;
 }

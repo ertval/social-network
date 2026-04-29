@@ -86,11 +86,14 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginResponse := LoginResponse{
-		UserID:       user.ID,
-		Username:     user.Nickname,
-		AccessToken:  newSession.AccessToken,
-		RefreshToken: newSession.RefreshToken,
+		UserID:   user.ID,
+		Username: user.Nickname,
+		// AccessToken:  newSession.AccessToken,
+		// RefreshToken: newSession.RefreshToken,
+		//not sure if we need them anymore in the response
 	}
+
+	h.SessionManager.SetCookies(w, newSession)
 
 	helpers.RespondWithJSON(
 		w,
