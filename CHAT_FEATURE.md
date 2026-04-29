@@ -17,12 +17,13 @@
    - [Inbound Message Types (Client → Server)](#inbound-message-types-client--server)
    - [Outbound Message Types (Server → Client)](#outbound-message-types-server--client)
 6. [REST Endpoints](#rest-endpoints)
+   - [POST /api/v1/chat/init](#post-apiv1chatinit)
+   - [GET /api/v1/chat/users](#get-apiv1chatusers)
 7. [Full Workflow — Step by Step](#full-workflow--step-by-step)
-8. [Known Gap — Chat Initialization](#known-gap--chat-initialization)
-9. [Concurrency & Online Presence](#concurrency--online-presence)
-10. [Unread Counts](#unread-counts)
-11. [Pagination](#pagination)
-12. [Key Design Decisions](#key-design-decisions)
+8. [Concurrency & Online Presence](#concurrency--online-presence)
+9. [Unread Counts](#unread-counts)
+10. [Pagination](#pagination)
+11. [Key Design Decisions](#key-design-decisions)
 
 ---
 
@@ -31,7 +32,7 @@
 The chat feature provides **real-time one-to-one direct messaging** between users. It is built on:
 
 - A **WebSocket** connection for real-time message exchange (send, receive, history, mark-read).
-- A **REST endpoint** (`GET /api/v1/chat/users`) for populating the chat user list with online presence and last-message ordering.
+- Two **REST endpoints**: `POST /api/v1/chat/init` to open or retrieve a conversation by user ID, and `GET /api/v1/chat/users` to populate the chat user list with online presence and last-message ordering.
 - A **SQLite** storage layer with three tables: `direct_chats`, `chat_messages`, and `chat_reads`.
 
 There is no concept of group chats — every chat is strictly between **two** users.
@@ -60,8 +61,10 @@ internal/
 │       │   └── message_handler.go WebSocket message router & logic
 │       │
 │       └── chat/
+│           ├── initChat/
+│           │   └── initChatHandler.go       POST /chat/init — open or create a conversation
 │           └── getChatUsers/
-│               └── getChatUsersHandler.go   REST handler for user list
+│               └── getChatUsersHandler.go   GET /chat/users — user list with presence
 │
 └── app/services.go                Services struct exposes ChatRepo to HTTP layer
 ```
@@ -213,19 +216,16 @@ All database operations go through this interface:
 
 **Endpoint:** `GET /api/v1/ws`
 **Protocol upgrade:** HTTP → WebSocket (via `gorilla/websocket`)
-**Auth:** Required — uses the same `session_token` cookie as all other protected routes.
+**Auth:** Required — uses the same `access_token` cookie as all other protected routes.
 
-The WebSocket upgrade handler calls `getUserIDFromRequest`, which:
-1. Reads the `session_token` cookie from the HTTP request headers.
-2. Validates the session via the session manager.
-3. Returns the `userID` if valid, or rejects the upgrade with `401 Unauthorized`.
+The `Authorization.Required` middleware runs first and validates the session. On success it stores the authenticated `*user.User` in the request context. The WebSocket upgrade handler then reads the user from that context — no separate cookie parsing happens inside the WebSocket layer.
 
-**The session cookie must be present when establishing the WebSocket connection.** If the browser has a valid session, the cookie is sent automatically. No extra auth steps are needed after the connection is open.
+**The `access_token` cookie must be present when establishing the WebSocket connection.** If the browser has a valid session, the cookie is sent automatically. No extra auth steps are needed after the connection is open.
 
 ```
 GET ws://host/api/v1/ws
 Headers:
-  Cookie: session_token=<token>
+  Cookie: access_token=<token>
   Upgrade: websocket
   Connection: Upgrade
 ```
@@ -451,6 +451,51 @@ Common error messages:
 
 ## REST Endpoints
 
+### `POST /api/v1/chat/init`
+
+**Auth:** Required
+
+Opens or retrieves the direct chat between the authenticated user and another user. This is the **first call to make** before any WebSocket messaging — it returns the `chat_id` required by all WebSocket operations. The operation is idempotent: calling it multiple times for the same pair always returns the same chat.
+
+**Request body:**
+
+```json
+{ "user_id": "uuid-of-the-other-user" }
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `user_id` | **Yes** | The ID of the user you want to chat with. Must not be your own ID. |
+
+**Response `200 OK`:**
+
+```json
+{
+  "info": null,
+  "data": {
+    "ID": "uuid-of-chat",
+    "UserLowID": "uuid",
+    "UserHighID": "uuid",
+    "CreatedAt": "2026-04-29T10:00:00Z",
+    "UpdatedAt": "2026-04-29T10:00:00Z",
+    "LastMessageID": null,
+    "LastMessageAt": null
+  }
+}
+```
+
+The `data.ID` field is the `chat_id` to use for all subsequent WebSocket messages.
+
+**Error responses:**
+
+| Status | Reason |
+|---|---|
+| `400` | Missing `user_id`, or `user_id` is your own ID |
+| `401` | Not authenticated |
+| `500` | Database error |
+
+---
+
 ### `GET /api/v1/chat/users`
 
 **Auth:** Required
@@ -485,7 +530,7 @@ Returns all registered users (except yourself), enriched with online presence an
 
 **`is_online`** is determined by whether the user currently has an active WebSocket connection to the server. This is a real-time value at the moment of the HTTP request.
 
-> **Note:** `is_online` via this HTTP endpoint is only accurate at request time. For live presence updates you would need a WebSocket event (not yet implemented — see [Known Gap](#known-gap--chat-initialization) below).
+> **Note:** `is_online` via this HTTP endpoint is only accurate at request time. For live presence updates you would need a WebSocket event (not yet implemented).
 
 ---
 
@@ -514,17 +559,17 @@ Once connected, you can start sending and receiving messages.
 
 ### Step 4: Open a conversation with a user
 
-> ⚠️ **See [Known Gap](#known-gap--chat-initialization) below.** A `chat_id` is required before sending messages, but there is currently no HTTP or WebSocket endpoint to retrieve or create one by `user_id`. This endpoint must be added.
+Call `POST /api/v1/chat/init` to get the `chat_id` for the conversation. This is idempotent — call it every time the user clicks on someone in the chat list.
 
-The planned call would be:
-
+```javascript
+const res = await fetch('/api/v1/chat/init', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ user_id: targetUserID }),
+});
+const { data } = await res.json();
+const chatID = data.ID;  // use this for all WebSocket messages
 ```
-POST /api/v1/chat/init
-Body: { "user_id": "uuid-of-other-user" }
-Response: { "chat_id": "uuid", "created": true/false }
-```
-
-Until this is implemented, you cannot obtain `chat_id` through the API.
 
 ### Step 5: Load recent messages
 
@@ -604,40 +649,6 @@ ws.send(JSON.stringify({
 ```
 
 Prepend the returned messages to the top of the chat view.
-
----
-
-## Known Gap — Chat Initialization
-
-### Problem
-
-`GetOrCreateChat` exists in `chat.Repository` and `chatRepo.go`, but **it is not exposed via any HTTP or WebSocket endpoint**. A `chat_id` (UUID) is required for all WebSocket operations (`chat.send`, `chat.history`, `chat.mark_read`), but there is currently no API call the frontend can make to obtain one from a `user_id`.
-
-### What needs to be built
-
-Add a new REST endpoint (or a new WebSocket message type) to initialize or open a chat by recipient user ID:
-
-**Recommended HTTP approach:**
-
-```
-POST /api/v1/chat/init
-Auth: Required
-Body:  { "user_id": "uuid-of-the-other-user" }
-
-Response 200:
-{
-  "info": null,
-  "data": {
-    "chat_id": "uuid",
-    "user_low_id": "...",
-    "user_high_id": "...",
-    "created_at": "...",
-    "last_message_at": null
-  }
-}
-```
-
-The handler should call `chatRepo.GetOrCreateChat(ctx, myUserID, targetUserID)` and return the resulting `Chat` struct. The repository method is already implemented and idempotent — calling it repeatedly for the same pair returns the same `chat_id`.
 
 ---
 

@@ -18,6 +18,7 @@ import (
 	getcategorybyid "github.com/arnald/forum/internal/infra/http/category/getCategoryByID"
 	updatecategory "github.com/arnald/forum/internal/infra/http/category/updateCategory"
 	getchatusers "github.com/arnald/forum/internal/infra/http/chat/getChatUsers"
+	initchat "github.com/arnald/forum/internal/infra/http/chat/initChat"
 	createcomment "github.com/arnald/forum/internal/infra/http/comment/createComment"
 	deletecomment "github.com/arnald/forum/internal/infra/http/comment/deleteComment"
 	getcomment "github.com/arnald/forum/internal/infra/http/comment/getComment"
@@ -340,6 +341,12 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Chat routes
+	server.router.HandleFunc(apiContext+"/chat/init",
+		middlewareChain(
+			initchat.NewHandler(server.appServices.ChatRepo, server.logger).InitChat,
+			server.middleware.Authorization.Required,
+		))
+
 	server.router.HandleFunc(apiContext+"/chat/users",
 		middlewareChain(
 			getchatusers.NewHandler(
