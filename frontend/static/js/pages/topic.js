@@ -43,12 +43,7 @@ export async function renderTopicPage(user) {
     // Topic fetch must send cookies so the backend can resolve UserVote.
     const [topicData, categoriesData] = await Promise.all([
       api.get(`/topic`, { id: topicID }),
-      fetchCategories({
-        order_by: 'name',
-        order: 'asc',
-        page: 1,
-        page_size: 100,
-      }),
+      fetchCategories({ order_by: 'name', order: 'asc', page: 1, page_size: 100 }),
     ]);
 
     if (!topicData) {
@@ -549,8 +544,8 @@ function initDeleteHandlers(topic, user) {
 
     const topicID = btn.dataset.topicId || topic.topicId;
     try {
-      await api.post('/topics/delete', { topic_id: Number(topicID) });
-      // Navigate away after deletion
+      // BFF DeleteTopicPost sent DELETE /topics/delete?id=X — no JSON body
+      await api.delete(`/topics/delete?id=${topicID}`);
       const { navigate } = await import('../router.js');
       navigate('/topics');
     } catch (err) {
@@ -567,13 +562,10 @@ function initDeleteHandlers(topic, user) {
       return;
 
     const commentID = btn.dataset.commentId;
-    const topicID = btn.dataset.topicId || topic.TopicID || topic.id;
+    const topicID = btn.dataset.topicId || topic.topicId;
     try {
-      await api.post('/comments/delete', {
-        comment_id: Number(commentID),
-        topic_id: Number(topicID),
-      });
-      // Remove the comment from the DOM immediately
+      // BFF DeleteCommentPost sent DELETE /comments/delete?id=X — no JSON body
+      await api.delete(`/comments/delete?id=${commentID}`);
       document.querySelector(`.comment-content[data-comment-id="${commentID}"]`)?.remove();
       updateCommentCount(-1);
     } catch (err) {
@@ -609,22 +601,16 @@ function initTopicEditFormSubmit(topic) {
     const categories = [...formData.getAll('categories')].map(Number);
 
     const payload = {
-      topic_id: Number(formData.get('topic_id')),
+      topicId: Number(formData.get('topic_id')),
       title: formData.get('title')?.trim(),
       content: formData.get('content')?.trim(),
-      categories,
-      image_path: formData.get('current_image_path') || '',
+      categoryIds: categories,
+      imagePath: formData.get('current_image_path') || '',
     };
 
-    // Handle file upload if a new image was selected
-    const fileInput = form.querySelector('input[name="image_path"][type="file"]');
-    if (fileInput?.files?.[0]) {
-      // File upload not handled here yet — backend integration point
-      // For now we keep the existing image path
-    }
-
     try {
-      await api.post('/topics/update', payload);
+      // BFF UpdateTopicPost sent PUT with updateTopicRequest { topicId, title, content, imagePath, categoryIds }
+      await api.put('/topics/update', payload);
       // Reload the page to show updated content
       await renderTopicPage(null); // re-render; user will be re-resolved by router
     } catch (err) {
@@ -660,8 +646,9 @@ function initCommentFormSubmit(topic, user) {
     const topicID = form.querySelector('input[name="topic_id"]')?.value;
 
     try {
+      // BFF CreateCommentPost sent POST with { topicId, content }
       await api.post('/comments/create', {
-        topic_id: Number(topicID),
+        topicId: Number(topicID),
         content,
       });
       // Re-render the page to show the new comment
@@ -701,9 +688,9 @@ function initEditCommentForms(topic) {
       const topicID = form.querySelector('input[name="topic_id"]')?.value;
 
       try {
-        await api.post('/comments/update', {
-          comment_id: Number(commentID),
-          topic_id: Number(topicID),
+        // BFF UpdateCommentPost sent PUT with { id, content } — no topic_id in body
+        await api.put('/comments/update', {
+          id: Number(commentID),
           content,
         });
         // Re-render to show updated comment
