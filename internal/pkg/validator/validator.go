@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"mime/multipart"
 	"path/filepath"
 	"reflect"
 	"regexp"
@@ -13,6 +14,8 @@ import (
 const (
 	InvalidType  = "invalid type"
 	InvalidEmail = "invalid email"
+	// maxUploadSizeBytes is used by image file validation (20 MB)
+	maxUploadSizeBytes = 20 << 20
 )
 
 var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
@@ -83,6 +86,57 @@ func ValidateStruct(v *Validator, data any, rules []ValidationRule) {
 			v.Check(ok, rule.Field, message)
 		}
 	}
+}
+func validateImageFile(value any) (bool, string) {
+	// Allowed content types mirror client-side checks
+	allowed := map[string]bool{
+		"image/jpeg": true,
+		"image/png":  true,
+		"image/gif":  true,
+	}
+
+	if value == nil {
+		// no file provided -> optional
+		return true, ""
+	}
+
+	rv := reflect.ValueOf(value)
+	// // unwrap pointers and interfaces safely
+	// for rv.Kind() == reflect.Ptr || rv.Kind() == reflect.Interface {
+	// 	if rv.IsNil() {
+	// 		return true, ""
+	// 	}
+	// 	rv = rv.Elem()
+	// }
+
+	if rv.Kind() != reflect.Struct {
+		return false, InvalidType
+	}
+
+	// Expect a struct with a Header field of type *multipart.FileHeader
+	hf := rv.FieldByName("Header")
+	if !hf.IsValid() || hf.IsZero() {
+		// no header -> treat as no file provided
+		return true, ""
+	}
+
+	hdr, ok := hf.Interface().(*multipart.FileHeader)
+	if !ok {
+		return false, "invalid file header type"
+	}
+
+	// Check content type
+	contentType := hdr.Header.Get("Content-Type")
+	if !allowed[contentType] {
+		return false, "invalid file type; only JPEG, PNG and GIF are allowed"
+	}
+
+	// Check size
+	if hdr.Size > maxUploadSizeBytes {
+		return false, "file too large; maximum size is 20MB"
+	}
+
+	return true, ""
 }
 
 func required(value any) (bool, string) {

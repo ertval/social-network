@@ -2,6 +2,8 @@ package topiccommands
 
 import (
 	"context"
+	"fmt"
+	"mime/multipart"
 
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
@@ -9,10 +11,15 @@ import (
 
 type CreateTopicRequest struct {
 	User        *user.User
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	ImagePath   string `json:"imagePath"`
-	CategoryIDs []int  `json:"categoryIds"`
+	Title       string     `json:"title"`
+	Content     string     `json:"content"`
+	ImagePath   string     `json:"imagePath"`
+	ImageFile   TopicImage `json:"topicImage"`
+	CategoryIDs []int      `json:"categoryIds"`
+}
+type TopicImage struct {
+	File   *multipart.File
+	Header *multipart.FileHeader
 }
 
 type CreateTopicRequestHandler interface {
@@ -30,6 +37,9 @@ func NewCreateTopicHandler(repo topic.Repository) CreateTopicRequestHandler {
 }
 
 func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicRequest) (*topic.Topic, error) {
+
+	fmt.Println(req.ImagePath)
+	//add saving logic files lives in req.ImageFile.File
 	topic := &topic.Topic{
 		UserID:      req.User.ID,
 		CategoryIDs: req.CategoryIDs,
