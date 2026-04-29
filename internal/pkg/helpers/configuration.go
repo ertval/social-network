@@ -26,6 +26,15 @@ func ParseEnv(content string) map[string]string {
 	return env
 }
 
+func ParseStrsToInts(list []string) []int {
+	result := make([]int, 0)
+	for _, str := range list {
+		int, _ := strconv.Atoi(str)
+		result = append(result, int)
+	}
+
+	return result
+}
 func ParseList(list string) []string {
 	if list == "" {
 		return []string{}
