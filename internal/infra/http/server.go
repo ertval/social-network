@@ -400,20 +400,14 @@ func (server *Server) initSessionManager() {
 	server.sessionManager = sessionstore.NewSessionManager(server.db, server.config.SessionManager)
 }
 
-// getUserIDFromRequest extracts and validates the session cookie,
-// returning the authenticated user's ID. Used by the WebSocket upgrade handler.
+// getUserIDFromRequest extracts the authenticated user's ID from the request context.
+// The Authorization.Required middleware runs before this and puts the user in context.
 func (server *Server) getUserIDFromRequest(r *http.Request) (string, error) {
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		return "", errors.New("no session cookie")
+	user := middleware.GetUserFromContext(r)
+	if user == nil {
+		return "", errors.New("no authenticated user in context")
 	}
-
-	sess, err := server.sessionManager.GetSession(cookie.Value)
-	if err != nil || sess == nil {
-		return "", errors.New("invalid or expired session")
-	}
-
-	return sess.UserID, nil
+	return user.ID, nil
 }
 
 func (server *Server) initNotifications() {

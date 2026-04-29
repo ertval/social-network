@@ -37,6 +37,19 @@ func GetTokensFromRequest(r *http.Request) (sessionToken, refreshToken string) {
 		refreshToken = cookie.Value
 	}
 
+	// Fallback: allow token via query parameter (used by WebSocket clients
+	// that cannot set Cookie headers, e.g. Postman WS, native browser WebSocket).
+	if sessionToken == "" {
+		if t := r.URL.Query().Get("access_token"); t != "" {
+			sessionToken = t
+		}
+	}
+	if refreshToken == "" {
+		if t := r.URL.Query().Get("refresh_token"); t != "" {
+			refreshToken = t
+		}
+	}
+
 	return
 }
 
