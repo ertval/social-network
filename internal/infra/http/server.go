@@ -107,7 +107,7 @@ func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
 			health.NewHandler(server.logger, server.notifications).HealthCheck,
-			server.middleware.Authorization.Optional,
+			server.middleware.Authorization.Required,
 		))
 
 	server.router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("frontend/static"))))
@@ -199,13 +199,13 @@ func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/topic",
 		middlewareChain(
 			gettopic.NewHandler(server.appServices, server.config, server.logger).GetTopic,
-			server.middleware.Authorization.Optional,
+			server.middleware.Authorization.Required,
 		),
 	)
 	server.router.HandleFunc(apiContext+"/topics/all",
 		middlewareChain(
 			getalltopics.NewHandler(server.appServices, server.config, server.logger).GetAllTopics,
-			server.middleware.Authorization.Optional,
+			server.middleware.Authorization.Required,
 		),
 	)
 
@@ -257,7 +257,7 @@ func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/category",
 		middlewareChain(
 			getcategorybyid.NewHandler(server.appServices, server.config, server.logger).GetCategoryByID,
-			server.middleware.Authorization.Optional,
+			server.middleware.Authorization.Required,
 		),
 	)
 	server.router.HandleFunc(apiContext+"/categories/all",
@@ -282,7 +282,7 @@ func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/vote/counts",
 		middlewareChain(
 			getCounts.NewHandler(server.appServices, server.config, server.logger).GetCounts,
-			server.middleware.Authorization.Optional,
+			server.middleware.Authorization.Required,
 		),
 	)
 

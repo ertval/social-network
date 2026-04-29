@@ -16,7 +16,6 @@ import (
 
 const (
 	contextTimeout = 15 * time.Second
-	SQLDateTime    = "2006-01-02 15:04:05"
 )
 
 type CreateSessionRequest struct {
@@ -57,17 +56,17 @@ func (sm *Manager) CreateSession(ctx context.Context, userID string) (*session.S
 	newSessionToken := sm.tokenGenerator.NewUUID()
 	newrefreshToken := sm.tokenGenerator.NewUUID()
 
-	expiry := time.Now().Add(sm.sessionConfig.DefaultExpiry)
+	expiry := time.Now().UTC().Add(sm.sessionConfig.DefaultExpiry)
 	refreshExpiry := expiry.Add(sm.sessionConfig.RefreshTokenExpiry)
 
 	_, err = stmt.ExecContext(
 		ctx,
 		newSessionToken,
 		userID,
-		expiry.Format(SQLDateTime),
+		expiry,
 
 		newrefreshToken,
-		refreshExpiry.Format(SQLDateTime),
+		refreshExpiry,
 	)
 	if err != nil {
 		return nil, err
@@ -136,6 +135,37 @@ func (sm *Manager) GetSessionFromSessionTokens(sessionToken, refreshToken string
 	defer stmt.Close()
 
 	row := stmt.QueryRowContext(ctx, sessionToken, refreshToken)
+
+	var session session.Session
+
+	err = row.Scan(&session.AccessToken, &session.UserID, &session.Expiry,
+		&session.RefreshToken, &session.RefreshTokenExpiry)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrSessionNotFound
+		}
+		return nil, err
+	}
+
+	return &session, nil
+}
+
+func (sm *Manager) GetSessionByRefreshToken(refreshToken string) (*session.Session, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
+	defer cancel()
+
+	query := `
+	SELECT token, user_id, expires_at, refresh_token, refresh_token_expires_at
+	FROM sessions
+	WHERE refresh_token = ?`
+
+	stmt, err := sm.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("prepare failed: %w", err)
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRowContext(ctx, refreshToken)
 
 	var session session.Session
 
@@ -225,19 +255,74 @@ func (sm *Manager) DeleteSessionWhenNewCreated(ctx context.Context, sessionID st
 	return err
 }
 
-func (sm *Manager) NewSessionCookie(token string) *http.Cookie {
-	return &http.Cookie{
-		Name:     sm.sessionConfig.CookieName,
-		Value:    token,
-		Path:     sm.sessionConfig.CookiePath,
-		Domain:   sm.sessionConfig.CookieDomain,
-		HttpOnly: sm.sessionConfig.HTTPOnlyCookie,
-		Secure:   sm.sessionConfig.SecureCookie,
-		SameSite: parseSameSite(sm.sessionConfig.SameSite),
-		MaxAge:   int(sm.sessionConfig.DefaultExpiry.Seconds()),
+func (sm *Manager) NewSessionCookie(session *session.Session) (accessCookie, refreshCookie *http.Cookie) {
+	accessMaxAge := int(time.Until(session.Expiry).Seconds())
+	if accessMaxAge < 0 {
+		accessMaxAge = 0
 	}
+
+	refreshMaxAge := int(time.Until(session.RefreshTokenExpiry).Seconds())
+	if refreshMaxAge < 0 {
+		refreshMaxAge = 0
+	}
+
+	return &http.Cookie{
+			Name:     sm.sessionConfig.AccessCookieName,
+			Value:    session.AccessToken,
+			Path:     sm.sessionConfig.CookiePath,
+			Domain:   sm.sessionConfig.CookieDomain,
+			HttpOnly: sm.sessionConfig.HTTPOnlyCookie,
+			Secure:   sm.sessionConfig.SecureCookie,
+			SameSite: parseSameSite(sm.sessionConfig.SameSite),
+			Expires:  session.Expiry.UTC(),
+			MaxAge:   accessMaxAge,
+		},
+		&http.Cookie{
+			Name:     sm.sessionConfig.RefreshCookieName,
+			Value:    session.RefreshToken,
+			Path:     sm.sessionConfig.CookiePath,
+			Domain:   sm.sessionConfig.CookieDomain,
+			HttpOnly: sm.sessionConfig.HTTPOnlyCookie,
+			Secure:   sm.sessionConfig.SecureCookie,
+			SameSite: parseSameSite(sm.sessionConfig.SameSite),
+			Expires:  session.RefreshTokenExpiry.UTC(),
+			MaxAge:   refreshMaxAge,
+		}
 }
 
+func (sm *Manager) SetCookies(w http.ResponseWriter, session *session.Session) {
+	accessCookie, refreshCookie := sm.NewSessionCookie(session)
+
+	http.SetCookie(w, accessCookie)
+	http.SetCookie(w, refreshCookie)
+}
+func (sm *Manager) DeleteCookies(r *http.Request, w http.ResponseWriter) (sessiontoken string) {
+	cookie, err := r.Cookie(sm.sessionConfig.AccessCookieName)
+	if err == nil {
+		sessiontoken = cookie.Value
+		http.SetCookie(w, &http.Cookie{
+			Name:     sm.sessionConfig.AccessCookieName,
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1,
+			HttpOnly: true,
+		})
+	}
+
+	cookie, err = r.Cookie(sm.sessionConfig.RefreshCookieName)
+	if err == nil {
+		cookie.MaxAge = -1
+		http.SetCookie(w, &http.Cookie{
+			Name:     sm.sessionConfig.RefreshCookieName,
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1,
+			HttpOnly: true,
+		})
+	}
+
+	return sessiontoken
+}
 func (sm *Manager) ValidateSession(sessionID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), contextTimeout)
 	defer cancel()
