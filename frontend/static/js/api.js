@@ -22,11 +22,10 @@ const API_BASE = '/api/v1';
 async function apiFetch(path, options = {}) {
   const url = API_BASE + path;
 
+  const hasBody = options.body !== undefined;
+
   const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    // Always send cookies so the backend session middleware can read them.
+    headers: hasBody ? { 'Content-Type': 'application/json' } : {},
     credentials: 'include',
   };
 
@@ -92,7 +91,7 @@ export const api = {
   delete(path, body) {
     return apiFetch(path, {
       method: 'DELETE',
-      body: body ? JSON.stringify(body) : undefined,
+      ...(body !== undefined && { body: JSON.stringify(body) }),
     });
   },
 };
