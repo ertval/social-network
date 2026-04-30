@@ -93,7 +93,7 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		//not sure if we need them anymore in the response
 	}
 
-	h.SessionManager.SetCookies(w, newSession)
+	h.CookieManager.SetCookies(w, newSession)
 
 	helpers.RespondWithJSON(
 		w,
