@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strconv"
 
+	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 )
 
 type Handler struct {
-	service *notifications.NotificationService
+	markAsRead notificationcommands.MarkAsReadHandler
 }
 
-func NewHandler(service *notifications.NotificationService) *Handler {
-	return &Handler{service: service}
+func NewHandler(service notificationcommands.MarkAsReadHandler) *Handler {
+	return &Handler{markAsRead: service}
 }
 
 func (h *Handler) MarkAsRead(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +48,7 @@ func (h *Handler) MarkAsRead(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.MarkAsRead(r.Context(), int(notificationID), userID)
+	err = h.markAsRead.Handle(r.Context(), notificationcommands.MarkAsReadRequest{NotificationID: int(notificationID), UserID: userID})
 	if err != nil {
 		http.Error(
 			w,

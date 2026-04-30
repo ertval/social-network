@@ -5,16 +5,16 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/arnald/forum/internal/app/notifications/queries"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 )
 
 type Handler struct {
-	service *notifications.NotificationService
+	getNotifications notificationqueries.GetNotificationsHandler
 }
 
-func NewHandler(service *notifications.NotificationService) *Handler {
-	return &Handler{service: service}
+func NewHandler(service notificationqueries.GetNotificationsHandler) *Handler {
+	return &Handler{getNotifications: service}
 }
 
 func (h *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
@@ -48,11 +48,7 @@ func (h *Handler) GetNotifications(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	notifications, err := h.service.GetNotifications(
-		r.Context(),
-		userID,
-		limit,
-	)
+	notifications, err := h.getNotifications.Handle(r.Context(), notificationqueries.GetNotificationsRequest{UserID: userID, Limit: limit})
 	if err != nil {
 		http.Error(
 			w,

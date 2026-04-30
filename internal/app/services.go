@@ -6,6 +6,8 @@ import (
 	categoryQueries "github.com/arnald/forum/internal/app/categories/queries"
 	commentCommands "github.com/arnald/forum/internal/app/comments/commands"
 	commentQueries "github.com/arnald/forum/internal/app/comments/queries"
+	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
+	notificationqueries "github.com/arnald/forum/internal/app/notifications/queries"
 	oauthservice "github.com/arnald/forum/internal/app/oauth"
 	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
 	topicQueries "github.com/arnald/forum/internal/app/topics/queries"
@@ -17,6 +19,7 @@ import (
 	"github.com/arnald/forum/internal/domain/category"
 	"github.com/arnald/forum/internal/domain/chat"
 	"github.com/arnald/forum/internal/domain/comment"
+	"github.com/arnald/forum/internal/domain/notification"
 	"github.com/arnald/forum/internal/domain/oauth"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
@@ -38,21 +41,26 @@ type Queries struct {
 	GetCounts          voteQueries.GetCountsRequestHandler
 	GetUserActivity    activityQueries.GetUserActivityHandler
 	GetAllUsers        userQueries.GetAllUsersRequestHandler
+	GetNotifications   notificationqueries.GetNotificationsHandler
+	GetUnreadCount     notificationqueries.GetUnreadCountHandler
 }
 
 type Commands struct {
-	UserRegister   userCommands.UserRegisterRequestHandler
-	CreateTopic    topicCommands.CreateTopicRequestHandler
-	UpdateTopic    topicCommands.UpdateTopicRequestHandler
-	DeleteTopic    topicCommands.DeleteTopicRequestHandler
-	CreateComment  commentCommands.CreateCommentRequestHandler
-	UpdateComment  commentCommands.UpdateCommentRequestHandler
-	DeleteComment  commentCommands.DeleteCommentRequestHandler
-	CreateCategory categoryCommands.CreateCategoryRequestHandler
-	UpdateCategory categoryCommands.UpdateCategoryRequestHandler
-	DeleteCategory categoryCommands.DeleteCategoryRequestHandler
-	CastVote       votecommands.CastVoteRequestHandler
-	DeleteVote     votecommands.DeleteVoteRequestHandler
+	UserRegister       userCommands.UserRegisterRequestHandler
+	CreateTopic        topicCommands.CreateTopicRequestHandler
+	UpdateTopic        topicCommands.UpdateTopicRequestHandler
+	DeleteTopic        topicCommands.DeleteTopicRequestHandler
+	CreateComment      commentCommands.CreateCommentRequestHandler
+	UpdateComment      commentCommands.UpdateCommentRequestHandler
+	DeleteComment      commentCommands.DeleteCommentRequestHandler
+	CreateCategory     categoryCommands.CreateCategoryRequestHandler
+	UpdateCategory     categoryCommands.UpdateCategoryRequestHandler
+	DeleteCategory     categoryCommands.DeleteCategoryRequestHandler
+	CastVote           votecommands.CastVoteRequestHandler
+	DeleteVote         votecommands.DeleteVoteRequestHandler
+	CreateNotification notificationcommands.CreateNotificationHandler
+	MarkAsRead         notificationcommands.MarkAsReadHandler
+	MarkAllAsRead      notificationcommands.MarkAllAsReadHandler
 }
 
 type UserServices struct {
@@ -65,7 +73,7 @@ type Services struct {
 	ChatRepo     chat.Repository
 }
 
-func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository) Services {
+func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
@@ -84,6 +92,8 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 				voteQueries.NewGetCountsRequestHandler(voteRepo),
 				activityQueries.NewGetUserActivityHandler(activityRepo),
 				userQueries.NewGetAllUsersRequestHandler(userRepo),
+				notificationqueries.NewGetNotificationsHandler(notificationsRepo),
+				notificationqueries.NewGetUnreadCountHandler(notificationsRepo),
 			},
 			Commands: Commands{
 				userCommands.NewUserRegisterHandler(userRepo, uuidProvider, encryption),
@@ -98,6 +108,9 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 				categoryCommands.NewDeleteCategoryHandler(categoryRepo),
 				votecommands.NewCastVoteHandler(voteRepo),
 				votecommands.NewDeleteVoteHandler(voteRepo),
+				notificationcommands.NewCreateNotificationHandler(notificationsRepo),
+				notificationcommands.NewMarkAsReadHandler(notificationsRepo),
+				notificationcommands.NewMarkAllAsReadHandler(notificationsRepo),
 			},
 		},
 	}
