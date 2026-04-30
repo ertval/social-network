@@ -2,7 +2,6 @@ package notifications
 
 import (
 	"context"
-	"database/sql"
 	"sync"
 
 	"github.com/arnald/forum/internal/domain/notification"
@@ -16,9 +15,9 @@ type NotificationService struct {
 	mu      sync.RWMutex
 }
 
-func NewNotificationService(db *sql.DB) *NotificationService {
+func NewNotificationService(notificationRepo notification.Repository) *NotificationService {
 	return &NotificationService{
-		repo:    NewRepo(db),
+		repo:    notificationRepo,
 		clients: make(map[string][]chan *notification.Notification),
 	}
 }

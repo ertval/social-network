@@ -299,6 +299,7 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Notifications routes
+	THESE ARE THE ROUTES
 
 	server.router.HandleFunc(apiContext+"/notifications/stream", // get
 		middlewareChain(
@@ -334,6 +335,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.middleware.Authorization.Required,
 		),
 	)
+	UNTIL HERE
 
 	// WebSocket route — chat and presence
 	server.router.HandleFunc(apiContext+"/ws",

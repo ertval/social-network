@@ -16,6 +16,7 @@ import (
 	"github.com/arnald/forum/internal/infra/storage/sqlite/categories"
 	"github.com/arnald/forum/internal/infra/storage/sqlite/chats"
 	"github.com/arnald/forum/internal/infra/storage/sqlite/comments"
+	"github.com/arnald/forum/internal/infra/storage/sqlite/notifications"
 	oauthrepo "github.com/arnald/forum/internal/infra/storage/sqlite/oauth"
 	"github.com/arnald/forum/internal/infra/storage/sqlite/topics"
 	"github.com/arnald/forum/internal/infra/storage/sqlite/users"
@@ -36,13 +37,14 @@ type Repositories struct {
 
 func NewRepositories(db *sql.DB) *Repositories {
 	return &Repositories{
-		UserRepo:     users.NewRepo(db),
-		CategoryRepo: categories.NewRepo(db),
-		TopicRepo:    topics.NewRepo(db),
-		CommentRepo:  comments.NewRepo(db),
-		VoteRepo:     votes.NewRepo(db),
-		OauthRepo:    oauthrepo.NewOAuthRepository(db),
-		ActivityRepo: activities.NewRepo(db),
-		ChatRepo:     chats.NewRepo(db),
+		UserRepo:         users.NewRepo(db),
+		CategoryRepo:     categories.NewRepo(db),
+		TopicRepo:        topics.NewRepo(db),
+		CommentRepo:      comments.NewRepo(db),
+		VoteRepo:         votes.NewRepo(db),
+		OauthRepo:        oauthrepo.NewOAuthRepository(db),
+		ActivityRepo:     activities.NewRepo(db),
+		ChatRepo:         chats.NewRepo(db),
+		NotificationRepo: notifications.NewRepo(db),
 	}
 }

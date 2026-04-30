@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 
+	notificationqueries "github.com/arnald/forum/internal/app/notifications/queries"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 )
 
 type Handler struct {
-	service *notifications.NotificationService
+	getUnreadCount notificationqueries.GetUnreadCountHandler
 }
 
-func NewHandler(service *notifications.NotificationService) *Handler {
-	return &Handler{service: service}
+func NewHandler(service notificationqueries.GetUnreadCountHandler) *Handler {
+	return &Handler{getUnreadCount: service}
 }
 
 func (h *Handler) GetUnread(w http.ResponseWriter, r *http.Request) {
@@ -38,7 +38,7 @@ func (h *Handler) GetUnread(w http.ResponseWriter, r *http.Request) {
 
 	userID := user.ID
 
-	count, err := h.service.GetUnreadCount(r.Context(), userID)
+	count, err := h.getUnreadCount.Handle(r.Context(), notificationqueries.GetUnreadCountRequest{UserID: userID})
 	if err != nil {
 		http.Error(
 			w,
