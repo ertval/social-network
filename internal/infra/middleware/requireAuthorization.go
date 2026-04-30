@@ -24,7 +24,7 @@ import (
 
 func (a authorization) Required(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessionToken, refreshToken := GetTokensFromRequest(r)
+		sessionToken, refreshToken := a.cookieManager.ReadTokens(r)
 
 		var (
 			session *session.Session
@@ -66,7 +66,7 @@ func (a authorization) Required(next http.HandlerFunc) http.HandlerFunc {
 					"Unauthorized: Could not refresh session")
 				return
 			}
-			a.sessionManager.SetCookies(w, session)
+			a.cookieManager.SetCookies(w, session)
 		}
 
 		// Both tokens valid, or just refreshed - get user and proceed

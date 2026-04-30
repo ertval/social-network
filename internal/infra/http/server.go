@@ -12,6 +12,7 @@ import (
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/session"
 	getuseractivity "github.com/arnald/forum/internal/infra/http/activity/getUserActivity"
+	"github.com/arnald/forum/internal/infra/http/authcookies"
 	createcategory "github.com/arnald/forum/internal/infra/http/category/createCategory"
 	deletecategory "github.com/arnald/forum/internal/infra/http/category/deleteCategory"
 	getallcategories "github.com/arnald/forum/internal/infra/http/category/getAllCategories"
@@ -66,6 +67,7 @@ type Server struct {
 	config         *config.ServerConfig
 	router         *http.ServeMux
 	sessionManager session.Manager
+	cookieManager  *authcookies.Manager
 	oauth          *OAuth
 	notifications  *notifications.NotificationService
 	middleware     *middleware.Middleware
@@ -89,9 +91,10 @@ func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appSe
 		logger:      logger,
 	}
 	httpServer.initSessionManager()
+	httpServer.initCookieManager()
 	httpServer.initNotifications()
 	httpServer.initOAuthServices()
-	httpServer.initMiddleware(httpServer.sessionManager)
+	httpServer.initMiddleware(httpServer.sessionManager, httpServer.cookieManager)
 	httpServer.hub = ws.NewHub()
 	httpServer.AddHTTPRoutes()
 	return httpServer
@@ -117,17 +120,17 @@ func (server *Server) AddHTTPRoutes() {
 
 	// User routes
 	server.router.HandleFunc(apiContext+"/login/email",
-		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserLoginEmail,
+		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginEmail,
 	)
 	server.router.HandleFunc(apiContext+"/login/username",
-		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserLoginUsername,
+		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginUsername,
 	)
 	server.router.HandleFunc(apiContext+"/register",
 		userRegister.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserRegister,
 	)
 	server.router.HandleFunc(apiContext+"/logout",
 		middlewareChain(
-			logout.NewHandler(server.sessionManager, server.logger).Logout,
+			logout.NewHandler(server.sessionManager, server.logger, server.cookieManager).Logout,
 			server.middleware.Authorization.Required,
 		))
 	// New handler for retrieving current user data from backend
@@ -407,6 +410,10 @@ func (server *Server) initSessionManager() {
 	server.sessionManager = sessionstore.NewSessionManager(server.db, server.config.SessionManager)
 }
 
+func (server *Server) initCookieManager() {
+	server.cookieManager = authcookies.NewManager(server.config.SessionManager)
+}
+
 // getUserIDFromRequest extracts the authenticated user's ID from the request context.
 // The Authorization.Required middleware runs before this and puts the user in context.
 func (server *Server) getUserIDFromRequest(r *http.Request) (string, error) {
@@ -421,8 +428,8 @@ func (server *Server) initNotifications() {
 	server.notifications = notifications.NewNotificationService(server.db)
 }
 
-func (server *Server) initMiddleware(sessionManager session.Manager) {
-	server.middleware = middleware.NewMiddleware(sessionManager)
+func (server *Server) initMiddleware(sessionManager session.Manager, cookieManager *authcookies.Manager) {
+	server.middleware = middleware.NewMiddleware(sessionManager, cookieManager)
 }
 
 func (server *Server) initOAuthServices() {

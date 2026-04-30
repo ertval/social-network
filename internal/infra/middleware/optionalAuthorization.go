@@ -23,7 +23,7 @@ import (
 
 func (a authorization) Optional(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessionToken, refreshToken := GetTokensFromRequest(r)
+		sessionToken, refreshToken := a.cookieManager.ReadTokens(r)
 		if sessionToken == "" && refreshToken == "" {
 			next.ServeHTTP(w, r)
 			return
@@ -60,7 +60,7 @@ func (a authorization) Optional(next http.HandlerFunc) http.HandlerFunc {
 				next.ServeHTTP(w, r)
 				return
 			}
-			a.sessionManager.SetCookies(w, session)
+			a.cookieManager.SetCookies(w, session)
 		}
 
 		// Both tokens valid, or just refreshed - get user and proceed with context
