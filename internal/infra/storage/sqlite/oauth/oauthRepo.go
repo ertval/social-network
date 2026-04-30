@@ -42,7 +42,7 @@ func (r *Repo) GetUserByProviderID(ctx context.Context, provider oauth.Provider,
 	)
 
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, ErrUserNotFound
+		return nil, oauth.ErrUserNotFound
 	}
 	if err != nil {
 		return nil, err
