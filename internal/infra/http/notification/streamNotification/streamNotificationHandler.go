@@ -6,18 +6,18 @@ import (
 	"net/http"
 	"time"
 
+	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 )
 
 const tickerTime = 10
 
 type Handler struct {
-	service *notifications.NotificationService
+	openStream notificationcommands.OpenStreamHandler
 }
 
-func NewHandler(service *notifications.NotificationService) *Handler {
-	return &Handler{service: service}
+func NewHandler(openStream notificationcommands.OpenStreamHandler) *Handler {
+	return &Handler{openStream: openStream}
 }
 
 func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
@@ -47,20 +47,26 @@ func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	notificationChan := h.service.RegisterClient(userID)
-	defer h.service.UnregisterClient(userID, notificationChan)
+	streamReq := notificationcommands.OpenStreamRequest{UserID: userID}
+	streamResp, err := h.openStream.Handle(r.Context(), streamReq)
+	if err != nil {
+		http.Error(
+			w,
+			"failed to open notification stream",
+			http.StatusInternalServerError,
+		)
+		return
+	}
+	defer h.openStream.Close(streamReq, streamResp.NotificationChan)
 
 	fmt.Fprintf(w, "data: {\"type\":\"connected\"}\n\n")
 	flusher.Flush()
 
-	count, err := h.service.GetUnreadCount(r.Context(), userID)
-	if err == nil {
-		fmt.Fprintf(
-			w,
-			"data: {\"type\":\"unread_count\",\"count\":%d}\n\n", count,
-		)
-		flusher.Flush()
-	}
+	fmt.Fprintf(
+		w,
+		"data: {\"type\":\"unread_count\",\"count\":%d}\n\n", streamResp.UnreadCount,
+	)
+	flusher.Flush()
 
 	ticker := time.NewTicker(tickerTime * time.Second)
 	defer ticker.Stop()
@@ -70,7 +76,7 @@ func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
 		case <-r.Context().Done():
 			// client disconected
 			return
-		case notification := <-notificationChan:
+		case notification := <-streamResp.NotificationChan:
 			data, err := json.Marshal(notification)
 			if err != nil {
 				continue

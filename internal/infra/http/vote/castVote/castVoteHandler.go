@@ -3,22 +3,13 @@ package castvote
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strconv"
 
-	"github.com/arnald/forum/internal/app"
-	commentqueries "github.com/arnald/forum/internal/app/comments/queries"
-	topicqueries "github.com/arnald/forum/internal/app/topics/queries"
 	votecommands "github.com/arnald/forum/internal/app/votes/commands"
 	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/notification"
-	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/vote"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 	"github.com/arnald/forum/internal/pkg/helpers"
 )
 
@@ -34,18 +25,16 @@ type ResponseModel struct {
 }
 
 type Handler struct {
-	Services      app.Services
-	Config        *config.ServerConfig
-	Logger        logger.Logger
-	Notifications *notifications.NotificationService
+	castVote votecommands.CastVoteRequestHandler
+	Config   *config.ServerConfig
+	Logger   logger.Logger
 }
 
-func NewHandler(services app.Services, config *config.ServerConfig, logger logger.Logger, notifications *notifications.NotificationService) *Handler {
+func NewHandler(castvoteHandler votecommands.CastVoteRequestHandler, config *config.ServerConfig, logger logger.Logger) *Handler {
 	return &Handler{
-		Services:      services,
-		Config:        config,
-		Logger:        logger,
-		Notifications: notifications,
+		castVote: castvoteHandler,
+		Config:   config,
+		Logger:   logger,
 	}
 }
 
@@ -91,8 +80,9 @@ func (h *Handler) CastVote(w http.ResponseWriter, r *http.Request) {
 		CommentID: req.CommentID,
 	}
 
-	err = h.Services.UserServices.Commands.CastVote.Handle(ctx, votecommands.CastVoteRequest{
+	err = h.castVote.Handle(ctx, votecommands.CastVoteRequest{
 		UserID:       user.ID,
+		NickName:     user.Nickname,
 		Target:       target,
 		ReactionType: req.ReactionType,
 	})
@@ -106,13 +96,6 @@ func (h *Handler) CastVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.sendVoteNotification(
-		ctx,
-		user.Nickname,
-		user.ID,
-		req,
-	)
-
 	Response := ResponseModel{
 		Message: "Vote cast successfully",
 	}
@@ -122,75 +105,4 @@ func (h *Handler) CastVote(w http.ResponseWriter, r *http.Request) {
 		nil,
 		Response,
 	)
-}
-
-func (h *Handler) getCommentOwner(ctx context.Context, commentID int) (*comment.Comment, error) {
-	return h.Services.UserServices.Queries.GetComment.Handle(ctx, commentqueries.GetCommentRequest{
-		CommentID: commentID,
-	})
-}
-
-func (h *Handler) getTopicOwner(ctx context.Context, topicID int) (*topic.Topic, error) {
-	return h.Services.UserServices.Queries.GetTopic.Handle(ctx, topicqueries.GetTopicRequest{
-		TopicID: topicID,
-	})
-}
-
-func (h *Handler) sendVoteNotification(ctx context.Context, username, userID string, req RequestModel) {
-	var ownerID string
-	var contentType string
-	var contentID string
-
-	if req.CommentID != nil {
-		comment, err := h.getCommentOwner(ctx, *req.CommentID)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-			return
-		}
-		ownerID = comment.UserID
-		contentType = "comment"
-		contentID = strconv.Itoa(*req.CommentID)
-	} else if req.TopicID != nil {
-		topic, err := h.getTopicOwner(ctx, *req.TopicID)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-			return
-		}
-		ownerID = topic.UserID
-		contentType = "topic"
-		contentID = strconv.Itoa(*req.TopicID)
-	}
-
-	if ownerID == "" || ownerID == userID {
-		return
-	}
-
-	var message string
-	var title string
-	var notificationType notification.Type
-	switch req.ReactionType {
-	case 1:
-		message = fmt.Sprintf("%s liked your %s", username, contentType)
-		title = "New like!"
-		notificationType = notification.NotificationTypeLike
-	case -1:
-		message = fmt.Sprintf("%s disliked your %s", username, contentType)
-		title = "New dislike!"
-		notificationType = notification.NotificationTypeDislike
-	}
-
-	notification := &notification.Notification{
-		Type:        notificationType,
-		RelatedID:   contentID,
-		UserID:      ownerID,
-		ActorID:     userID,
-		Message:     message,
-		Title:       title,
-		RelatedType: contentType,
-	}
-
-	err := h.Notifications.CreateNotification(ctx, notification)
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
 }
