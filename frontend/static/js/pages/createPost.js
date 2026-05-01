@@ -27,7 +27,7 @@
  *   it just won't persist if the backend still expects JSON.
  */
 
-import { fetchCategories } from '../api.js';
+import { api, fetchCategories } from '../api.js';
 import { navigate } from '../router.js';
 import { prepareCategories, escapeHTML } from '../helpers.js';
 
@@ -319,46 +319,49 @@ function initFormSubmit() {
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating...';
 
+    const title = document.getElementById('title').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const categories = [...form.querySelectorAll('input[name="categories"]:checked')].map((cb) =>
+      Number(cb.value)
+    );
+    const fileInput = document.getElementById('image-upload');
+    const file = fileInput?.files?.[0] ?? null;
+
     try {
-      // Build FormData so file upload works natively.
-      // The browser sets Content-Type: multipart/form-data automatically.
-      // The backend /topics/create endpoint needs to accept multipart.
-      const formData = new FormData();
+      if (file) {
+        // Image selected — send multipart so the backend can receive the file.
+        // Requires the backend createTopic handler to accept multipart/form-data.
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        categories.forEach((id) => formData.append('categories', String(id)));
+        formData.append('image_path', file);
 
-      formData.append('title', document.getElementById('title').value.trim());
-      formData.append('content', document.getElementById('content').value.trim());
+        const response = await fetch('/api/v1/topics/create', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+          // Do NOT set Content-Type — browser sets the multipart boundary automatically
+        });
 
-      form.querySelectorAll('input[name="categories"]:checked').forEach((cb) => {
-        formData.append('categories', cb.value);
-      });
-
-      const fileInput = document.getElementById('image-upload');
-      if (fileInput?.files?.[0]) {
-        formData.append('image_path', fileInput.files[0]);
-      }
-
-      const response = await fetch('/api/v1/topics/create', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-        // Do NOT set Content-Type — browser sets it with the correct boundary
-      });
-
-      if (!response.ok) {
-        let msg = `HTTP ${response.status}`;
-        try {
-          const body = await response.json();
-          msg = body?.error || body?.message || msg;
-        } catch {
-          /* ignore parse errors */
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}));
+          throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
         }
-        throw new Error(msg);
+      } else {
+        // No image — send JSON directly, matching createTopicRequest struct:
+        // { title, content, imagePath, categoryIds }
+        await api.post('/topics/create', {
+          title,
+          content,
+          imagePath: '',
+          categoryIds: categories,
+        });
       }
 
       navigate('/topics');
     } catch (err) {
       console.error('Failed to create topic:', err);
-      // Show the error near the submit button
       document.getElementById('error-content').textContent =
         'Failed to create topic: ' + (err.message || 'Unknown error');
     } finally {
