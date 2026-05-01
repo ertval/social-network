@@ -47,7 +47,6 @@ import (
 	"github.com/arnald/forum/internal/infra/http/ws"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 	"github.com/arnald/forum/internal/infra/storage/sessionstore"
 	oauth "github.com/arnald/forum/internal/pkg/oAuth"
 	"github.com/arnald/forum/internal/pkg/oAuth/githubclient"
@@ -69,7 +68,6 @@ type Server struct {
 	sessionManager session.Manager
 	cookieManager  *authcookies.Manager
 	oauth          *OAuth
-	notifications  *notifications.NotificationService
 	middleware     *middleware.Middleware
 	db             *sql.DB
 	logger         logger.Logger
@@ -92,7 +90,6 @@ func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appSe
 	}
 	httpServer.initSessionManager()
 	httpServer.initCookieManager()
-	httpServer.initNotifications()
 	httpServer.initOAuthServices()
 	httpServer.initMiddleware(httpServer.sessionManager, httpServer.cookieManager)
 	httpServer.hub = ws.NewHub()
@@ -110,7 +107,7 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
-			health.NewHandler(server.logger, server.notifications).HealthCheck,
+			health.NewHandler(server.logger, server.appServices.UserServices.Commands.CreateNotification).HealthCheck,
 			server.middleware.Authorization.Required,
 		))
 
@@ -216,7 +213,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Comment routes
 	server.router.HandleFunc(apiContext+"/comments/create",
 		middlewareChain(
-			createcomment.NewHandler(server.appServices, server.config, server.logger, server.notifications).CreateComment,
+			createcomment.NewHandler(server.appServices.UserServices.Commands.CreateComment, server.config, server.logger).CreateComment,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -271,7 +268,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Vote routes
 	server.router.HandleFunc(apiContext+"/vote/cast",
 		middlewareChain(
-			castvote.NewHandler(server.appServices, server.config, server.logger, server.notifications).CastVote,
+			castvote.NewHandler(server.appServices.UserServices.Commands.CastVote, server.config, server.logger).CastVote,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -299,43 +296,41 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Notifications routes
-	THESE ARE THE ROUTES
 
 	server.router.HandleFunc(apiContext+"/notifications/stream", // get
 		middlewareChain(
-			streamnotification.NewHandler(server.notifications).StreamNotifications,
+			streamnotification.NewHandler(server.appServices.UserServices.Commands.OpenStream).StreamNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/unread-count", // get
 		middlewareChain(
-			getunreadcount.NewHandler(server.notifications).GetUnread,
+			getunreadcount.NewHandler(server.appServices.UserServices.Queries.GetUnreadCount).GetUnread,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications", // get
 		middlewareChain(
-			getnotifications.NewHandler(server.notifications).GetNotifications,
+			getnotifications.NewHandler(server.appServices.UserServices.Queries.GetNotifications).GetNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-read", // post
 		middlewareChain(
-			markasread.NewHandler(server.notifications).MarkAsRead,
+			markasread.NewHandler(server.appServices.UserServices.Commands.MarkAsRead).MarkAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-all-read", // post
 		middlewareChain(
-			markallasread.NewHandler(server.notifications).MarkAllAsRead,
+			markallasread.NewHandler(server.appServices.UserServices.Commands.MarkAllAsRead).MarkAllAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
-	UNTIL HERE
 
 	// WebSocket route — chat and presence
 	server.router.HandleFunc(apiContext+"/ws",
@@ -424,10 +419,6 @@ func (server *Server) getUserIDFromRequest(r *http.Request) (string, error) {
 		return "", errors.New("no authenticated user in context")
 	}
 	return user.ID, nil
-}
-
-func (server *Server) initNotifications() {
-	server.notifications = notifications.NewNotificationService(server.db)
 }
 
 func (server *Server) initMiddleware(sessionManager session.Manager, cookieManager *authcookies.Manager) {

@@ -6,6 +6,7 @@ import (
 	categoryQueries "github.com/arnald/forum/internal/app/categories/queries"
 	commentCommands "github.com/arnald/forum/internal/app/comments/commands"
 	commentQueries "github.com/arnald/forum/internal/app/comments/queries"
+	"github.com/arnald/forum/internal/app/notifications"
 	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	notificationqueries "github.com/arnald/forum/internal/app/notifications/queries"
 	oauthservice "github.com/arnald/forum/internal/app/oauth"
@@ -59,6 +60,7 @@ type Commands struct {
 	CastVote           votecommands.CastVoteRequestHandler
 	DeleteVote         votecommands.DeleteVoteRequestHandler
 	CreateNotification notificationcommands.CreateNotificationHandler
+	OpenStream         notificationcommands.OpenStreamHandler
 	MarkAsRead         notificationcommands.MarkAsReadHandler
 	MarkAllAsRead      notificationcommands.MarkAllAsReadHandler
 }
@@ -73,7 +75,7 @@ type Services struct {
 	ChatRepo     chat.Repository
 }
 
-func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository) Services {
+func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
@@ -100,15 +102,16 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 				topicCommands.NewCreateTopicHandler(topicRepo),
 				topicCommands.NewUpdateTopicHandler(topicRepo),
 				topicCommands.NewDeleteTopicHandler(topicRepo),
-				commentCommands.NewCreateCommentRequestHandler(commentRepo),
+				commentCommands.NewCreateCommentRequestHandler(commentRepo, topicRepo, notificationsRepo, notifier),
 				commentCommands.NewUpdateCommentRequestHandler(commentRepo),
 				commentCommands.NewDeleteCommentHandler(commentRepo),
 				categoryCommands.NewCreateCategoryHandler(categoryRepo),
 				categoryCommands.NewUpdateCategoryHandler(categoryRepo),
 				categoryCommands.NewDeleteCategoryHandler(categoryRepo),
-				votecommands.NewCastVoteHandler(voteRepo),
+				votecommands.NewCastVoteHandler(voteRepo, topicRepo, commentRepo, notificationsRepo, notifier),
 				votecommands.NewDeleteVoteHandler(voteRepo),
-				notificationcommands.NewCreateNotificationHandler(notificationsRepo),
+				notificationcommands.NewCreateNotificationHandler(notificationsRepo, notifier),
+				notificationcommands.NewOpenStreamHandler(notificationsRepo, notifier),
 				notificationcommands.NewMarkAsReadHandler(notificationsRepo),
 				notificationcommands.NewMarkAllAsReadHandler(notificationsRepo),
 			},

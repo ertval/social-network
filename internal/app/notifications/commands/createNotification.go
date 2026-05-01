@@ -3,6 +3,7 @@ package notificationcommands
 import (
 	"context"
 
+	"github.com/arnald/forum/internal/app/notifications"
 	"github.com/arnald/forum/internal/domain/notification"
 )
 
@@ -15,15 +16,21 @@ type CreateNotificationHandler interface {
 }
 
 type createNotificationHandler struct {
-	repo notification.Repository
+	repo     notification.Repository
+	notifier notifications.Notifier
 }
 
-func NewCreateNotificationHandler(repo notification.Repository) CreateNotificationHandler {
+func NewCreateNotificationHandler(repo notification.Repository, notifier notifications.Notifier) CreateNotificationHandler {
 	return &createNotificationHandler{
-		repo: repo,
+		repo:     repo,
+		notifier: notifier,
 	}
 }
 
 func (h *createNotificationHandler) Handle(ctx context.Context, req CreateNotificationRequest) error {
-	return h.repo.Create(ctx, req.Notification)
+	if err := h.repo.Create(ctx, req.Notification); err != nil {
+		return err
+	}
+	h.notifier.BroadcastToUser(req.Notification.UserID, req.Notification)
+	return nil
 }
