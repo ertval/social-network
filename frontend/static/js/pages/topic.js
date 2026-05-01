@@ -81,6 +81,85 @@ export async function renderTopicPage(user) {
   }
 }
 
+// ─── Initialize Global Listeners ──────────────────────────────────────────────────────────────
+
+let listenersInitialized = false;
+
+export function initGlobalListeners() {
+  if (listenersInitialized) return;
+  listenersInitialized = true;
+
+  document.addEventListener('click', async (e) => {
+    try {
+      // ─── DELETE TOPIC ───
+      const topicDeleteBtn = e.target.closest(".btn-delete[data-type='topic']");
+      if (topicDeleteBtn) {
+        if (!confirm('Delete topic?')) return;
+
+        const topicID = topicDeleteBtn.dataset.topicId;
+        await api.delete(`/topics/delete?id=${topicID}`);
+        const { navigate } = await import('../router.js');
+        navigate('/topics');
+        return;
+      }
+
+      // ─── DELETE COMMENT ───
+      const commentDeleteBtn = e.target.closest(".btn-delete[data-type='comment']");
+      if (commentDeleteBtn) {
+        if (!confirm('Delete comment?')) return;
+
+        const commentID = commentDeleteBtn.dataset.commentId;
+        await api.delete(`/comments/delete?id=${commentID}`);
+
+        document.querySelector(`[data-comment-id="${commentID}"]`)?.remove();
+        updateCommentCount(-1);
+        return;
+      }
+
+      // ─── EDIT TOGGLE ───
+      const editBtn = e.target.closest('.btn-edit');
+      if (editBtn) {
+        closeAllEditForms();
+        clearAllErrors();
+        document.querySelector('.add-comment')?.classList.remove('active');
+
+        // Reset file inputs and labels when opening
+        const topicForm = document.querySelector('.topic-edit-form');
+        if (topicForm) {
+          topicForm.querySelector('#topic-file-name').textContent = '';
+          topicForm.querySelector('#topicImageUpload').value = '';
+        }
+
+        const type = editBtn.dataset.type;
+
+        if (type === 'topic') {
+          document.querySelector('.edit-topic-form')?.style.setProperty('display', 'block');
+        }
+
+        if (type === 'comment') {
+          const id = editBtn.dataset.commentId;
+          document
+            .querySelector(`[data-comment-id="${id}"] .edit-comment-form`)
+            ?.style.setProperty('display', 'block');
+        }
+        return;
+      }
+
+      // ─── CLOSE EDIT FORM ───
+      if (e.target.classList.contains('close-edit-form')) {
+        e.target.closest('.edit-form')?.style.setProperty('display', 'none');
+        clearAllErrors();
+        return;
+      }
+    } catch (err) {
+      console.error('Global handler error:', err);
+      alert('Something went wrong: ' + err.message);
+    }
+  });
+}
+
+initGlobalListeners();
+
 // ─── URL parsing ──────────────────────────────────────────────────────────────
 
 /**
@@ -316,13 +395,24 @@ function buildEditTopicFormHTML(topic, categories) {
         </div>
 
         <div class="comment-form-field">
-          <label class="upload-box" id="topicUploadBox">
-            <img src="/static/images/icons/upload-icon.png" alt="Upload" class="upload-icon" />
-            <span>Click to upload new image (optional)</span>
-            <input class="input" id="topicImageUpload" name="image_path"
-                   type="file" accept="image/jpeg,image/png,image/gif" style="display:none" />
-          </label>
+          <label class="label">Attach new image (optional)</label>
+
+          <div class="upload-box" id="topicUploadBox">
+            <input class="input" id="topicImageUpload"
+                  name="image_path"
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif"
+                  hidden />
+
+            <div class="upload-placeholder">
+              <img src="/static/images/icons/upload-icon.png" class="upload-icon" />
+              <p class="upload-text">Click to upload image</p>
+              <p class="upload-subtext">JPEG, PNG, or GIF — Max 20MB</p>
+            </div>
+          </div>
+
           <div class="field-error" id="error-topic-image"></div>
+          <div id="topic-file-name" class="file-name"></div>
         </div>
 
         <button class="post-comment" type="submit">Save Changes</button>
@@ -467,8 +557,6 @@ function buildCommentItemHTML(comment, topicID, user) {
 
 function initTopicInteractions(topic, user) {
   initCommentFormToggle();
-  initEditFormToggles();
-  initDeleteHandlers(topic, user);
   initTopicEditFormSubmit(topic);
   initCommentFormSubmit(topic, user);
   initEditCommentForms(topic);
@@ -492,86 +580,8 @@ function initCommentFormToggle() {
   });
 }
 
-// ── Edit form show/hide ───────────────────────────────────────────────────────
-
-function initEditFormToggles() {
-  // Open
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-edit');
-    if (!btn) return;
-
-    closeAllEditForms();
-    clearAllErrors();
-    document.querySelector('.add-comment')?.classList.remove('active');
-
-    const type = btn.dataset.type;
-
-    if (type === 'topic') {
-      document.querySelector('.edit-topic-form')?.style.setProperty('display', 'block');
-    }
-
-    if (type === 'comment') {
-      const id = btn.dataset.commentId;
-      document
-        .querySelector(`.comment-content[data-comment-id="${id}"] .edit-comment-form`)
-        ?.style.setProperty('display', 'block');
-    }
-  });
-
-  // Close via ✖ button
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('close-edit-form')) {
-      e.target.closest('.edit-form')?.style.setProperty('display', 'none');
-      clearAllErrors();
-    }
-  });
-}
-
 function closeAllEditForms() {
   document.querySelectorAll('.edit-form').forEach((f) => f.style.setProperty('display', 'none'));
-}
-
-// ── Delete handlers ───────────────────────────────────────────────────────────
-
-function initDeleteHandlers(topic, user) {
-  // Topic delete
-  document.addEventListener('click', async (e) => {
-    const btn = e.target.closest(".btn-delete[data-type='topic']");
-    if (!btn) return;
-
-    if (!confirm('Are you sure you want to delete this topic? This action cannot be undone.'))
-      return;
-
-    const topicID = btn.dataset.topicId || topic.topicId;
-    try {
-      // BFF DeleteTopicPost sent DELETE /topics/delete?id=X — no JSON body
-      await api.delete(`/topics/delete?id=${topicID}`);
-      const { navigate } = await import('../router.js');
-      navigate('/topics');
-    } catch (err) {
-      alert('Failed to delete topic: ' + err.message);
-    }
-  });
-
-  // Comment delete
-  document.addEventListener('click', async (e) => {
-    const btn = e.target.closest(".btn-delete[data-type='comment']");
-    if (!btn) return;
-
-    if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.'))
-      return;
-
-    const commentID = btn.dataset.commentId;
-    const topicID = btn.dataset.topicId || topic.topicId;
-    try {
-      // BFF DeleteCommentPost sent DELETE /comments/delete?id=X — no JSON body
-      await api.delete(`/comments/delete?id=${commentID}`);
-      document.querySelector(`.comment-content[data-comment-id="${commentID}"]`)?.remove();
-      updateCommentCount(-1);
-    } catch (err) {
-      alert('Failed to delete comment: ' + err.message);
-    }
-  });
 }
 
 // ── Topic edit form submit ────────────────────────────────────────────────────
@@ -579,6 +589,22 @@ function initDeleteHandlers(topic, user) {
 function initTopicEditFormSubmit(topic) {
   const form = document.querySelector('.topic-edit-form');
   if (!form) return;
+
+  const uploadBox = form.querySelector('#topicUploadBox');
+  const fileInput = form.querySelector('#topicImageUpload');
+  const fileNameEl = form.querySelector('#topic-file-name');
+
+  uploadBox?.addEventListener('click', () => fileInput.click());
+
+  fileInput?.addEventListener('change', () => {
+    if (fileInput.files && fileInput.files[0]) {
+      fileNameEl.textContent = `Selected: ${fileInput.files[0].name}`;
+      fileNameEl.style.color = '#2ecc71'; // Give it a success color
+    } else {
+      fileNameEl.textContent = '';
+    }
+    clearError('error-topic-image');
+  });
 
   // Clear errors on input
   form
@@ -599,20 +625,48 @@ function initTopicEditFormSubmit(topic) {
 
     const formData = new FormData(form);
     const categories = [...formData.getAll('categories')].map(Number);
-
-    const payload = {
-      topicId: Number(formData.get('topic_id')),
-      title: formData.get('title')?.trim(),
-      content: formData.get('content')?.trim(),
-      categoryIds: categories,
-      imagePath: formData.get('current_image_path') || '',
-    };
+    const topicId = Number(formData.get('topic_id'));
+    const title = formData.get('title')?.trim();
+    const content = formData.get('content')?.trim();
+    const currentPath = formData.get('current_image_path') || '';
+    const file = fileInput?.files?.[0] ?? null;
 
     try {
-      // BFF UpdateTopicPost sent PUT with updateTopicRequest { topicId, title, content, imagePath, categoryIds }
-      await api.put('/topics/update', payload);
-      // Reload the page to show updated content
-      await renderTopicPage(null); // re-render; user will be re-resolved by router
+      if (file) {
+        // New image selected — send multipart
+        const fd = new FormData();
+        fd.append('topic_id', String(topicId));
+        fd.append('title', title);
+        fd.append('content', content);
+        fd.append('current_image_path', currentPath);
+        categories.forEach((id) => fd.append('categories', String(id)));
+        fd.append('image_path', file);
+
+        const response = await fetch('/api/v1/topics/update', {
+          method: 'PUT',
+          credentials: 'include',
+          body: fd,
+        });
+
+        if (!response.ok) {
+          const body = await response.json().catch(() => ({}));
+          throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
+        }
+      } else {
+        // No new image — send JSON with updateTopicRequest shape
+        // imagePath: keep currentPath (preserves existing image)
+        // to remove an image entirely, set imagePath: ""
+        await api.put('/topics/update', {
+          topicId,
+          title,
+          content,
+          categoryIds: categories,
+          imagePath: currentPath,
+        });
+      }
+
+      const { getUser } = await import('../auth.js');
+      await renderTopicPage(getUser());
     } catch (err) {
       alert('Failed to update topic: ' + err.message);
     }
