@@ -164,6 +164,7 @@
   right: 0;
   background-color: var(--white-background-light);
   border-radius: 8px;
+  overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 380px;
   max-height: 500px;
