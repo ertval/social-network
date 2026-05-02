@@ -50,15 +50,14 @@ func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
 	notificationChan := h.service.RegisterClient(userID)
 	defer h.service.UnregisterClient(userID, notificationChan)
 
-	fmt.Fprintf(w, "data: {\"type\":\"connected\"}\n\n")
+	// connected
+	fmt.Fprintf(w, "event: connected\ndata: {\"type\":\"connected\"}\n\n")
 	flusher.Flush()
 
 	count, err := h.service.GetUnreadCount(r.Context(), userID)
 	if err == nil {
-		fmt.Fprintf(
-			w,
-			"data: {\"type\":\"unread_count\",\"count\":%d}\n\n", count,
-		)
+		// unread count
+		fmt.Fprintf(w, "event: unread_count\ndata: {\"type\":\"unread_count\",\"count\":%d}\n\n", count)
 		flusher.Flush()
 	}
 
@@ -75,16 +74,12 @@ func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				continue
 			}
-			fmt.Fprintf(
-				w,
-				"data: %s\n\n", data,
-			)
+			// notification
+			fmt.Fprintf(w, "event: notification\ndata: %s\n\n", data)
 			flusher.Flush()
 		case <-ticker.C:
-			fmt.Fprintf(
-				w,
-				": heartbeat\n\n",
-			)
+			// heartbeat (comments are valid SSE — no change needed)
+			fmt.Fprintf(w, ": heartbeat\n\n")
 			flusher.Flush()
 		}
 	}
