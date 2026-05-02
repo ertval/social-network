@@ -793,15 +793,13 @@ function initVoteButtons(topic, user) {
         if (isActive) {
           // Toggle off — delete the vote
           const payload =
-            targetType === 'comment'
-              ? { comment_id: targetID, topic_id: null }
-              : { comment_id: null, topic_id: targetID };
+            targetType === 'comment' ? { commentId: targetID } : { topicId: targetID };
           await deleteVote(payload);
         } else {
           // Cast or switch vote
-          const payload = { reaction_type: reactionType };
-          if (targetType === 'comment') payload.comment_id = targetID;
-          else payload.topic_id = targetID;
+          const payload = { reactionType: reactionType };
+          if (targetType === 'comment') payload.commentId = targetID;
+          else payload.topicId = targetID;
           await castVote(payload);
         }
 
@@ -830,6 +828,7 @@ async function refreshVoteUI(targetID, targetType, clickedBtn) {
   const params = targetType === 'comment' ? { comment_id: targetID } : { topic_id: targetID };
 
   const counts = await fetchVoteCounts(params);
+  console.log('COUNTS:', counts);
   const container = clickedBtn.closest('.reactions');
 
   const likeCount = container.querySelector('.like-count');

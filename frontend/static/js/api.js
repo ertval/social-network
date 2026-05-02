@@ -207,7 +207,7 @@ export async function castVote(body) {
 }
 
 export async function deleteVote(body) {
-  return api.post('/vote/delete', body);
+  return api.delete('/vote/delete', body);
 }
 
 export async function fetchVoteCounts(params) {
