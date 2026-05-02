@@ -16,6 +16,7 @@ import { escapeHTML } from './helpers.js';
 import {
   fetchNotifications,
   fetchUnreadCount,
+  fetchComment,
   markNotificationRead,
   markAllNotificationsRead,
 } from './api.js';
@@ -184,8 +185,15 @@ function initNotifications() {
   markAllBtn?.addEventListener('click', async () => {
     try {
       await markAllNotificationsRead();
-      refreshUnreadCount();
-      loadNotifications();
+
+      // Update every unread item in the list immediately
+      document.querySelectorAll('.notification-item.unread').forEach((item) => {
+        item.classList.remove('unread');
+        item.dataset.read = 'true';
+        item.querySelector('.notification-unread-dot')?.remove();
+      });
+
+      updateBadge(0);
     } catch (err) {
       console.error('Failed to mark all as read:', err);
     }
@@ -233,18 +241,47 @@ async function loadNotifications() {
 
     list.innerHTML = notifications.map(buildNotificationItemHTML).join('');
 
-    // Click to mark as read
+    // Click to mark as read + navigate
     list.querySelectorAll('.notification-item').forEach((item) => {
       item.addEventListener('click', async () => {
         const id = item.dataset.id;
-        if (!id) return;
-        try {
-          await markNotificationRead(id);
+        const isRead = item.dataset.read === 'true';
+        const relatedType = item.dataset.relatedType;
+        const relatedId = item.dataset.relatedId;
+
+        // Update UI immediately
+        if (!isRead) {
           item.classList.remove('unread');
+          item.dataset.read = 'true';
           item.querySelector('.notification-unread-dot')?.remove();
-          refreshUnreadCount();
-        } catch (err) {
-          console.error('Failed to mark notification as read:', err);
+
+          try {
+            await markNotificationRead(id);
+            refreshUnreadCount();
+          } catch (err) {
+            console.error('Failed to mark notification as read:', err);
+          }
+        }
+
+        // Navigate to related content
+        if (relatedId) {
+          const { navigate } = await import('./router.js');
+
+          if (relatedType === 'topic') {
+            navigate(`/topic/${relatedId}`);
+          } else if (relatedType === 'comment') {
+            try {
+              const comment = await fetchComment(relatedId);
+              const topicId = comment?.topicId;
+              if (topicId) {
+                navigate(`/topic/${topicId}`);
+              }
+            } catch (err) {
+              console.error('Failed to resolve comment topic:', err);
+            }
+          }
+
+          document.getElementById('notificationDropdown').style.display = 'none';
         }
       });
     });
@@ -255,15 +292,22 @@ async function loadNotifications() {
 }
 
 function buildNotificationItemHTML(n) {
-  const isUnread = !n.read_at && !n.ReadAt;
-  const icon = notificationIcon(n.type || n.Type);
-  const title = escapeHTML(n.title || n.Title || 'Notification');
-  const message = escapeHTML(n.message || n.Message || '');
-  const time = formatNotificationTime(n.created_at || n.CreatedAt);
+  const isUnread = !n.isRead;
+  const icon = notificationIcon(n.type);
+  const title = escapeHTML(n.title || '');
+  const message = escapeHTML(n.message || '');
+  const time = formatNotificationTime(n.createdAt);
+  const id = escapeHTML(String(n.id ?? ''));
+  const relatedType = escapeHTML(n.relatedType ?? '');
+  const relatedId = escapeHTML(n.relatedId ?? '');
 
   return /* html */ `
-    <div class="notification-item ${isUnread ? 'unread' : ''}" data-id="${escapeHTML(String(n.id || n.ID || ''))}">
-      <div class="notification-icon ${escapeHTML(n.type || n.Type || '')}">
+    <div class="notification-item ${isUnread ? 'unread' : ''}"
+         data-id="${id}"
+         data-read="${!isUnread}"
+         data-related-type="${relatedType}"
+         data-related-id="${relatedId}">
+      <div class="notification-icon ${escapeHTML(n.type || '')}">
         ${icon}
       </div>
       <div class="notification-content">
@@ -281,7 +325,9 @@ function notificationIcon(type) {
     case 'reply':
       return '💬';
     case 'like':
-      return '❤️';
+      return '💚';
+    case 'dislike':
+      return '🤮';
     case 'mention':
       return '📣';
     default:
@@ -302,7 +348,6 @@ function formatNotificationTime(isoString) {
 }
 
 function startNotificationStream() {
-  // Close any existing stream first (e.g. after a re-render / route change)
   if (_notificationSSE) {
     _notificationSSE.close();
     _notificationSSE = null;
@@ -313,14 +358,34 @@ function startNotificationStream() {
       withCredentials: true,
     });
 
+    // Backend sends: event: connected
+    es.addEventListener('connected', () => {
+      // stream is live — nothing to do, unread_count arrives next
+    });
+
+    // Backend sends: event: unread_count  data: {"type":"unread_count","count":N}
+    es.addEventListener('unread_count', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        updateBadge(data.count ?? 0);
+      } catch {
+        // malformed frame — ignore
+      }
+    });
+
+    // Backend sends: event: notification  data: {...notification object...}
     es.addEventListener('notification', () => {
+      // A new notification arrived — refresh the badge count from the API
+      // (same as before — avoids stale in-memory counts)
       refreshUnreadCount();
     });
 
     es.onerror = () => {
-      // SSE reconnects automatically; we just close and let the browser retry
       es.close();
       _notificationSSE = null;
+      // Browser will NOT auto-reconnect after we call close().
+      // Retry after 5 s so the user doesn't lose live updates.
+      setTimeout(startNotificationStream, 5000);
     };
 
     _notificationSSE = es;
