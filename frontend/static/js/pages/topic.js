@@ -828,7 +828,6 @@ async function refreshVoteUI(targetID, targetType, clickedBtn) {
   const params = targetType === 'comment' ? { comment_id: targetID } : { topic_id: targetID };
 
   const counts = await fetchVoteCounts(params);
-  console.log('COUNTS:', counts);
   const container = clickedBtn.closest('.reactions');
 
   const likeCount = container.querySelector('.like-count');
