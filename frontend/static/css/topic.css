@@ -403,7 +403,7 @@
   column-gap: 1rem;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 768px) {
   .topic-body-container {
     padding: 0 2rem;
   }
@@ -413,7 +413,7 @@
     width: 60%;
   }
 }
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 480px) {
   .topic-body-container {
     padding: 0 0.5rem;
   }
