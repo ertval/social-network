@@ -72,7 +72,7 @@ func (h *Handler) DeleteVote(w http.ResponseWriter, r *http.Request) {
 		helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to unmarshal request")
 	}
 
-	err = h.Services.UserServices.Commands.DeleteVote.Handle(ctx, votecommands.DeleteVoteRequest{
+	err = h.Services.Commands.DeleteVote.Handle(ctx, votecommands.DeleteVoteRequest{
 		UserID:    user.ID,
 		TopicID:   voteToDelete.TopicID,
 		CommentID: voteToDelete.CommentID,

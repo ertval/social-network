@@ -73,60 +73,53 @@ type Commands struct {
 	SendChatMessage       chatcommands.SendChatHandler
 }
 
-type UserServices struct {
+type Services struct {
 	Queries  Queries
 	Commands Commands
-}
-
-type Services struct {
-	UserServices UserServices
-	ChatRepo     chat.Repository
 }
 
 func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier, broadcaster chatapp.Broadcaster) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
-		UserServices: UserServices{
-			Queries: Queries{
-				*oauthservice.NewOAuthService(oauthRepo, uuidProvider),
-				topicQueries.NewGetTopicHandler(topicRepo, commentRepo),
-				topicQueries.NewGetAllTopicsHandler(topicRepo, categoryRepo),
-				commentQueries.NewGetCommentHandler(commentRepo),
-				commentQueries.NewGetCommentsByTopicRequestHandler(commentRepo),
-				userQueries.NewUserLoginEmailHandler(userRepo, encryption),
-				userQueries.NewUserLoginUsernameHandler(userRepo, encryption),
-				categoryQueries.NewGetCategoryByIDHandler(categoryRepo),
-				categoryQueries.NewGetAllCategoriesHandler(categoryRepo),
-				voteQueries.NewGetCountsRequestHandler(voteRepo),
-				activityQueries.NewGetUserActivityHandler(activityRepo),
-				userQueries.NewGetAllUsersRequestHandler(userRepo),
-				notificationqueries.NewGetNotificationsHandler(notificationsRepo),
-				notificationqueries.NewGetUnreadCountHandler(notificationsRepo),
-				chatqueries.NewGetChatHistoryHandler(chatRepo),
-				chatqueries.NewGetChatUsersHandler(chatRepo, userRepo, broadcaster),
-			},
-			Commands: Commands{
-				userCommands.NewUserRegisterHandler(userRepo, uuidProvider, encryption),
-				topicCommands.NewCreateTopicHandler(topicRepo),
-				topicCommands.NewUpdateTopicHandler(topicRepo),
-				topicCommands.NewDeleteTopicHandler(topicRepo),
-				commentCommands.NewCreateCommentRequestHandler(commentRepo, topicRepo, notificationsRepo, notifier),
-				commentCommands.NewUpdateCommentRequestHandler(commentRepo),
-				commentCommands.NewDeleteCommentHandler(commentRepo),
-				categoryCommands.NewCreateCategoryHandler(categoryRepo),
-				categoryCommands.NewUpdateCategoryHandler(categoryRepo),
-				categoryCommands.NewDeleteCategoryHandler(categoryRepo),
-				votecommands.NewCastVoteHandler(voteRepo, topicRepo, commentRepo, notificationsRepo, notifier),
-				votecommands.NewDeleteVoteHandler(voteRepo),
-				notificationcommands.NewCreateNotificationHandler(notificationsRepo, notifier),
-				notificationcommands.NewOpenStreamHandler(notificationsRepo, notifier),
-				notificationcommands.NewMarkAsReadHandler(notificationsRepo),
-				notificationcommands.NewMarkAllAsReadHandler(notificationsRepo),
-				chatcommands.NewInitChatHandler(chatRepo),
-				chatcommands.NewMarkAsReadHandler(chatRepo),
-				chatcommands.NewSendChatHandler(chatRepo, broadcaster),
-			},
+		Queries: Queries{
+			*oauthservice.NewOAuthService(oauthRepo, uuidProvider),
+			topicQueries.NewGetTopicHandler(topicRepo, commentRepo),
+			topicQueries.NewGetAllTopicsHandler(topicRepo, categoryRepo),
+			commentQueries.NewGetCommentHandler(commentRepo),
+			commentQueries.NewGetCommentsByTopicRequestHandler(commentRepo),
+			userQueries.NewUserLoginEmailHandler(userRepo, encryption),
+			userQueries.NewUserLoginUsernameHandler(userRepo, encryption),
+			categoryQueries.NewGetCategoryByIDHandler(categoryRepo),
+			categoryQueries.NewGetAllCategoriesHandler(categoryRepo),
+			voteQueries.NewGetCountsRequestHandler(voteRepo),
+			activityQueries.NewGetUserActivityHandler(activityRepo),
+			userQueries.NewGetAllUsersRequestHandler(userRepo),
+			notificationqueries.NewGetNotificationsHandler(notificationsRepo),
+			notificationqueries.NewGetUnreadCountHandler(notificationsRepo),
+			chatqueries.NewGetChatHistoryHandler(chatRepo),
+			chatqueries.NewGetChatUsersHandler(chatRepo, userRepo, broadcaster),
+		},
+		Commands: Commands{
+			userCommands.NewUserRegisterHandler(userRepo, uuidProvider, encryption),
+			topicCommands.NewCreateTopicHandler(topicRepo),
+			topicCommands.NewUpdateTopicHandler(topicRepo),
+			topicCommands.NewDeleteTopicHandler(topicRepo),
+			commentCommands.NewCreateCommentRequestHandler(commentRepo, topicRepo, notificationsRepo, notifier),
+			commentCommands.NewUpdateCommentRequestHandler(commentRepo),
+			commentCommands.NewDeleteCommentHandler(commentRepo),
+			categoryCommands.NewCreateCategoryHandler(categoryRepo),
+			categoryCommands.NewUpdateCategoryHandler(categoryRepo),
+			categoryCommands.NewDeleteCategoryHandler(categoryRepo),
+			votecommands.NewCastVoteHandler(voteRepo, topicRepo, commentRepo, notificationsRepo, notifier),
+			votecommands.NewDeleteVoteHandler(voteRepo),
+			notificationcommands.NewCreateNotificationHandler(notificationsRepo, notifier),
+			notificationcommands.NewOpenStreamHandler(notificationsRepo, notifier),
+			notificationcommands.NewMarkAsReadHandler(notificationsRepo),
+			notificationcommands.NewMarkAllAsReadHandler(notificationsRepo),
+			chatcommands.NewInitChatHandler(chatRepo),
+			chatcommands.NewMarkAsReadHandler(chatRepo),
+			chatcommands.NewSendChatHandler(chatRepo, broadcaster),
 		},
 	}
 }

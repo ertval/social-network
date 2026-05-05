@@ -80,7 +80,7 @@ func (h *Handler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.UserServices.UserServices.Commands.UpdateCategory.Handle(ctx, categorycommands.UpdateCategoryRequest{
+	err = h.UserServices.Commands.UpdateCategory.Handle(ctx, categorycommands.UpdateCategoryRequest{
 		ID:          categoryToUpdate.ID,
 		Name:        categoryToUpdate.Name,
 		Description: categoryToUpdate.Description,

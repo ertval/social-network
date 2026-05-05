@@ -77,7 +77,7 @@ func (h *Handler) DeleteTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.UserServices.UserServices.Commands.DeleteTopic.Handle(ctx, topicCommands.DeleteTopicRequest{
+	err = h.UserServices.Commands.DeleteTopic.Handle(ctx, topicCommands.DeleteTopicRequest{
 		TopicID: topicID,
 		User:    user,
 	})

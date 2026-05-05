@@ -71,7 +71,7 @@ func (h *Handler) GetCounts(w http.ResponseWriter, r *http.Request) {
 		CommentID: commentID,
 	}
 
-	Counts, err := h.Services.UserServices.Queries.GetCounts.Handle(ctx, votequeries.GetCountsRequest{
+	Counts, err := h.Services.Queries.GetCounts.Handle(ctx, votequeries.GetCountsRequest{
 		Target: Target,
 	})
 	if err != nil {

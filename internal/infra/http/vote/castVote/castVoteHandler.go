@@ -3,14 +3,13 @@ package castvote
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-
 	votecommands "github.com/arnald/forum/internal/app/votes/commands"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/vote"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/pkg/helpers"
+	"net/http"
 )
 
 type RequestModel struct {

@@ -82,7 +82,7 @@ func (h *Handler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.UserServices.UserServices.Commands.UpdateComment.Handle(ctx, commentCommands.UpdateCommentRequest{
+	_, err = h.UserServices.Commands.UpdateComment.Handle(ctx, commentCommands.UpdateCommentRequest{
 		CommentID: commentToUpdate.CommentID,
 		Content:   commentToUpdate.Content,
 		User:      user,

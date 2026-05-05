@@ -2,15 +2,11 @@ package main
 
 import (
 	"log"
-	"os"
 
-	"github.com/arnald/forum/internal/app"
+	"github.com/arnald/forum/internal/bootstrap"
 	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/realtime/notifications"
+	"github.com/arnald/forum/internal/infra/http"
 	"github.com/arnald/forum/internal/infra/storage/sqlite"
-	"github.com/arnald/forum/internal/infra/ws"
 )
 
 func main() {
@@ -27,24 +23,7 @@ func main() {
 	}
 	defer db.Close()
 
-	// 3. Create repository with injected DB
-	logger := logger.New(os.Stdout, logger.LevelInfo)
-	notifier := notifications.NewNotifier()
-	hub := ws.NewHub()
-	infraProviders := infra.NewInfraProviders(db)
-	appServices := app.NewServices(
-		infraProviders.Repositories.UserRepo,
-		infraProviders.Repositories.CategoryRepo,
-		infraProviders.Repositories.TopicRepo,
-		infraProviders.Repositories.CommentRepo,
-		infraProviders.Repositories.VoteRepo,
-		infraProviders.Repositories.OauthRepo,
-		infraProviders.Repositories.ActivityRepo,
-		infraProviders.Repositories.ChatRepo,
-		infraProviders.Repositories.NotificationRepo,
-		notifier,
-		hub,
-	)
-	infraHTTPServer := infra.NewHTTPServer(cfg, db, logger, appServices, hub)
-	infraHTTPServer.ListenAndServe()
+	app := bootstrap.Bootstrap(db, cfg)
+	HTTPServer := http.NewServer(cfg, app)
+	HTTPServer.ListenAndServe()
 }

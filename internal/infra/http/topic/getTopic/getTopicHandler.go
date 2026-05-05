@@ -94,7 +94,7 @@ func (h *Handler) GetTopic(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.Config.Timeouts.HandlerTimeouts.UserRegister)
 	defer cancel()
 
-	topic, err := h.UserServices.UserServices.Queries.GetTopic.Handle(ctx, topicQueries.GetTopicRequest{
+	topic, err := h.UserServices.Queries.GetTopic.Handle(ctx, topicQueries.GetTopicRequest{
 		TopicID: topicID,
 		UserID:  userID,
 	})
