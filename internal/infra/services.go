@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/arnald/forum/internal/app"
+	"github.com/arnald/forum/internal/bootstrap"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/infra/http"
 	"github.com/arnald/forum/internal/infra/logger"
@@ -22,6 +23,6 @@ func NewInfraProviders(db *sql.DB) Services {
 	}
 }
 
-func NewHTTPServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services, hub *ws.Hub) *http.Server {
-	return http.NewServer(cfg, db, logger, appServices, hub)
+func NewHTTPServer(cfg *config.ServerConfig, app *bootstrap.App) *http.Server {
+	return http.NewServer(cfg, app)
 }

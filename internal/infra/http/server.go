@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/arnald/forum/internal/app"
+	"github.com/arnald/forum/internal/bootstrap"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/session"
 	getuseractivity "github.com/arnald/forum/internal/infra/http/activity/getUserActivity"
@@ -47,12 +48,9 @@ import (
 	wshttp "github.com/arnald/forum/internal/infra/http/ws"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/sessionstore"
 	"github.com/arnald/forum/internal/infra/ws"
 	wshandlers "github.com/arnald/forum/internal/infra/ws/handlers"
 	oauth "github.com/arnald/forum/internal/pkg/oAuth"
-	"github.com/arnald/forum/internal/pkg/oAuth/githubclient"
-	"github.com/arnald/forum/internal/pkg/oAuth/googleclient"
 )
 
 const (
@@ -70,32 +68,25 @@ type Server struct {
 	wsRouter       ws.WSRouter
 	sessionManager session.Manager
 	cookieManager  *authcookies.Manager
-	oauth          *OAuth
+	oauth          *oauth.OAuth
 	middleware     *middleware.Middleware
 	db             *sql.DB
 	logger         logger.Logger
 	hub            *ws.Hub
 }
 
-type OAuth struct {
-	stateManager   *oauth.StateManager
-	githubProvider *githubclient.GitHubProvider
-	googleProvider *googleclient.GoogleProvider
-}
-
-func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services, hub *ws.Hub) *Server {
+func NewServer(cfg *config.ServerConfig, app *bootstrap.App) *Server {
 	httpServer := &Server{
-		router:      http.NewServeMux(),
-		appServices: appServices,
-		config:      cfg,
-		db:          db,
-		logger:      logger,
+		router:         http.NewServeMux(),
+		appServices:    app.Services,
+		config:         cfg,
+		logger:         app.Logger,
+		oauth:          app.OAuth,
+		cookieManager:  app.CookieManager,
+		sessionManager: app.SessionManager,
+		middleware:     app.Middlware,
+		hub:            app.Hub,
 	}
-	httpServer.initSessionManager()
-	httpServer.initCookieManager()
-	httpServer.initOAuthServices()
-	httpServer.initMiddleware(httpServer.sessionManager, httpServer.cookieManager)
-	httpServer.hub = hub
 	httpServer.initWSRouter()
 	httpServer.AddHTTPRoutes()
 	return httpServer
@@ -109,10 +100,15 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 }
 
 func (server *Server) initWSRouter() {
-	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.UserServices.Queries.GetChatHistory, server.logger)
+
+	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
+
 	pingWShandler := wshandlers.NewPingHandler()
-	markAsReadWShandler := wshandlers.NewChatMarkReadHandler(server.appServices.UserServices.Commands.MarkAsReadChatMessage, server.logger)
-	sendWShandler := wshandlers.NewChatSendHandler(server.appServices.UserServices.Commands.SendChatMessage, server.logger)
+
+	markAsReadWShandler := wshandlers.NewChatMarkReadHandler(server.appServices.Commands.MarkAsReadChatMessage, server.logger)
+
+	sendWShandler := wshandlers.NewChatSendHandler(server.appServices.Commands.SendChatMessage, server.logger)
+
 	server.wsRouter = ws.NewWSRouter(
 		chatHistoryWShandler,
 		pingWShandler,
@@ -123,7 +119,7 @@ func (server *Server) initWSRouter() {
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
-			health.NewHandler(server.logger, server.appServices.UserServices.Commands.CreateNotification).HealthCheck,
+			health.NewHandler(server.logger, server.appServices.Commands.CreateNotification).HealthCheck,
 			server.middleware.Authorization.Required,
 		))
 
@@ -155,40 +151,40 @@ func (server *Server) AddHTTPRoutes() {
 	// OAuth routes
 	server.router.HandleFunc(apiContext+"/auth/github/login",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.githubProvider,
+			server.oauth.GithubProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/github/callback",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.githubProvider,
+			server.oauth.GithubProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Callback,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/login",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.googleProvider,
+			server.oauth.GoogleProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/callback",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.googleProvider,
+			server.oauth.GoogleProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Callback,
@@ -229,7 +225,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Comment routes
 	server.router.HandleFunc(apiContext+"/comments/create",
 		middlewareChain(
-			createcomment.NewHandler(server.appServices.UserServices.Commands.CreateComment, server.config, server.logger).CreateComment,
+			createcomment.NewHandler(server.appServices.Commands.CreateComment, server.config, server.logger).CreateComment,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -284,7 +280,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Vote routes
 	server.router.HandleFunc(apiContext+"/vote/cast",
 		middlewareChain(
-			castvote.NewHandler(server.appServices.UserServices.Commands.CastVote, server.config, server.logger).CastVote,
+			castvote.NewHandler(server.appServices.Commands.CastVote, server.config, server.logger).CastVote,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -315,35 +311,35 @@ func (server *Server) AddHTTPRoutes() {
 
 	server.router.HandleFunc(apiContext+"/notifications/stream", // get
 		middlewareChain(
-			streamnotification.NewHandler(server.appServices.UserServices.Commands.OpenStream).StreamNotifications,
+			streamnotification.NewHandler(server.appServices.Commands.OpenStream).StreamNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/unread-count", // get
 		middlewareChain(
-			getunreadcount.NewHandler(server.appServices.UserServices.Queries.GetUnreadCount).GetUnread,
+			getunreadcount.NewHandler(server.appServices.Queries.GetUnreadCount).GetUnread,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications", // get
 		middlewareChain(
-			getnotifications.NewHandler(server.appServices.UserServices.Queries.GetNotifications).GetNotifications,
+			getnotifications.NewHandler(server.appServices.Queries.GetNotifications).GetNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-read", // post
 		middlewareChain(
-			markasread.NewHandler(server.appServices.UserServices.Commands.MarkAsRead).MarkAsRead,
+			markasread.NewHandler(server.appServices.Commands.MarkAsRead).MarkAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-all-read", // post
 		middlewareChain(
-			markallasread.NewHandler(server.appServices.UserServices.Commands.MarkAllAsRead).MarkAllAsRead,
+			markallasread.NewHandler(server.appServices.Commands.MarkAllAsRead).MarkAllAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -359,14 +355,14 @@ func (server *Server) AddHTTPRoutes() {
 	// Chat routes
 	server.router.HandleFunc(apiContext+"/chat/init",
 		middlewareChain(
-			initchat.NewHandler(server.appServices.UserServices.Commands.InitChat, server.logger).InitChat,
+			initchat.NewHandler(server.appServices.Commands.InitChat, server.logger).InitChat,
 			server.middleware.Authorization.Required,
 		))
 
 	server.router.HandleFunc(apiContext+"/chat/users",
 		middlewareChain(
 			getchatusers.NewHandler(
-				server.appServices.UserServices.Queries.GetChatUsers,
+				server.appServices.Queries.GetChatUsers,
 				server.logger,
 			).GetChatUsers,
 			server.middleware.Authorization.Required,
@@ -414,47 +410,6 @@ func (server *Server) ListenAndServe() {
 
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		server.logger.PrintFatal(err, nil)
-	}
-}
-
-func (server *Server) initSessionManager() {
-	server.sessionManager = sessionstore.NewSessionManager(server.db, server.config.SessionManager)
-}
-
-func (server *Server) initCookieManager() {
-	server.cookieManager = authcookies.NewManager(server.config.SessionManager)
-}
-
-// getUserIDFromRequest extracts the authenticated user's ID from the request context.
-// The Authorization.Required middleware runs before this and puts the user in context.
-func (server *Server) getUserIDFromRequest(r *http.Request) (string, error) {
-	user := middleware.GetUserFromContext(r)
-	if user == nil {
-		return "", errors.New("no authenticated user in context")
-	}
-	return user.ID, nil
-}
-
-func (server *Server) initMiddleware(sessionManager session.Manager, cookieManager *authcookies.Manager) {
-	server.middleware = middleware.NewMiddleware(sessionManager, cookieManager)
-}
-
-func (server *Server) initOAuthServices() {
-	server.oauth = &OAuth{
-		stateManager: oauth.NewStateManager(stateManagerDefaultLimit * time.Minute),
-		githubProvider: githubclient.NewProvider(
-			server.config.OAuth.GitHub.ClientID,
-			server.config.OAuth.GitHub.ClientSecret,
-			server.config.OAuth.GitHub.RedirectURL,
-			server.config.OAuth.GitHub.Scopes,
-		),
-		googleProvider: googleclient.NewProvider(
-			server.config.OAuth.Google.ClientID,
-			server.config.OAuth.Google.ClientSecret,
-			server.config.OAuth.Google.RedirectURL,
-			server.config.OAuth.Google.TokenURL,
-			server.config.OAuth.Google.Scopes,
-		),
 	}
 }
 

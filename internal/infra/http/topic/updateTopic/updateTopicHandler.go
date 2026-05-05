@@ -87,7 +87,7 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	topic, err := h.UserServices.UserServices.Commands.UpdateTopic.Handle(ctx, topicCommands.UpdateTopicRequest{
+	topic, err := h.UserServices.Commands.UpdateTopic.Handle(ctx, topicCommands.UpdateTopicRequest{
 		CategoryIDs: topicToUpdate.CategoryIDs,
 		TopicID:     topicToUpdate.TopicID,
 		Title:       topicToUpdate.Title,

@@ -68,7 +68,7 @@ func (h *Handler) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 			val.ToStringErrors())
 		return
 	}
-	category, err := h.UserServices.UserServices.Queries.GetCategoryByID.Handle(ctx, categoryqueries.GetCategoryByIDRequest{
+	category, err := h.UserServices.Queries.GetCategoryByID.Handle(ctx, categoryqueries.GetCategoryByIDRequest{
 		ID: categoryID,
 	})
 	if err != nil {

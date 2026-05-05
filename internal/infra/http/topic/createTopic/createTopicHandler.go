@@ -86,7 +86,7 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	topic, err := h.UserServices.UserServices.Commands.CreateTopic.Handle(ctx, topicCommands.CreateTopicRequest{
+	topic, err := h.UserServices.Commands.CreateTopic.Handle(ctx, topicCommands.CreateTopicRequest{
 		CategoryIDs: topicToCreate.CategoryIDs,
 		Title:       topicToCreate.Title,
 		Content:     topicToCreate.Content,
