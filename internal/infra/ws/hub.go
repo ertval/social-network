@@ -1,6 +1,8 @@
 package ws
 
 import (
+	"encoding/json"
+	"github.com/arnald/forum/internal/domain/chat"
 	"log"
 	"sync"
 )
@@ -55,6 +57,29 @@ func (h *Hub) Send(toUserID string, msg []byte) {
 
 	for client := range h.clients[toUserID] {
 		client.send <- msg
+	}
+}
+
+// this is here so that the hub ipmlement the broadcaster interface in the app
+// for this, the chat domain is imported, if we dedide we dont want that the next 2 methods should be implemented for a different struct so that the hub remains ws generic and not chat specific
+func (h *Hub) SendToUser(toUserID, requestID string, msg *chat.Message) {
+	outPayload, _ := json.Marshal(MessagePayload{
+		ID:        msg.ID,
+		ChatID:    msg.ChatID,
+		SenderID:  msg.SenderID,
+		Content:   msg.Content,
+		CreatedAt: msg.CreatedAt,
+	})
+	reply, _ := json.Marshal(Envelope{
+		Type:      TypeChatMessage,
+		RequestID: requestID,
+		Payload:   outPayload,
+	})
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	for client := range h.clients[toUserID] {
+		client.send <- reply
 	}
 }
 

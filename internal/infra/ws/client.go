@@ -21,6 +21,10 @@ type Client struct {
 	send   chan []byte
 }
 
+func (c *Client) Send(msg []byte) {
+	c.send <- msg
+}
+
 func NewClient(userID string, hub *Hub, conn *websocket.Conn) *Client {
 	return &Client{
 		UserID: userID,

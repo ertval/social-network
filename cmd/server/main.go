@@ -10,6 +10,7 @@ import (
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/realtime/notifications"
 	"github.com/arnald/forum/internal/infra/storage/sqlite"
+	"github.com/arnald/forum/internal/infra/ws"
 )
 
 func main() {
@@ -29,6 +30,7 @@ func main() {
 	// 3. Create repository with injected DB
 	logger := logger.New(os.Stdout, logger.LevelInfo)
 	notifier := notifications.NewNotifier()
+	hub := ws.NewHub()
 	infraProviders := infra.NewInfraProviders(db)
 	appServices := app.NewServices(
 		infraProviders.Repositories.UserRepo,
@@ -41,7 +43,8 @@ func main() {
 		infraProviders.Repositories.ChatRepo,
 		infraProviders.Repositories.NotificationRepo,
 		notifier,
+		hub,
 	)
-	infraHTTPServer := infra.NewHTTPServer(cfg, db, logger, appServices)
+	infraHTTPServer := infra.NewHTTPServer(cfg, db, logger, appServices, hub)
 	infraHTTPServer.ListenAndServe()
 }

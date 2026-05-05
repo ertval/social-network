@@ -4,6 +4,9 @@ import (
 	activityQueries "github.com/arnald/forum/internal/app/activities/queries"
 	categoryCommands "github.com/arnald/forum/internal/app/categories/commands"
 	categoryQueries "github.com/arnald/forum/internal/app/categories/queries"
+	chatapp "github.com/arnald/forum/internal/app/chat"
+	chatcommands "github.com/arnald/forum/internal/app/chat/commands"
+	chatqueries "github.com/arnald/forum/internal/app/chat/queries"
 	commentCommands "github.com/arnald/forum/internal/app/comments/commands"
 	commentQueries "github.com/arnald/forum/internal/app/comments/queries"
 	"github.com/arnald/forum/internal/app/notifications"
@@ -44,25 +47,30 @@ type Queries struct {
 	GetAllUsers        userQueries.GetAllUsersRequestHandler
 	GetNotifications   notificationqueries.GetNotificationsHandler
 	GetUnreadCount     notificationqueries.GetUnreadCountHandler
+	GetChatHistory     chatqueries.GetChatHistoryHandler
+	GetChatUsers       chatqueries.GetChatUsersHandler
 }
 
 type Commands struct {
-	UserRegister       userCommands.UserRegisterRequestHandler
-	CreateTopic        topicCommands.CreateTopicRequestHandler
-	UpdateTopic        topicCommands.UpdateTopicRequestHandler
-	DeleteTopic        topicCommands.DeleteTopicRequestHandler
-	CreateComment      commentCommands.CreateCommentRequestHandler
-	UpdateComment      commentCommands.UpdateCommentRequestHandler
-	DeleteComment      commentCommands.DeleteCommentRequestHandler
-	CreateCategory     categoryCommands.CreateCategoryRequestHandler
-	UpdateCategory     categoryCommands.UpdateCategoryRequestHandler
-	DeleteCategory     categoryCommands.DeleteCategoryRequestHandler
-	CastVote           votecommands.CastVoteRequestHandler
-	DeleteVote         votecommands.DeleteVoteRequestHandler
-	CreateNotification notificationcommands.CreateNotificationHandler
-	OpenStream         notificationcommands.OpenStreamHandler
-	MarkAsRead         notificationcommands.MarkAsReadHandler
-	MarkAllAsRead      notificationcommands.MarkAllAsReadHandler
+	UserRegister          userCommands.UserRegisterRequestHandler
+	CreateTopic           topicCommands.CreateTopicRequestHandler
+	UpdateTopic           topicCommands.UpdateTopicRequestHandler
+	DeleteTopic           topicCommands.DeleteTopicRequestHandler
+	CreateComment         commentCommands.CreateCommentRequestHandler
+	UpdateComment         commentCommands.UpdateCommentRequestHandler
+	DeleteComment         commentCommands.DeleteCommentRequestHandler
+	CreateCategory        categoryCommands.CreateCategoryRequestHandler
+	UpdateCategory        categoryCommands.UpdateCategoryRequestHandler
+	DeleteCategory        categoryCommands.DeleteCategoryRequestHandler
+	CastVote              votecommands.CastVoteRequestHandler
+	DeleteVote            votecommands.DeleteVoteRequestHandler
+	CreateNotification    notificationcommands.CreateNotificationHandler
+	OpenStream            notificationcommands.OpenStreamHandler
+	MarkAsRead            notificationcommands.MarkAsReadHandler
+	MarkAllAsRead         notificationcommands.MarkAllAsReadHandler
+	InitChat              chatcommands.InitChatHandler
+	MarkAsReadChatMessage chatcommands.MarkAsReadHandler
+	SendChatMessage       chatcommands.SendChatHandler
 }
 
 type UserServices struct {
@@ -75,11 +83,10 @@ type Services struct {
 	ChatRepo     chat.Repository
 }
 
-func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier) Services {
+func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier, broadcaster chatapp.Broadcaster) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
-		ChatRepo: chatRepo,
 		UserServices: UserServices{
 			Queries: Queries{
 				*oauthservice.NewOAuthService(oauthRepo, uuidProvider),
@@ -96,6 +103,8 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 				userQueries.NewGetAllUsersRequestHandler(userRepo),
 				notificationqueries.NewGetNotificationsHandler(notificationsRepo),
 				notificationqueries.NewGetUnreadCountHandler(notificationsRepo),
+				chatqueries.NewGetChatHistoryHandler(chatRepo),
+				chatqueries.NewGetChatUsersHandler(chatRepo, userRepo, broadcaster),
 			},
 			Commands: Commands{
 				userCommands.NewUserRegisterHandler(userRepo, uuidProvider, encryption),
@@ -114,6 +123,9 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 				notificationcommands.NewOpenStreamHandler(notificationsRepo, notifier),
 				notificationcommands.NewMarkAsReadHandler(notificationsRepo),
 				notificationcommands.NewMarkAllAsReadHandler(notificationsRepo),
+				chatcommands.NewInitChatHandler(chatRepo),
+				chatcommands.NewMarkAsReadHandler(chatRepo),
+				chatcommands.NewSendChatHandler(chatRepo, broadcaster),
 			},
 		},
 	}
