@@ -44,10 +44,12 @@ import (
 	castvote "github.com/arnald/forum/internal/infra/http/vote/castVote"
 	deletevote "github.com/arnald/forum/internal/infra/http/vote/deleteVote"
 	getCounts "github.com/arnald/forum/internal/infra/http/vote/getVoteCounts"
-	"github.com/arnald/forum/internal/infra/http/ws"
+	wshttp "github.com/arnald/forum/internal/infra/http/ws"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/infra/storage/sessionstore"
+	"github.com/arnald/forum/internal/infra/ws"
+	wshandlers "github.com/arnald/forum/internal/infra/ws/handlers"
 	oauth "github.com/arnald/forum/internal/pkg/oAuth"
 	"github.com/arnald/forum/internal/pkg/oAuth/githubclient"
 	"github.com/arnald/forum/internal/pkg/oAuth/googleclient"
@@ -65,6 +67,7 @@ type Server struct {
 	appServices    app.Services
 	config         *config.ServerConfig
 	router         *http.ServeMux
+	wsRouter       ws.WSRouter
 	sessionManager session.Manager
 	cookieManager  *authcookies.Manager
 	oauth          *OAuth
@@ -80,7 +83,7 @@ type OAuth struct {
 	googleProvider *googleclient.GoogleProvider
 }
 
-func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services) *Server {
+func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services, hub *ws.Hub) *Server {
 	httpServer := &Server{
 		router:      http.NewServeMux(),
 		appServices: appServices,
@@ -92,7 +95,8 @@ func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appSe
 	httpServer.initCookieManager()
 	httpServer.initOAuthServices()
 	httpServer.initMiddleware(httpServer.sessionManager, httpServer.cookieManager)
-	httpServer.hub = ws.NewHub()
+	httpServer.hub = hub
+	httpServer.initWSRouter()
 	httpServer.AddHTTPRoutes()
 	return httpServer
 }
@@ -104,6 +108,18 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 	return handler
 }
 
+func (server *Server) initWSRouter() {
+	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.UserServices.Queries.GetChatHistory, server.logger)
+	pingWShandler := wshandlers.NewPingHandler()
+	markAsReadWShandler := wshandlers.NewChatMarkReadHandler(server.appServices.UserServices.Commands.MarkAsReadChatMessage, server.logger)
+	sendWShandler := wshandlers.NewChatSendHandler(server.appServices.UserServices.Commands.SendChatMessage, server.logger)
+	server.wsRouter = ws.NewWSRouter(
+		chatHistoryWShandler,
+		pingWShandler,
+		markAsReadWShandler,
+		sendWShandler,
+	)
+}
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
@@ -335,7 +351,7 @@ func (server *Server) AddHTTPRoutes() {
 	// WebSocket route — chat and presence
 	server.router.HandleFunc(apiContext+"/ws",
 		middlewareChain(
-			ws.Handler(server.hub, server.getUserIDFromRequest, ws.MessageHandler(server.hub, server.appServices.ChatRepo)),
+			wshttp.NewHandler(server.hub, server.wsRouter, server.logger).UpgradeConnection,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -343,16 +359,14 @@ func (server *Server) AddHTTPRoutes() {
 	// Chat routes
 	server.router.HandleFunc(apiContext+"/chat/init",
 		middlewareChain(
-			initchat.NewHandler(server.appServices.ChatRepo, server.logger).InitChat,
+			initchat.NewHandler(server.appServices.UserServices.Commands.InitChat, server.logger).InitChat,
 			server.middleware.Authorization.Required,
 		))
 
 	server.router.HandleFunc(apiContext+"/chat/users",
 		middlewareChain(
 			getchatusers.NewHandler(
-				server.appServices,
-				server.appServices.ChatRepo,
-				server.hub,
+				server.appServices.UserServices.Queries.GetChatUsers,
 				server.logger,
 			).GetChatUsers,
 			server.middleware.Authorization.Required,

@@ -3,6 +3,10 @@ package ws
 import (
 	"net/http"
 
+	"github.com/arnald/forum/internal/infra/logger"
+	"github.com/arnald/forum/internal/infra/middleware"
+	"github.com/arnald/forum/internal/infra/ws"
+	"github.com/arnald/forum/internal/pkg/helpers"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,30 +19,37 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// Hnadler upgrades the connection and registers the client with the hub.
-// getUserIDFromRequest is injected so this package has no auth dependency.
-func Handler(
-	hub *Hub,
-	getUserIDFromRequest func(r *http.Request) (string, error),
-	onMessage func(client *Client, msg []byte),
-) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		userID, err := getUserIDFromRequest(r)
-		if err != nil || userID == "" {
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
+type Handler struct {
+	hub    *ws.Hub
+	router ws.WSRouter
+	logger logger.Logger
+}
 
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			http.Error(w, "could not upgrade connection", http.StatusInternalServerError)
-			return
-		}
-
-		client := NewClient(userID, hub, conn)
-		hub.Register(client)
-
-		go client.WritePump()
-		go client.ReadPump(onMessage)
+func NewHandler(hub *ws.Hub, router ws.WSRouter, logger logger.Logger) *Handler {
+	return &Handler{
+		hub:    hub,
+		router: router,
+		logger: logger,
 	}
+}
+
+func (h *Handler) UpgradeConnection(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r)
+	if user == nil {
+		helpers.RespondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		h.logger.PrintError(err, nil)
+		http.Error(w, "could not upgrade connection", http.StatusInternalServerError)
+		return
+	}
+
+	client := ws.NewClient(user.ID, h.hub, conn)
+	h.hub.Register(client)
+
+	go client.WritePump()
+	go client.ReadPump(h.router.Route)
 }

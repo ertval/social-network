@@ -8,6 +8,7 @@ import (
 	"github.com/arnald/forum/internal/infra/http"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/storage/sqlite"
+	"github.com/arnald/forum/internal/infra/ws"
 )
 
 type Services struct {
@@ -21,6 +22,6 @@ func NewInfraProviders(db *sql.DB) Services {
 	}
 }
 
-func NewHTTPServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services) *http.Server {
-	return http.NewServer(cfg, db, logger, appServices)
+func NewHTTPServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services, hub *ws.Hub) *http.Server {
+	return http.NewServer(cfg, db, logger, appServices, hub)
 }
