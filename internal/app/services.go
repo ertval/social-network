@@ -13,6 +13,7 @@ import (
 	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	notificationqueries "github.com/arnald/forum/internal/app/notifications/queries"
 	oauthservice "github.com/arnald/forum/internal/app/oauth"
+	"github.com/arnald/forum/internal/app/topics"
 	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
 	topicQueries "github.com/arnald/forum/internal/app/topics/queries"
 	userCommands "github.com/arnald/forum/internal/app/user/commands"
@@ -78,7 +79,7 @@ type Services struct {
 	Commands Commands
 }
 
-func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier, broadcaster chatapp.Broadcaster) Services {
+func NewServices(userRepo user.Repository, categoryRepo category.Repository, topicRepo topic.Repository, commentRepo comment.Repository, voteRepo vote.Repository, oauthRepo oauth.Repository, activityRepo activity.Repository, chatRepo chat.Repository, notificationsRepo notification.Repository, notifier notifications.Notifier, broadcaster chatapp.Broadcaster, fileStorage topics.FileStorageManager) Services {
 	uuidProvider := uuid.NewProvider()
 	encryption := bcrypt.NewProvider()
 	return Services{
@@ -102,9 +103,9 @@ func NewServices(userRepo user.Repository, categoryRepo category.Repository, top
 		},
 		Commands: Commands{
 			userCommands.NewUserRegisterHandler(userRepo, uuidProvider, encryption),
-			topicCommands.NewCreateTopicHandler(topicRepo),
-			topicCommands.NewUpdateTopicHandler(topicRepo),
-			topicCommands.NewDeleteTopicHandler(topicRepo),
+			topicCommands.NewCreateTopicHandler(topicRepo, fileStorage),
+			topicCommands.NewUpdateTopicHandler(topicRepo, fileStorage),
+			topicCommands.NewDeleteTopicHandler(topicRepo, fileStorage),
 			commentCommands.NewCreateCommentRequestHandler(commentRepo, topicRepo, notificationsRepo, notifier),
 			commentCommands.NewUpdateCommentRequestHandler(commentRepo),
 			commentCommands.NewDeleteCommentHandler(commentRepo),

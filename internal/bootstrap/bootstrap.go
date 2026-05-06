@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/arnald/forum/internal/app"
+	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/session"
 	"github.com/arnald/forum/internal/infra/http/authcookies"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/infra/realtime/notifications"
+	localstorage "github.com/arnald/forum/internal/infra/storage/local"
 	"github.com/arnald/forum/internal/infra/storage/sessionstore"
 	"github.com/arnald/forum/internal/infra/storage/sqlite"
 	"github.com/arnald/forum/internal/infra/ws"
@@ -31,6 +33,7 @@ type App struct {
 	CookieManager  *authcookies.Manager
 	OAuth          *oauth.OAuth
 	Logger         logger.Logger
+	FileStorage    topics.FileStorageManager
 }
 
 func Bootstrap(db *sql.DB, cfg *config.ServerConfig) *App {
@@ -40,7 +43,8 @@ func Bootstrap(db *sql.DB, cfg *config.ServerConfig) *App {
 	cookieManager := authcookies.NewManager(cfg.SessionManager)
 	middleware := middleware.NewMiddleware(sessionManager, cookieManager)
 	repos := sqlite.NewRepositories(db)
-	services := app.NewServices(repos.UserRepo, repos.CategoryRepo, repos.TopicRepo, repos.CommentRepo, repos.VoteRepo, repos.OauthRepo, repos.ActivityRepo, repos.ChatRepo, repos.NotificationRepo, notifier, hub)
+	fileStorage := localstorage.NewLocalStorage()
+	services := app.NewServices(repos.UserRepo, repos.CategoryRepo, repos.TopicRepo, repos.CommentRepo, repos.VoteRepo, repos.OauthRepo, repos.ActivityRepo, repos.ChatRepo, repos.NotificationRepo, notifier, hub, fileStorage)
 	oAuth := InitOAuth(cfg.OAuth)
 	logger := logger.New(os.Stdout, logger.LevelInfo)
 	return &App{
@@ -52,6 +56,7 @@ func Bootstrap(db *sql.DB, cfg *config.ServerConfig) *App {
 		CookieManager:  cookieManager,
 		OAuth:          oAuth,
 		Logger:         logger,
+		FileStorage:    fileStorage,
 	}
 }
 

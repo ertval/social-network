@@ -3,6 +3,7 @@ package topiccommands
 import (
 	"context"
 
+	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
 )
@@ -21,12 +22,14 @@ type UpdateTopicRequestHandler interface {
 }
 
 type updateTopicRequestHandler struct {
-	repo topic.Repository
+	repo        topic.Repository
+	fileStorage topics.FileStorageManager
 }
 
-func NewUpdateTopicHandler(repo topic.Repository) UpdateTopicRequestHandler {
+func NewUpdateTopicHandler(repo topic.Repository, fileStorage topics.FileStorageManager) UpdateTopicRequestHandler {
 	return &updateTopicRequestHandler{
-		repo: repo,
+		repo:        repo,
+		fileStorage: fileStorage,
 	}
 }
 
@@ -40,6 +43,8 @@ func (h *updateTopicRequestHandler) Handle(ctx context.Context, req UpdateTopicR
 		ImagePath:   req.ImagePath,
 	}
 
+	//this is now ready to use for the images
+	//h.fileStorage.Upload(ImageFile,ImagePath)
 	err := h.repo.UpdateTopic(ctx, topic)
 	if err != nil {
 		return nil, err
