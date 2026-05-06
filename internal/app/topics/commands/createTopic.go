@@ -3,6 +3,7 @@ package topiccommands
 import (
 	"context"
 
+	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
 )
@@ -20,12 +21,14 @@ type CreateTopicRequestHandler interface {
 }
 
 type createTopicRequestHandler struct {
-	repo topic.Repository
+	repo        topic.Repository
+	fileStorage topics.FileStorageManager
 }
 
-func NewCreateTopicHandler(repo topic.Repository) CreateTopicRequestHandler {
+func NewCreateTopicHandler(repo topic.Repository, fileStorage topics.FileStorageManager) CreateTopicRequestHandler {
 	return &createTopicRequestHandler{
-		repo: repo,
+		repo:        repo,
+		fileStorage: fileStorage,
 	}
 }
 
@@ -38,6 +41,7 @@ func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicR
 		ImagePath:   req.ImagePath,
 	}
 
+	//h.fileStorage.Upload(req.ImageFile,req.ImageFileName)
 	err := h.repo.CreateTopic(ctx, topic)
 	if err != nil {
 		return nil, err
