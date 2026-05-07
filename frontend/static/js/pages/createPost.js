@@ -328,36 +328,37 @@ function initFormSubmit() {
     const file = fileInput?.files?.[0] ?? null;
 
     try {
+      // Image selected — send multipart so the backend can receive the file.
+      // Requires the backend createTopic handler to accept multipart/form-data.
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      categories.forEach((id) => formData.append('categories', String(id)));
       if (file) {
-        // Image selected — send multipart so the backend can receive the file.
-        // Requires the backend createTopic handler to accept multipart/form-data.
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('content', content);
-        categories.forEach((id) => formData.append('categories', String(id)));
         formData.append('image_path', file);
-
-        const response = await fetch('/api/v1/topics/create', {
-          method: 'POST',
-          credentials: 'include',
-          body: formData,
-          // Do NOT set Content-Type — browser sets the multipart boundary automatically
-        });
-
-        if (!response.ok) {
-          const body = await response.json().catch(() => ({}));
-          throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
-        }
-      } else {
-        // No image — send JSON directly, matching createTopicRequest struct:
-        // { title, content, imagePath, categoryIds }
-        await api.post('/topics/create', {
-          title,
-          content,
-          imagePath: '',
-          categoryIds: categories,
-        });
       }
+
+      const response = await fetch('/api/v1/topics/create', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+        // Do NOT set Content-Type — browser sets the multipart boundary automatically
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
+      }
+      // } else {
+      //   // No image — send JSON directly, matching createTopicRequest struct:
+      //   // { title, content, imagePath, categoryIds }
+      //   await api.post('/topics/create', {
+      //     title,
+      //     content,
+      //     imagePath: '',
+      //     categoryIds: categories,
+      //   });
+      // }
 
       navigate('/topics');
     } catch (err) {

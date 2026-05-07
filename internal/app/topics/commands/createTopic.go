@@ -2,22 +2,15 @@ package topiccommands
 
 import (
 	"context"
-	"errors"
-	"io"
-	"mime/multipart"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
+	"io"
+	"mime/multipart"
 )
 
 const (
-	savingDir       = "frontend/static/images/uploads"
-	imagepathprefix = "/static/images/uploads"
-	uploadDirPerm   = 0o750
+	imagepathprefix = "/static/images/uploads/"
 )
 
 type CreateTopicRequest struct {
@@ -50,43 +43,27 @@ func NewCreateTopicHandler(repo topic.Repository, fileStorage topics.FileStorage
 }
 
 func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicRequest) (*topic.Topic, error) {
-
-	err := os.MkdirAll(savingDir, uploadDirPerm)
+	var topic topic.Topic
+	if req.ImagePath != "" {
+		topic.UserID = req.User.ID
+		topic.CategoryIDs = req.CategoryIDs
+		topic.Title = req.Title
+		topic.Content = req.Content
+		topic.ImagePath = imagepathprefix + req.ImagePath
+		filecontent, err := io.ReadAll(*req.ImageFile.File)
+		if err != nil {
+			return nil, err
+		}
+		h.fileStorage.Upload(ctx, filecontent, req.ImagePath)
+	} else {
+		topic.UserID = req.User.ID
+		topic.CategoryIDs = req.CategoryIDs
+		topic.Title = req.Title
+		topic.Content = req.Content
+	}
+	err := h.repo.CreateTopic(ctx, &topic)
 	if err != nil {
 		return nil, err
 	}
-	destPath := filepath.Join(savingDir, req.ImagePath)
-	destPath = filepath.Clean(destPath)
-
-	if !strings.HasPrefix(destPath, filepath.Clean(savingDir)+string(os.PathSeparator)) {
-		return nil, errors.New("Invalid File Path")
-	}
-
-	var destFile *os.File
-	destFile, err = os.Create(destPath)
-	if err != nil {
-		return nil, err
-	}
-	defer destFile.Close()
-
-	_, err = io.Copy(destFile, *req.ImageFile.File)
-	if err != nil {
-		return nil, err
-	}
-	req.ImagePath = filepath.Join(imagepathprefix, req.ImagePath)
-
-	topic := &topic.Topic{
-		UserID:      req.User.ID,
-		CategoryIDs: req.CategoryIDs,
-		Title:       req.Title,
-		Content:     req.Content,
-		ImagePath:   req.ImagePath,
-	}
-
-	//h.fileStorage.Upload(req.ImageFile,req.ImageFileName)
-	err := h.repo.CreateTopic(ctx, topic)
-	if err != nil {
-		return nil, err
-	}
-	return topic, nil
+	return &topic, nil
 }
