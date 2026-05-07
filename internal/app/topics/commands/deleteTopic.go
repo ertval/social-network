@@ -2,6 +2,7 @@ package topiccommands
 
 import (
 	"context"
+	"strings"
 
 	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
@@ -30,10 +31,16 @@ func NewDeleteTopicHandler(repo topic.Repository, fileStorage topics.FileStorage
 }
 
 func (h *deleteTopicRequestHandler) Handle(ctx context.Context, req DeleteTopicRequest) error {
-	err := h.repo.DeleteTopic(ctx, req.User.ID, req.TopicID)
+	imagePath, err := h.repo.GetImagePathFromTopicID(ctx, req.TopicID, req.User.ID)
 	if err != nil {
 		return err
 	}
-	//h.fileStorage.Delete(req.ImagePath)
+	if imagePath != "" {
+		h.fileStorage.Delete(ctx, strings.TrimPrefix(imagePath, uploadDir))
+	}
+	err = h.repo.DeleteTopic(ctx, req.User.ID, req.TopicID)
+	if err != nil {
+		return err
+	}
 	return nil
 }

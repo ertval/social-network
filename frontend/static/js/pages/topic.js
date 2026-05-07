@@ -632,37 +632,26 @@ function initTopicEditFormSubmit(topic) {
     const file = fileInput?.files?.[0] ?? null;
 
     try {
+      // New image selected — send multipart
+      const fd = new FormData();
+      fd.append('topic_id', String(topicId));
+      fd.append('title', title);
+      fd.append('content', content);
+      categories.forEach((id) => fd.append('categories', String(id)));
       if (file) {
-        // New image selected — send multipart
-        const fd = new FormData();
-        fd.append('topic_id', String(topicId));
-        fd.append('title', title);
-        fd.append('content', content);
         fd.append('current_image_path', currentPath);
-        categories.forEach((id) => fd.append('categories', String(id)));
         fd.append('image_path', file);
+      }
 
-        const response = await fetch('/api/v1/topics/update', {
-          method: 'PUT',
-          credentials: 'include',
-          body: fd,
-        });
+      const response = await fetch('/api/v1/topics/update', {
+        method: 'PUT',
+        credentials: 'include',
+        body: fd,
+      });
 
-        if (!response.ok) {
-          const body = await response.json().catch(() => ({}));
-          throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
-        }
-      } else {
-        // No new image — send JSON with updateTopicRequest shape
-        // imagePath: keep currentPath (preserves existing image)
-        // to remove an image entirely, set imagePath: ""
-        await api.put('/topics/update', {
-          topicId,
-          title,
-          content,
-          categoryIds: categories,
-          imagePath: currentPath,
-        });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body?.error || body?.message || `HTTP ${response.status}`);
       }
 
       const { getUser } = await import('../auth.js');
@@ -765,7 +754,7 @@ function initVoteButtons(topic, user) {
   if (!user) return; // buttons are already disabled in the HTML for guests
 
   document.querySelectorAll('.like-btn, .dislike-btn').forEach((btn) => {
-    btn.addEventListener('click', async function () {
+    btn.addEventListener('click', async function() {
       if (this.disabled) return;
 
       const isLike = this.classList.contains('like-btn');
