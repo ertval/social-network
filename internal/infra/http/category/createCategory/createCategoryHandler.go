@@ -77,7 +77,7 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	err = h.UserServices.UserServices.Commands.CreateCategory.Handle(ctx, categorycommands.CreateCategoryRequest{
+	err = h.UserServices.Commands.CreateCategory.Handle(ctx, categorycommands.CreateCategoryRequest{
 		Name:        categoryToCreate.Name,
 		Description: categoryToCreate.Description,
 		CreatedBy:   user.ID,

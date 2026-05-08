@@ -57,7 +57,7 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.UserServices.UserServices.Queries.UserLoginEmail.Handle(ctx, userQueries.UserLoginEmailRequest{
+	user, err := h.UserServices.Queries.UserLoginEmail.Handle(ctx, userQueries.UserLoginEmailRequest{
 		Email:    userToLogin.Email,
 		Password: userToLogin.Password,
 	})
@@ -93,7 +93,7 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		//not sure if we need them anymore in the response
 	}
 
-	h.SessionManager.SetCookies(w, newSession)
+	h.CookieManager.SetCookies(w, newSession)
 
 	helpers.RespondWithJSON(
 		w,

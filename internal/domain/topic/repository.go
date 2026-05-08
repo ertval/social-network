@@ -9,4 +9,5 @@ type Repository interface {
 	GetTopicByID(ctx context.Context, topicID int, userID *string) (*Topic, error)
 	GetAllTopics(ctx context.Context, page, size, categoryID int, orderBy, order, filter string, userID *string) ([]Topic, error)
 	GetTotalTopicsCount(ctx context.Context, filter string, categoryID int) (int, error)
+	GetImagePathFromTopicID(ctx context.Context, topicID int, userID string) (imagePath string, err error)
 }

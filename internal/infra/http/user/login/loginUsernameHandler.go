@@ -64,7 +64,7 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.UserServices.UserServices.Queries.UserLoginUsername.Handle(ctx, userQueries.UserLoginUsernameRequest{
+	user, err := h.UserServices.Queries.UserLoginUsername.Handle(ctx, userQueries.UserLoginUsernameRequest{
 		Username: userToLogin.Username,
 		Password: userToLogin.Password,
 	})
@@ -98,7 +98,7 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 		//not sure if we need them anymore in the response
 	}
 
-	h.SessionManager.SetCookies(w, newSession)
+	h.CookieManager.SetCookies(w, newSession)
 
 	helpers.RespondWithJSON(
 		w,

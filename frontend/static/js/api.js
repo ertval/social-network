@@ -21,40 +21,43 @@ const API_BASE = '/api/v1';
  */
 async function apiFetch(path, options = {}) {
   const url = API_BASE + path;
+  const hasBody = options.body !== undefined && options.body !== null;
 
   const defaultOptions = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    // Always send cookies so the backend session middleware can read them.
+    headers: hasBody ? { 'Content-Type': 'application/json' } : {},
     credentials: 'include',
   };
 
   const mergedOptions = {
     ...defaultOptions,
     ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...(options.headers || {}),
-    },
+    headers: { ...defaultOptions.headers, ...(options.headers || {}) },
   };
 
   const response = await fetch(url, mergedOptions);
 
-  // Parse the JSON body regardless of status so we can extract error messages.
+  const text = await response.text();
+
+  if (!response.ok) {
+    let message;
+    try {
+      const errBody = text ? JSON.parse(text) : {};
+      message = errBody?.error || errBody?.message || `HTTP ${response.status}`;
+    } catch {
+      message = text || `HTTP ${response.status}`;
+    }
+    throw new ApiError(response.status, message);
+  }
+
+  if (!text) return {};
+
   let body;
   try {
-    body = await response.json();
+    body = JSON.parse(text);
   } catch {
     throw new ApiError(response.status, 'Failed to parse server response');
   }
 
-  if (!response.ok) {
-    const message = body?.error || body?.message || `HTTP ${response.status}`;
-    throw new ApiError(response.status, message);
-  }
-
-  // Unwrap the backend envelope: { data: T }
   return body?.data !== undefined ? body.data : body;
 }
 
@@ -92,7 +95,7 @@ export const api = {
   delete(path, body) {
     return apiFetch(path, {
       method: 'DELETE',
-      body: body ? JSON.stringify(body) : undefined,
+      ...(body !== undefined && { body: JSON.stringify(body) }),
     });
   },
 };
@@ -184,6 +187,9 @@ export async function deleteTopic(body) {
 }
 
 // ─── Comments ─────────────────────────────────────────────────────────────────
+export async function fetchComment(id) {
+  return api.get('/comments/get', { id });
+}
 
 export async function fetchCommentsByTopic(topicId) {
   return api.get('/comments/topic', { topic_id: topicId });
@@ -208,7 +214,7 @@ export async function castVote(body) {
 }
 
 export async function deleteVote(body) {
-  return api.post('/vote/delete', body);
+  return api.delete('/vote/delete', body);
 }
 
 export async function fetchVoteCounts(params) {
@@ -226,7 +232,7 @@ export async function fetchUnreadCount() {
 }
 
 export async function markNotificationRead(id) {
-  return api.post('/notifications/mark-read', { id });
+  return api.post(`/notifications/mark-read?id=${id}`, null);
 }
 
 export async function markAllNotificationsRead() {

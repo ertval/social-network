@@ -2,7 +2,9 @@ package topiccommands
 
 import (
 	"context"
+	"strings"
 
+	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
 )
@@ -17,17 +19,26 @@ type DeleteTopicRequestHandler interface {
 }
 
 type deleteTopicRequestHandler struct {
-	repo topic.Repository
+	repo        topic.Repository
+	fileStorage topics.FileStorageManager
 }
 
-func NewDeleteTopicHandler(repo topic.Repository) DeleteTopicRequestHandler {
+func NewDeleteTopicHandler(repo topic.Repository, fileStorage topics.FileStorageManager) DeleteTopicRequestHandler {
 	return &deleteTopicRequestHandler{
-		repo: repo,
+		repo:        repo,
+		fileStorage: fileStorage,
 	}
 }
 
 func (h *deleteTopicRequestHandler) Handle(ctx context.Context, req DeleteTopicRequest) error {
-	err := h.repo.DeleteTopic(ctx, req.User.ID, req.TopicID)
+	imagePath, err := h.repo.GetImagePathFromTopicID(ctx, req.TopicID, req.User.ID)
+	if err != nil {
+		return err
+	}
+	if imagePath != "" {
+		h.fileStorage.Delete(ctx, strings.TrimPrefix(imagePath, uploadDir))
+	}
+	err = h.repo.DeleteTopic(ctx, req.User.ID, req.TopicID)
 	if err != nil {
 		return err
 	}

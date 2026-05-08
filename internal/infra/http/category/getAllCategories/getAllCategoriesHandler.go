@@ -51,7 +51,7 @@ func (h *Handler) GetAllCategories(w http.ResponseWriter, r *http.Request) {
 	order := params.GetQueryStringOr("order", "desc")
 	filter := params.GetQueryStringOr("search", "")
 
-	categories, totalCount, err := h.UserServices.UserServices.Queries.GetAllCategories.Handle(ctx, categoryqueries.GetAllCategoriesRequest{
+	categories, totalCount, err := h.UserServices.Queries.GetAllCategories.Handle(ctx, categoryqueries.GetAllCategoriesRequest{
 		OrderBy: orderBy,
 		Order:   order,
 		Filter:  filter,

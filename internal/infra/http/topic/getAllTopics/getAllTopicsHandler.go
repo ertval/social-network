@@ -84,7 +84,7 @@ func (h *Handler) GetAllTopics(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	allTopics, err := h.UserServices.UserServices.Queries.GetAllTopics.Handle(ctx, topicQueries.GetAllTopicsRequest{
+	allTopics, err := h.UserServices.Queries.GetAllTopics.Handle(ctx, topicQueries.GetAllTopicsRequest{
 		Page:       pagination.Page,
 		Size:       pagination.Limit,
 		Offset:     pagination.Offset,

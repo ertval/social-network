@@ -5,21 +5,21 @@ import (
 	"time"
 
 	"github.com/arnald/forum/internal/app/health/queries"
+	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	"github.com/arnald/forum/internal/domain/notification"
 	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 	"github.com/arnald/forum/internal/pkg/helpers"
 )
 
 type Handler struct {
-	Logger        logger.Logger
-	Notifications *notifications.NotificationService
+	Logger             logger.Logger
+	createNotification notificationcommands.CreateNotificationHandler
 }
 
-func NewHandler(logger logger.Logger, notifications *notifications.NotificationService) *Handler {
+func NewHandler(logger logger.Logger, createNotificationHandler notificationcommands.CreateNotificationHandler) *Handler {
 	return &Handler{
-		Logger:        logger,
-		Notifications: notifications,
+		Logger:             logger,
+		createNotification: createNotificationHandler,
 	}
 }
 
@@ -46,7 +46,7 @@ func (h Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 		RelatedID:   relatedID,
 		IsRead:      false,
 	}
-	err := h.Notifications.CreateNotification(r.Context(), testNotification)
+	err := h.createNotification.Handle(r.Context(), notificationcommands.CreateNotificationRequest{Notification: testNotification})
 	if err != nil {
 		h.Logger.PrintError(err, nil)
 		helpers.RespondWithError(w, http.StatusInternalServerError, "Failed to create test notification")

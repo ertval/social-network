@@ -9,14 +9,18 @@ import (
 	"time"
 
 	"github.com/arnald/forum/internal/app"
+	"github.com/arnald/forum/internal/bootstrap"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/session"
 	getuseractivity "github.com/arnald/forum/internal/infra/http/activity/getUserActivity"
+	"github.com/arnald/forum/internal/infra/http/authcookies"
 	createcategory "github.com/arnald/forum/internal/infra/http/category/createCategory"
 	deletecategory "github.com/arnald/forum/internal/infra/http/category/deleteCategory"
 	getallcategories "github.com/arnald/forum/internal/infra/http/category/getAllCategories"
 	getcategorybyid "github.com/arnald/forum/internal/infra/http/category/getCategoryByID"
 	updatecategory "github.com/arnald/forum/internal/infra/http/category/updateCategory"
+	getchatusers "github.com/arnald/forum/internal/infra/http/chat/getChatUsers"
+	initchat "github.com/arnald/forum/internal/infra/http/chat/initChat"
 	createcomment "github.com/arnald/forum/internal/infra/http/comment/createComment"
 	deletecomment "github.com/arnald/forum/internal/infra/http/comment/deleteComment"
 	getcomment "github.com/arnald/forum/internal/infra/http/comment/getComment"
@@ -41,13 +45,12 @@ import (
 	castvote "github.com/arnald/forum/internal/infra/http/vote/castVote"
 	deletevote "github.com/arnald/forum/internal/infra/http/vote/deleteVote"
 	getCounts "github.com/arnald/forum/internal/infra/http/vote/getVoteCounts"
+	wshttp "github.com/arnald/forum/internal/infra/http/ws"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
-	"github.com/arnald/forum/internal/infra/storage/sessionstore"
+	"github.com/arnald/forum/internal/infra/ws"
+	wshandlers "github.com/arnald/forum/internal/infra/ws/handlers"
 	oauth "github.com/arnald/forum/internal/pkg/oAuth"
-	"github.com/arnald/forum/internal/pkg/oAuth/githubclient"
-	"github.com/arnald/forum/internal/pkg/oAuth/googleclient"
 )
 
 const (
@@ -62,32 +65,29 @@ type Server struct {
 	appServices    app.Services
 	config         *config.ServerConfig
 	router         *http.ServeMux
+	wsRouter       ws.WSRouter
 	sessionManager session.Manager
-	oauth          *OAuth
-	notifications  *notifications.NotificationService
+	cookieManager  *authcookies.Manager
+	oauth          *oauth.OAuth
 	middleware     *middleware.Middleware
 	db             *sql.DB
 	logger         logger.Logger
+	hub            *ws.Hub
 }
 
-type OAuth struct {
-	stateManager   *oauth.StateManager
-	githubProvider *githubclient.GitHubProvider
-	googleProvider *googleclient.GoogleProvider
-}
-
-func NewServer(cfg *config.ServerConfig, db *sql.DB, logger logger.Logger, appServices app.Services) *Server {
+func NewServer(cfg *config.ServerConfig, app *bootstrap.App) *Server {
 	httpServer := &Server{
-		router:      http.NewServeMux(),
-		appServices: appServices,
-		config:      cfg,
-		db:          db,
-		logger:      logger,
+		router:         http.NewServeMux(),
+		appServices:    app.Services,
+		config:         cfg,
+		logger:         app.Logger,
+		oauth:          app.OAuth,
+		cookieManager:  app.CookieManager,
+		sessionManager: app.SessionManager,
+		middleware:     app.Middlware,
+		hub:            app.Hub,
 	}
-	httpServer.initSessionManager()
-	httpServer.initNotifications()
-	httpServer.initOAuthServices()
-	httpServer.initMiddleware(httpServer.sessionManager)
+	httpServer.initWSRouter()
 	httpServer.AddHTTPRoutes()
 	return httpServer
 }
@@ -99,10 +99,27 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 	return handler
 }
 
+func (server *Server) initWSRouter() {
+
+	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
+
+	pingWShandler := wshandlers.NewPingHandler()
+
+	markAsReadWShandler := wshandlers.NewChatMarkReadHandler(server.appServices.Commands.MarkAsReadChatMessage, server.logger)
+
+	sendWShandler := wshandlers.NewChatSendHandler(server.appServices.Commands.SendChatMessage, server.logger)
+
+	server.wsRouter = ws.NewWSRouter(
+		chatHistoryWShandler,
+		pingWShandler,
+		markAsReadWShandler,
+		sendWShandler,
+	)
+}
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
-			health.NewHandler(server.logger, server.notifications).HealthCheck,
+			health.NewHandler(server.logger, server.appServices.Commands.CreateNotification).HealthCheck,
 			server.middleware.Authorization.Required,
 		))
 
@@ -112,17 +129,17 @@ func (server *Server) AddHTTPRoutes() {
 
 	// User routes
 	server.router.HandleFunc(apiContext+"/login/email",
-		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserLoginEmail,
+		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginEmail,
 	)
 	server.router.HandleFunc(apiContext+"/login/username",
-		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserLoginUsername,
+		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginUsername,
 	)
 	server.router.HandleFunc(apiContext+"/register",
 		userRegister.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserRegister,
 	)
 	server.router.HandleFunc(apiContext+"/logout",
 		middlewareChain(
-			logout.NewHandler(server.sessionManager, server.logger).Logout,
+			logout.NewHandler(server.sessionManager, server.logger, server.cookieManager).Logout,
 			server.middleware.Authorization.Required,
 		))
 	// New handler for retrieving current user data from backend
@@ -134,40 +151,40 @@ func (server *Server) AddHTTPRoutes() {
 	// OAuth routes
 	server.router.HandleFunc(apiContext+"/auth/github/login",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.githubProvider,
+			server.oauth.GithubProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/github/callback",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.githubProvider,
+			server.oauth.GithubProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Callback,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/login",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.googleProvider,
+			server.oauth.GoogleProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/callback",
 		oauthlogin.NewOAuthHandler(
-			server.oauth.googleProvider,
+			server.oauth.GoogleProvider,
 			server.config,
-			&server.appServices.UserServices.Queries.UserLoginGithub,
-			server.oauth.stateManager,
+			&server.appServices.Queries.UserLoginGithub,
+			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
 		).Callback,
@@ -208,7 +225,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Comment routes
 	server.router.HandleFunc(apiContext+"/comments/create",
 		middlewareChain(
-			createcomment.NewHandler(server.appServices, server.config, server.logger, server.notifications).CreateComment,
+			createcomment.NewHandler(server.appServices.Commands.CreateComment, server.config, server.logger).CreateComment,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -263,7 +280,7 @@ func (server *Server) AddHTTPRoutes() {
 	// Vote routes
 	server.router.HandleFunc(apiContext+"/vote/cast",
 		middlewareChain(
-			castvote.NewHandler(server.appServices, server.config, server.logger, server.notifications).CastVote,
+			castvote.NewHandler(server.appServices.Commands.CastVote, server.config, server.logger).CastVote,
 			server.middleware.Authorization.Required,
 		),
 	)
@@ -294,38 +311,62 @@ func (server *Server) AddHTTPRoutes() {
 
 	server.router.HandleFunc(apiContext+"/notifications/stream", // get
 		middlewareChain(
-			streamnotification.NewHandler(server.notifications).StreamNotifications,
+			streamnotification.NewHandler(server.appServices.Commands.OpenStream).StreamNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/unread-count", // get
 		middlewareChain(
-			getunreadcount.NewHandler(server.notifications).GetUnread,
+			getunreadcount.NewHandler(server.appServices.Queries.GetUnreadCount).GetUnread,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications", // get
 		middlewareChain(
-			getnotifications.NewHandler(server.notifications).GetNotifications,
+			getnotifications.NewHandler(server.appServices.Queries.GetNotifications).GetNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-read", // post
 		middlewareChain(
-			markasread.NewHandler(server.notifications).MarkAsRead,
+			markasread.NewHandler(server.appServices.Commands.MarkAsRead).MarkAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
 
 	server.router.HandleFunc(apiContext+"/notifications/mark-all-read", // post
 		middlewareChain(
-			markallasread.NewHandler(server.notifications).MarkAllAsRead,
+			markallasread.NewHandler(server.appServices.Commands.MarkAllAsRead).MarkAllAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
+
+	// WebSocket route — chat and presence
+	server.router.HandleFunc(apiContext+"/ws",
+		middlewareChain(
+			wshttp.NewHandler(server.hub, server.wsRouter, server.logger).UpgradeConnection,
+			server.middleware.Authorization.Required,
+		),
+	)
+
+	// Chat routes
+	server.router.HandleFunc(apiContext+"/chat/init",
+		middlewareChain(
+			initchat.NewHandler(server.appServices.Commands.InitChat, server.logger).InitChat,
+			server.middleware.Authorization.Required,
+		))
+
+	server.router.HandleFunc(apiContext+"/chat/users",
+		middlewareChain(
+			getchatusers.NewHandler(
+				server.appServices.Queries.GetChatUsers,
+				server.logger,
+			).GetChatUsers,
+			server.middleware.Authorization.Required,
+		))
 }
 
 func (server *Server) ListenAndServe() {
@@ -369,37 +410,6 @@ func (server *Server) ListenAndServe() {
 
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		server.logger.PrintFatal(err, nil)
-	}
-}
-
-func (server *Server) initSessionManager() {
-	server.sessionManager = sessionstore.NewSessionManager(server.db, server.config.SessionManager)
-}
-
-func (server *Server) initNotifications() {
-	server.notifications = notifications.NewNotificationService(server.db)
-}
-
-func (server *Server) initMiddleware(sessionManager session.Manager) {
-	server.middleware = middleware.NewMiddleware(sessionManager)
-}
-
-func (server *Server) initOAuthServices() {
-	server.oauth = &OAuth{
-		stateManager: oauth.NewStateManager(stateManagerDefaultLimit * time.Minute),
-		githubProvider: githubclient.NewProvider(
-			server.config.OAuth.GitHub.ClientID,
-			server.config.OAuth.GitHub.ClientSecret,
-			server.config.OAuth.GitHub.RedirectURL,
-			server.config.OAuth.GitHub.Scopes,
-		),
-		googleProvider: googleclient.NewProvider(
-			server.config.OAuth.Google.ClientID,
-			server.config.OAuth.Google.ClientSecret,
-			server.config.OAuth.Google.RedirectURL,
-			server.config.OAuth.Google.TokenURL,
-			server.config.OAuth.Google.Scopes,
-		),
 	}
 }
 

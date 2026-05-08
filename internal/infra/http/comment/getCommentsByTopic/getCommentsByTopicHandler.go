@@ -66,7 +66,7 @@ func (h *Handler) GetCommentsByTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comments, err := h.UserServices.UserServices.Queries.GetCommentsByTopic.Handle(ctx, commentQueries.GetCommentsByTopicRequest{
+	comments, err := h.UserServices.Queries.GetCommentsByTopic.Handle(ctx, commentQueries.GetCommentsByTopicRequest{
 		TopicID: topicID,
 	})
 	if err != nil {

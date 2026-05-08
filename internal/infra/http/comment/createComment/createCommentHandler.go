@@ -2,20 +2,14 @@ package createcomment
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"strconv"
-
-	"github.com/arnald/forum/internal/app"
 	commentCommands "github.com/arnald/forum/internal/app/comments/commands"
-	topicqueries "github.com/arnald/forum/internal/app/topics/queries"
 	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/notification"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 	"github.com/arnald/forum/internal/pkg/helpers"
 	"github.com/arnald/forum/internal/pkg/validator"
+	"net/http"
+	"strconv"
 )
 
 type RequestModel struct {
@@ -29,18 +23,16 @@ type ResponseModel struct {
 }
 
 type Handler struct {
-	UserServices app.Services
-	Config       *config.ServerConfig
-	Logger       logger.Logger
-	Notification *notifications.NotificationService
+	createComment commentCommands.CreateCommentRequestHandler
+	Config        *config.ServerConfig
+	Logger        logger.Logger
 }
 
-func NewHandler(userServices app.Services, config *config.ServerConfig, logger logger.Logger, notifications *notifications.NotificationService) *Handler {
+func NewHandler(createComment commentCommands.CreateCommentRequestHandler, config *config.ServerConfig, logger logger.Logger) *Handler {
 	return &Handler{
-		UserServices: userServices,
-		Config:       config,
-		Logger:       logger,
-		Notification: notifications,
+		createComment: createComment,
+		Config:        config,
+		Logger:        logger,
 	}
 }
 
@@ -90,7 +82,7 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment, err := h.UserServices.UserServices.Commands.CreateComment.Handle(ctx, commentCommands.CreateCommentRequest{
+	comment, err := h.createComment.Handle(ctx, commentCommands.CreateCommentRequest{
 		TopicID: commentToCreate.TopicID,
 		Content: commentToCreate.Content,
 		User:    user,
@@ -104,32 +96,6 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		h.Logger.PrintError(err, nil)
 		return
 	}
-
-	topic, err := h.UserServices.UserServices.Queries.GetTopic.Handle(ctx, topicqueries.GetTopicRequest{
-		UserID:  &user.ID,
-		TopicID: comment.TopicID,
-	})
-	if err != nil {
-		h.Logger.PrintError(err, nil)
-	}
-
-	if user.ID != topic.UserID {
-		notification := &notification.Notification{
-			ActorID:     user.Nickname,
-			UserID:      topic.UserID,
-			RelatedID:   strconv.Itoa(comment.TopicID),
-			RelatedType: "topic",
-			Type:        notification.NotificationTypeReply,
-			Title:       "New comment",
-			Message:     fmt.Sprintf("%s commented on your Topic %s", user.Nickname, topic.Title),
-		}
-
-		err = h.Notification.CreateNotification(ctx, notification)
-		if err != nil {
-			h.Logger.PrintError(err, nil)
-		}
-	}
-
 	commentResponse := ResponseModel{
 		CommentID: comment.ID,
 		Message:   "Comment created successfully",

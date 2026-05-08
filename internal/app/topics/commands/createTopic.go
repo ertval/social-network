@@ -2,17 +2,28 @@ package topiccommands
 
 import (
 	"context"
-
+	"github.com/arnald/forum/internal/app/topics"
 	"github.com/arnald/forum/internal/domain/topic"
 	"github.com/arnald/forum/internal/domain/user"
+	"io"
+	"mime/multipart"
+)
+
+const (
+	imagepathprefix = "/static/images/uploads/"
 )
 
 type CreateTopicRequest struct {
 	User        *user.User
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	ImagePath   string `json:"imagePath"`
-	CategoryIDs []int  `json:"categoryIds"`
+	Title       string     `json:"title"`
+	Content     string     `json:"content"`
+	ImagePath   string     `json:"imagePath"`
+	ImageFile   TopicImage `json:"topicImage"`
+	CategoryIDs []int      `json:"categoryIds"`
+}
+type TopicImage struct {
+	File   *multipart.File
+	Header *multipart.FileHeader
 }
 
 type CreateTopicRequestHandler interface {
@@ -20,27 +31,39 @@ type CreateTopicRequestHandler interface {
 }
 
 type createTopicRequestHandler struct {
-	repo topic.Repository
+	repo        topic.Repository
+	fileStorage topics.FileStorageManager
 }
 
-func NewCreateTopicHandler(repo topic.Repository) CreateTopicRequestHandler {
+func NewCreateTopicHandler(repo topic.Repository, fileStorage topics.FileStorageManager) CreateTopicRequestHandler {
 	return &createTopicRequestHandler{
-		repo: repo,
+		repo:        repo,
+		fileStorage: fileStorage,
 	}
 }
 
 func (h *createTopicRequestHandler) Handle(ctx context.Context, req CreateTopicRequest) (*topic.Topic, error) {
-	topic := &topic.Topic{
-		UserID:      req.User.ID,
-		CategoryIDs: req.CategoryIDs,
-		Title:       req.Title,
-		Content:     req.Content,
-		ImagePath:   req.ImagePath,
+	var topic topic.Topic
+	if req.ImagePath != "" {
+		topic.UserID = req.User.ID
+		topic.CategoryIDs = req.CategoryIDs
+		topic.Title = req.Title
+		topic.Content = req.Content
+		topic.ImagePath = imagepathprefix + req.ImagePath
+		filecontent, err := io.ReadAll(*req.ImageFile.File)
+		if err != nil {
+			return nil, err
+		}
+		h.fileStorage.Upload(ctx, filecontent, req.ImagePath)
+	} else {
+		topic.UserID = req.User.ID
+		topic.CategoryIDs = req.CategoryIDs
+		topic.Title = req.Title
+		topic.Content = req.Content
 	}
-
-	err := h.repo.CreateTopic(ctx, topic)
+	err := h.repo.CreateTopic(ctx, &topic)
 	if err != nil {
 		return nil, err
 	}
-	return topic, nil
+	return &topic, nil
 }
