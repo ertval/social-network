@@ -7,7 +7,6 @@ import (
 
 	"github.com/arnald/forum/internal/domain/oauth"
 	"github.com/arnald/forum/internal/domain/user"
-	oauthrepo "github.com/arnald/forum/internal/infra/storage/sqlite/oauth"
 	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
 	"github.com/arnald/forum/internal/pkg/uuid"
 )
@@ -40,7 +39,7 @@ func (s *OAuthService) Login(ctx context.Context, code string, provider oauthpkg
 	// TODO: PROVIDER NAME VALIDATION
 	providerName := oauth.Provider(provider.Name())
 	existingUser, err := s.oauthRepo.GetUserByProviderID(ctx, providerName, providerID)
-	if err != nil && !errors.Is(err, oauthrepo.ErrUserNotFound) {
+	if err != nil && !errors.Is(err, oauth.ErrUserNotFound) {
 		return nil, fmt.Errorf("failed to check existing user: %w", err)
 	}
 

@@ -16,6 +16,7 @@
 
 import { api } from '../api.js';
 import { navigate } from '../router.js';
+import { closeNotificationStream } from '../navbar.js';
 
 export async function renderLogoutPage(user) {
   const root = document.getElementById('app-root');
@@ -36,6 +37,9 @@ export async function renderLogoutPage(user) {
   }
 
   //the cookies are deleted from the backend response, so we just go to the home page and the middleware will get the user and render the navbar
+
+  closeNotificationStream();
+
   navigate('/');
 }
 
@@ -48,12 +52,13 @@ function buildHTML(message, showRetry = false) {
       <p style="margin-top:1.5rem;color:var(--white-background-light);font-size:1.1rem">
         ${message}
       </p>
-      ${showRetry
-      ? `<div style="margin-top:1.5rem">
+      ${
+        showRetry
+          ? `<div style="margin-top:1.5rem">
              <button id="logout-retry" class="btn-signup">Retry</button>
            </div>`
-      : ''
-    }
+          : ''
+      }
     </div>
   `;
 }

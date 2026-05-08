@@ -72,7 +72,7 @@ func (h *Handler) GetComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	comment, err := h.UserServices.UserServices.Queries.GetComment.Handle(ctx, commentQueries.GetCommentRequest{
+	comment, err := h.UserServices.Queries.GetComment.Handle(ctx, commentQueries.GetCommentRequest{
 		CommentID: commentIDVal.CommentID,
 	})
 	if err != nil {

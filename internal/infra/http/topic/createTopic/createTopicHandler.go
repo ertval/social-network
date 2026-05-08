@@ -2,7 +2,10 @@ package createtopic
 
 import (
 	"context"
+	"errors"
+	"mime/multipart"
 	"net/http"
+	"path/filepath"
 
 	"github.com/arnald/forum/internal/app"
 	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
@@ -11,13 +14,23 @@ import (
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/pkg/helpers"
 	"github.com/arnald/forum/internal/pkg/validator"
+	"github.com/google/uuid"
+)
+
+const (
+	maxUploadSize = 20 << 20 // 20 MB
 )
 
 type RequestModel struct {
 	Title       string `json:"title"`
 	Content     string `json:"content"`
 	ImagePath   string `json:"imagePath"`
+	ImageFile   File   `json:"imageFile"`
 	CategoryIDs []int  `json:"categoryIds"`
+}
+type File struct {
+	Content multipart.File
+	Header  *multipart.FileHeader
 }
 
 type ResponseModel struct {
@@ -58,22 +71,36 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 
 	var topicToCreate RequestModel
 
-	topicAny, err := helpers.ParseBodyRequest(r, &topicToCreate)
+	err := r.ParseMultipartForm(maxUploadSize)
 	if err != nil {
+		h.Logger.PrintError(err, nil)
 		helpers.RespondWithError(w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
-
-		h.Logger.PrintError(err, nil)
-
 		return
 	}
-	defer r.Body.Close()
+	topicToCreate.Title = r.FormValue("title")
+	topicToCreate.Content = r.FormValue("content")
+	topicToCreate.CategoryIDs = helpers.ParseStrsToInts(r.Form["categories"])
+	topicToCreate.ImageFile.Content, topicToCreate.ImageFile.Header, err = r.FormFile("image_path")
+	switch {
+	case errors.Is(err, http.ErrMissingFile):
+	case err != nil:
+		h.Logger.PrintError(err, nil)
+		helpers.RespondWithError(w,
+			http.StatusBadRequest,
+			"Error Processing uploaded file",
+		)
+		return
+	default:
+		defer topicToCreate.ImageFile.Content.Close()
+		topicToCreate.ImagePath = uuid.New().String() + filepath.Ext(topicToCreate.ImageFile.Header.Filename)
+	}
 
 	v := validator.New()
 
-	validator.ValidateCreateTopic(v, topicAny)
+	validator.ValidateCreateTopic(v, &topicToCreate)
 
 	if !v.Valid() {
 		helpers.RespondWithError(
@@ -86,12 +113,15 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	topic, err := h.UserServices.UserServices.Commands.CreateTopic.Handle(ctx, topicCommands.CreateTopicRequest{
+	topic, err := h.UserServices.Commands.CreateTopic.Handle(ctx, topicCommands.CreateTopicRequest{
 		CategoryIDs: topicToCreate.CategoryIDs,
 		Title:       topicToCreate.Title,
 		Content:     topicToCreate.Content,
 		ImagePath:   topicToCreate.ImagePath,
-		User:        user,
+		ImageFile: topicCommands.TopicImage{File: &topicToCreate.ImageFile.Content,
+			Header: topicToCreate.ImageFile.Header,
+		},
+		User: user,
 	})
 	if err != nil {
 		helpers.RespondWithError(w,

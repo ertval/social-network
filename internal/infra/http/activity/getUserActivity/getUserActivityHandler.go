@@ -52,7 +52,7 @@ func (h *Handler) GetUserActivity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	activity, err := h.Services.UserServices.Queries.GetUserActivity.Handle(ctx, activityQueries.GetUserActivityRequest{
+	activity, err := h.Services.Queries.GetUserActivity.Handle(ctx, activityQueries.GetUserActivityRequest{
 		UserID: user.ID,
 	})
 	if err != nil {

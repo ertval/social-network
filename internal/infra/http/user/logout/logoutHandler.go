@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/arnald/forum/internal/domain/session"
+	"github.com/arnald/forum/internal/infra/http/authcookies"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/pkg/helpers"
@@ -11,12 +12,14 @@ import (
 
 type Handler struct {
 	sessionManager session.Manager
+	cookieManager  *authcookies.Manager
 	logger         logger.Logger
 }
 
-func NewHandler(sessionManager session.Manager, logger logger.Logger) *Handler {
+func NewHandler(sessionManager session.Manager, logger logger.Logger, cookieManager *authcookies.Manager) *Handler {
 	return &Handler{
 		sessionManager: sessionManager,
+		cookieManager:  cookieManager,
 		logger:         logger,
 	}
 }
@@ -35,7 +38,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken := h.sessionManager.DeleteCookies(r, w)
+	sessionToken := h.cookieManager.DeleteCookies(r, w)
 	if sessionToken == "" {
 		helpers.RespondWithError(w, http.StatusUnauthorized, "No session found")
 		return

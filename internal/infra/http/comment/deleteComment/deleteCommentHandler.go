@@ -70,7 +70,7 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.UserServices.UserServices.Commands.DeleteComment.Handle(ctx, commentCommands.DeleteCommentRequest{
+	err = h.UserServices.Commands.DeleteComment.Handle(ctx, commentCommands.DeleteCommentRequest{
 		CommentID: commentID,
 		User:      user,
 	})

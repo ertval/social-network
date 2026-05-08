@@ -3,16 +3,16 @@ package markallasread
 import (
 	"net/http"
 
+	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
 	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/notifications"
 )
 
 type Handler struct {
-	service *notifications.NotificationService
+	markAllAsRead notificationcommands.MarkAllAsReadHandler
 }
 
-func NewHandler(service *notifications.NotificationService) *Handler {
-	return &Handler{service: service}
+func NewHandler(service notificationcommands.MarkAllAsReadHandler) *Handler {
+	return &Handler{markAllAsRead: service}
 }
 
 func (h *Handler) MarkAllAsRead(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +37,7 @@ func (h *Handler) MarkAllAsRead(w http.ResponseWriter, r *http.Request) {
 
 	userID := user.ID
 
-	err := h.service.MarkAllAsRead(r.Context(), userID)
+	err := h.markAllAsRead.Handle(r.Context(), notificationcommands.MarkAllAsReadRequest{UserID: userID})
 	if err != nil {
 		http.Error(
 			w,

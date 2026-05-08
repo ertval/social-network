@@ -2,8 +2,7 @@ package updatetopic
 
 import (
 	"context"
-	"net/http"
-
+	"errors"
 	"github.com/arnald/forum/internal/app"
 	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
 	"github.com/arnald/forum/internal/config"
@@ -11,14 +10,30 @@ import (
 	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/pkg/helpers"
 	"github.com/arnald/forum/internal/pkg/validator"
+	"github.com/google/uuid"
+	"mime/multipart"
+	"net/http"
+	"path/filepath"
+	"strconv"
+)
+
+const (
+	maxUploadSize = 20 << 20 // 20 MB
 )
 
 type RequestModel struct {
-	Title       string `json:"title"`
-	Content     string `json:"content"`
-	ImagePath   string `json:"imagePath"`
-	CategoryIDs []int  `json:"categoryIds"`
-	TopicID     int    `json:"topicId"`
+	Title        string `json:"title"`
+	Content      string `json:"content"`
+	ImageFile    File   `json:"imageFile"`
+	ImagePath    string `json:"imagePath"`
+	OldImagePath string
+	CategoryIDs  []int `json:"categoryIds"`
+	TopicID      int   `json:"topicId"`
+}
+
+type File struct {
+	Content multipart.File
+	Header  *multipart.FileHeader
 }
 
 type ResponseModel struct {
@@ -59,22 +74,38 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 
 	var topicToUpdate RequestModel
 
-	topicAny, err := helpers.ParseBodyRequest(r, &topicToUpdate)
+	err := r.ParseMultipartForm(maxUploadSize)
 	if err != nil {
+		h.Logger.PrintError(err, nil)
 		helpers.RespondWithError(w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
-
-		h.Logger.PrintError(err, nil)
-
 		return
 	}
-	defer r.Body.Close()
+	topicToUpdate.Title = r.FormValue("title")
+	topicToUpdate.OldImagePath = r.FormValue("current_image_path")
+	topicToUpdate.Content = r.FormValue("content")
+	topicToUpdate.CategoryIDs = helpers.ParseStrsToInts(r.Form["categories"])
+	topicToUpdate.TopicID, _ = strconv.Atoi(r.FormValue("topic_id"))
+	topicToUpdate.ImageFile.Content, topicToUpdate.ImageFile.Header, err = r.FormFile("image_path")
+	switch {
+	case errors.Is(err, http.ErrMissingFile):
+	case err != nil:
+		h.Logger.PrintError(err, nil)
+		helpers.RespondWithError(w,
+			http.StatusBadRequest,
+			"Error Processing uploaded file",
+		)
+		return
+	default:
+		defer topicToUpdate.ImageFile.Content.Close()
+		topicToUpdate.ImagePath = uuid.New().String() + filepath.Ext(topicToUpdate.ImageFile.Header.Filename)
+	}
 
 	v := validator.New()
 
-	validator.ValidateCreateTopic(v, topicAny)
+	validator.ValidateCreateTopic(v, &topicToUpdate)
 
 	if !v.Valid() {
 		helpers.RespondWithError(
@@ -87,13 +118,17 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	topic, err := h.UserServices.UserServices.Commands.UpdateTopic.Handle(ctx, topicCommands.UpdateTopicRequest{
-		CategoryIDs: topicToUpdate.CategoryIDs,
-		TopicID:     topicToUpdate.TopicID,
-		Title:       topicToUpdate.Title,
-		Content:     topicToUpdate.Content,
-		ImagePath:   topicToUpdate.ImagePath,
-		User:        user,
+	topic, err := h.UserServices.Commands.UpdateTopic.Handle(ctx, topicCommands.UpdateTopicRequest{
+		CategoryIDs:  topicToUpdate.CategoryIDs,
+		TopicID:      topicToUpdate.TopicID,
+		Title:        topicToUpdate.Title,
+		Content:      topicToUpdate.Content,
+		ImagePath:    topicToUpdate.ImagePath,
+		OldImagePath: topicToUpdate.OldImagePath,
+		ImageFile: topicCommands.TopicImage{File: &topicToUpdate.ImageFile.Content,
+			Header: topicToUpdate.ImageFile.Header,
+		},
+		User: user,
 	})
 	if err != nil {
 		helpers.RespondWithError(w,

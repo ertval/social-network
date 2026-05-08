@@ -119,6 +119,12 @@ func ValidateCreateTopic(v *Validator, data any) {
 				optional(validImagePath),
 			},
 		},
+		{
+			Field: "ImageFile",
+			Rules: []func(any) (bool, string){
+				validateImageFile,
+			},
+		},
 		// TODO: figure out validation with categoryID or Name
 		// {
 		// 	Field: "Category",

@@ -92,6 +92,18 @@ func (r Repo) CreateTopic(ctx context.Context, topic *topic.Topic) error {
 	return nil
 }
 
+func (r Repo) GetImagePathFromTopicID(ctx context.Context, topicID int, userID string) (imagePath string, err error) {
+	query := `select image_path from topics where id=? and user_id=?;`
+	var imagepath sql.NullString
+	err = r.DB.QueryRowContext(ctx, query, topicID, userID).Scan(&imagepath)
+	if err != nil {
+		return "", err
+	}
+	if !imagepath.Valid {
+		return "", nil
+	}
+	return imagepath.String, nil
+}
 func (r Repo) UpdateTopic(ctx context.Context, topic *topic.Topic) error {
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {

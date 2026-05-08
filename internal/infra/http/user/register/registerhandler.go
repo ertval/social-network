@@ -86,7 +86,7 @@ func (h Handler) UserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.UserServices.UserServices.Commands.UserRegister.Handle(ctx, usercommands.UserRegisterRequest{
+	user, err := h.UserServices.Commands.UserRegister.Handle(ctx, usercommands.UserRegisterRequest{
 		Nickname:  userToRegister.Nickname,
 		Password:  userToRegister.Password,
 		FirstName: userToRegister.FirstName,

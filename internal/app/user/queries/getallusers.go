@@ -9,7 +9,7 @@ import (
 
 type GetAllUsersResult struct {
 	CreatedAt time.Time
-	Name      string
+	Nickname  string
 	Role      string
 	ID        string
 }
@@ -36,7 +36,7 @@ func (r getAllUsersRequestHandler) Handle(ctx context.Context) ([]GetAllUsersRes
 	for _, u := range users {
 		results = append(results, GetAllUsersResult{
 			ID:        u.ID,
-			Name:      u.Nickname,
+			Nickname:  u.Nickname,
 			Role:      u.Role,
 			CreatedAt: u.CreatedAt,
 		})

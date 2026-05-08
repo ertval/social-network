@@ -75,7 +75,7 @@ func (h *Handler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.UserServices.UserServices.Commands.DeleteCategory.Handle(ctx, categorycommands.DeleteCategoryRequest{
+	err = h.UserServices.Commands.DeleteCategory.Handle(ctx, categorycommands.DeleteCategoryRequest{
 		CategoryID: categoryID,
 		UserID:     user.ID,
 	})
