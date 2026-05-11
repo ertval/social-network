@@ -3,15 +3,14 @@ package oauthlogin
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"net/url"
-
 	oauthservice "github.com/arnald/forum/internal/app/oauth"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/domain/session"
+	"github.com/arnald/forum/internal/infra/http/authcookies"
 	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/pkg/helpers"
 	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
+	"net/http"
 )
 
 type OAuthHandler struct {
@@ -20,6 +19,7 @@ type OAuthHandler struct {
 	loginService   *oauthservice.OAuthService
 	stateManager   *oauthpkg.StateManager
 	sessionManager session.Manager
+	cookieManager  *authcookies.Manager
 	logger         logger.Logger
 }
 
@@ -30,6 +30,7 @@ func NewOAuthHandler(
 	stateManager *oauthpkg.StateManager,
 	sessionManager session.Manager,
 	logger logger.Logger,
+	cookieManager *authcookies.Manager,
 ) *OAuthHandler {
 	return &OAuthHandler{
 		provider:       provider,
@@ -38,6 +39,7 @@ func NewOAuthHandler(
 		stateManager:   stateManager,
 		sessionManager: sessionManager,
 		logger:         logger,
+		cookieManager:  cookieManager,
 	}
 }
 
@@ -126,17 +128,15 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 
 	session, err := h.sessionManager.CreateSession(r.Context(), user.ID)
 	if err != nil {
-		h.logger.PrintError(err, nil)
-		http.Error(
-			w,
-			"error at creating session",
+		helpers.RespondWithError(w,
 			http.StatusInternalServerError,
+			"error at creating session",
 		)
+		h.logger.PrintError(err, nil)
+		return
 	}
 
-	params := url.Values{}
-	params.Add("access_token", session.AccessToken)
-	params.Add("refresh_token", session.RefreshToken)
+	h.cookieManager.SetCookies(w, session)
 
 	// Determine the provider-specific frontend callback URL
 	var frontendCallbackBase string
@@ -149,9 +149,7 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		frontendCallbackBase = h.config.OAuth.FrontendCallbackURL
 	}
 
-	frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
-
-	http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, frontendCallbackBase, http.StatusTemporaryRedirect)
 
 	h.logger.PrintInfo(
 		"User logged in via "+h.provider.Name(),

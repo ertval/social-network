@@ -157,6 +157,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/github/callback",
@@ -167,6 +168,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Callback,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/login",
@@ -177,6 +179,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Login,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/callback",
@@ -187,6 +190,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Callback,
 	)
 
