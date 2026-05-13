@@ -2,15 +2,20 @@ package oauthlogin
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
+	"net/url"
+
 	oauthservice "github.com/arnald/forum/internal/app/oauth"
 	"github.com/arnald/forum/internal/config"
+	"github.com/arnald/forum/internal/domain/oauth"
 	"github.com/arnald/forum/internal/domain/session"
 	"github.com/arnald/forum/internal/infra/http/authcookies"
 	"github.com/arnald/forum/internal/infra/logger"
+	"github.com/arnald/forum/internal/infra/middleware"
 	"github.com/arnald/forum/internal/pkg/helpers"
 	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
-	"net/http"
 )
 
 type OAuthHandler struct {
@@ -43,8 +48,34 @@ func NewOAuthHandler(
 	}
 }
 
+func (h *OAuthHandler) Link(w http.ResponseWriter, r *http.Request) {
+	user := middleware.GetUserFromContext(r)
+
+	var stateData oauthpkg.StateData
+	stateData.Flow = "link"
+	stateData.Provider = h.provider.Name()
+	stateData.UserID = user.ID
+
+	state, err := h.stateManager.Generate(stateData)
+	if err != nil {
+		h.logger.PrintError(err, nil)
+		helpers.RespondWithError(
+			w,
+			http.StatusInternalServerError,
+			"internal server error",
+		)
+		return
+	}
+
+	authURL := h.provider.GetAuthURL(state)
+
+	http.Redirect(w, r, authURL, http.StatusTemporaryRedirect)
+}
 func (h *OAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	state, err := h.stateManager.Generate()
+	var stateData oauthpkg.StateData
+	stateData.Flow = "login"
+	stateData.Provider = h.provider.Name()
+	state, err := h.stateManager.Generate(stateData)
 	if err != nil {
 		h.logger.PrintError(err, nil)
 		helpers.RespondWithError(
@@ -68,6 +99,16 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 			http.StatusMethodNotAllowed,
 		)
 		return
+	}
+	params := url.Values{}
+	var frontendCallbackBase string
+	switch h.provider.Name() {
+	case "github":
+		frontendCallbackBase = h.config.OAuth.GitHub.FrontendCallbackURL
+	case "google":
+		frontendCallbackBase = h.config.OAuth.Google.FrontendCallbackURL
+	default:
+		frontendCallbackBase = h.config.OAuth.FrontendCallbackURL
 	}
 
 	ctx, cancel := context.WithTimeout(r.Context(), h.config.Timeouts.HandlerTimeouts.UserRegister)
@@ -97,7 +138,7 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.stateManager.Verify(state)
+	stateData, err := h.stateManager.Verify(state)
 	if err != nil {
 		h.logger.PrintError(err, nil)
 		http.Error(
@@ -108,54 +149,125 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.loginService.Login(
-		ctx,
-		code,
-		h.provider,
-	)
-	if err != nil {
-		h.logger.PrintError(err, map[string]string{
-			"action":   "oauth_login",
-			"provider": h.provider.Name(),
-		})
-		http.Error(
-			w,
-			"error at github_login",
-			http.StatusInternalServerError,
+	switch stateData.Flow {
+	case "login":
+		user, err := h.loginService.Login(
+			ctx,
+			code,
+			h.provider,
 		)
-		return
-	}
 
-	session, err := h.sessionManager.CreateSession(r.Context(), user.ID)
-	if err != nil {
-		helpers.RespondWithError(w,
-			http.StatusInternalServerError,
-			"error at creating session",
+		if errors.Is(err, oauth.ErrUserWithEmailExists) {
+			h.logger.PrintError(err, map[string]string{
+				"action":   "oauth_login",
+				"provider": h.provider.Name(),
+			})
+			params.Add("flow", "login")
+			params.Add("error", "email_exists")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
+		if err != nil {
+			h.logger.PrintError(err, map[string]string{
+				"action":   "oauth_login",
+				"provider": h.provider.Name(),
+			})
+			params.Add("flow", "login")
+			params.Add("error", "errorAtOauthLogin")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
+
+		session, err := h.sessionManager.CreateSession(r.Context(), user.ID)
+		if err != nil {
+			h.logger.PrintError(err, nil)
+			params.Add("flow", "login")
+			params.Add("error", "errorCreatingSession")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
+
+		h.cookieManager.SetCookies(w, session)
+		params.Add("flow", "login")
+		params.Add("success", "ok")
+		params.Add("provider", h.provider.Name())
+		frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+		http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+
+		h.logger.PrintInfo(
+			"User logged in via "+h.provider.Name(),
+			map[string]string{
+				"user_id":  user.ID,
+				"username": user.Nickname,
+				"provider": h.provider.Name(),
+			})
+	case "link":
+		err := h.loginService.Link(
+			ctx,
+			stateData.UserID,
+			code,
+			h.provider,
 		)
-		h.logger.PrintError(err, nil)
-		return
-	}
 
-	h.cookieManager.SetCookies(w, session)
+		if errors.Is(err, oauth.ErrProviderAccountBelongsToAnotherUser) {
+			h.logger.PrintError(err, map[string]string{
+				"action":   "oauth_link",
+				"provider": h.provider.Name(),
+			})
+			params.Add("flow", "link")
+			params.Add("error", "providerAccountBelongsToAnotherUser")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
+		if errors.Is(err, oauth.ErrAlreadyLinkedToProvider) {
+			h.logger.PrintError(err, map[string]string{
+				"action":   "oauth_link",
+				"provider": h.provider.Name(),
+			})
+			params.Add("flow", "link")
+			params.Add("error", "alreadyLinkedToProvider")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
+		if err != nil {
+			h.logger.PrintError(err, map[string]string{
+				"action":   "oauth_login",
+				"provider": h.provider.Name(),
+			})
+			params.Add("flow", "link")
+			params.Add("error", "errorAtOauthLogin")
+			params.Add("provider", h.provider.Name())
+			frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+			http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+			return
+		}
 
-	// Determine the provider-specific frontend callback URL
-	var frontendCallbackBase string
-	switch h.provider.Name() {
-	case "github":
-		frontendCallbackBase = h.config.OAuth.GitHub.FrontendCallbackURL
-	case "google":
-		frontendCallbackBase = h.config.OAuth.Google.FrontendCallbackURL
+		params.Add("flow", "link")
+		params.Add("success", "ok")
+		params.Add("provider", h.provider.Name())
+		frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+		http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
+
+		h.logger.PrintInfo(
+			"User Acount linked to provider"+h.provider.Name(),
+			map[string]string{
+				"user_id":  stateData.UserID,
+				"provider": h.provider.Name(),
+			})
 	default:
-		frontendCallbackBase = h.config.OAuth.FrontendCallbackURL
+		params.Add("error", "flowNotRecognised")
+		frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
+		http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
 	}
 
-	http.Redirect(w, r, frontendCallbackBase, http.StatusTemporaryRedirect)
-
-	h.logger.PrintInfo(
-		"User logged in via "+h.provider.Name(),
-		map[string]string{
-			"user_id":  user.ID,
-			"username": user.Nickname,
-			"provider": h.provider.Name(),
-		})
 }

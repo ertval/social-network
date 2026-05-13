@@ -95,6 +95,13 @@ const ROUTES = [
     protected: true,
     title: 'Forum — Logout',
   },
+  {
+    path: '/oauth/callback',
+    loader: () => import('./pages/oauthCallback.js'),
+    render: 'renderOauthCallback',
+    protected: false,
+    title: 'Forum — OAuth Callback',
+  },
 ];
 
 // ─── Router state ─────────────────────────────────────────────────────────────
@@ -152,7 +159,7 @@ async function handleRoute(fullPath) {
 
   const route = matchRoute(pathname);
 
-  await authMiddleware()
+  await authMiddleware();
   // Always re-render the navbar so it reflects the latest auth state
   const user = getUser();
   renderNavbar(user);
