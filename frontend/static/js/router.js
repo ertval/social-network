@@ -89,6 +89,13 @@ const ROUTES = [
     title: 'Forum — Activity',
   },
   {
+    path: '/account/settings',
+    loader: () => import('./pages/accountSettings.js'),
+    render: 'renderAccountSettingsPage',
+    protected: true,
+    title: 'Forum — Account Settings',
+  },
+  {
     path: '/logout',
     loader: () => import('./pages/logout.js'),
     render: 'renderLogoutPage',
