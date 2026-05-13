@@ -54,6 +54,7 @@ func (h *OAuthHandler) Link(w http.ResponseWriter, r *http.Request) {
 	var stateData oauthpkg.StateData
 	stateData.Flow = "link"
 	stateData.Provider = h.provider.Name()
+	fmt.Println(user.ID)
 	stateData.UserID = user.ID
 
 	state, err := h.stateManager.Generate(stateData)

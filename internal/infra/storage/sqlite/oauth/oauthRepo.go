@@ -101,14 +101,15 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
 	}()
 
 	insertUserQuery := `
-        INSERT INTO users (id, username, email, password_hash)
-        VALUES (?, ?, ?, '')
+        INSERT INTO users (id, username, email, password_hash,avatar_url)
+        VALUES (?, ?, ?, '',?)
     `
 
 	_, err = tx.ExecContext(ctx, insertUserQuery,
 		oauthUser.UserID,
 		oauthUser.Username,
 		oauthUser.Email,
+		oauthUser.AvatarURL,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
