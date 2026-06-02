@@ -17,14 +17,20 @@ type wsRouter struct {
 	pingHandler        WSHandler
 	markAsReadHandler  WSHandler
 	sendHandler        WSHandler
+	chatOpenHandler    WSHandler
+	chatCloseHandler   WSHandler
+	chatTypingHandler  WSHandler
 }
 
-func NewWSRouter(chatHistoryHandler, pingHandler, markAsReasHandler, sendHandler WSHandler) WSRouter {
+func NewWSRouter(chatHistoryHandler, pingHandler, markAsReasHandler, sendHandler, chatOpenHandler, chatCloseHandler, chatTypingHandler WSHandler) WSRouter {
 	return &wsRouter{
 		chatHistoryHandler: chatHistoryHandler,
 		pingHandler:        pingHandler,
 		markAsReadHandler:  markAsReasHandler,
 		sendHandler:        sendHandler,
+		chatOpenHandler:    chatOpenHandler,
+		chatCloseHandler:   chatCloseHandler,
+		chatTypingHandler:  chatTypingHandler,
 	}
 }
 
@@ -43,6 +49,12 @@ func (r *wsRouter) Route(client *Client, raw []byte) {
 		r.sendHandler.Handle(client, env)
 	case TypeChatHistory:
 		r.chatHistoryHandler.Handle(client, env)
+	case TypeChatOpen:
+		r.chatOpenHandler.Handle(client, env)
+	case TypeChatClose:
+		r.chatCloseHandler.Handle(client, env)
+	case TypeTyping:
+		r.chatTypingHandler.Handle(client, env)
 	case TypeMarkRead:
 		r.markAsReadHandler.Handle(client, env)
 	default:

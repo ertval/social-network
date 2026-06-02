@@ -11,14 +11,19 @@ const (
 	TypeChatHistory = "chat.history"
 	TypeMarkRead    = "chat.mark_read"
 	TypePing        = "ping"
+	TypeTyping      = "chat.typing"
+	TypeChatOpen    = "chat.open"
+	TypeChatClose   = "chat.close"
 )
 
 // Outbound message types (server -> client)
 const (
-	TypeChatMessage   = "chat.message"
-	TypeHistoryResult = "chat.history_result"
-	TypeError         = "error"
-	TypePong          = "pong"
+	TypeChatMessage    = "chat.message"
+	TypeHistoryResult  = "chat.history_result"
+	TypeError          = "error"
+	TypePong           = "pong"
+	TypeIsOnlineStatus = "isOnlineStatus.update"
+	TypeIsTyping       = "chat.is_typing"
 )
 
 // Envelope is the wrapper for every WebSocker message.
@@ -34,6 +39,18 @@ type SendPayload struct {
 	Content         string `json:"content"`
 	ClientMessageID string `json:"client_message_id,omitempty"`
 }
+type ChatOpenClosePayload struct {
+	ChatID string `json:"chat_id"`
+}
+
+type ChatTypingPayload struct {
+	ChatID string `json:"chat_id"`
+}
+
+type IsOnlineStatusPayload struct {
+	UserID   string `json:"user_id"`
+	IsOnline bool   `json:"isOnline"`
+}
 
 type HistoryPayload struct {
 	ChatID          string `json:"chat_id"`
@@ -47,12 +64,18 @@ type MarkReadPayload struct {
 }
 
 // Payloads for outbound messages
+type ChatIsTyping struct {
+	ChatID string `json:"chat_id"`
+	UserID string `json:"user_id"`
+}
+
 type MessagePayload struct {
-	ID        int       `json:"id"`
-	ChatID    string    `json:"chat_id"`
-	SenderID  string    `json:"sender_id"`
-	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
+	ID              int       `json:"id"`
+	ChatID          string    `json:"chat_id"`
+	SenderID        string    `json:"sender_id"`
+	Content         string    `json:"content"`
+	CreatedAt       time.Time `json:"created_at"`
+	ClientMessageID *string   `json:"client_message_id,omitempty"`
 }
 
 type ErrorPayload struct {

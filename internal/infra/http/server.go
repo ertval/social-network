@@ -104,6 +104,9 @@ func (server *Server) initWSRouter() {
 	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
 
 	pingWShandler := wshandlers.NewPingHandler()
+	chatOpenHandler := wshandlers.NewChatOpenHandler(server.hub)
+	chatCloseHandler := wshandlers.NewChatCloseHandler(server.hub)
+	chatTypingHandler := wshandlers.NewChatTypingHandler(server.hub)
 
 	markAsReadWShandler := wshandlers.NewChatMarkReadHandler(server.appServices.Commands.MarkAsReadChatMessage, server.logger)
 
@@ -114,6 +117,9 @@ func (server *Server) initWSRouter() {
 		pingWShandler,
 		markAsReadWShandler,
 		sendWShandler,
+		chatOpenHandler,
+		chatCloseHandler,
+		chatTypingHandler,
 	)
 }
 func (server *Server) AddHTTPRoutes() {
