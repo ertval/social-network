@@ -89,11 +89,25 @@ const ROUTES = [
     title: 'Forum — Activity',
   },
   {
+    path: '/account/settings',
+    loader: () => import('./pages/accountSettings.js'),
+    render: 'renderAccountSettingsPage',
+    protected: true,
+    title: 'Forum — Account Settings',
+  },
+  {
     path: '/logout',
     loader: () => import('./pages/logout.js'),
     render: 'renderLogoutPage',
     protected: true,
     title: 'Forum — Logout',
+  },
+  {
+    path: '/oauth/callback',
+    loader: () => import('./pages/oauthCallback.js'),
+    render: 'renderOauthCallback',
+    protected: false,
+    title: 'Forum — OAuth Callback',
   },
 ];
 
@@ -152,7 +166,7 @@ async function handleRoute(fullPath) {
 
   const route = matchRoute(pathname);
 
-  await authMiddleware()
+  await authMiddleware();
   // Always re-render the navbar so it reflects the latest auth state
   const user = getUser();
   renderNavbar(user);
