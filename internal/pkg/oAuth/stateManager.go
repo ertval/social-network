@@ -18,15 +18,25 @@ var (
 	ErrStateExpired  = errors.New("state expired")
 )
 
+type StateData struct {
+	Flow     string
+	UserID   string
+	Provider string
+}
+type storedData struct {
+	Data      StateData
+	CreatedAt int64
+}
+
 type StateManager struct {
-	states map[string]int64
+	states map[string]storedData
 	mu     sync.RWMutex
 	ttl    time.Duration
 }
 
 func NewStateManager(ttl time.Duration) *StateManager {
 	sm := &StateManager{
-		states: make(map[string]int64),
+		states: make(map[string]storedData),
 		ttl:    ttl,
 	}
 
@@ -35,7 +45,7 @@ func NewStateManager(ttl time.Duration) *StateManager {
 	return sm
 }
 
-func (sm *StateManager) Generate() (string, error) {
+func (sm *StateManager) Generate(stateData StateData) (string, error) {
 	b := make([]byte, bufferSize)
 	_, err := rand.Read(b)
 	if err != nil {
@@ -45,28 +55,31 @@ func (sm *StateManager) Generate() (string, error) {
 	state := base64.URLEncoding.EncodeToString(b)
 
 	sm.mu.Lock()
-	sm.states[state] = time.Now().Unix()
+	sm.states[state] = storedData{
+		Data:      stateData,
+		CreatedAt: time.Now().Unix(),
+	}
 	sm.mu.Unlock()
 
 	return state, nil
 }
 
-func (sm *StateManager) Verify(state string) error {
+func (sm *StateManager) Verify(state string) (StateData, error) {
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
-	createdAt, exists := sm.states[state]
+	storedData, exists := sm.states[state]
 	if !exists {
-		return ErrStateNotFound
+		return StateData{}, ErrStateNotFound
 	}
 
-	if time.Now().Unix()-createdAt > int64(sm.ttl.Seconds()) {
+	if time.Now().Unix()-storedData.CreatedAt > int64(sm.ttl.Seconds()) {
 		delete(sm.states, state)
-		return ErrStateExpired
+		return StateData{}, ErrStateExpired
 	}
 
 	delete(sm.states, state)
-	return nil
+	return storedData.Data, nil
 }
 
 func (sm *StateManager) cleanup() {
@@ -76,8 +89,8 @@ func (sm *StateManager) cleanup() {
 	for range ticker.C {
 		now := time.Now().Unix()
 		sm.mu.Lock()
-		for state, createdAt := range sm.states {
-			if now-createdAt > int64(sm.ttl.Seconds()) {
+		for state, storedData := range sm.states {
+			if now-storedData.CreatedAt > int64(sm.ttl.Seconds()) {
 				delete(sm.states, state)
 			}
 		}

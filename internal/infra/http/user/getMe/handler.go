@@ -19,9 +19,10 @@ func NewHandler(logger logger.Logger) *Handler {
 }
 
 type Response struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	AvatarURL string `json:"avatar_url"`
 }
 
 // GetMe handler retrieves the current user from the session in the context.
@@ -43,6 +44,9 @@ func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 		ID:       user.ID,
 		Username: user.Nickname,
 		Email:    user.Email,
+	}
+	if user.AvatarURL != nil {
+		response.AvatarURL = *user.AvatarURL
 	}
 
 	helpers.RespondWithJSON(w, http.StatusOK, nil, response)

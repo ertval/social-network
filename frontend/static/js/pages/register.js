@@ -33,11 +33,11 @@ function buildRegisterHTML() {
         </div>
  
         <div class="btn-box">
-          <a class="signup-provider-btn google" href="/auth/google/login">
+          <a class="signup-provider-btn google" href="api/v1/auth/google/login">
             <img src="/static/images/icons/google-logo.png" alt="Google Logo" />
             <p>Sign up with Google</p>
           </a>
-          <a class="signup-provider-btn github" href="/auth/github/login">
+          <a class="signup-provider-btn github" href="api/v1/auth/github/login">
             <img src="/static/images/icons/github-white-logo.png" alt="Github Logo" />
             <p>Sign up with Github</p>
           </a>

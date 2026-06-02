@@ -50,6 +50,37 @@ func (r *Repo) GetUserByProviderID(ctx context.Context, provider oauth.Provider,
 	return &u, nil
 }
 
+func (r *Repo) GetUserByEmail(ctx context.Context, email string) (*user.User, error) {
+	query := `
+	SELECT id, username, email, password_hash, created_at
+	FROM users 
+	WHERE email=?
+	`
+
+	var u user.User
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRowContext(ctx, email).Scan(
+		&u.ID,
+		&u.Nickname,
+		&u.Email,
+		&u.Password,
+		&u.CreatedAt,
+	)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, oauth.ErrUserNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
 func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (userResult *user.User, err error) {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -70,14 +101,15 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
 	}()
 
 	insertUserQuery := `
-        INSERT INTO users (id, username, email, password_hash)
-        VALUES (?, ?, ?, '')
+        INSERT INTO users (id, username, email, password_hash,avatar_url)
+        VALUES (?, ?, ?, '',?)
     `
 
 	_, err = tx.ExecContext(ctx, insertUserQuery,
 		oauthUser.UserID,
 		oauthUser.Username,
 		oauthUser.Email,
+		oauthUser.AvatarURL,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
@@ -109,12 +141,8 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
 
 func (r *Repo) LinkOAuthProvider(ctx context.Context, userID string, oauthUser *oauth.User) error {
 	query := `
-	INSERT INTO oath_providers (user_id, provider, provider_user_id, email, username, avatar_url, created_at, updated_at)
-	VALUES (?, ?, ?, ?, ?, ?, ?, ?,)
-	ON CONFLICT(provider, provider_user_id) DO UPDATE SET
-		email = excluded.username,
-		avatar_url = excluded.avatar_url,
-		updated_at = excluded.updated_at
+	INSERT INTO oauth_providers (user_id, provider, provider_user_id, email, username, avatar_url)
+	VALUES (?, ?, ?, ?, ?, ?)
 	`
 
 	stmt, err := r.db.PrepareContext(ctx, query)
@@ -126,7 +154,7 @@ func (r *Repo) LinkOAuthProvider(ctx context.Context, userID string, oauthUser *
 	_, err = stmt.ExecContext(ctx,
 		userID,
 		string(oauthUser.Provider),
-		oauthUser.Provider,
+		oauthUser.ProviderID,
 		oauthUser.Email,
 		oauthUser.Username,
 		oauthUser.AvatarURL,

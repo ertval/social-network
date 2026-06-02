@@ -157,8 +157,22 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Login,
 	)
+	server.router.HandleFunc(apiContext+"/auth/github/link",
+		middlewareChain(
+			oauthlogin.NewOAuthHandler(
+				server.oauth.GithubProvider,
+				server.config,
+				&server.appServices.Queries.UserLoginGithub,
+				server.oauth.StateManager,
+				server.sessionManager,
+				server.logger,
+				server.cookieManager,
+			).Link,
+			server.middleware.Authorization.Required,
+		))
 	server.router.HandleFunc(apiContext+"/auth/github/callback",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GithubProvider,
@@ -167,6 +181,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Callback,
 	)
 	server.router.HandleFunc(apiContext+"/auth/google/login",
@@ -177,8 +192,22 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Login,
 	)
+	server.router.HandleFunc(apiContext+"/auth/google/link",
+		middlewareChain(
+			oauthlogin.NewOAuthHandler(
+				server.oauth.GoogleProvider,
+				server.config,
+				&server.appServices.Queries.UserLoginGithub,
+				server.oauth.StateManager,
+				server.sessionManager,
+				server.logger,
+				server.cookieManager,
+			).Link,
+			server.middleware.Authorization.Required,
+		))
 	server.router.HandleFunc(apiContext+"/auth/google/callback",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GoogleProvider,
@@ -187,6 +216,7 @@ func (server *Server) AddHTTPRoutes() {
 			server.oauth.StateManager,
 			server.sessionManager,
 			server.logger,
+			server.cookieManager,
 		).Callback,
 	)
 

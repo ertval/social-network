@@ -12,7 +12,7 @@
  *   { "error": "message" }  (with a non-2xx status)
  */
 
-const API_BASE = '/api/v1';
+const API_BASE = 'https://localhost:8080/api/v1';
 
 /**
  * Generic fetch wrapper.

@@ -36,6 +36,7 @@ export function renderNavbar(user) {
   root.innerHTML = buildNavbarHTML(user);
 
   if (user) {
+    initUserMenu();
     initNotifications(user);
     initActiveNavLink();
   }
@@ -65,6 +66,7 @@ function buildNavbarHTML(user) {
 }
 
 function buildLoggedInNav(user) {
+  console.log(user.avatar_url)
   const avatarSrc =
     user.avatar_url || user.AvatarURL
       ? escapeHTML(user.avatar_url || user.AvatarURL)
@@ -79,11 +81,23 @@ function buildLoggedInNav(user) {
           <span class="welcome-user">Welcome,</span>
           <span class="welcome-user-name">${username}</span>
         </div>
-        <a href="/activity" class="user-avatar-link" data-link>
-          <span class="user-avatar">
-            <img src="${avatarSrc}" alt="User Avatar" />
-          </span>
-        </a>
+        <div class="user-menu-wrapper">
+          <button
+            type="button"
+            class="user-avatar-link user-avatar-trigger"
+            id="userMenuTrigger"
+            aria-label="Open account menu"
+            aria-expanded="false"
+          >
+            <span class="user-avatar">
+              <img src="${avatarSrc}" alt="User Avatar" />
+            </span>
+          </button>
+          <div class="user-menu-dropdown" id="userMenuDropdown" style="display:none">
+            <a href="/activity" class="user-menu-item" data-link>Profile</a>
+            <a href="/account/settings" class="user-menu-item" data-link>Account Settings</a>
+          </div>
+        </div>
       </div>
 
       <ul class="nav-links">
@@ -147,6 +161,40 @@ function initActiveNavLink() {
   });
 }
 
+function initUserMenu() {
+  const trigger = document.getElementById('userMenuTrigger');
+  const dropdown = document.getElementById('userMenuDropdown');
+  const notificationDropdown = document.getElementById('notificationDropdown');
+
+  if (!trigger || !dropdown) return;
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.style.display !== 'none';
+
+    if (notificationDropdown) {
+      notificationDropdown.style.display = 'none';
+    }
+
+    dropdown.style.display = isOpen ? 'none' : 'block';
+    trigger.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  dropdown.querySelectorAll('a[data-link]').forEach((link) => {
+    link.addEventListener('click', () => {
+      dropdown.style.display = 'none';
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
 // ─── Notification bell (mirrors frontend/static/js/notifications.js) ─────────
 
 let _notificationSSE = null;
@@ -155,6 +203,8 @@ function initNotifications() {
   const bell = document.getElementById('notificationBell');
   const dropdown = document.getElementById('notificationDropdown');
   const markAllBtn = document.getElementById('markAllReadBtn');
+  const userMenuDropdown = document.getElementById('userMenuDropdown');
+  const userMenuTrigger = document.getElementById('userMenuTrigger');
 
   if (!bell || !dropdown) return;
 
@@ -168,6 +218,10 @@ function initNotifications() {
     if (isOpen) {
       dropdown.style.display = 'none';
     } else {
+      if (userMenuDropdown) {
+        userMenuDropdown.style.display = 'none';
+      }
+      userMenuTrigger?.setAttribute('aria-expanded', 'false');
       dropdown.style.display = 'flex';
       dropdown.style.flexDirection = 'column';
       loadNotifications();
