@@ -45,3 +45,5 @@ coverage/
 
 #AI agents
 .agents/
+.audit/
+tmp/
