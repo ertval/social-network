@@ -18,7 +18,7 @@ internal/
   │  session/       realtime/      middleware/     server/       │
   └─────────────────────────────────────────────────────────────┘
   ┌── Platform ────────────────────────────────────────────────┐
-  │  platform/database/   platform/redis/   platform/rabbitmq/  │
+  │  platform/database/   platform/redis/   platform/eventbus/  │
   └─────────────────────────────────────────────────────────────┘
   ┌── Shared Utilities ────────────────────────────────────────┐
   │  pkg/bcrypt  pkg/uuid  pkg/validator  pkg/helpers           │
@@ -66,12 +66,15 @@ Create the database abstraction layer supporting both SQLite and PostgreSQL.
 | Realtime pub/sub | SSE/WS hub subscribes to Redis channels for cross-instance fan-out |
 | Online presence | Sorted sets tracking user online status |
 
-### 0.3 RabbitMQ Client (`internal/platform/rabbitmq/`)
+### 0.3 Event Bus & RabbitMQ Client (`internal/platform/eventbus/` & `internal/platform/rabbitmq/`)
+
+To allow swapping RabbitMQ for Kafka, NATS, or other message brokers in the future, all event publishing must be abstracted. Use-case layers MUST NOT import RabbitMQ directly.
 
 #### Files
 
+- `internal/platform/eventbus/eventbus.go` — `EventBus` interface definition (`Publish(ctx, event, payload) error`)
 - `internal/platform/rabbitmq/rabbitmq.go` — Connection, channel management, auto-reconnect
-- `internal/platform/rabbitmq/publisher.go` — Publish domain events
+- `internal/platform/rabbitmq/publisher.go` — Concrete implementation of `EventBus` using RabbitMQ
 - `internal/platform/rabbitmq/consumer.go` — Consume events, dispatch to services
 - `internal/platform/rabbitmq/exchanges.go` — Exchange/queue/binding declarations
 
@@ -119,8 +122,8 @@ Move from `internal/infra/middleware/`:
 
 Move from `internal/infra/http/server.go`:
 
-- `server/server.go` — HTTP server struct, `NewServer()`, `ListenAndServe()`
-- `server/routes.go` — Route registration table (imports ~10 feature transport packages)
+- `server/server.go` — HTTP server struct, `NewServer()`, `ListenAndServe()` with graceful shutdown (handles `SIGTERM`/`SIGINT`, drains RabbitMQ, and closes DB pools).
+- `server/routes.go` — Route registration table including `/healthz` (liveness) and `/readyz` (readiness check for DB, Redis, RabbitMQ).
 
 ---
 
@@ -261,7 +264,7 @@ Wire RabbitMQ consumers to the notification service:
 Feature root (user.go, commands.go, queries.go)
   ├── MUST NOT import transport/ or store/ from same feature
   ├── MAY import other features' root packages (entity + interface)
-  ├── MAY import platform/ packages (rabbitmq, redis)
+  ├── MAY import platform/ packages (eventbus, redis)  # EventBus interface only (no rabbitmq/kafka)
   └── MUST NOT import other features' transport/ or store/
 
 transport/http.go
@@ -275,7 +278,7 @@ store/sqlite.go, store/postgres.go
   └── MUST NOT import transport/
 
 bootstrap/bootstrap.go
-  └── Imports EVERYTHING, wires concrete impls into interfaces
+  └── Imports EVERYTHING, wires concrete implementations (e.g., rabbitmq.Publisher) into platform interfaces (e.g., eventbus.EventBus).
 ```
 
 ---
