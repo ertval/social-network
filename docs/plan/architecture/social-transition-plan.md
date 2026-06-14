@@ -6,7 +6,7 @@ This document outlines the unified, deduplicated, and optimized roadmap to evolv
 
 ## Target Architecture
 
-```
+```text
                       +-------------------+
                       |      Browser      |
                       |   (Next.js App)   |
@@ -17,17 +17,17 @@ This document outlines the unified, deduplicated, and optimized roadmap to evolv
                       |    Go Backend     |
                       |    (Port 8080)    |
                       +---------+---------+
-                                |
-                                v
-                      +-------------------+
-                      |   SQLite Database |
-                      |    (WAL Enabled)  |
-                      +-------------------+
+                         /      |      \
+                        v       v       v
+             +----------+  +---------+  +----------+
+             |  SQLite  |  |  Redis  |  | RabbitMQ |
+             |  / PG    |  | (Cache) |  | (Events) |
+             +----------+  +---------+  +----------+
 ```
 
 - **Frontend**: A modern **Next.js** web application replacing the current Vanilla JS SPA. It will leverage Next.js App Router, using vanilla CSS for premium, custom styling (gradients, glassmorphism, smooth animations), and handle client-side WebSocket/SSE updates.
-- **Backend**: Clean Architecture with CQRS commands/queries (`domain` -> `app` -> `infra`). We preserve the separation of HTTP handlers, CQRS commands/queries, and SQLite repositories.
-- **Database**: Support through Factory pattern for PostgreSQL and SQLite with Write-Ahead Logging (`WAL`), `_busy_timeout=5000`, and parameterized queries.
+- **Backend**: **Optimized Vertical Slices** pattern. We depart from horizontal layering (`domain` -> `app` -> `infra`) into standalone feature slices (`user/`, `topic/`, `follow/`, `group/`, etc.), each encapsulating its entity, CQRS commands/queries, HTTP transport, and data store implementations.
+- **Infrastructure Services**: Support through Factory pattern for PostgreSQL and SQLite (with `_journal_mode=WAL` and `_busy_timeout=5000`), Redis for session and realtime pub/sub, and RabbitMQ for asynchronous event notifications.
 
 ---
 
@@ -195,100 +195,67 @@ Create SQL scripts inside `db/migrations/` to establish:
 
 ---
 
-## Phase 2: Backend Domain & Application Services
+## Phase 2: Platform & Cross-Cutting Infrastructure
 
-*Defining interfaces, domain models, and CQRS commands/queries.*
+*Transitioning to vertical slices requires a strong platform and cross-cutting foundation.*
 
-### 2.1 Domain Layer Updates
-- **User Domain (`internal/domain/user/user.go`)**: Update `User` entity to contain `DateOfBirth time.Time`, `AboutMe string`, and `IsPrivate bool`. Make Nickname field handling optional.
-- **Topic Domain (`internal/domain/topic/topic.go`)**: Add `Visibility` field (constants: `Public`, `AlmostPrivate`, `Private`) and list of `AllowedUsers []string`.
-- **Follow Domain (`internal/domain/follow/follow.go`)**:
-  - Define `Follow` and `FollowRequest` structs.
-  - Define `Repository` interface: `CreateFollow`, `DeleteFollow`, `GetFollowers`, `GetFollowing`, `IsFollowing`, `CreateFollowRequest`, `GetPendingFollowRequests`, `UpdateFollowRequest`.
-- **Group Domain (`internal/domain/group/group.go`)**:
-  - Define `Group`, `GroupMember`, `GroupInvitation`, and `GroupJoinRequest` structs.
-  - Define `Repository` interface for groups CRUD, membership updates, invitations, and join requests.
-- **Event Domain (`internal/domain/event/event.go`)**:
-  - Define `Event` and `EventRSVP` structs.
-  - Define `Repository` interface for events creation and RSVP operations.
+### 2.1 Database, Redis, and EventBus (`internal/platform/`)
+- **Database Factory**: `platform/database/database.go` supporting SQLite (`_journal_mode=WAL`, `_busy_timeout=5000`) and PostgreSQL.
+- **Redis Cache & Pub/Sub**: `platform/redis/` for session caching, rate limiting, and real-time event fan-out.
+- **EventBus & RabbitMQ**: `platform/eventbus/` (interface) and `platform/rabbitmq/` for async event dispatch (e.g., `follow.requested`, `event.created`).
 
-### 2.2 CQRS Application Layer
-- **Follow Commands/Queries (`internal/app/follow/`)**:
-  - `commands/followUser.go` / `unfollowUser.go`
-  - `commands/sendFollowRequest.go` / `respondToFollowRequest.go`
-  - `queries/getFollowers.go` / `getFollowing.go` / `getFollowRequests.go`
-- **Group Commands/Queries (`internal/app/group/`)**:
-  - `commands/createGroup.go` / `updateGroup.go` / `deleteGroup.go`
-  - `commands/inviteToGroup.go` / `respondToInvitation.go`
-  - `commands/requestJoinGroup.go` / `respondToJoinRequest.go`
-  - `commands/leaveGroup.go`
-  - `queries/getGroup.go` / `getUserGroups.go` / `getGroupMembers.go` / `getGroupPosts.go` / `searchGroups.go`
-- **Event Commands/Queries (`internal/app/event/`)**:
-  - `commands/createEvent.go` / `rsvpEvent.go`
-  - `queries/getGroupEvents.go` / `getEventRSVPs.go`
-- **Services Registry (`internal/app/services.go`)**:
-  - Register all new CQRS structures within the orchestrating `Services` object.
+### 2.2 Cross-Cutting Infrastructure
+- **Session (`internal/session/`)**: Session entity, manager, and Redis cache.
+- **Realtime (`internal/realtime/`)**: WS connection hub, client lifecycle (`defer recover()`), routing.
+- **Middleware (`internal/middleware/`)**: Auth, CORS, Ratelimiter (using Redis), Logging.
+- **Server (`internal/server/`)**: HTTP server with `/healthz`, `/readyz`, and graceful shutdown.
 
 ---
 
-## Phase 3: Backend Infrastructure Layer
+## Phase 3: Vertical Slices Backend Migration & Greenfield Features
 
-*Implementing database access logic, router setup, and API handlers.*
+*Migrating from the horizontal `domain/ -> app/ -> infra/` to Optimized Vertical Slices, and building the new features.*
 
-### 3.1 SQLite Repositories
-Implement the repository interfaces using SQLite:
-- `internal/infra/storage/sqlite/follows/followRepo.go`
-- `internal/infra/storage/sqlite/groups/groupRepo.go`
-- `internal/infra/storage/sqlite/events/eventRepo.go`
-- Register the new repositories inside `internal/infra/storage/sqlite/repositories.go`.
+### 3.1 Greenfield Feature Slices
+Build new features directly as vertical slices (no horizontal migration needed):
+- **Follow (`internal/follow/`)**: `follow.go`, `commands.go`, `queries.go`, `transport/http.go`, `store/sqlite.go`, `store/postgres.go`.
+- **Group (`internal/group/`)**: `group.go`, `commands.go`, `queries.go`, `transport/http.go` (REST), `transport/ws.go` (Chat), `store/sqlite.go`, `store/postgres.go`.
+- **Event (`internal/event/`)**: `event.go`, `commands.go`, `queries.go`, `transport/http.go`, `store/sqlite.go`, `store/postgres.go`.
 
-### 3.2 HTTP Handlers & API Routes
+### 3.2 Migrating Existing Features
+Move existing horizontal code into vertical slices:
+- **`user/`**: Absorbs `activity/`. Updates: Add `DateOfBirth`, `AboutMe`, `IsPrivate`.
+- **`topic/`**: Absorbs `category/`. Updates: Add `Visibility`, `AllowedUsers`. Implement `http.DetectContentType` for uploads.
+- **`comment/`**: Update to vertical slice.
+- **`vote/`**: Update to vertical slice.
+- **`chat/`**: Gets `transport/ws.go` from old infra layer. Apply Chat Access Constraints.
+- **`notification/`**: Consumes RabbitMQ events to generate notifications.
+- **`oauth/`**: Update to vertical slice. Ensure Google OAuth maps correctly.
 
-#### Users / Profiles
-- `GET /api/v1/users/:id` — Get profile information. Respects profile privacy (returns minimal profile summary if private and requester is not a follower).
-- `PUT /api/v1/users/update` — Update avatar, biography, date of birth, nickname, or toggle privacy settings.
-- `GET /api/v1/users/:id/activity` — Get post and comment history of the target user. Restricts output based on profile privacy.
+### 3.3 HTTP Handlers & API Routes (in Vertical Slices)
 
-#### Follow System
-- `POST /api/v1/follow/:id` — Sends follow request (if profile is private) or registers direct follow (if public).
-- `DELETE /api/v1/follow/:id` — Unfollows a user.
-- `GET /api/v1/follow/requests` — Lists pending follow requests for the authenticated user.
-- `PUT /api/v1/follow/requests/:id` — Accept or decline a follow request.
-- `GET /api/v1/users/:id/followers` — List of user's followers.
-- `GET /api/v1/users/:id/following` — List of users the target follows.
+#### Users / Profiles (`user/transport/http.go`)
+- `GET /api/v1/users/:id` — Get profile information (respects privacy).
+- `PUT /api/v1/users/update` — Update avatar, biography, date of birth, nickname, privacy.
+- `GET /api/v1/users/:id/activity` — Get post and comment history (respects privacy).
 
-#### Group Management
-- `POST /api/v1/groups` — Create a group.
-- `GET /api/v1/groups` — Search and browse groups.
-- `GET /api/v1/groups/:id` — Retrieve group details.
-- `DELETE /api/v1/groups/:id/members/:userId` — Leave group or remove a member.
-- `POST /api/v1/groups/:id/invite` — Invite users.
-- `GET /api/v1/groups/:id/invitations` — List active invitations.
-- `PUT /api/v1/groups/:id/invitations/:inviteId` — Accept/decline an invite.
-- `POST /api/v1/groups/:id/join` — Request to join.
-- `GET /api/v1/groups/:id/join-requests` — List active requests.
-- `PUT /api/v1/groups/:id/join-requests/:reqId` — Accept/decline join request.
+#### Follow System (`follow/transport/http.go`)
+- `POST /api/v1/follow/:id` — Follow/send request. Dispatches `follow.requested`/`follow.accepted` to RabbitMQ.
+- `DELETE /api/v1/follow/:id` — Unfollow.
+- `GET /api/v1/follow/requests` / `PUT .../:id` — List/resolve requests.
+- `GET /api/v1/users/:id/followers` & `/following` — Lists.
 
-#### Group Content
-- `POST /api/v1/groups/:id/posts` — Create a group post (saved in topics table with `group_id`).
-- `GET /api/v1/groups/:id/posts` — Retrieve group posts feed (accessible by members only).
-- `POST /api/v1/groups/:id/events` — Create a group event.
-- `GET /api/v1/groups/:id/events` — List events scheduled for the group.
-- `POST /api/v1/events/:eventId/rsvp` — RSVP (`going`, `not_going`).
+#### Group Management & Content (`group/transport/http.go` & `event/transport/http.go`)
+- `POST /api/v1/groups` — Create group.
+- `GET /api/v1/groups`, `/api/v1/groups/:id` — List/View group.
+- `DELETE /api/v1/groups/:id/members/:userId` — Leave/Remove.
+- `POST /api/v1/groups/:id/invite` / `join` — Management endpoints.
+- `POST /api/v1/groups/:id/posts` — Group posts.
+- `POST /api/v1/groups/:id/events` — Create event. Dispatches `event.created` to RabbitMQ.
+- `POST /api/v1/events/:eventId/rsvp` — RSVP.
 
-#### Post Privacy Whitelist
-- `GET /api/v1/topics/:id/allowed-users` — Retrieve target follower usernames allowed to view the private topic.
-
-### 3.3 Domain Integrations & Adjustments
-- **Chat Access Constraint**: Update `internal/app/chat/commands/initChat.go`. Users can only initialize a chat session if they follow each other (either follower/followee direction) or the recipient has a public profile.
-- **Image Content Security**: Update `internal/app/topics/filestorage.go` and user registration/update profile routes. Read the first 512 bytes of uploads using `http.DetectContentType` to enforce true image type validation (JPEG, PNG, GIF) and prevent client MIME-spoofing.
-- **Notification Dispatches**: Wire notification logic inside the services layer:
-  - `follow_request` when sending a request to a private profile.
-  - `follow_request_accepted` when follow request is accepted.
-  - `group_invite` when a user is invited to a group.
-  - `group_join_request` when a user requests to join a group.
-  - `event_created` when an event is added to a group (dispatched to all members).
-- **Google OAuth Wiring Check**: Verify that Google OAuth handlers in `internal/infra/http/server.go` correctly map to the Google authentication queries/services (e.g. `UserLoginGoogle` query service) rather than reusing the Github login handler explicitly if distinct parameters are required.
+#### Post Privacy Whitelist (`topic/transport/http.go`)
+- `GET /api/v1/topics/:id/allowed-users` — Retrieve allowed users for private topic.
 
 ---
 
@@ -340,12 +307,14 @@ Implement the repository interfaces using SQLite:
 
 ## Phase 5: Multi-Container Deployment
 
-*Split the single-container execution model into isolated backend and frontend services.*
+*Transition to a scalable orchestration of backend, frontend, and infrastructure services.*
 
 ### 5.1 Docker Compose Configuration
-- Expose **`backend`** service on port `8080` (Go rest api).
-- Expose **`frontend`** service on port `3000` (Next.js server).
-- Define backend environment variables inside the frontend service to routing calls cleanly.
+- **`backend`**: Go API server on port `8080`.
+- **`frontend`**: Next.js server on port `3000`.
+- **`redis`**: Redis for caching and pub/sub on port `6379`.
+- **`rabbitmq`**: RabbitMQ for async event dispatch on port `5672` (and management UI on `15672`).
+- Provide appropriate environment variables (`DATABASE_DRIVER`, `REDIS_URL`, `RABBITMQ_URL`) to the backend.
 
 ### 5.2 Frontend Dockerfile
 - Create `frontend/Dockerfile` for Next.js:
