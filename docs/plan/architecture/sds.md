@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS notifications (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
-    type TEXT NOT NULL, -- 'follow-request', 'follow-accepted', 'group-invite', 'group-join', 'event-creation', 'direct-message'
+    type TEXT NOT NULL, -- 'follow.requested', 'follow.accepted', 'group.invited', 'group.join_requested', 'event.created'
     source_id TEXT NOT NULL, -- references the triggering entity (user, group, event, chat)
     content TEXT NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT 0,
@@ -342,7 +342,44 @@ func (r *GetFollowersResolver) Execute(ctx context.Context, q *GetFollowersQuery
 }
 ```
 
-#### 2.1.4 SQLite Adapter (`store/sqlite.go`)
+#### 2.1.4 Transport Layer (`transport/http.go` + `transport/ws.go`)
+
+Defines HTTP REST handlers and WebSocket handlers that delegate to commands/queries. One file per feature avoids handler fragmentation.
+
+```go
+// follow/transport/http.go
+package transport
+
+import (
+    "net/http"
+    "social-network/internal/follow/commands"
+    "social-network/internal/follow/queries"
+)
+
+type Handler struct {
+    followUser     *commands.FollowUserHandler
+    unfollowUser   *commands.UnfollowUserHandler
+    acceptRequest  *commands.AcceptRequestHandler
+    declineRequest *commands.DeclineRequestHandler
+    getFollowers   *queries.GetFollowersResolver
+    getFollowing   *queries.GetFollowingResolver
+}
+
+func NewHandler(
+    fu *commands.FollowUserHandler,
+    uu *commands.UnfollowUserHandler,
+    ar *commands.AcceptRequestHandler,
+    dr *commands.DeclineRequestHandler,
+    gf *queries.GetFollowersResolver,
+    gf2 *queries.GetFollowingResolver,
+) *Handler {
+    return &Handler{followUser: fu, unfollowUser: uu, acceptRequest: ar, declineRequest: dr, getFollowers: gf, getFollowing: gf2}
+}
+```
+
+`ws.go` exists only for features with WebSocket traffic (chat, group chat).
+
+#### 2.1.5 SQLite Adapter (`store/sqlite.go`)
 Implements the full `Repository` interface using standard SQL. All SQL for a feature domain lives in one file. Translates platform DB connection methods into feature actions.
 
 ```go
