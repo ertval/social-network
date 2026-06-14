@@ -111,7 +111,7 @@ feature root (entity.go, commands.go, queries.go)
 
 transport/http.go
   ├── Imports own feature root
-  ├── Imports session/ for auth context
+  ├── Imports infra/session/ for auth context
   └── MUST NOT import store/
 
 store/sqlite.go
@@ -146,6 +146,10 @@ oauth          → user
 ## Directory Tree — Final Target
 
 ```
+cmd/
+  server/
+    main.go         # Application entry point. Imports config, bootstrap, and infra/server.
+
 internal/
   # ─── Feature Slices (all follow D1 layout) ───
   user/             # Absorbs activity. Entities: User
@@ -159,16 +163,18 @@ internal/
   notification/     # Entities: Notification
   oauth/            # Entities: OAuthState
 
-  # ─── Cross-cutting ───
-  session/          # Session entity + manager + store
-  realtime/         # WebSocket hub, client, router
-  middleware/       # Auth, CORS, rate limiter, logging
-  server/           # HTTP server, route registration, graceful shutdown
+  # ─── Cross-cutting Infrastructure ───
+  infra/
+    session/        # Session entity + manager + store
+    realtime/       # WebSocket hub, client, router
+    middleware/     # Auth, CORS, rate limiter, logging
+    server/         # HTTP server, route registration, graceful shutdown
 
   # ─── Platform (behind interfaces) ───
   platform/
     database/       # DB interface + factory (SQLite now, PostgreSQL later)
     eventbus/       # EventBus interface + in-process impl (RabbitMQ later)
+    cache/          # Cache interface + in-memory map (Redis later)
 
   # ─── Shared Utilities ───
   pkg/
@@ -223,7 +229,12 @@ The factory returns `DB`. All feature stores will accept `DB`, not `*sql.DB`.
 
 ~40 lines of code. No external dependencies. Features publish events; subscribers receive them asynchronously in-process.
 
-### 2.3 Migration Scripts (`db/migrations/`)
+### 2.3 Simple In-Memory Cache (`internal/platform/cache/`)
+
+- `cache.go` — `Cache` interface: `Get(ctx, key, val)`, `Set(ctx, key, val, ttl)`, `Delete(ctx, key)`
+- `memory.go` — In-process implementation using a thread-safe map (`sync.RWMutex`) and cleanup goroutine.
+
+### 2.4 Migration Scripts (`db/migrations/`)
 
 Create numbered migration scripts:
 
@@ -245,25 +256,25 @@ Create numbered migration scripts:
 
 *Move existing cross-cutting concerns into their target locations.*
 
-### 3.1 Session (`internal/session/`)
+### 3.1 Session (`internal/infra/session/`)
 
 - `session.go` — Session entity, `Manager` interface
 - `store/sqlite.go` — SQLite session store (moved from `infra/storage/sessionstore/`)
 
-### 3.2 Realtime (`internal/realtime/`)
+### 3.2 Realtime (`internal/infra/realtime/`)
 
 - `hub.go` — WebSocket hub (moved from `infra/ws/`)
 - `client.go` — Client lifecycle with `defer recover()` (bug 1.7 applied here)
 - `router.go` — WS message routing by type
 
-### 3.3 Middleware (`internal/middleware/`)
+### 3.3 Middleware (`internal/infra/middleware/`)
 
 - `auth.go` — Session auth middleware
 - `cors.go` — CORS with proper origin validation
 - `ratelimiter.go` — Rate limiter (flattened from sub-package, bug 1.8 applied)
 - `logging.go` — Request logging
 
-### 3.4 Server (`internal/server/`)
+### 3.4 Server (`internal/infra/server/`)
 
 - `server.go` — HTTP server, `ListenAndServe()`, graceful shutdown
 - `routes.go` — Route registration
@@ -469,24 +480,24 @@ Add `postgres` service. Backend switches to PostgreSQL by changing `DATABASE_DRI
 
 *Goal: understand caching, distributed rate limiting, and pub/sub.*
 
-### 9.1 Redis Client (`internal/platform/redis/`)
+### 9.1 Redis Cache (`internal/platform/cache/`)
 
-- `redis.go` — Connection pool, health check
-- `pubsub.go` — Pub/sub wrapper
+- `redis.go` — Implements `Cache` interface using Redis connection pool
+- `pubsub.go` — Pub/sub wrapper for cross-instance messaging
 
 ### 9.2 Session Cache
 
-- Create `session/store/redis.go` — Read-through cache with TTL. DB remains source of truth.
+- Create `internal/infra/session/store/redis.go` — Cache implementation utilizing `platform/cache` interface wrapper with TTL. DB remains source of truth.
 - Wire in `bootstrap.go` to wrap the SQLite/Postgres session store.
 
 ### 9.3 Rate Limiter
 
-- Update `middleware/ratelimiter.go` to use Redis `INCR` + `EXPIRE` instead of in-memory map.
+- Update `internal/infra/middleware/ratelimiter.go` to use the `platform/cache` Redis implementation (e.g. `INCR` + `EXPIRE`) instead of in-memory map.
 - Enables consistent rate limiting across multiple backend instances.
 
 ### 9.4 Realtime Pub/Sub
 
-- Update `realtime/hub.go` to subscribe to Redis channels.
+- Update `internal/infra/realtime/hub.go` to subscribe to Redis channels via the `pubsub` client.
 - When a notification is created, publish to Redis. All backend instances receive it and push to their connected WebSocket clients.
 
 ### 9.5 Docker Compose Update
@@ -554,7 +565,7 @@ govulncheck ./...
 
 ```bash
 # No feature's transport/ or store/ imports another feature's transport/ or store/
-grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'session/'
+grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'infra/'
 ```
 
 ### Manual Test Scenarios
