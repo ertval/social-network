@@ -114,6 +114,7 @@ session        → user
 follow         → user, eventbus
 topic          → user
 comment        → user, topic
+vote           → user, topic, comment, eventbus
 group          → user, eventbus
 event          → group, eventbus
 chat           → user, FollowChecker (interface, not follow import)
@@ -128,7 +129,7 @@ oauth          → user
 ## 6. Technology Stack & Runtime Infrastructure
 
 ### Backend (Go)
-- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and a busy timeout configured to prevent locking. Portability for PostgreSQL is built-in. Seed data migration (`000007_seed_data`) available as a bonus feature.
+- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and busy timeout (`_busy_timeout=5000`) configured to prevent locking. Portability for PostgreSQL is built-in. Seed data migration (`000007_seed_data`) available as a bonus feature.
 - **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/core/realtime/` with token verification on handshake. Chat messages support Unicode/emoji via standard UTF-8 JSON encoding.
 - **Asynchronous Processing**: Non-blocking channel-based event bus for localized operations. Portability for RabbitMQ is built-in.
 
