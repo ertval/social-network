@@ -65,6 +65,19 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
   - ❌ `/home/user/code/social-network/internal/user/service.go`
 - Reference paths from the project root (where `go.mod` lives).
 
+## 6. Git Branch Naming
+
+All branches must follow the format `<username>/<type>-<detail>`.
+
+- **username**: GitHub/Gitea username (e.g. `ekaramet`, `arnald`)
+- **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
+- **detail**: kebab-case description of the change
+
+Examples:
+- `ekaramet/feat-arch-proposal`
+- `arnald/fix-sqlite-busy-timeout`
+- `ekaramet/chore-update-deps`
+
 ## Audit 2026-06-14: Social Network Codebase Audit
 
 ### Patterns
