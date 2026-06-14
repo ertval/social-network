@@ -49,6 +49,7 @@ coverage/
 .agents/
 .audit/
 tmp/
+.agentignore
 
 # Agent skills lock file
 skills-lock.json
