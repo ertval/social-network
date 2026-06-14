@@ -481,3 +481,36 @@ event    → group, notification (events belong to groups, trigger notifications
 ```
 
 `notification` serves as the shared kernel — every feature that dispatches notifications imports it. This is by design.
+
+---
+
+## Future Scale Expansions: Microservice Promotion & Independent Scaling (Requirement)
+
+The optimized architecture is designed to support the seamless promotion of modules into standalone **Microservices** and the physical scaling of **Commands** and **Queries** independently. By keeping slices logically segregated and minimizing cross-slice references, this transition is treated as a routing and infrastructure concern rather than a code-rewrite task.
+
+### 1. Promotion to Microservices (Requirement)
+Any feature slice (e.g., `user/`, `group/`, `notification/`) must be ready for promotion to an independent microservice:
+- **No Shared Storage:** Slices access only their own database tables. Cross-slice joins are forbidden.
+- **Strict Boundary Import Rules:** Slices interact only through whitelisted domain interfaces or clean APIs. 
+- **Transition Path:** To extract a slice (e.g., `notification`) into its own microservice:
+  1. Move the `internal/notification/` directory to a new Go service repository.
+  2. Implement an HTTP/gRPC transport layer for its endpoints.
+  3. Replace in-memory service calls in other slices with HTTP/gRPC API client calls.
+
+### 2. Kubernetes Readiness (App Alignment)
+To ensure the application deploys reliably on Kubernetes and handles orchestrator lifecycle events:
+- **Liveness & Readiness Probes:** The HTTP server exposes `/healthz` (always returns `200 OK`) and `/readyz` (dynamically verifies active SQLite/Postgres connections, Redis connectivity, and RabbitMQ health). Traffic is routed only when `/readyz` is healthy.
+- **Graceful Shutdown (`SIGTERM` handling):** The Go binary traps orchestrator `SIGTERM`/`SIGINT` signals, halts the HTTP/WS listener, drains in-flight requests, gracefully closes RabbitMQ consumer channels, and releases database connection pools to prevent active connection dropouts.
+- **12-Factor Config:** Configuration is populated strictly via environment variables, aligning with Kubernetes `ConfigMaps` and `Secrets` injection.
+
+### 3. Message Broker Swappability (RabbitMQ to Kafka)
+To prevent cloud-provider/vendor lock-in to RabbitMQ and allow dropping in Kafka or NATS in the future:
+- **Abstracted Event Bus:** Feature commands publish events strictly via a generic `EventBus` interface defined in `internal/platform/eventbus/`.
+- **Decoupled Business Logic:** Slices have zero import dependencies on RabbitMQ (`amqp`) libraries.
+- **Interchangeable Implementations:** The concrete RabbitMQ client resides in `platform/rabbitmq`. If you migrate to Kafka, you only need to create `platform/kafka`, implement the same `EventBus` interface, and update the wiring in `bootstrap/bootstrap.go`.
+
+### 4. Path to Independent CQRS Scaling
+If read traffic heavily outweighs write traffic, the unified binary can be scaled asymmetrically in Kubernetes (e.g., running 10 replicas of Queries and 2 replicas of Commands) using these steps:
+- **Separate Entrypoints:** Create separate binaries under `cmd/commands/main.go` and `cmd/queries/main.go` using the same underlying code but wiring only the necessary controllers.
+- **Asymmetric Routing:** Configure Kubernetes Ingress, Nginx, or an API Gateway to forward read requests (`GET`) to query replicas and write requests (`POST`, `PUT`, `DELETE`) to command replicas.
+- **Database Replication:** Update the `platform/database` factory to accept write and read connection strings (DSNs), supplying the primary database to commands and read-replicas to queries.
