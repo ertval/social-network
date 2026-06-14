@@ -27,7 +27,7 @@ This document outlines the unified, deduplicated, and optimized roadmap to evolv
 
 - **Frontend**: A modern **Next.js** web application replacing the current Vanilla JS SPA. It will leverage Next.js App Router, using vanilla CSS for premium, custom styling (gradients, glassmorphism, smooth animations), and handle client-side WebSocket/SSE updates.
 - **Backend**: Clean Architecture with CQRS commands/queries (`domain` -> `app` -> `infra`). We preserve the separation of HTTP handlers, CQRS commands/queries, and SQLite repositories.
-- **Database**: SQLite with Write-Ahead Logging (`WAL`), `_busy_timeout=5000`, and parameterized queries.
+- **Database**: Support through Factory pattern for PostgreSQL and SQLite with Write-Ahead Logging (`WAL`), `_busy_timeout=5000`, and parameterized queries.
 
 ---
 
