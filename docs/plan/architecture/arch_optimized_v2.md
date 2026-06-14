@@ -111,7 +111,7 @@ feature root (entity.go, commands.go, queries.go)
 
 transport/http.go
   ├── Imports own feature root
-  ├── Imports infra/session/ for auth context
+  ├── Imports core/session/ for auth context
   └── MUST NOT import store/
 
 store/sqlite.go
@@ -148,7 +148,7 @@ oauth          → user
 ```
 cmd/
   server/
-    main.go         # Application entry point. Imports config, bootstrap, and infra/server.
+    main.go         # Application entry point. Imports config, bootstrap, and core/server.
 
 internal/
   # ─── Feature Slices (all follow D1 layout) ───
@@ -163,8 +163,8 @@ internal/
   notification/     # Entities: Notification
   oauth/            # Entities: OAuthState
 
-  # ─── Cross-cutting Infrastructure ───
-  infra/
+  # ─── Cross-cutting Core ───
+  core/
     session/        # Session entity + manager + store
     realtime/       # WebSocket hub, client, router
     middleware/     # Auth, CORS, rate limiter, logging
@@ -252,29 +252,29 @@ Create numbered migration scripts:
 
 ---
 
-## Phase 3: Cross-Cutting Infrastructure
+## Phase 3: Cross-Cutting Core
 
 *Move existing cross-cutting concerns into their target locations.*
 
-### 3.1 Session (`internal/infra/session/`)
+### 3.1 Session (`internal/core/session/`)
 
 - `session.go` — Session entity, `Manager` interface
 - `store/sqlite.go` — SQLite session store (moved from `infra/storage/sessionstore/`)
 
-### 3.2 Realtime (`internal/infra/realtime/`)
+### 3.2 Realtime (`internal/core/realtime/`)
 
 - `hub.go` — WebSocket hub (moved from `infra/ws/`)
 - `client.go` — Client lifecycle with `defer recover()` (bug 1.7 applied here)
 - `router.go` — WS message routing by type
 
-### 3.3 Middleware (`internal/infra/middleware/`)
+### 3.3 Middleware (`internal/core/middleware/`)
 
 - `auth.go` — Session auth middleware
 - `cors.go` — CORS with proper origin validation
 - `ratelimiter.go` — Rate limiter (flattened from sub-package, bug 1.8 applied)
 - `logging.go` — Request logging
 
-### 3.4 Server (`internal/infra/server/`)
+### 3.4 Server (`internal/core/server/`)
 
 - `server.go` — HTTP server, `ListenAndServe()`, graceful shutdown
 - `routes.go` — Route registration
@@ -396,9 +396,11 @@ After all features migrated:
 ### 6.1 Scaffold
 
 - Scaffold Next.js app in `frontend/` (App Router)
-- Structure: `src/app/` (routes), `src/components/`, `src/styles/`
-- Vanilla CSS: dark mode, custom palette, glassmorphism, micro-animations
-- Typography: Google Fonts (Inter or Outfit)
+- Component Library: Integrate **shadcn/ui** for UI components.
+- Styling: **Tailwind CSS** with custom HSL values (dark mode, glassmorphism, micro-animations).
+- Structure: `src/app/` (routes), `src/components/ui/` (primitives), `src/components/features/` (composite elements), `src/styles/`.
+- Code Quality: **Biome** for fast linting, formatting, and import sorting (configured via `biome.json`).
+- Typography: Google Fonts (Inter or Outfit).
 
 ### 6.2 Core Pages
 
@@ -487,17 +489,17 @@ Add `postgres` service. Backend switches to PostgreSQL by changing `DATABASE_DRI
 
 ### 9.2 Session Cache
 
-- Create `internal/infra/session/store/redis.go` — Cache implementation utilizing `platform/cache` interface wrapper with TTL. DB remains source of truth.
+- Create `internal/core/session/store/redis.go` — Cache implementation utilizing `platform/cache` interface wrapper with TTL. DB remains source of truth.
 - Wire in `bootstrap.go` to wrap the SQLite/Postgres session store.
 
 ### 9.3 Rate Limiter
 
-- Update `internal/infra/middleware/ratelimiter.go` to use the `platform/cache` Redis implementation (e.g. `INCR` + `EXPIRE`) instead of in-memory map.
+- Update `internal/core/middleware/ratelimiter.go` to use the `platform/cache` Redis implementation (e.g. `INCR` + `EXPIRE`) instead of in-memory map.
 - Enables consistent rate limiting across multiple backend instances.
 
 ### 9.4 Realtime Pub/Sub
 
-- Update `internal/infra/realtime/hub.go` to subscribe to Redis channels via the `pubsub` client.
+- Update `internal/core/realtime/hub.go` to subscribe to Redis channels via the `pubsub` client.
 - When a notification is created, publish to Redis. All backend instances receive it and push to their connected WebSocket clients.
 
 ### 9.5 Docker Compose Update
@@ -551,14 +553,31 @@ Add `rabbitmq` service. Final compose has 4-5 services.
 
 ## Verification Checklist
 
-### Automated (run after every phase)
+### Automated Verification (run after every phase)
 
+#### Backend (Go)
 ```bash
 go vet ./...
 go build ./...
 go test -race -coverprofile=coverage.out ./...
 golangci-lint run
 govulncheck ./...
+```
+
+#### Frontend (Next.js)
+```bash
+# Lint and Format checks (Biome)
+npx @biomejs/biome lint src/
+npx @biomejs/biome format src/
+
+# Type Checking
+tsc --noEmit
+
+# Unit & Component Testing
+npm run test # runs Vitest
+
+# E2E Testing
+npx playwright test
 ```
 
 ### Boundary Verification

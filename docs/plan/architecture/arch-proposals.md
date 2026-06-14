@@ -140,7 +140,7 @@ internal/
       sqlite.go                 # SQLite repository for mapping persistent OAuth credentials or user states
       postgres.go               # PostgreSQL equivalent repository implementation for OAuth credentials
 
-  # ─── Cross-cutting infrastructure ───
+  # ─── Cross-cutting core ───
 
   session/
     session.go                  # Core Session token entity and Session Manager interface
@@ -216,7 +216,7 @@ To ensure clear ownership and strict architectural boundaries, each component in
   * `store/sqlite.go`: Concrete implementation of the repository interface using SQLite driver queries.
   * `store/postgres.go`: Concrete implementation of the repository interface using PostgreSQL driver queries.
 
-#### 2. Cross-Cutting Infrastructure
+#### 2. Cross-Cutting Core
 *Located under `internal/<package>/`*
 * **Responsibility**: Provides application-level services that span across multiple vertical slices.
 * **Key Components**:
