@@ -10,7 +10,6 @@ import (
 )
 
 const (
-	savingDir = "frontend/static/images/uploads/"
 	uploadDir = "/static/images/uploads/"
 )
 

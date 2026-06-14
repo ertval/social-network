@@ -23,6 +23,7 @@ type MockRepository struct {
 	GetTopicByIDFunc        func(ctx context.Context, topicID int, userID *string) (*topic.Topic, error)
 	GetAllTopicsFunc        func(ctx context.Context, page, size, categoryID int, orderBy, order, filter string, userID *string) ([]topic.Topic, error)
 	GetTotalTopicsCountFunc func(ctx context.Context, filter string, categoryID int) (int, error)
+	GetImagePathFromTopicIDFunc func(ctx context.Context, topicID int, userID string) (imagePath string, err error)
 }
 
 func (m *MockRepository) UserRegister(ctx context.Context, user *user.User) error {
@@ -90,6 +91,13 @@ func (m *MockRepository) GetTotalTopicsCount(ctx context.Context, filter string,
 		return m.GetTotalTopicsCountFunc(ctx, filter, categoryID)
 	}
 	return 0, ErrTest
+}
+
+func (m *MockRepository) GetImagePathFromTopicID(ctx context.Context, topicID int, userID string) (imagePath string, err error) {
+	if m.GetImagePathFromTopicIDFunc != nil {
+		return m.GetImagePathFromTopicIDFunc(ctx, topicID, userID)
+	}
+	return "", ErrTest
 }
 
 type MockUUIDProvider struct {
