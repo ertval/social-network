@@ -143,3 +143,53 @@ oauth          → user
 ### Docker
 - **Two containers**: Backend (Go, port 8080) and Frontend (Next.js, port 3000), orchestrated via `docker-compose.yml`.
 - **Build script**: Optional `scripts/docker-build.sh` convenience script for automated image building and container startup.
+
+---
+
+## 7. Development Tooling & SDLC
+
+Quick-reference for all tools used across the software development lifecycle.
+
+### Backend (Go)
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Build | `go build` | `Dockerfile` (multi-stage) |
+| Testing | `go test -race -coverprofile` | `Makefile` `test` |
+| Linting (aggregator, 30+ linters) | `golangci-lint` v2.2.1 | `.golangci.yml` |
+| Linting (static analysis) | `staticcheck` | `Makefile` `lint` |
+| Linting (official) | `go vet` | `.golangci.yml`, CLI |
+| Formatting | `gofmt -s`, `gofumpt` | `Makefile` `format`, `.golangci.yml` |
+| Imports | `goimports`, `gci` | `Makefile` `format`, `.golangci.yml` |
+| Modules | `go mod tidy` | `Makefile` `ci-mod` |
+| Benchmarking | `benchstat` | `Makefile` |
+| Profiling | `go tool pprof` | `Makefile` |
+| Vuln scanning | `govulncheck` | Manual / CI |
+
+### Frontend (Bun)
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Runtime | Bun | `package.json` (scripts) |
+| Package manager | Bun | `bun.lock` |
+| Linting + formatting | Biome | `biome.json` |
+| Type checking | `tsc --noEmit` | `package.json` (planned) |
+| Unit/component tests | Vitest | (planned) |
+| E2E tests | Playwright | (planned) |
+
+### Infrastructure & CI
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Containers | Docker (multi-stage) | `Dockerfile` |
+| Orchestration | Docker Compose v5.1.1 | `docker-compose.yml` |
+| Dev TLS | `openssl` | `scripts/makecerts.sh` |
+| CI pipeline | Makefile `ci` target | `Makefile` |
+
+### CI Pipeline (`make ci`)
+
+```
+ci-mod → format → check-format → lint → test
+```
+
+Sequentially: verify modules tidy → format Go → assert no diff → staticcheck + golangci-lint → tests with race + coverage.

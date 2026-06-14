@@ -46,7 +46,7 @@
 
 ### Components
 
-**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with shadcn/ui components + Tailwind CSS styling + Biome for linting/formatting.
+**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with **shadcn/ui components + Tailwind CSS styling + Biome for linting/formatting**.
 
 **Backend (Go)** — HTTP server on port 8080. Entry point for all API requests. Organized as **vertical feature slices** under `internal/<feature>/`, each encapsulating domain entities, CQRS commands/queries, HTTP transport handlers, and a SQLite store implementation. Cross-cutting concerns (auth, sessions, WebSocket hub, middleware) live in `internal/core/`. Platform abstractions (database factory, event bus, cache) live in `internal/platform/`.
 
@@ -72,6 +72,65 @@ The backend starts with in-memory infrastructure (channels, maps) and swaps to R
 | Chat | 1-on-1 direct messaging via WebSocket, follow-gated | Migrate from old layers |
 | Notification | Event bus subscriber: follow-request, follow-accepted, group-invite, group-join, event-creation | Migrate from old layers |
 | OAuth | GitHub and Google third-party authentication | Migrate from old layers |
+
+---
+
+## Technology & Tooling (SDLC Overview)
+
+Quick-reference for all tools across the software development lifecycle.
+
+### Languages & Runtimes
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Go 1.24 |
+| Frontend | TypeScript / JavaScript (Next.js App Router, Bun runtime) |
+| Database | SQL (SQLite / PostgreSQL) |
+| Infrastructure | Docker Compose v5.1.1 |
+
+### Backend (Go)
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Build | `go build` | `Dockerfile` (multi-stage) |
+| Unit/Integration tests | `go test -race -coverprofile` | `Makefile` `test` |
+| Linting (aggregator) | `golangci-lint` v2.2.1 (30+ linters) | `.golangci.yml` |
+| Linting (static analysis) | `staticcheck` | `Makefile` `lint` |
+| Linting (official) | `go vet` | `.golangci.yml` + CLI |
+| Formatting | `gofmt -s`, `gofumpt` | `Makefile` `format`, `.golangci.yml` |
+| Imports | `goimports`, `gci` | `Makefile` `format`, `.golangci.yml` |
+| Module hygiene | `go mod tidy` | `Makefile` `ci-mod` |
+| Benchmarking | `benchstat` | `Makefile` |
+| Profiling | `go tool pprof` (+ Graphviz) | `Makefile` |
+| Vulnerability scan | `govulncheck` | Manual / CI |
+
+### Frontend (Next.js, Bun)
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Runtime | Bun | `package.json` (scripts) |
+| Package manager | Bun | `bun.lock` |
+| Linting + formatting | Biome | `biome.json` |
+| Type checking | `tsc --noEmit` | `package.json` |
+| Unit/component tests | Vitest | `vitest.config.ts` |
+| E2E tests | Playwright | `playwright.config.ts` |
+
+### Infrastructure
+
+| Phase | Tool | Where |
+|-------|------|-------|
+| Container build | Docker (multi-stage) | `Dockerfile` |
+| Orchestration | Docker Compose v5.1.1 | `docker-compose.yml` |
+| Dev TLS certs | `openssl` | `scripts/makecerts.sh` |
+| Task runner / CI pipeline | Makefile | `Makefile` `ci` target |
+
+### CI Pipeline (`make ci`)
+
+```
+ci-mod → format → check-format → lint → test
+```
+
+Verifies: modules tidy → Go formatted → no diff → staticcheck + golangci-lint → tests pass with race + coverage.
 
 ---
 
