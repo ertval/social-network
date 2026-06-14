@@ -208,6 +208,9 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
     version INTEGER PRIMARY KEY,
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 000007_seed_data.up.sql (optional bonus feature)
+-- Inserts demo users, sample posts, groups, and follow relationships for testing.
 ```
 
 ---
@@ -219,7 +222,7 @@ Each feature is standard Go code built inside `internal/<feature>/`. Features mu
 ### 2.1 File Organization & Content Rules
 
 #### 2.1.1 Entities and Store Definition (`<feature>.go`)
-Defines the struct representations of the business models and the `Repository` interface that commands/queries use to talk to the database.
+Defines the struct representations of the business models, the `Repository` interface that commands/queries use to talk to the database, and domain-specific errors.
 
 ```go
 package follow
@@ -236,6 +239,8 @@ type FollowRequest struct {
     FolloweeID string
 }
 
+// Repository is implemented by store/sqlite.go.
+// Each command/query file in commands/ and queries/ accepts this interface.
 type Repository interface {
     CreateFollow(ctx context.Context, f *Follow) error
     DeleteFollow(ctx context.Context, followerID, followeeID string) error
@@ -247,61 +252,106 @@ type Repository interface {
 }
 ```
 
-#### 2.1.2 Commands Layer (`commands.go`)
-Handles all actions that mutate states. Commands take a context and data payloads, execute logic, commit to the repository, and optionally dispatch events.
+#### 2.1.2 Commands Layer (`commands/<use_case>.go`)
+Each write use case lives in its own file inside `commands/`. Each file contains the command struct, validation, business logic, event publishing, and a handler.
 
 ```go
-package follow
+// follow/commands/follow_user.go
+package commands
 
 import (
     "context"
     "errors"
+
+    "social-network/internal/follow"
 )
 
-type Service struct {
-    repo     Repository
-    eventBus EventBus // Locally-defined narrow EventBus interface
+// Cross-slice interface: defined locally, satisfied by user store
+type UserPrivacyChecker interface {
+    IsPrivate(ctx context.Context, userID string) (bool, error)
 }
 
 type EventBus interface {
     Publish(ctx context.Context, eventType string, payload any) error
 }
 
-func NewService(repo Repository, bus EventBus) *Service {
-    return &Service{repo: repo, eventBus: bus}
+type FollowUserCommand struct {
+    FollowerID string
+    TargetID   string
 }
 
-func (s *Service) Follow(ctx context.Context, followerID, followeeID string, isPrivate bool) error {
-    if isPrivate {
-        req := &FollowRequest{FollowerID: followerID, FolloweeID: followeeID}
-        if err := s.repo.CreateFollowRequest(ctx, req); err != nil {
-            return err
-        }
-        return s.eventBus.Publish(ctx, "follow.requested", req)
-    }
-    
-    f := &Follow{FollowerID: followerID, FolloweeID: followeeID}
-    if err := s.repo.CreateFollow(ctx, f); err != nil {
+type FollowUserHandler struct {
+    repo    follow.Repository
+    privacy UserPrivacyChecker
+    bus     EventBus
+}
+
+func NewFollowUserHandler(repo follow.Repository, p UserPrivacyChecker, bus EventBus) *FollowUserHandler {
+    return &FollowUserHandler{repo: repo, privacy: p, bus: bus}
+}
+
+func (h *FollowUserHandler) Execute(ctx context.Context, cmd *FollowUserCommand) error {
+    isPrivate, err := h.privacy.IsPrivate(ctx, cmd.TargetID)
+    if err != nil {
         return err
     }
-    return s.eventBus.Publish(ctx, "follow.accepted", f)
+
+    if isPrivate {
+        req := &follow.FollowRequest{FollowerID: cmd.FollowerID, FolloweeID: cmd.TargetID}
+        if err := h.repo.CreateFollowRequest(ctx, req); err != nil {
+            return err
+        }
+        return h.bus.Publish(ctx, "follow.requested", req)
+    }
+
+    f := &follow.Follow{FollowerID: cmd.FollowerID, FolloweeID: cmd.TargetID}
+    if err := h.repo.CreateFollow(ctx, f); err != nil {
+        return err
+    }
+    return h.bus.Publish(ctx, "follow.accepted", f)
 }
 ```
 
-#### 2.1.3 Queries Layer (`queries.go`)
-Read-only queries to extract data projections. Avoids updating state.
+#### 2.1.3 Queries Layer (`queries/<use_case>.go`)
+Each read use case lives in its own file inside `queries/`. Read-only queries that extract data projections and perform access checks.
+
+```go
+// follow/queries/get_followers.go
+package queries
+
+import (
+    "context"
+
+    "social-network/internal/follow"
+)
+
+type GetFollowersQuery struct {
+    UserID string
+}
+
+type GetFollowersResolver struct {
+    repo follow.Repository
+}
+
+func NewGetFollowersResolver(repo follow.Repository) *GetFollowersResolver {
+    return &GetFollowersResolver{repo: repo}
+}
+
+func (r *GetFollowersResolver) Execute(ctx context.Context, q *GetFollowersQuery) ([]follow.Follow, error) {
+    return r.repo.GetFollowers(ctx, q.UserID)
+}
+```
 
 #### 2.1.4 SQLite Adapter (`store/sqlite.go`)
-Implements the `Repository` interface using standard SQL. Translates platform DB connection methods into feature actions.
+Implements the full `Repository` interface using standard SQL. All SQL for a feature domain lives in one file. Translates platform DB connection methods into feature actions.
 
 ```go
 package store
 
 import (
     "context"
-    "database/sql"
-    "internal/follow"
-    "internal/platform/database"
+    "social-network/internal/follow"
+    "social-network/internal/platform/database"
 )
 
 type SQLiteStore struct {
@@ -312,6 +362,15 @@ func NewSQLiteStore(db database.DB) *SQLiteStore {
     return &SQLiteStore{db: db}
 }
 
+// Used by: commands/follow_user.go
+func (s *SQLiteStore) CreateFollow(ctx context.Context, f *follow.Follow) error {
+    _, err := s.db.ExecContext(ctx,
+        `INSERT INTO follows (follower_id, followee_id) VALUES (?, ?)`,
+        f.FollowerID, f.FolloweeID)
+    return err
+}
+
+// Used by: queries/are_connected.go (cross-slice FollowChecker)
 func (s *SQLiteStore) AreConnected(ctx context.Context, a, b string) (bool, error) {
     query := `SELECT EXISTS(SELECT 1 FROM follows WHERE follower_id = ? AND followee_id = ?)`
     var exists bool
@@ -319,6 +378,8 @@ func (s *SQLiteStore) AreConnected(ctx context.Context, a, b string) (bool, erro
     return exists, err
 }
 ```
+
+Comments like `// Used by:` make the mapping from store method → command/query slice explicit without splitting files.
 
 ---
 
@@ -417,10 +478,12 @@ Messages are framed in JSON format:
   "type": "chat_message",
   "payload": {
     "chat_id": "uuid-string",
-    "content": "Hello world"
+    "content": "Hello world 😊"
   }
 }
 ```
+
+Messages support Unicode text, including emojis, transmitted as UTF-8 encoded JSON strings. No special encoding or stripping is applied to message content.
 
 ---
 
@@ -554,7 +617,8 @@ Tailwind utility classes form the basis of the visual design system, augmented b
   - `Date of Birth`: Date picker enforcing a minimum age constraint of 13.
   - `Avatar` (optional): Upload handler incorporating magic-byte checking on client/server side to prevent non-image extensions.
   - `Nickname` & `About Me`: Optional string inputs.
-- **Confirmation dialogs**: All destructive or critical user operations (e.g., deleting a post, leaving a group, unfollowing, declining a request) must prompt the user with a `shadcn/ui` Dialog overlay for confirmation before executing.
+- **Confirmation dialogs**: All destructive or critical user operations (e.g., deleting a post, leaving a group, unfollowing, declining a request, toggling profile privacy) must prompt the user with a `shadcn/ui` Dialog overlay for confirmation before executing.
+- **Notification vs message display**: Notifications are displayed in a dedicated UI panel (bell icon with unread count), visually and structurally distinct from the Chat panel. This ensures users can differentiate new notifications (follow requests, group invites, event alerts) from new private messages at a glance.
 
 ---
 
@@ -597,4 +661,23 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Real-time chat (spawning parallel browser contexts to test bidirectional messaging).
   - Notification receipt on events (group invitations, follow requests).
   - Profile locks and access permissions.
-  - Execution command: `npx playwright test`
+   - Execution command: `npx playwright test`
+
+---
+
+## 8. Docker & Build Automation
+
+### 8.1 Docker Compose
+
+Two Docker images are built via `docker-compose.yml`:
+- **backend**: Go server on port `8080`, SQLite volume mounted at `./data:/app/data`
+- **frontend**: Next.js app on port `3000`
+
+### 8.2 Build Script (Bonus Feature)
+
+A convenience script `scripts/docker-build.sh` automates image building and container startup:
+```bash
+#!/bin/sh
+docker compose build --parallel
+docker compose up -d
+```

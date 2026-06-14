@@ -63,21 +63,30 @@ The backend starts with in-memory infrastructure (channels, maps) and swaps to R
 
 These are the settled conclusions. Every phase below follows them.
 
-### D1: Vertical Slices
+### D1: Vertical Slices with CQRS
 
-All features live in `internal/<feature>/` with the same internal structure:
+All features live in `internal/<feature>/` with the same internal structure. Each **use case** (one business operation) is its own file inside `commands/` (writes) or `queries/` (reads). The store and transport remain shared per-feature — they are thin layers where splitting adds no value.
 
 ```
 internal/<feature>/
-  <feature>.go       # Entity structs + Repository interface
-  commands.go        # Write operations (functions that mutate state)
-  queries.go         # Read operations (functions that return data)
+  <feature>.go           # Entity structs + Repository interface + domain errors
+  commands/
+    <use_case>.go        # One file per write operation (validation + logic + event publishing)
+    <use_case>.go        # ...
+  queries/
+    <use_case>.go        # One file per read operation (access checks + data projection)
+    <use_case>.go        # ...
   transport/
-    http.go          # HTTP handlers
-    ws.go            # WebSocket handlers (only for chat, group chat)
+    http.go              # HTTP handlers — delegates to commands/queries
+    ws.go                # WebSocket handlers (only for chat, group chat)
   store/
-    sqlite.go        # SQLite implementation of Repository
+    sqlite.go            # SQLite implementation of Repository (all SQL in one file)
 ```
+
+**Why this layout:**
+- The **logic layer** is where complexity lives (privacy checks, event publishing, MIME validation). Splitting it per use case isolates each operation.
+- The **store layer** is thin SQL (5–15 lines per method). One file per feature keeps all queries reviewable in one place.
+- The **transport layer** is a thin HTTP adapter. One file per feature avoids handler fragmentation.
 
 No exceptions. Every feature, new or migrated, follows this layout.
 
@@ -98,18 +107,18 @@ type Repository interface {
     // ...
 }
 
-// follow/commands.go
-type Service struct { repo Repository }  // accepts the full interface — fine, same package
+// follow/commands/follow_user.go
+type FollowUserHandler struct { repo Repository }  // accepts the full interface — fine, same package
 ```
 
 ```go
 // ACROSS features — narrow interface, consumer-defined
-// chat/commands.go
+// chat/commands/send_private_msg.go
 type FollowChecker interface {
     AreConnected(ctx context.Context, a, b string) (bool, error)
 }
 
-type Service struct {
+type SendPrivateMsgHandler struct {
     repo    Repository      // own repo
     follows FollowChecker   // narrow — only what chat needs from follow
 }
@@ -117,7 +126,7 @@ type Service struct {
 
 ```go
 // bootstrap/bootstrap.go — wires concrete into narrow interface
-chatSvc := chat.NewService(chatRepo, followSvc)  // followSvc satisfies chat.FollowChecker
+sendMsgH := chat.NewSendPrivateMsgHandler(chatRepo, followSvc)  // followSvc satisfies chat.FollowChecker
 ```
 
 ### D3: Cross-Slice Communication — Three Strategies, Consistently Applied
@@ -157,20 +166,30 @@ Feature stores accept `DB`, not `*sql.DB`. When PostgreSQL support arrives, we a
 ### D5: Boundary Rules
 
 ```
-feature root (entity.go, commands.go, queries.go)
+feature root (<feature>.go) + commands/ + queries/
   ├── MUST NOT import own transport/ or store/
   ├── MAY import platform/eventbus (interface only)
   └── MUST NOT import another feature's transport/ or store/
 
-transport/http.go
+commands/<use_case>.go
+  ├── Imports own feature root (entities, Repository interface)
+  ├── Defines cross-slice interfaces locally (e.g. FollowChecker)
+  └── MUST NOT import store/ or transport/
+
+queries/<use_case>.go
   ├── Imports own feature root
+  ├── Defines cross-slice interfaces locally
+  └── MUST NOT import store/ or transport/
+
+transport/http.go
+  ├── Imports own feature root + commands/ + queries/
   ├── Imports internal/core/session/ for auth context
   └── MUST NOT import store/
 
 store/sqlite.go
   ├── Imports own feature root (entities + repository interface)
   ├── Imports platform/database (DB interface)
-  └── MUST NOT import transport/
+  └── MUST NOT import transport/ or commands/ or queries/
 
 bootstrap/bootstrap.go
   └── Imports everything, wires concrete implementations
@@ -201,20 +220,138 @@ oauth          → user
 ```
 cmd/
   server/
-    main.go         # Application entry point. Imports config, bootstrap, and core/server.
+    main.go                              # Application entry point
 
 internal/
   # ─── Feature Slices (all follow D1 layout) ───
-  user/             # Absorbs activity. Entities: User
-  topic/            # Absorbs category. Entities: Topic, Category, AllowedUser
-  comment/          # Entities: Comment
-  vote/             # Entities: Vote
-  follow/           # NEW. Entities: Follow, FollowRequest
-  group/            # NEW. Entities: Group, GroupMember, Invitation, JoinRequest, ChatMessage
-  event/            # NEW. Entities: Event, EventRSVP
-  chat/             # Entities: Chat, Message
-  notification/     # Entities: Notification
-  oauth/            # Entities: OAuthState
+
+  user/                                  # Absorbs activity. Entities: User
+    user.go                              # Entity: User (DateOfBirth, AboutMe, IsPrivate), Repository iface
+    commands/
+      register.go                        # Validate 8 fields, bcrypt hash, create user
+      login.go                           # Password verify, create session
+      logout.go                          # Revoke session
+      update_profile.go                  # Update user fields (name, about me, avatar)
+      toggle_privacy.go                  # Flip is_private flag
+    queries/
+      get_profile.go                     # Privacy lock check (FollowChecker), return user info
+      get_activity.go                    # User posts + follower/following lists
+      list_users.go                      # Browse/search users
+    transport/
+      http.go                            # All user HTTP handlers
+    store/
+      sqlite.go                          # All user SQL
+
+  follow/                                # NEW. Entities: Follow, FollowRequest
+    follow.go                            # Entity: Follow, FollowRequest, Repository iface
+    commands/
+      follow_user.go                     # Auto-follow (public) or create request (private) + publish event
+      unfollow_user.go                   # Remove follow relationship
+      accept_request.go                  # Accept follow request → insert follow + publish event
+      decline_request.go                 # Decline follow request
+    queries/
+      get_followers.go                   # List followers of a user
+      get_following.go                   # List users followed by a user
+      get_pending_requests.go            # List pending follow requests
+      are_connected.go                   # Shared helper — implements FollowChecker for cross-slice use
+    transport/
+      http.go                            # All follow HTTP handlers
+    store/
+      sqlite.go                          # All follow SQL
+
+  topic/                                 # Absorbs category. Entities: Topic, Category, AllowedUser, Vote
+    topic.go                             # Entity: Topic, Visibility enum, AllowedUser, Vote, Repository iface
+    commands/
+      create_topic.go                    # MIME validation (magic bytes), set visibility + allowed users
+      cast_vote.go                       # Upvote/downvote a topic
+    queries/
+      get_feed.go                        # Home feed with visibility filtering (public/almost_private/private)
+      get_user_topics.go                 # Topics by user (privacy-aware)
+      get_topic.go                       # Single topic detail + privacy check
+      get_votes.go                       # Vote counts for a topic
+    transport/
+      http.go                            # All topic HTTP handlers
+    store/
+      sqlite.go                          # All topic + vote SQL
+
+  comment/                               # Entities: Comment
+    comment.go                           # Entity: Comment, Repository iface
+    commands/
+      create_comment.go                  # MIME validation for image/GIF attachment
+    queries/
+      get_comments.go                    # Comments for a topic
+    transport/
+      http.go                            # All comment HTTP handlers
+    store/
+      sqlite.go                          # All comment SQL
+
+  group/                                 # NEW. Entities: Group, Member, Invitation, JoinRequest, GroupPost
+    group.go                             # Entity: Group, GroupMember, Invitation, JoinRequest, Repository iface
+    commands/
+      create_group.go                    # Create group + auto-add creator as owner
+      invite_member.go                   # Invite follower + publish group.invited event
+      respond_invite.go                  # Accept/decline group invitation
+      request_join.go                    # Request to join group + publish group.join_requested event
+      respond_join.go                    # Owner accepts/declines join request
+      create_group_post.go               # Post inside group (membership check)
+      send_group_message.go              # Group chat message (membership check)
+    queries/
+      list_groups.go                     # Browse all groups
+      get_group.go                       # Group detail + membership check
+      get_group_feed.go                  # Group posts (membership check)
+      get_group_chat.go                  # Group chat history
+    transport/
+      http.go                            # Group REST handlers
+      ws.go                              # Group chat WebSocket handlers
+    store/
+      sqlite.go                          # All group SQL
+
+  event/                                 # NEW. Entities: Event, EventRSVP
+    event.go                             # Entity: Event, RSVP, Option, Repository iface
+    commands/
+      create_event.go                    # Validate ≥2 options + membership check + publish event.created
+      rsvp.go                            # Vote going/not going
+    queries/
+      list_group_events.go               # Events for a group + vote counts
+    transport/
+      http.go                            # All event HTTP handlers
+    store/
+      sqlite.go                          # All event SQL
+
+  chat/                                  # Entities: Chat, Message
+    chat.go                              # Entity: PrivateMessage, Repository iface
+    commands/
+      send_private_msg.go                # Follow relationship check (FollowChecker) + WS dispatch
+    queries/
+      get_chat_history.go                # Private message history
+      list_conversations.go              # User's conversation list
+    transport/
+      http.go                            # Chat REST handlers
+      ws.go                              # Chat WebSocket handlers
+    store/
+      sqlite.go                          # All chat SQL
+
+  notification/                          # Entities: Notification
+    notification.go                      # Entity: Notification, Type enum, Repository iface
+    commands/
+      consume_events.go                  # EventBus subscriber — handles all event types, writes notifications
+      mark_read.go                       # Mark notification as read
+    queries/
+      list_notifications.go              # List user notifications
+    transport/
+      http.go                            # All notification HTTP handlers
+    store/
+      sqlite.go                          # All notification SQL
+
+  oauth/                                 # Entities: OAuthState
+    oauth.go                             # Entity: OAuthState, Provider enum, Repository iface
+    commands/
+      initiate.go                        # Generate state + redirect URL
+      callback.go                        # Exchange code, upsert user, create session
+    transport/
+      http.go                            # OAuth HTTP handlers
+    store/
+      sqlite.go                          # OAuth SQL
 
   # ─── Cross-cutting Core ───
   core/
@@ -289,6 +426,8 @@ The factory returns `DB`. All feature stores will accept `DB`, not `*sql.DB`.
 
 ### 2.4 Migration Scripts (`db/migrations/`)
 
+Migration files follow the numbered up/down format per spec requirements. The custom migration runner splits commands on `";"` and tracks applied versions in `schema_migrations`.
+
 Create numbered migration scripts:
 
 - `000001_initial_schema.up.sql` — Current tables (users, topics, comments, categories, votes, sessions, chats, notifications, oauth_states)
@@ -300,6 +439,8 @@ Create numbered migration scripts:
 - `000004_follow_system.up.sql` — Create `follows`, `follow_requests`
 - `000005_groups.up.sql` — Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`
 - `000006_events.up.sql` — Create `events`, `event_rsvps`
+- `000007_seed_data.up.sql` — Optional seed demo data (users, posts, groups, follows) — bonus feature
+- `000007_seed_data.down.sql` — Remove seed data
 
 **Verify**: Run migrations on fresh DB. `go vet ./...`.
 
@@ -353,8 +494,14 @@ Create numbered migration scripts:
 | File | Contents |
 |------|----------|
 | `follow.go` | `Follow`, `FollowRequest` entities, `Repository` interface |
-| `commands.go` | `Follow()`, `Unfollow()`, `SendRequest()`, `AcceptRequest()`, `DeclineRequest()` |
-| `queries.go` | `GetFollowers()`, `GetFollowing()`, `GetPendingRequests()`, `AreConnected()` |
+| `commands/follow_user.go` | Auto-follow (public) or create request (private), publish event |
+| `commands/unfollow_user.go` | Remove follow relationship |
+| `commands/accept_request.go` | Accept request → insert follow + publish `follow.accepted` |
+| `commands/decline_request.go` | Decline request |
+| `queries/get_followers.go` | List followers of a user |
+| `queries/get_following.go` | List users followed by a user |
+| `queries/get_pending_requests.go` | List pending follow requests for current user |
+| `queries/are_connected.go` | Check follow relationship (implements `FollowChecker` for cross-slice) |
 | `transport/http.go` | HTTP handlers |
 | `store/sqlite.go` | SQLite implementation |
 
@@ -367,9 +514,18 @@ Create numbered migration scripts:
 
 | File | Contents |
 |------|----------|
-| `group.go` | `Group`, `GroupMember`, `Invitation`, `JoinRequest`, `ChatMessage` entities, `Repository` interface |
-| `commands.go` | CRUD, `Invite()`, `RespondToInvite()`, `RequestJoin()`, `RespondToJoin()`, `SendChatMessage()` |
-| `queries.go` | `GetGroup()`, `ListGroups()`, `GetMembers()`, `GetChatHistory()` |
+| `group.go` | `Group`, `GroupMember`, `Invitation`, `JoinRequest` entities, `Repository` interface |
+| `commands/create_group.go` | Create group + auto-add creator as owner |
+| `commands/invite_member.go` | Any member invites a follower, publish `group.invited` |
+| `commands/respond_invite.go` | Invitee accepts/declines invitation |
+| `commands/request_join.go` | User requests to join group, publish `group.join_requested` |
+| `commands/respond_join.go` | Owner accepts/declines join request |
+| `commands/create_group_post.go` | Post inside group (membership check) |
+| `commands/send_group_message.go` | Group chat message (membership check) |
+| `queries/list_groups.go` | Browse all groups |
+| `queries/get_group.go` | Group detail + membership info |
+| `queries/get_group_feed.go` | Group posts (membership check) |
+| `queries/get_group_chat.go` | Group chat history |
 | `transport/http.go` | REST handlers |
 | `transport/ws.go` | Group chat WebSocket handlers |
 | `store/sqlite.go` | SQLite implementation |
@@ -377,20 +533,23 @@ Create numbered migration scripts:
 **Key behavior**:
 - Invite/join request → publish `group.invited` / `group.join_requested` to eventbus
 - Group chat uses WebSocket hub for real-time message delivery
+- Any group member can invite others, only creator can accept/decline join requests
 
 ### 4.3 Event (`internal/event/`)
 
 | File | Contents |
 |------|----------|
-| `event.go` | `Event`, `EventRSVP` entities, `Repository` interface |
-| `commands.go` | `CreateEvent()`, `RSVP()` |
-| `queries.go` | `GetGroupEvents()`, `GetRSVPs()` |
+| `event.go` | `Event`, `EventRSVP`, `Option` entities, `Repository` interface |
+| `commands/create_event.go` | Validate ≥2 options (going/not going at minimum) + membership check + publish `event.created` |
+| `commands/rsvp.go` | User votes going/not going on an event |
+| `queries/list_group_events.go` | Events for a group + options + vote counts |
 | `transport/http.go` | HTTP handlers |
 | `store/sqlite.go` | SQLite implementation |
 
 **Key behavior**:
 - Event creation → publish `event.created` to eventbus (fans out to all group members)
-- Requires `GroupMemberChecker` interface (defined locally, satisfied by `group.Service`)
+- Requires `GroupMemberChecker` interface (defined locally, satisfied by group store)
+- Event fields: title, description, day/time, at least 2 options (going, not going)
 
 **Verify**: All new features compile, handlers respond, events publish and trigger notifications. `go test -race ./...`.
 
@@ -402,36 +561,52 @@ Create numbered migration scripts:
 
 ### Per-Feature Migration Steps
 
-For each feature (user, topic, comment, vote, chat, notification, oauth):
+For each feature (user, topic, comment, chat, notification, oauth):
 
-1. Create `internal/<feature>/` with D1 layout
+1. Create `internal/<feature>/` with D1 layout (`<feature>.go`, `commands/`, `queries/`, `transport/`, `store/`)
 2. Copy entity from `domain/<feature>/` → `<feature>/<feature>.go`
-3. Merge CQRS from `app/<feature>/commands/` + `queries/` → `commands.go` + `queries.go`
-4. Merge handlers from `infra/http/<feature>/` → `transport/http.go`
-5. Copy store from `infra/storage/sqlite/<feature>/` → `store/sqlite.go`
-6. Update imports
-7. `go vet ./...` + `go test -race ./...`
-8. Delete old directories
+3. Split CQRS from `app/<feature>/commands/` into individual files under `commands/` (one per use case)
+4. Split CQRS from `app/<feature>/queries/` into individual files under `queries/` (one per use case)
+5. Merge handlers from `infra/http/<feature>/` → `transport/http.go`
+6. Copy store from `infra/storage/sqlite/<feature>/` → `store/sqlite.go`
+7. Update imports
+8. `go vet ./...` + `go test -race ./...`
+9. Delete old directories
 
 ### Special Merge Notes
 
 **`user/` — absorbs `activity/`**
 - `domain/user/user.go` + `domain/activity/` → `user/user.go`
 - Add `DateOfBirth`, `AboutMe`, `IsPrivate` fields (drop `Age`)
-- All user handlers + activity handler → `user/transport/http.go`
+- Split into: `commands/register.go`, `commands/login.go`, `commands/logout.go`, `commands/update_profile.go`, `commands/toggle_privacy.go`
+- Split into: `queries/get_profile.go`, `queries/get_activity.go`, `queries/list_users.go`
+- All handlers → `user/transport/http.go`
 
-**`topic/` — absorbs `category/`**
-- `domain/topic/` + `domain/category/` → `topic/topic.go`
-- Add `Visibility` enum, `AllowedUser` entity
+**`topic/` — absorbs `category/` and `vote/`**
+- `domain/topic/` + `domain/category/` + `domain/vote/` → `topic/topic.go`
+- Add `Visibility` enum (`public`, `almost_private`, `private`), `AllowedUser` entity, `Vote` entity
+- Split into: `commands/create_topic.go`, `commands/cast_vote.go`
+- Split into: `queries/get_feed.go`, `queries/get_user_topics.go`, `queries/get_topic.go`, `queries/get_votes.go`
 - Add `http.DetectContentType` for upload MIME validation (uses `pkg/imgutil/`)
+
+**`comment/`**
+- Split into: `commands/create_comment.go` (with MIME validation for image/GIF)
+- Split into: `queries/get_comments.go`
 
 **`chat/` — gets `transport/ws.go`**
 - Move WS message handlers from `infra/ws/handlers/` → `chat/transport/ws.go`
-- Add chat access constraint: require follow relationship (uses `FollowChecker` interface)
+- Split into: `commands/send_private_msg.go` (requires follow relationship via `FollowChecker` interface)
+- Split into: `queries/get_chat_history.go`, `queries/list_conversations.go`
 
 **`notification/` — becomes event consumer**
 - Wire eventbus subscriptions in `bootstrap.go`
+- Split into: `commands/consume_events.go` (subscribes to all events), `commands/mark_read.go`
+- Split into: `queries/list_notifications.go`
 - Subscribes to: `follow.requested`, `follow.accepted`, `group.invited`, `group.join_requested`, `event.created`
+- Notifications displayed via dedicated UI panel, visually distinct from chat messages (separate icon, sidebar panel, unread count)
+
+**`oauth/`**
+- Split into: `commands/initiate.go`, `commands/callback.go`
 
 ### Cleanup
 
@@ -466,6 +641,7 @@ After all features migrated:
 ### 6.3 Social Features
 
 - Follow/unfollow buttons with confirmation popups
+- Privacy toggle with confirmation popup
 - Follow request notification with accept/decline
 - Groups directory, group page with members, posts, events, chat
 - Event RSVP (going / not going)
@@ -475,6 +651,7 @@ After all features migrated:
 
 - WebSocket connection for chat (direct + group)
 - SSE or WebSocket for notification streaming
+- Emoji support in chat messages (Unicode text)
 - Typing indicators, online presence
 
 ---
@@ -497,6 +674,8 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: http://backend:8080
 ```
+
+- Optional convenience script: `scripts/docker-build.sh` to build images and start containers
 
 **This completes all spec requirements.** Everything below is optional learning.
 
@@ -656,8 +835,12 @@ grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | g
 6. A unfollows → confirmation popup, relationship severed
 
 **C: Post Privacy**
-1. A creates "almost_private" post → visible to followers, hidden from non-followers
-2. A creates "private" post selecting only B → visible to B, hidden from others
+1. A creates "almost_private" post
+   - B (follower of A) → visible
+   - C (not a follower) → invisible
+2. A creates "private" post selecting only B
+   - B (selected user) → visible
+   - D (follower of A, but not selected) → invisible
 
 **D: Group & Event**
 1. A creates group
