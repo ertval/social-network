@@ -1,6 +1,92 @@
-# Requirements Compliance Verification — arch_optimized_v2.md
+# Requirements Compliance Verification Matrix — arch_optimized_v2.md
 
 This document provides a line-by-line cross-reference of every requirement from `docs/requirements/audit.md` and `docs/requirements/readme.md` against the finalized, optimized vertical slices architecture plan in `docs/plan/architecture/arch_optimized_v2.md`.
+
+## Executive Summary
+
+**Status:** 100% Compliant.
+**Gap Analysis:** Zero missing requirements. Every specification from the README and the Audit checklist is explicitly addressed in the optimized architecture, including all bonus features.
+
+---
+
+## 1. Technical Stack & Infrastructure
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **JS Framework** (Next.js, Vue, Svelte, Mithril) | `readme.md` (Frontend) | Phase 6.1: Next.js App Router scaffold | ✅ |
+| **Standard Go Packages Allowed** | `readme.md` (Packages) | Compliant throughout backend codebase | ✅ |
+| **Allowed Packages** (Gorilla WS, Migrate, SQLite3, Bcrypt, UUID) | `readme.md` (Packages) | Phase 3.2 (Gorilla), 2.4 (Migrate), 3.5 (Bcrypt, UUID) | ✅ |
+| **Docker Compose** (Backend & Frontend containers) | `readme.md` (Docker) | Phase 7: 2 Services with ports 8080/3000 | ✅ |
+| **Build Script for Docker** | `audit.md` (Bonus) | Phase 7: `scripts/docker-build.sh` | ✅ |
+| **Architecture Separation** (Server, App, Database) | `readme.md` (Backend) | D1 (Vertical Slices: transport, core, platform) | ✅ |
+| **SQLite Usage** | `readme.md` (Sqlite) | D4 (Factory Pattern), Phase 2.1 | ✅ |
+| **Database Migrations** | `readme.md` (Migrate) | Phase 2.4: Sequential migration runner | ✅ |
+| **Migration Folder Structure** (Numbered up/down) | `readme.md` (Migrate) | Phase 2.4: Numbered up/down SQL scripts | ✅ |
+| **DB Seeding Script** | `audit.md` (Bonus) | Phase 2.4: `000007_seed_data.up.sql` | ✅ |
+
+## 2. Authentication & Security
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **Registration Form Elements** (Email, Pass, First/Last Name, DOB, Avatar, Nickname, About) | `readme.md` (Auth) | Phase 6.2, Phase 5 (user migration mapping fields) | ✅ |
+| **Duplicate User Prevention** | `audit.md` (Auth) | Phase 5: `user/commands/register.go` handles validation | ✅ |
+| **Session/Cookie Based Auth** | `readme.md` (Auth) | Phase 3.1: Session manager | ✅ |
+| **Logout Functionality** | `readme.md` (Auth) | Phase 5: `user/commands/logout.go` | ✅ |
+| **Multi-browser Persistence** | `audit.md` (Auth) | Phase 3.1: Server-side sessions mapped to cookies | ✅ |
+| **Third-party OAuth** (GitHub/Google) | `audit.md` (Bonus) | Phase 5: `oauth` vertical slice | ✅ |
+
+## 3. Social & Profiles
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **Profile Display** (Info, Activity, Followers/Following) | `readme.md` (Profile) | Phase 5: `queries/get_profile.go`, `get_activity.go` | ✅ |
+| **Public vs Private Profiles** | `readme.md` (Profile) | Phase 5: `user/commands/toggle_privacy.go` | ✅ |
+| **Privacy Toggle Confirmation Popup** | `audit.md` (Bonus) | Phase 6.3: Frontend confirmation popup | ✅ |
+| **Follow/Unfollow Mechanics** | `readme.md` (Followers) | Phase 4.1: `commands/follow_user.go` | ✅ |
+| **Public Follow** (Instant) | `readme.md` (Followers) | Phase 4.1: Auto-follow + event publish | ✅ |
+| **Private Follow** (Request / Accept / Decline) | `readme.md` (Followers) | Phase 4.1: `accept_request.go` / `decline_request.go` | ✅ |
+| **Unfollow Confirmation Popup** | `audit.md` (Bonus) | Phase 6.3: Frontend confirmation popup | ✅ |
+| **Profile Access Control** (Hide private profile if not following) | `audit.md` (Profile) | Phase 5: `get_profile.go` lock screen check | ✅ |
+
+## 4. Content (Posts & Comments)
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **Create Posts & Comments** | `readme.md` (Posts) | Phase 5: `topic` and `comment` vertical slices | ✅ |
+| **Image & GIF Support** | `readme.md` (Posts) | Phase 5: `create_topic.go`, MIME magic bytes check | ✅ |
+| **Post Privacy Options** (Public, Almost Private, Private) | `readme.md` (Posts) | Phase 5: `topic/commands/create_topic.go` enum | ✅ |
+| **Custom User Selection for Private Posts** | `readme.md` (Posts) | Phase 5: `AllowedUser` entity mapped in topic creation | ✅ |
+
+## 5. Groups & Events
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **Create Group** (Title, Description) | `readme.md` (Groups) | Phase 4.2: `commands/create_group.go` | ✅ |
+| **Invite Followers to Group** | `readme.md` (Groups) | Phase 4.2: `commands/invite_member.go` | ✅ |
+| **Join Request & Accept/Refuse** | `readme.md` (Groups) | Phase 4.2: `request_join.go`, `respond_join.go` | ✅ |
+| **Browse Groups** | `readme.md` (Groups) | Phase 4.2: `queries/list_groups.go` | ✅ |
+| **Group Posts & Comments** | `readme.md` (Groups) | Phase 4.2: `create_group_post.go` (membership check) | ✅ |
+| **Group Events** (Title, Desc, Day/Time, 2+ Options) | `readme.md` (Groups) | Phase 4.3: `create_event.go` | ✅ |
+| **Event Voting** (Going / Not Going) | `readme.md` (Groups) | Phase 4.3: `rsvp.go` | ✅ |
+
+## 6. Real-Time Chat & Notifications
+
+| Requirement | Source | Addressed In Architecture | Status |
+| :--- | :--- | :--- | :--- |
+| **Private Chat** (WebSockets) | `readme.md` (Chat) | Phase 5: `chat/transport/ws.go` | ✅ |
+| **Chat Authorization** (Must follow/be followed) | `readme.md` (Chat) | Phase 5: `commands/send_private_msg.go` + `FollowChecker` | ✅ |
+| **Emojis in Chat** | `readme.md` (Chat) | Phase 6.4: Unicode text support | ✅ |
+| **Group Chat Room** | `readme.md` (Chat) | Phase 4.2: `commands/send_group_message.go` | ✅ |
+| **Notifications on all pages** | `readme.md` (Notification) | Phase 6.3: Notifications panel with WS updates | ✅ |
+| **Event: Follow Request Notification** | `readme.md` (Notification) | Phase 5: `consume_events.go` listens to `follow.requested` | ✅ |
+| **Event: Group Invite Notification** | `readme.md` (Notification) | Phase 5: `consume_events.go` listens to `group.invited` | ✅ |
+| **Event: Group Join Request Notification** | `readme.md` (Notification) | Phase 5: `consume_events.go` listens to `group.join_requested` | ✅ |
+| **Event: Event Creation Notification** | `readme.md` (Notification) | Phase 5: `consume_events.go` listens to `event.created` | ✅ |
+
+---
+
+## Gap Analysis Conclusion
+The `arch_optimized_v2.md` architecture is a **complete superset** of the specifications. It not only covers all baseline requirements and audit checklist items, but also gracefully integrates the required system stability fixes (from the Audit) into Phase 1, paving the way for the robust Vertical Slice feature implementation in Phase 4 and Phase 5.
 
 ---
 
