@@ -39,170 +39,215 @@ Key improvements:
 ```
 internal/
   user/
-    user.go                     # Entity, Repository interface, Activity types
-    commands.go                 # Register, Login, Update
-    queries.go                  # GetMe, GetActivity
+    user.go                     # Entity definitions, Repository interfaces, and domain-specific types (e.g., Activity)
+    commands.go                 # Write operations (CQRS): registration, login, updating profiles, password changes
+    queries.go                  # Read operations (CQRS): fetching user details, compiling activity history
     transport/
-      http.go                   # All user HTTP handlers (register, login, me, update, activity)
+      http.go                   # HTTP handlers/endpoints routing to commands and queries for user operations
     store/
-      sqlite.go                 # User + Activity SQLite implementation
-      postgres.go               # User + Activity PostgreSQL implementation
+      sqlite.go                 # SQLite database repository implementation for user and activity data
+      postgres.go               # PostgreSQL database repository implementation for user and activity data
 
   topic/
-    topic.go                    # Entity (with Visibility enum), Repository interface,
-                                # AllowedUser, Category types, CategoryRepository interface
-    commands.go                 # Create, Update, Delete, FileStorage
-    queries.go                  # Get, List, privacy filtering
+    topic.go                    # Entity definitions (including Visibility enum), repository interfaces, AllowedUser types
+    commands.go                 # Write operations (CQRS): topic creation, updating settings, deletion, attachment storage
+    queries.go                  # Read operations (CQRS): fetching topics, listings, visibility/privacy-based filtering
     transport/
-      http.go                   # Topic + Category + AllowedUsers HTTP handlers
+      http.go                   # HTTP handlers for topic, category, and access control list (ACL) operations
     store/
-      sqlite.go                 # topic, category, topic_allowed_users, topic_categories queries
-      postgres.go               # PostgreSQL equivalent
+      sqlite.go                 # SQLite queries and repository implementations for topic and category tables
+      postgres.go               # PostgreSQL equivalent repository implementation for topics and categories
 
   comment/
-    comment.go                  # Entity, Repository interface
-    commands.go                 # Create (dispatches notification), Update, Delete
-    queries.go                  # Get, ListByTopic
+    comment.go                  # Entity definition representing a post comment, and the comment repository interface
+    commands.go                 # Write operations (CQRS): creating comments (publishing events to broker), edits, deletions
+    queries.go                  # Read operations (CQRS): comment retrieval and thread listing for specific topics
     transport/
-      http.go
+      http.go                   # HTTP handlers mapping comment REST endpoints to command/query logic
     store/
-      sqlite.go
-      postgres.go
+      sqlite.go                 # SQLite comment tables repository implementation
+      postgres.go               # PostgreSQL equivalent comment repository implementation
 
   vote/
-    vote.go                     # Entity, Repository interface
-    commands.go                 # Cast, Delete (imports topic, comment, notification)
-    queries.go                  # GetCounts
+    vote.go                     # Entity representing a vote (like/dislike) and repository interface definition
+    commands.go                 # Write operations (CQRS): casting/updating votes and deleting votes, publishing notifications
+    queries.go                  # Read operations (CQRS): aggregating vote count summaries for posts and comments
     transport/
-      http.go
+      http.go                   # HTTP handlers exposing voting endpoints for topics and comments
     store/
-      sqlite.go
-      postgres.go
+      sqlite.go                 # SQLite repository implementation mapping vote tables and aggregates
+      postgres.go               # PostgreSQL equivalent repository implementation for votes
 
   follow/                       # NEW
-    follow.go                   # Follow, FollowRequest entities, Repository interface
-    commands.go                 # Follow, Unfollow, SendRequest, Respond
-    queries.go                  # List (Followers, Following, Pending)
+    follow.go                   # Follow and FollowRequest entity models and repository interfaces
+    commands.go                 # Write operations (CQRS): following/unfollowing, sending request, accepting/declining requests
+    queries.go                  # Read operations (CQRS): querying followers, following lists, and pending requests
     transport/
-      http.go
+      http.go                   # HTTP handlers managing follow requests and relations
     store/
-      sqlite.go                 # follows + follow_requests tables
-      postgres.go
+      sqlite.go                 # SQLite implementation for follows and follow_requests tables
+      postgres.go               # PostgreSQL equivalent implementation for follow relations
 
   group/                        # NEW
-    group.go                    # Group, GroupMember, Invitation, JoinRequest,
-                                # GroupChatMessage entities, Repository interface
-    commands.go                 # C/U/D, Invite, Join, Leave, SendChat
-    queries.go                  # Read, Members, Posts, GetChat
+    group.go                    # Group metadata, GroupMember, Invitation, JoinRequest, GroupChatMessage models, and repositories
+    commands.go                 # Write operations (CQRS): CRUD, group invitations, requests, membership changes, sending messages
+    queries.go                  # Read operations (CQRS): group profiles, member lists, group posts, and message history
     transport/
-      http.go                   # REST endpoints for group management + content
-      ws.go                     # Group chat WebSocket message handling
+      http.go                   # REST handlers managing group profiles, settings, and content
+      ws.go                     # WebSocket handler managing realtime group chat message loops
     store/
-      sqlite.go                 # groups, group_members, group_invitations,
-                                # group_join_requests, group_chat_messages tables
-      postgres.go
+      sqlite.go                 # SQLite repository mapping groups, members, invites, requests, and chat message tables
+      postgres.go               # PostgreSQL equivalent database mappings for group operations
 
   event/                        # NEW
-    event.go                    # Event, EventRSVP entities, Repository interface
-    commands.go                 # Create, RSVP
-    queries.go                  # List
+    event.go                    # Event details, RSVP status options, and event repository interface
+    commands.go                 # Write operations (CQRS): group event creation and submitting RSVPs
+    queries.go                  # Read operations (CQRS): listing group events and RSVPs
     transport/
-      http.go
+      http.go                   # HTTP handlers managing event detail routes and RSVP submission
     store/
-      sqlite.go                 # events + event_rsvps tables
-      postgres.go
+      sqlite.go                 # SQLite implementation for events and event_rsvps tables
+      postgres.go               # PostgreSQL equivalent database repository for events
 
   chat/
-    chat.go                     # Chat, Message, ChatRead entities, Repository interface
-    commands.go                 # InitChat, Send, MarkRead
-    queries.go                  # History, Users
+    chat.go                     # Chat room metadata, direct messages, Read receipt models, and repositories
+    commands.go                 # Write operations (CQRS): initiating chat, sending messages, marking messages read
+    queries.go                  # Read operations (CQRS): fetching chat history and active users
     transport/
-      http.go                   # REST (init, history, users)
-      ws.go                     # WebSocket message handling (send, receive, typing)
+      http.go                   # REST handlers for chat creation, message history queries, and user lists
+      ws.go                     # WebSocket handling client chat lifecycle, typing status, and incoming/outgoing events
     store/
-      sqlite.go
-      postgres.go
+      sqlite.go                 # SQLite repository mapping direct chats and message tables
+      postgres.go               # PostgreSQL equivalent repository implementation for direct chat
 
   notification/
-    notification.go             # Entity, Repository interface, Notifier interface
-    commands.go                 # Create, MarkRead, MarkAllRead
-    queries.go                  # List, Stream
+    notification.go             # Notification model types, repository interface, and dispatch notifier interface
+    commands.go                 # Write operations (CQRS): generating notifications, marking read, marking all read
+    queries.go                  # Read operations (CQRS): listing unread notifications and real-time event streaming
     transport/
-      http.go                   # REST + SSE stream
+      http.go                   # REST endpoints and SSE (Server-Sent Events) streaming endpoint for active clients
     store/
-      sqlite.go
-      postgres.go
+      sqlite.go                 # SQLite database mapping for notifications table
+      postgres.go               # PostgreSQL equivalent database repository for notifications
 
   oauth/
-    oauth.go                    # Entity, Repository interface
-    commands.go                 # LoginGithub, LoginGoogle (generic Provider)
-    queries.go                  # (Empty or holds callback verifications)
+    oauth.go                    # Entity representing OAuth state/tokens and repository interface
+    commands.go                 # Write operations (CQRS): initiating OAuth, exchange code for profile, session generation
+    queries.go                  # Verification checks for state and callbacks
     transport/
-      http.go                   # OAuth redirect + callback handlers
+      http.go                   # HTTP handlers for triggering redirects and accepting provider callbacks (Github/Google)
     store/
-      sqlite.go
-      postgres.go
+      sqlite.go                 # SQLite repository for mapping persistent OAuth credentials or user states
+      postgres.go               # PostgreSQL equivalent repository implementation for OAuth credentials
 
   # ─── Cross-cutting infrastructure ───
 
   session/
-    session.go                  # Session entity, Manager interface
+    session.go                  # Core Session token entity and Session Manager interface
     store/
-      sqlite.go                 # SQLite session store
-      postgres.go               # PostgreSQL session store
-      redis.go                  # Redis session cache (fast lookups, TTL-based expiry)
+      sqlite.go                 # Persistent SQLite database session storage
+      postgres.go               # Persistent PostgreSQL database session storage
+      redis.go                  # High-performance Redis session cache (hot-lookup TTL-based expiry)
 
   realtime/
-    hub.go                      # WebSocket connection hub
-    client.go                   # Client lifecycle (ReadPump, WritePump)
-    router.go                   # WS message routing by type
+    hub.go                      # WebSocket hub managing active connections, client registration, and broadcast events
+    client.go                   # WebSockets client wrapper managing ReadPump (listening) and WritePump (writing) goroutines
+    router.go                   # Incoming WebSocket message router, dispatching payloads based on event type
 
   middleware/
-    auth.go                     # Session auth middleware
-    cors.go                     # CORS middleware
-    ratelimiter.go              # Rate limiter (single file; uses Redis for distributed state)
-    logging.go                  # Request logging
+    auth.go                     # Middleware verifying session tokens and injecting authenticated user to context
+    cors.go                     # Cross-Origin Resource Sharing (CORS) security header enforcement
+    ratelimiter.go              # Rate limiting logic (Redis key-incrementing window algorithm)
+    logging.go                  # HTTP request-response log wrapper
 
   server/
-    server.go                   # HTTP server with graceful shutdown (SIGTERM/SIGINT)
-    routes.go                   # Routes list, including health probes (/healthz, /readyz)
+    server.go                   # Main HTTP server configuration, TLS/TCP setup, and OS interrupt signal trapping
+    routes.go                   # Complete API endpoint routing registry, middleware chains, and health probes
 
   config/
-    config.go
+    config.go                   # Application settings loader (reads from env variables and config.json)
 
   bootstrap/
-    bootstrap.go                # DI wiring — maps concrete clients (rabbitmq) to interfaces (eventbus)
+    bootstrap.go                # Dependency Injection (DI) bootstrapper, instantiating and wiring platform and slices
 
   # ─── Shared infrastructure services ───
 
   platform/
     database/
-      database.go               # DB interface, Factory (SQLite vs PostgreSQL selector)
-      sqlite.go                 # SQLite connection init, WAL config, busy_timeout
-      postgres.go               # PostgreSQL connection pool init
-      migrations.go             # Migration runner (reads db/migrations/ sequentially)
+      database.go               # Common DB client interfaces and the selector factory (SQLite/PostgreSQL switcher)
+      sqlite.go                 # SQLite driver initialization (WAL journal mode, busy timeout, pool tuning)
+      postgres.go               # PostgreSQL pgx driver pool configuration and initialization
+      migrations.go             # Migration utility matching numbered up/down scripts from db/migrations/
     redis/
-      redis.go                  # Redis client init, connection pool, health check
-      pubsub.go                 # Redis Pub/Sub wrapper for realtime event fan-out
+      redis.go                  # Redis connection client instance, pool config, and health checks
+      pubsub.go                 # Redis Pub/Sub wrapper fanning out messages across horizontal backend server instances
     eventbus/
-      eventbus.go               # EventBus publisher interface
+      eventbus.go               # Publisher interface definition for publishing application-wide domain events
     rabbitmq/
-      rabbitmq.go               # RabbitMQ connection, channel management, reconnect
-      publisher.go              # Concrete EventBus implementation using RabbitMQ
-      consumer.go               # Consume events, dispatch to notification service
-      exchanges.go              # Exchange/queue/binding declarations
+      rabbitmq.go               # RabbitMQ connection lifecycle, channel managers, and automatic reconnect wrappers
+      publisher.go              # AMQP implementation of the EventBus publisher interface using RabbitMQ
+      consumer.go               # Background queue listener consuming AMQP messages and invoking domain service commands
+      exchanges.go              # AMQP setup scripts defining exchanges, queues, and routing key bindings
 
   pkg/                          # Shared utilities (no business logic)
-    bcrypt/
-    uuid/
-    validator/
-    helpers/
-    oauth/                      # Renamed from oAuth → oauth (Go naming convention)
-      github/                   # Renamed from githubclient → github
-      google/                   # Renamed from googleclient → google
-      client.go                 # Shared HTTP client for OAuth
-    imgutil/                    # NEW: http.DetectContentType wrapper for MIME validation
+    bcrypt/                     # Encrypted password hashing utility wraps x/crypto/bcrypt
+    uuid/                       # GUID generator wrapper
+    validator/                  # Request payload validation helper
+    helpers/                    # Generic formatting and parsing aids
+    oauth/                      # Custom provider-agnostic oauth engine helpers
+      github/                   # GitHub OAuth client provider implementation
+      google/                   # Google OAuth client provider implementation
+      client.go                 # Configurable HTTP client helper for fetching OAuth payloads
+    imgutil/                    # Magic-bytes sniffer wraps http.DetectContentType for strict upload MIME validation
 ```
+
+### Directory Tree Details by Section
+
+To ensure clear ownership and strict architectural boundaries, each component in the directory tree is categorized into one of four distinct conceptual layers:
+
+#### 1. Vertical Feature Slices
+*Located under `internal/<feature>/`*
+* **Responsibility**: Houses all code relating to a specific domain or feature area, keeping business logic, transport, and storage co-located.
+* **CQRS Structure**:
+  * `<feature>.go`: Domain definitions (structs, enums) and repository interfaces. Does not import anything from inner transport or storage layers.
+  * `commands.go`: Logic that mutates state (Write model). Dispatches events to RabbitMQ where applicable.
+  * `queries.go`: Logic that retrieves state (Read model), applying necessary security or privacy filters.
+  * `transport/http.go`: Exposes endpoints via HTTP handlers, translating HTTP request bodies/params to Commands/Queries.
+  * `store/sqlite.go`: Concrete implementation of the repository interface using SQLite driver queries.
+  * `store/postgres.go`: Concrete implementation of the repository interface using PostgreSQL driver queries.
+
+#### 2. Cross-Cutting Infrastructure
+*Located under `internal/<package>/`*
+* **Responsibility**: Provides application-level services that span across multiple vertical slices.
+* **Key Components**:
+  * `session/`: Decoupled session manager implementing user identity tracking. Accessible by transport layers and auth middleware.
+  * `realtime/`: Manages live socket infrastructure (hubs, client read/write loops, message router) without tie-in to database storage.
+  * `middleware/`: HTTP middleware wrappers dealing with security (CORS), session-level authorization (Auth), rate-limiting (RateLimiter), and request tracing (Logging).
+  * `server/`: Orchestrates the HTTP listener lifecycle, binds endpoints, registers HTTP routes, and handles graceful shutdowns on system interrupts.
+  * `config/`: Central struct parsing environment configurations and parameters.
+  * `bootstrap/`: The application's composition root. Wires concrete implementations (e.g., SQLite repositories, RabbitMQ publisher) to their respective slice interfaces at boot time.
+
+#### 3. Shared Infrastructure Services (Platform)
+*Located under `internal/platform/<service>/`*
+* **Responsibility**: Low-level database and message broker integrations.
+* **Key Components**:
+  * `platform/database/`: Encapsulates database connectivity. Configures WAL (Write-Ahead Logging) and busy timeout adjustments for SQLite, connection pools for Postgres, and runs migrations sequentially.
+  * `platform/redis/`: Exposes connection pooling and helpers for caching or pub/sub.
+  * `platform/eventbus/`: Defines standard interface definitions for the event-driven publish/subscribe model.
+  * `platform/rabbitmq/`: Orchestrates the AMQP message broker lifecycle, defines topology, publishes messages, and hosts background consumers.
+
+#### 4. Shared Utilities (Package)
+*Located under `internal/pkg/<utility>/`*
+* **Responsibility**: Stateless, project-agnostic utility functions containing absolutely zero business logic or domain references.
+* **Key Components**:
+  * `pkg/bcrypt/`: Password hashing wrapper.
+  * `pkg/uuid/`: Identifier generation wrapper.
+  * `pkg/validator/`: Object field validator helper.
+  * `pkg/helpers/`: Small utility helpers for string or type conversions.
+  * `pkg/oauth/`: Independent HTTP oauth providers.
+  * `pkg/imgutil/`: Image MIME checker using magic-byte headers rather than unreliable content-type headers.
+
+
 
 ### How Redis Fits
 
@@ -420,30 +465,30 @@ internal/
 
 ## Comparison Table
 
-| Criterion | Current (Baseline) | Proposal 1: Horizontal | Proposal 2: Vertical | **Proposal 3: Optimized** |
-|-----------|-------------------|----------------------|---------------------|--------------------------|
-| Package count | ~55 | ~40 | ~35 | **~30** |
-| Handler imports in server.go | 32 aliased | ~12 clean | ~12 clean | **~10 clean** |
-| Dirs to touch per feature | 4 (domain, app, infra/http, infra/sqlite) | 4 (domain, service, handler, repo) | **1** (feature dir) | **1** (feature dir) |
-| Import stuttering | `usercommands.CreateUserHandler` | `usersvc.CreateUser` | `user.CreateUser` | `user.CreateUser` |
-| Go-idiomatic naming | Low (infra, app, per-action handlers) | Medium (service, handler, repo) | **High** (package-by-feature) | **High** |
-| Migration effort | — | Low (rename + flatten only) | High (restructure all files) | High (same as P2) |
-| CQRS clarity | High (explicit commands/queries) | Medium (merged into service) | Medium (merged into service) | **High** (commands/queries files) |
-| Feature isolation | Low (scattered) | Low (scattered) | **High** (co-located) | **High** |
-| Flat "god package" risk | Medium (`app/services.go`) | **High** (`service/`, `repository/`) | None | **None** |
-| Dual DB support | No | No | No | **Yes** (factory pattern) |
-| Horizontal scaling | No | No | No | **Yes** (Redis + RabbitMQ) |
-| Async event processing | No | No | No | **Yes** (RabbitMQ) |
-| Microservice readiness | No | Low | Medium | **High** (isolated domains) |
-| Kubernetes readiness | No | No | No | **Yes** (health probes + graceful shutdown) |
-| Broker swappability | No | No | No | **Yes** (EventBus interface abstraction) |
-| Missing merged-plan items | N/A | 2 | 3 | **0** |
+| Criterion | Current (Baseline) | Proposal 1: Optimized Verticals | Proposal 2: Horizontal |
+|-----------|-------------------|---------------------------------|------------------------|
+| Package count | ~55 | **~30** | ~40 |
+| Handler imports in server.go | 32 aliased | **~10 clean** | ~12 clean |
+| Dirs to touch per feature | 4 (domain, app, infra/http, infra/sqlite) | **1** (feature dir) | 4 (domain, service, handler, repo) |
+| Import stuttering | `usercommands.CreateUserHandler` | `user.CreateUser` | `usersvc.CreateUser` |
+| Go-idiomatic naming | Low (infra, app, per-action handlers) | **High** | Medium (service, handler, repo) |
+| Migration effort | — | High | Low (rename + flatten only) |
+| CQRS clarity | High (explicit commands/queries) | **High** (commands/queries files) | Medium (merged into service) |
+| Feature isolation | Low (scattered) | **High** (co-located) | Low (scattered) |
+| Flat "god package" risk | Medium (`app/services.go`) | None | **High** (`service/`, `repository/`) |
+| Dual DB support | No | **Yes** (factory pattern) | No |
+| Horizontal scaling | No | **Yes** (Redis + RabbitMQ) | No |
+| Async event processing | No | **Yes** (RabbitMQ) | No |
+| Microservice readiness | No | **High** (isolated domains) | Low |
+| Kubernetes readiness | No | **Yes** (health probes + graceful shutdown) | No |
+| Broker swappability | No | **Yes** (EventBus interface abstraction) | No |
+| Missing merged-plan items | N/A | **0** | 2 |
 
 ---
 
 ## Recommendation
 
-**Use Proposal 3 (Optimized Vertical Slices)** as the target architecture.
+**Use Proposal 1 (Optimized Vertical Slices)** as the target architecture.
 
 ### Migration Strategy
 
