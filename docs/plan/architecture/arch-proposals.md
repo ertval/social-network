@@ -174,6 +174,7 @@ Based on the deep review of Proposals 1 and 2. Key improvements:
 5. **Add RabbitMQ** — async event/notification dispatch, decoupled service communication
 6. **Add missing slices** (`session/`)
 7. **Explicit placement** for all `sn-merged-plan.md` tables
+8. **Preserve CQRS** — Explicit `commands.go` and `queries.go` files within each slice instead of a monolithic service file
 
 ### Directory Tree
 
@@ -181,7 +182,8 @@ Based on the deep review of Proposals 1 and 2. Key improvements:
 internal/
   user/
     user.go                     # Entity, Repository interface, Activity types
-    service.go                  # Register, Login, GetMe, Update, GetActivity
+    commands.go                 # Register, Login, Update
+    queries.go                  # GetMe, GetActivity
     transport/
       http.go                   # All user HTTP handlers (register, login, me, update, activity)
     store/
@@ -191,7 +193,8 @@ internal/
   topic/
     topic.go                    # Entity (with Visibility enum), Repository interface,
                                 # AllowedUser, Category types, CategoryRepository interface
-    service.go                  # CRUD, FileStorage, privacy filtering
+    commands.go                 # Create, Update, Delete, FileStorage
+    queries.go                  # Get, List, privacy filtering
     transport/
       http.go                   # Topic + Category + AllowedUsers HTTP handlers
     store/
@@ -200,7 +203,8 @@ internal/
 
   comment/
     comment.go                  # Entity, Repository interface
-    service.go                  # CRUD, notification dispatch on create
+    commands.go                 # Create (dispatches notification), Update, Delete
+    queries.go                  # Get, ListByTopic
     transport/
       http.go
     store/
@@ -209,7 +213,8 @@ internal/
 
   vote/
     vote.go                     # Entity, Repository interface
-    service.go                  # Cast, Delete, GetCounts (imports topic, comment, notification)
+    commands.go                 # Cast, Delete (imports topic, comment, notification)
+    queries.go                  # GetCounts
     transport/
       http.go
     store/
@@ -218,7 +223,8 @@ internal/
 
   follow/                       # NEW
     follow.go                   # Follow, FollowRequest entities, Repository interface
-    service.go                  # Follow, Unfollow, SendRequest, Respond, List
+    commands.go                 # Follow, Unfollow, SendRequest, Respond
+    queries.go                  # List (Followers, Following, Pending)
     transport/
       http.go
     store/
@@ -228,7 +234,8 @@ internal/
   group/                        # NEW
     group.go                    # Group, GroupMember, Invitation, JoinRequest,
                                 # GroupChatMessage entities, Repository interface
-    service.go                  # CRUD, Invite, Join, Members, Posts, GroupChat
+    commands.go                 # C/U/D, Invite, Join, Leave, SendChat
+    queries.go                  # Read, Members, Posts, GetChat
     transport/
       http.go                   # REST endpoints for group management + content
       ws.go                     # Group chat WebSocket message handling
@@ -239,7 +246,8 @@ internal/
 
   event/                        # NEW
     event.go                    # Event, EventRSVP entities, Repository interface
-    service.go                  # Create, RSVP, List
+    commands.go                 # Create, RSVP
+    queries.go                  # List
     transport/
       http.go
     store/
@@ -248,7 +256,8 @@ internal/
 
   chat/
     chat.go                     # Chat, Message, ChatRead entities, Repository interface
-    service.go                  # InitChat, Send, History, Users, MarkRead
+    commands.go                 # InitChat, Send, MarkRead
+    queries.go                  # History, Users
     transport/
       http.go                   # REST (init, history, users)
       ws.go                     # WebSocket message handling (send, receive, typing)
@@ -258,7 +267,8 @@ internal/
 
   notification/
     notification.go             # Entity, Repository interface, Notifier interface
-    service.go                  # Create, List, Stream, MarkRead, MarkAllRead
+    commands.go                 # Create, MarkRead, MarkAllRead
+    queries.go                  # List, Stream
     transport/
       http.go                   # REST + SSE stream
     store/
@@ -267,7 +277,8 @@ internal/
 
   oauth/
     oauth.go                    # Entity, Repository interface
-    service.go                  # LoginGithub, LoginGoogle (generic Provider)
+    commands.go                 # LoginGithub, LoginGoogle (generic Provider)
+    queries.go                  # (Empty or holds callback verifications)
     transport/
       http.go                   # OAuth redirect + callback handlers
     store/
@@ -346,8 +357,8 @@ internal/
 
 | Use Case | How |
 |----------|-----|
-| **Async notification dispatch** | When `follow/service.go` creates a follow-request, it publishes a `follow.requested` event to RabbitMQ instead of calling `notification/service.go` directly. The consumer picks it up and creates the notification asynchronously. This decouples features. |
-| **Group event broadcast** | When `event/service.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response. |
+| **Async notification dispatch** | When `follow/commands.go` creates a follow-request, it publishes a `follow.requested` event to RabbitMQ instead of calling `notification/commands.go` directly. The consumer picks it up and creates the notification asynchronously. This decouples features. |
+| **Group event broadcast** | When `event/commands.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response. |
 | **Email/push notifications** | Future consumers can subscribe to the same exchanges for email delivery, push notifications, etc. without changing the publisher. |
 | **Retry and dead-letter** | Failed notification dispatches go to a dead-letter queue for retry, instead of silently failing in a goroutine. |
 
@@ -378,12 +389,12 @@ Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Rep
 
 ### Boundary Rules (enforced by AGENTS.md)
 
-- `user/user.go`, `user/service.go` — **must not** import `user/transport/` or `user/store/`
+- `user/user.go`, `user/commands.go` — **must not** import `user/transport/` or `user/store/`
 - `user/store/sqlite.go` — imports `user/` (domain entities + repo interface) + `database/sql`
-- `user/transport/http.go` — imports `user/` (service) + `session/` for auth context
+- `user/transport/http.go` — imports `user/` (commands/queries) + `session/` for auth context
 - `bootstrap/bootstrap.go` — imports everything, wires concrete impls into service interfaces
-- Feature services may import `platform/rabbitmq/` to publish events (one-way dependency)
-- Feature services **never** import another feature's `transport/` or `store/`
+- Feature commands may import `platform/rabbitmq/` to publish events (one-way dependency)
+- Feature commands/queries **never** import another feature's `transport/` or `store/`
 
 ### Key Decisions Explained
 
@@ -415,7 +426,7 @@ Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Rep
 | Import stuttering | `usercommands.CreateUserHandler` | `usersvc.CreateUser` | `user.CreateUser` | `user.CreateUser` |
 | Go-idiomatic naming | Low (infra, app, per-action handlers) | Medium (service, handler, repo) | **High** (package-by-feature) | **High** |
 | Migration effort | — | Low (rename + flatten only) | High (restructure all files) | High (same as P2) |
-| CQRS clarity | High (explicit commands/queries) | Medium (merged into service) | Medium (merged into service) | Medium |
+| CQRS clarity | High (explicit commands/queries) | Medium (merged into service) | Medium (merged into service) | **High** (commands/queries files) |
 | Feature isolation | Low (scattered) | Low (scattered) | **High** (co-located) | **High** |
 | Flat "god package" risk | Medium (`app/services.go`) | **High** (`service/`, `repository/`) | None | **None** |
 | Dual DB support | No | No | No | **Yes** (factory pattern) |
@@ -441,7 +452,7 @@ Set up `platform/database/`, `platform/redis/`, `platform/rabbitmq/`. Wire throu
 Move `user/`, `topic/`, `chat/`, `notification/` to vertical slices. Steps per feature:
 1. Create the new feature directory (e.g., `internal/user/`)
 2. Copy domain types from `domain/user/` → `internal/user/user.go`
-3. Copy service logic from `app/user/` → `internal/user/service.go`
+3. Copy CQRS logic from `app/user/commands` and `queries` → `internal/user/commands.go` and `queries.go`
 4. Copy handler logic from `infra/http/user/` → `internal/user/transport/http.go`
 5. Copy repo logic from `infra/storage/sqlite/users/` → `internal/user/store/sqlite.go`
 6. Add `store/postgres.go` stub implementing the same interface

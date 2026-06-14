@@ -12,7 +12,7 @@ internal/
   │  user/          topic/         comment/       vote/         │
   │  follow/        group/         event/         chat/         │
   │  notification/  oauth/                                      │
-  │  Each: entity.go + service.go + transport/ + store/         │
+  │  Each: entity.go + commands.go + queries.go + transport/ + store/ │
   └─────────────────────────────────────────────────────────────┘
   ┌── Cross-cutting ───────────────────────────────────────────┐
   │  session/       realtime/      middleware/     server/       │
@@ -133,7 +133,8 @@ Build new features as vertical slices. No migration needed — these don't exist
 | File | Contents |
 |------|----------|
 | `follow/follow.go` | `Follow`, `FollowRequest` entities, `Repository` interface |
-| `follow/service.go` | `Follow()`, `Unfollow()`, `SendRequest()`, `RespondToRequest()`, `GetFollowers()`, `GetFollowing()`, `GetPendingRequests()` |
+| `follow/commands.go` | `Follow()`, `Unfollow()`, `SendRequest()`, `RespondToRequest()` |
+| `follow/queries.go` | `GetFollowers()`, `GetFollowing()`, `GetPendingRequests()` |
 | `follow/transport/http.go` | HTTP handlers for all follow API endpoints |
 | `follow/store/sqlite.go` | SQLite impl for `follows` + `follow_requests` tables |
 | `follow/store/postgres.go` | PostgreSQL impl |
@@ -147,7 +148,8 @@ Build new features as vertical slices. No migration needed — these don't exist
 | File | Contents |
 |------|----------|
 | `group/group.go` | `Group`, `GroupMember`, `GroupInvitation`, `GroupJoinRequest`, `GroupChatMessage` entities, `Repository` interface |
-| `group/service.go` | CRUD, `InviteToGroup()`, `RespondToInvitation()`, `RequestJoin()`, `RespondToJoinRequest()`, `LeaveGroup()`, `GetMembers()`, `GetPosts()`, group chat operations |
+| `group/commands.go` | C/U/D, `InviteToGroup()`, `RespondToInvitation()`, `RequestJoin()`, `RespondToJoinRequest()`, `LeaveGroup()`, send chat |
+| `group/queries.go` | Read, `GetMembers()`, `GetPosts()`, get chat history |
 | `group/transport/http.go` | REST endpoints for group management + content |
 | `group/transport/ws.go` | Group chat WebSocket message handling |
 | `group/store/sqlite.go` | SQLite impl for `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages` |
@@ -162,7 +164,8 @@ Build new features as vertical slices. No migration needed — these don't exist
 | File | Contents |
 |------|----------|
 | `event/event.go` | `Event`, `EventRSVP` entities, `Repository` interface |
-| `event/service.go` | `CreateEvent()`, `RSVP()`, `GetGroupEvents()`, `GetRSVPs()` |
+| `event/commands.go` | `CreateEvent()`, `RSVP()` |
+| `event/queries.go` | `GetGroupEvents()`, `GetRSVPs()` |
 | `event/transport/http.go` | HTTP handlers |
 | `event/store/sqlite.go` | SQLite impl for `events` + `event_rsvps` |
 | `event/store/postgres.go` | PostgreSQL impl |
@@ -183,7 +186,7 @@ For each feature (user, topic, comment, vote, chat, notification, oauth):
 
 1. Create `internal/<feature>/` directory
 2. **Entity**: Copy from `domain/<feature>/*.go` → `internal/<feature>/<feature>.go`
-3. **Service**: Merge from `app/<feature>/commands/*.go` + `app/<feature>/queries/*.go` → `internal/<feature>/service.go`
+3. **CQRS**: Copy from `app/<feature>/commands/*.go` → `internal/<feature>/commands.go` and `app/<feature>/queries/*.go` → `internal/<feature>/queries.go`
 4. **Handler**: Merge from `infra/http/<feature>/<action>/*.go` → `internal/<feature>/transport/http.go`
 5. **Store (SQLite)**: Copy from `infra/storage/sqlite/<feature>/*.go` → `internal/<feature>/store/sqlite.go`
 6. **Store (PostgreSQL)**: Create `internal/<feature>/store/postgres.go` implementing same interface
@@ -196,14 +199,16 @@ For each feature (user, topic, comment, vote, chat, notification, oauth):
 #### `user/` — absorbs `activity/`
 
 - `domain/user/user.go` + `domain/activity/activity.go` → `user/user.go`
-- `app/user/commands/*.go` + `app/user/queries/*.go` + `app/activities/queries/*.go` → `user/service.go`
+- `app/user/commands/*.go` → `user/commands.go`
+- `app/user/queries/*.go` + `app/activities/queries/*.go` → `user/queries.go`
 - All user handlers + activity handler → `user/transport/http.go`
 - `infra/storage/sqlite/users/*.go` + `infra/storage/sqlite/activity/*.go` → `user/store/sqlite.go`
 
 #### `topic/` — absorbs `category/`
 
 - `domain/topic/topic.go` + `domain/category/category.go` → `topic/topic.go`
-- `app/topics/**` + `app/categories/**` → `topic/service.go`
+- `app/topics/commands/**` + `app/categories/commands/**` → `topic/commands.go`
+- `app/topics/queries/**` + `app/categories/queries/**` → `topic/queries.go`
 - All topic + category handlers → `topic/transport/http.go`
 - `infra/storage/sqlite/topics/*.go` + `infra/storage/sqlite/categories/*.go` → `topic/store/sqlite.go`
 - Add `topic_allowed_users` queries to `topic/store/sqlite.go`
@@ -245,7 +250,7 @@ Wire RabbitMQ consumers to the notification service:
 
 1. `platform/rabbitmq/consumer.go` subscribes to `social.events` exchange
 2. Routes events by routing key to notification service methods
-3. `notification/service.go` creates the appropriate notification and pushes through the SSE/WS notifier
+3. `notification/commands.go` creates the appropriate notification and pushes through the SSE/WS notifier
 4. Failed dispatches go to dead-letter queue for retry
 
 ---
@@ -253,7 +258,7 @@ Wire RabbitMQ consumers to the notification service:
 ## Boundary Rules (Enforced)
 
 ```
-Feature root (user.go, service.go)
+Feature root (user.go, commands.go, queries.go)
   ├── MUST NOT import transport/ or store/ from same feature
   ├── MAY import other features' root packages (entity + interface)
   ├── MAY import platform/ packages (rabbitmq, redis)
