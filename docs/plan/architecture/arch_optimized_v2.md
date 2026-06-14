@@ -6,6 +6,59 @@
 
 ---
 
+## System Overview
+
+```
+                       +-------------------+
+                       |      Browser      |
+                       |   (Next.js App)   |
+                       |    Port 3000      |
+                       +---------+---------+
+                                 | (HTTP / WebSocket)
+                                 v
+                       +-------------------+
+                       |    Go Backend     |
+                       |    Port 8080      |
+                       +---------+---------+
+                          /      |      \
+                         v       v       v
+              +----------+  +---------+  +----------+
+              |  SQLite  |  |  Redis  |  | RabbitMQ |
+              |  (store) |  | (cache) |  | (events) |
+              +----------+  +---------+  +----------+
+```
+
+### Components
+
+**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with shadcn/ui components + Tailwind CSS styling + Biome for linting/formatting.
+
+**Backend (Go)** — HTTP server on port 8080. Entry point for all API requests. Organized as **vertical feature slices** under `internal/<feature>/`, each encapsulating domain entities, CQRS commands/queries, HTTP transport handlers, and a SQLite store implementation. Cross-cutting concerns (auth, sessions, WebSocket hub, middleware) live in `internal/core/`. Platform abstractions (database factory, event bus, cache) live in `internal/platform/`.
+
+**Infrastructure Services** — Pluggable behind interfaces in `internal/platform/`:
+- **SQLite** (required): Primary storage with Write-Ahead Logging (`_journal_mode=WAL`) and busy timeout (`_busy_timeout=5000`).
+- **PostgreSQL** (optional): Demonstrates database portability via the factory pattern — swap implementations without touching feature code.
+- **Redis** (optional): In-memory cache, session store, rate limiter backend, and real-time pub/sub.
+- **RabbitMQ** (optional): Async event bus for cross-feature notifications, replacing the in-process channel implementation.
+
+The backend starts with in-memory infrastructure (channels, maps) and swaps to Redis/RabbitMQ later by reimplementing the same `platform` interfaces — zero changes to feature code.
+
+### Feature Overview
+
+| Feature | Description | New/Migrated |
+|---------|-------------|--------------|
+| User | Registration, login, profile, privacy toggle, avatar | Migrate from old layers |
+| Topic | Posts with visibility (public/almost_private/private), images | Migrate from old layers |
+| Comment | Comments on posts with optional images | Migrate from old layers |
+| Vote | Upvote/downvote on posts and comments | Migrate from old layers |
+| Follow | Public follow, private follow request/accept/decline | Greenfield |
+| Group | Create, invite, request join, group chat, group posts | Greenfield |
+| Event | Create event with title/description/day-time, RSVP (going/not going) | Greenfield |
+| Chat | 1-on-1 direct messaging via WebSocket, follow-gated | Migrate from old layers |
+| Notification | Event bus subscriber: follow-request, follow-accepted, group-invite, group-join, event-creation | Migrate from old layers |
+| OAuth | GitHub and Google third-party authentication | Migrate from old layers |
+
+---
+
 ## Design Decisions (from Architecture Discussions)
 
 These are the settled conclusions. Every phase below follows them.
@@ -111,7 +164,7 @@ feature root (entity.go, commands.go, queries.go)
 
 transport/http.go
   ├── Imports own feature root
-  ├── Imports core/session/ for auth context
+  ├── Imports internal/core/session/ for auth context
   └── MUST NOT import store/
 
 store/sqlite.go
