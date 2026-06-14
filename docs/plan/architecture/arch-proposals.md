@@ -1,6 +1,6 @@
 # Go Package Architecture Proposals
 
-Three alternatives to the current `domain/ → app/ → infra/` horizontal layering, all respecting the AGENTS.md constraint: **domain never imports infrastructure**.
+Three alternatives to the current `domain/ → app/ → infra/` horizontal layering, all respecting the AGENTS.md constraint: **domain never imports infrastructure** and satisfing plan.
 
 This document includes a deep review of each proposal verified against the live codebase and `docs/plan/sn-merged-plan.md`.
 
@@ -21,7 +21,262 @@ This document includes a deep review of each proposal verified against the live 
 
 ---
 
-## Proposal 1: Refined Horizontal Layers (still Clean CQRS)
+## Proposal 1: Optimized Vertical Slices (Recommended)
+
+Key improvements:
+
+1. **Fold thin features** (`activity`, `category`) into parent features
+2. **Keep `transport/` naming** — leaves room for future gRPC/NATS transports
+3. **Dual database support** — `sqlite/` and `postgres/` sub-packages under each feature's `store/`
+4. **Add Redis** — session caching, rate limiting, pub/sub for realtime
+5. **Add RabbitMQ** — async event/notification dispatch, decoupled service communication
+6. **Add missing slices** (`session/`)
+7. **Explicit placement** for all `sn-merged-plan.md` tables
+8. **Preserve CQRS** — Explicit `commands.go` and `queries.go` files within each slice instead of a monolithic service file
+
+### Directory Tree
+
+```
+internal/
+  user/
+    user.go                     # Entity, Repository interface, Activity types
+    commands.go                 # Register, Login, Update
+    queries.go                  # GetMe, GetActivity
+    transport/
+      http.go                   # All user HTTP handlers (register, login, me, update, activity)
+    store/
+      sqlite.go                 # User + Activity SQLite implementation
+      postgres.go               # User + Activity PostgreSQL implementation
+
+  topic/
+    topic.go                    # Entity (with Visibility enum), Repository interface,
+                                # AllowedUser, Category types, CategoryRepository interface
+    commands.go                 # Create, Update, Delete, FileStorage
+    queries.go                  # Get, List, privacy filtering
+    transport/
+      http.go                   # Topic + Category + AllowedUsers HTTP handlers
+    store/
+      sqlite.go                 # topic, category, topic_allowed_users, topic_categories queries
+      postgres.go               # PostgreSQL equivalent
+
+  comment/
+    comment.go                  # Entity, Repository interface
+    commands.go                 # Create (dispatches notification), Update, Delete
+    queries.go                  # Get, ListByTopic
+    transport/
+      http.go
+    store/
+      sqlite.go
+      postgres.go
+
+  vote/
+    vote.go                     # Entity, Repository interface
+    commands.go                 # Cast, Delete (imports topic, comment, notification)
+    queries.go                  # GetCounts
+    transport/
+      http.go
+    store/
+      sqlite.go
+      postgres.go
+
+  follow/                       # NEW
+    follow.go                   # Follow, FollowRequest entities, Repository interface
+    commands.go                 # Follow, Unfollow, SendRequest, Respond
+    queries.go                  # List (Followers, Following, Pending)
+    transport/
+      http.go
+    store/
+      sqlite.go                 # follows + follow_requests tables
+      postgres.go
+
+  group/                        # NEW
+    group.go                    # Group, GroupMember, Invitation, JoinRequest,
+                                # GroupChatMessage entities, Repository interface
+    commands.go                 # C/U/D, Invite, Join, Leave, SendChat
+    queries.go                  # Read, Members, Posts, GetChat
+    transport/
+      http.go                   # REST endpoints for group management + content
+      ws.go                     # Group chat WebSocket message handling
+    store/
+      sqlite.go                 # groups, group_members, group_invitations,
+                                # group_join_requests, group_chat_messages tables
+      postgres.go
+
+  event/                        # NEW
+    event.go                    # Event, EventRSVP entities, Repository interface
+    commands.go                 # Create, RSVP
+    queries.go                  # List
+    transport/
+      http.go
+    store/
+      sqlite.go                 # events + event_rsvps tables
+      postgres.go
+
+  chat/
+    chat.go                     # Chat, Message, ChatRead entities, Repository interface
+    commands.go                 # InitChat, Send, MarkRead
+    queries.go                  # History, Users
+    transport/
+      http.go                   # REST (init, history, users)
+      ws.go                     # WebSocket message handling (send, receive, typing)
+    store/
+      sqlite.go
+      postgres.go
+
+  notification/
+    notification.go             # Entity, Repository interface, Notifier interface
+    commands.go                 # Create, MarkRead, MarkAllRead
+    queries.go                  # List, Stream
+    transport/
+      http.go                   # REST + SSE stream
+    store/
+      sqlite.go
+      postgres.go
+
+  oauth/
+    oauth.go                    # Entity, Repository interface
+    commands.go                 # LoginGithub, LoginGoogle (generic Provider)
+    queries.go                  # (Empty or holds callback verifications)
+    transport/
+      http.go                   # OAuth redirect + callback handlers
+    store/
+      sqlite.go
+      postgres.go
+
+  # ─── Cross-cutting infrastructure ───
+
+  session/
+    session.go                  # Session entity, Manager interface
+    store/
+      sqlite.go                 # SQLite session store
+      postgres.go               # PostgreSQL session store
+      redis.go                  # Redis session cache (fast lookups, TTL-based expiry)
+
+  realtime/
+    hub.go                      # WebSocket connection hub
+    client.go                   # Client lifecycle (ReadPump, WritePump)
+    router.go                   # WS message routing by type
+
+  middleware/
+    auth.go                     # Session auth middleware
+    cors.go                     # CORS middleware
+    ratelimiter.go              # Rate limiter (single file; uses Redis for distributed state)
+    logging.go                  # Request logging
+
+  server/
+    server.go                   # HTTP server with graceful shutdown (SIGTERM/SIGINT)
+    routes.go                   # Routes list, including health probes (/healthz, /readyz)
+
+  config/
+    config.go
+
+  bootstrap/
+    bootstrap.go                # DI wiring — maps concrete clients (rabbitmq) to interfaces (eventbus)
+
+  # ─── Shared infrastructure services ───
+
+  platform/
+    database/
+      database.go               # DB interface, Factory (SQLite vs PostgreSQL selector)
+      sqlite.go                 # SQLite connection init, WAL config, busy_timeout
+      postgres.go               # PostgreSQL connection pool init
+      migrations.go             # Migration runner (reads db/migrations/ sequentially)
+    redis/
+      redis.go                  # Redis client init, connection pool, health check
+      pubsub.go                 # Redis Pub/Sub wrapper for realtime event fan-out
+    eventbus/
+      eventbus.go               # EventBus publisher interface
+    rabbitmq/
+      rabbitmq.go               # RabbitMQ connection, channel management, reconnect
+      publisher.go              # Concrete EventBus implementation using RabbitMQ
+      consumer.go               # Consume events, dispatch to notification service
+      exchanges.go              # Exchange/queue/binding declarations
+
+  pkg/                          # Shared utilities (no business logic)
+    bcrypt/
+    uuid/
+    validator/
+    helpers/
+    oauth/                      # Renamed from oAuth → oauth (Go naming convention)
+      github/                   # Renamed from githubclient → github
+      google/                   # Renamed from googleclient → google
+      client.go                 # Shared HTTP client for OAuth
+    imgutil/                    # NEW: http.DetectContentType wrapper for MIME validation
+```
+
+### How Redis Fits
+
+| Use Case | How |
+|----------|-----|
+| **Session cache** | `session/store/redis.go` — fast session lookups. DB is the source of truth, Redis is the hot cache with TTL-based expiry. |
+| **Rate limiting** | `middleware/ratelimiter.go` — uses Redis `INCR` + `EXPIRE` for distributed rate limiting across multiple backend instances. |
+| **Realtime pub/sub** | `platform/redis/pubsub.go` — when a notification is created, publish to a Redis channel. The SSE/WS hub subscribes and pushes to connected clients. Enables horizontal scaling of the backend. |
+| **Online presence** | `realtime/hub.go` can use Redis sorted sets to track user online/offline status across multiple server instances. |
+
+### How RabbitMQ Fits
+
+| Use Case | How |
+|----------|-----|
+| **Async notification dispatch** | When `follow/commands.go` creates a follow-request, it publishes a `follow.requested` event to RabbitMQ instead of calling `notification/commands.go` directly. The consumer picks it up and creates the notification asynchronously. This decouples features. |
+| **Group event broadcast** | When `event/commands.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response. |
+| **Email/push notifications** | Future consumers can subscribe to the same exchanges for email delivery, push notifications, etc. without changing the publisher. |
+| **Retry and dead-letter** | Failed notification dispatches go to a dead-letter queue for retry, instead of silently failing in a goroutine. |
+
+### Database Factory Pattern
+
+```go
+// platform/database/database.go
+type DB interface {
+    QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+    ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+    // ... standard database/sql interface subset
+}
+
+// NewDB selects SQLite or PostgreSQL based on config
+func NewDB(cfg config.DatabaseConfig) (DB, error) {
+    switch cfg.Driver {
+    case "sqlite":
+        return newSQLite(cfg.DSN)   // includes _journal_mode=WAL, _busy_timeout=5000
+    case "postgres":
+        return newPostgres(cfg.DSN) // includes connection pool config
+    default:
+        return nil, fmt.Errorf("unsupported driver: %s", cfg.Driver)
+    }
+}
+```
+
+Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Repository` interface. The `bootstrap.go` selects which implementation to wire based on config.
+
+### Boundary Rules (enforced by AGENTS.md)
+
+- `user/user.go`, `user/commands.go` — **must not** import `user/transport/` or `user/store/`
+- `user/store/sqlite.go` — imports `user/` (domain entities + repo interface) + `database/sql`
+- `user/transport/http.go` — imports `user/` (commands/queries) + `session/` for auth context
+- `bootstrap/bootstrap.go` — imports everything, wires concrete impls into service interfaces
+- Feature commands may import `platform/rabbitmq/` to publish events (one-way dependency)
+- Feature commands/queries **never** import another feature's `transport/` or `store/`
+
+### Key Decisions Explained
+
+| Decision | Rationale |
+|----------|-----------|
+| **`activity` folded into `user`** | Activity is just "user's post + comment history" — a single query. Doesn't warrant its own slice. |
+| **`category` folded into `topic`** | Categories exist only to tag topics. No independent business logic. Reduces package count. |
+| **`transport/` kept (not `httpapi/`)** | Leaves room for future gRPC, NATS, or other transports. Industry-standard naming in Go service architecture. |
+| **`store/` kept (not bare `sqlite/`)** | With dual DB support, `store/sqlite.go` and `store/postgres.go` sit naturally under `store/`. |
+| **`session/` as standalone** | Session management is used by middleware and bootstrap. It's cross-cutting but has its own entity + store. |
+| **`server/` for HTTP server** | Replaces `infra/http/server.go`. Contains the mux, middleware chain, and route registration. |
+| **`ratelimiter.go` flattened** | The current `ratelimiter/` sub-package has exactly one file. A sub-package for one file violates Go conventions. |
+| **`pkg/oauth/` renamed** | `oAuth` → `oauth` follows Go naming (no camelCase in package names). `githubclient` → `github` removes stutter. |
+| **`imgutil/` added** | Merged plan requires magic-byte MIME validation. Shared utility, not feature-specific. |
+| **Group chat in `group/`** | Group chat messages are access-controlled by group membership. Semantically belongs with the group feature. |
+| **`platform/` for shared infra** | Database, Redis, and RabbitMQ are infrastructure services used by multiple features. Separating them from `pkg/` (which is pure utilities) makes the dependency direction clear. |
+| **RabbitMQ over direct calls** | Decouples notification creation from the feature that triggers it. Enables async processing, retries, and future consumers (email, push). |
+| **Redis for sessions + rate limiting** | Enables horizontal scaling. Multiple backend instances can share session state and rate limit counters. |
+
+---
+
+## Proposal 2: Refined Horizontal Layers
 
 Conservative evolution. Keeps layer separation but renames to Go-idiomatic terms and flattens the 32+ per-action handler packages.
 
@@ -163,259 +418,6 @@ internal/
 
 ---
 
-## Proposal 3: Optimized Vertical Slices (Recommended)
-
-Based on the deep review of Proposals 1 and 2. Key improvements:
-
-1. **Fold thin features** (`activity`, `category`) into parent features
-2. **Keep `transport/` naming** — leaves room for future gRPC/NATS transports
-3. **Dual database support** — `sqlite/` and `postgres/` sub-packages under each feature's `store/`
-4. **Add Redis** — session caching, rate limiting, pub/sub for realtime
-5. **Add RabbitMQ** — async event/notification dispatch, decoupled service communication
-6. **Add missing slices** (`session/`)
-7. **Explicit placement** for all `sn-merged-plan.md` tables
-8. **Preserve CQRS** — Explicit `commands.go` and `queries.go` files within each slice instead of a monolithic service file
-
-### Directory Tree
-
-```
-internal/
-  user/
-    user.go                     # Entity, Repository interface, Activity types
-    commands.go                 # Register, Login, Update
-    queries.go                  # GetMe, GetActivity
-    transport/
-      http.go                   # All user HTTP handlers (register, login, me, update, activity)
-    store/
-      sqlite.go                 # User + Activity SQLite implementation
-      postgres.go               # User + Activity PostgreSQL implementation
-
-  topic/
-    topic.go                    # Entity (with Visibility enum), Repository interface,
-                                # AllowedUser, Category types, CategoryRepository interface
-    commands.go                 # Create, Update, Delete, FileStorage
-    queries.go                  # Get, List, privacy filtering
-    transport/
-      http.go                   # Topic + Category + AllowedUsers HTTP handlers
-    store/
-      sqlite.go                 # topic, category, topic_allowed_users, topic_categories queries
-      postgres.go               # PostgreSQL equivalent
-
-  comment/
-    comment.go                  # Entity, Repository interface
-    commands.go                 # Create (dispatches notification), Update, Delete
-    queries.go                  # Get, ListByTopic
-    transport/
-      http.go
-    store/
-      sqlite.go
-      postgres.go
-
-  vote/
-    vote.go                     # Entity, Repository interface
-    commands.go                 # Cast, Delete (imports topic, comment, notification)
-    queries.go                  # GetCounts
-    transport/
-      http.go
-    store/
-      sqlite.go
-      postgres.go
-
-  follow/                       # NEW
-    follow.go                   # Follow, FollowRequest entities, Repository interface
-    commands.go                 # Follow, Unfollow, SendRequest, Respond
-    queries.go                  # List (Followers, Following, Pending)
-    transport/
-      http.go
-    store/
-      sqlite.go                 # follows + follow_requests tables
-      postgres.go
-
-  group/                        # NEW
-    group.go                    # Group, GroupMember, Invitation, JoinRequest,
-                                # GroupChatMessage entities, Repository interface
-    commands.go                 # C/U/D, Invite, Join, Leave, SendChat
-    queries.go                  # Read, Members, Posts, GetChat
-    transport/
-      http.go                   # REST endpoints for group management + content
-      ws.go                     # Group chat WebSocket message handling
-    store/
-      sqlite.go                 # groups, group_members, group_invitations,
-                                # group_join_requests, group_chat_messages tables
-      postgres.go
-
-  event/                        # NEW
-    event.go                    # Event, EventRSVP entities, Repository interface
-    commands.go                 # Create, RSVP
-    queries.go                  # List
-    transport/
-      http.go
-    store/
-      sqlite.go                 # events + event_rsvps tables
-      postgres.go
-
-  chat/
-    chat.go                     # Chat, Message, ChatRead entities, Repository interface
-    commands.go                 # InitChat, Send, MarkRead
-    queries.go                  # History, Users
-    transport/
-      http.go                   # REST (init, history, users)
-      ws.go                     # WebSocket message handling (send, receive, typing)
-    store/
-      sqlite.go
-      postgres.go
-
-  notification/
-    notification.go             # Entity, Repository interface, Notifier interface
-    commands.go                 # Create, MarkRead, MarkAllRead
-    queries.go                  # List, Stream
-    transport/
-      http.go                   # REST + SSE stream
-    store/
-      sqlite.go
-      postgres.go
-
-  oauth/
-    oauth.go                    # Entity, Repository interface
-    commands.go                 # LoginGithub, LoginGoogle (generic Provider)
-    queries.go                  # (Empty or holds callback verifications)
-    transport/
-      http.go                   # OAuth redirect + callback handlers
-    store/
-      sqlite.go
-      postgres.go
-
-  # ─── Cross-cutting infrastructure ───
-
-  session/
-    session.go                  # Session entity, Manager interface
-    store/
-      sqlite.go                 # SQLite session store
-      postgres.go               # PostgreSQL session store
-      redis.go                  # Redis session cache (fast lookups, TTL-based expiry)
-
-  realtime/
-    hub.go                      # WebSocket connection hub
-    client.go                   # Client lifecycle (ReadPump, WritePump)
-    router.go                   # WS message routing by type
-
-  middleware/
-    auth.go                     # Session auth middleware
-    cors.go                     # CORS middleware
-    ratelimiter.go              # Rate limiter (single file; uses Redis for distributed state)
-    logging.go                  # Request logging
-
-  server/
-    server.go                   # HTTP server, mux setup, route registration
-    routes.go                   # Route table (separated for readability)
-
-  config/
-    config.go
-
-  bootstrap/
-    bootstrap.go                # DI wiring — imports all features, assembles the app
-
-  # ─── Shared infrastructure services ───
-
-  platform/
-    database/
-      database.go               # DB interface, Factory (SQLite vs PostgreSQL selector)
-      sqlite.go                 # SQLite connection init, WAL config, busy_timeout
-      postgres.go               # PostgreSQL connection pool init
-      migrations.go             # Migration runner (reads db/migrations/ sequentially)
-    redis/
-      redis.go                  # Redis client init, connection pool, health check
-      pubsub.go                 # Redis Pub/Sub wrapper for realtime event fan-out
-    rabbitmq/
-      rabbitmq.go               # RabbitMQ connection, channel management, reconnect
-      publisher.go              # Publish events (follow-request, group-invite, etc.)
-      consumer.go               # Consume events, dispatch to notification service
-      exchanges.go              # Exchange/queue/binding declarations
-
-  pkg/                          # Shared utilities (no business logic)
-    bcrypt/
-    uuid/
-    validator/
-    helpers/
-    oauth/                      # Renamed from oAuth → oauth (Go naming convention)
-      github/                   # Renamed from githubclient → github
-      google/                   # Renamed from googleclient → google
-      client.go                 # Shared HTTP client for OAuth
-    imgutil/                    # NEW: http.DetectContentType wrapper for MIME validation
-```
-
-### How Redis Fits
-
-| Use Case | How |
-|----------|-----|
-| **Session cache** | `session/store/redis.go` — fast session lookups. DB is the source of truth, Redis is the hot cache with TTL-based expiry. |
-| **Rate limiting** | `middleware/ratelimiter.go` — uses Redis `INCR` + `EXPIRE` for distributed rate limiting across multiple backend instances. |
-| **Realtime pub/sub** | `platform/redis/pubsub.go` — when a notification is created, publish to a Redis channel. The SSE/WS hub subscribes and pushes to connected clients. Enables horizontal scaling of the backend. |
-| **Online presence** | `realtime/hub.go` can use Redis sorted sets to track user online/offline status across multiple server instances. |
-
-### How RabbitMQ Fits
-
-| Use Case | How |
-|----------|-----|
-| **Async notification dispatch** | When `follow/commands.go` creates a follow-request, it publishes a `follow.requested` event to RabbitMQ instead of calling `notification/commands.go` directly. The consumer picks it up and creates the notification asynchronously. This decouples features. |
-| **Group event broadcast** | When `event/commands.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response. |
-| **Email/push notifications** | Future consumers can subscribe to the same exchanges for email delivery, push notifications, etc. without changing the publisher. |
-| **Retry and dead-letter** | Failed notification dispatches go to a dead-letter queue for retry, instead of silently failing in a goroutine. |
-
-### Database Factory Pattern
-
-```go
-// platform/database/database.go
-type DB interface {
-    QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
-    ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
-    // ... standard database/sql interface subset
-}
-
-// NewDB selects SQLite or PostgreSQL based on config
-func NewDB(cfg config.DatabaseConfig) (DB, error) {
-    switch cfg.Driver {
-    case "sqlite":
-        return newSQLite(cfg.DSN)   // includes _journal_mode=WAL, _busy_timeout=5000
-    case "postgres":
-        return newPostgres(cfg.DSN) // includes connection pool config
-    default:
-        return nil, fmt.Errorf("unsupported driver: %s", cfg.Driver)
-    }
-}
-```
-
-Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Repository` interface. The `bootstrap.go` selects which implementation to wire based on config.
-
-### Boundary Rules (enforced by AGENTS.md)
-
-- `user/user.go`, `user/commands.go` — **must not** import `user/transport/` or `user/store/`
-- `user/store/sqlite.go` — imports `user/` (domain entities + repo interface) + `database/sql`
-- `user/transport/http.go` — imports `user/` (commands/queries) + `session/` for auth context
-- `bootstrap/bootstrap.go` — imports everything, wires concrete impls into service interfaces
-- Feature commands may import `platform/rabbitmq/` to publish events (one-way dependency)
-- Feature commands/queries **never** import another feature's `transport/` or `store/`
-
-### Key Decisions Explained
-
-| Decision | Rationale |
-|----------|-----------|
-| **`activity` folded into `user`** | Activity is just "user's post + comment history" — a single query. Doesn't warrant its own slice. |
-| **`category` folded into `topic`** | Categories exist only to tag topics. No independent business logic. Reduces package count. |
-| **`transport/` kept (not `httpapi/`)** | Leaves room for future gRPC, NATS, or other transports. Industry-standard naming in Go service architecture. |
-| **`store/` kept (not bare `sqlite/`)** | With dual DB support, `store/sqlite.go` and `store/postgres.go` sit naturally under `store/`. |
-| **`session/` as standalone** | Session management is used by middleware and bootstrap. It's cross-cutting but has its own entity + store. |
-| **`server/` for HTTP server** | Replaces `infra/http/server.go`. Contains the mux, middleware chain, and route registration. |
-| **`ratelimiter.go` flattened** | The current `ratelimiter/` sub-package has exactly one file. A sub-package for one file violates Go conventions. |
-| **`pkg/oauth/` renamed** | `oAuth` → `oauth` follows Go naming (no camelCase in package names). `githubclient` → `github` removes stutter. |
-| **`imgutil/` added** | Merged plan requires magic-byte MIME validation. Shared utility, not feature-specific. |
-| **Group chat in `group/`** | Group chat messages are access-controlled by group membership. Semantically belongs with the group feature. |
-| **`platform/` for shared infra** | Database, Redis, and RabbitMQ are infrastructure services used by multiple features. Separating them from `pkg/` (which is pure utilities) makes the dependency direction clear. |
-| **RabbitMQ over direct calls** | Decouples notification creation from the feature that triggers it. Enables async processing, retries, and future consumers (email, push). |
-| **Redis for sessions + rate limiting** | Enables horizontal scaling. Multiple backend instances can share session state and rate limit counters. |
-
----
-
 ## Comparison Table
 
 | Criterion | Current (Baseline) | Proposal 1: Horizontal | Proposal 2: Vertical | **Proposal 3: Optimized** |
@@ -432,6 +434,9 @@ Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Rep
 | Dual DB support | No | No | No | **Yes** (factory pattern) |
 | Horizontal scaling | No | No | No | **Yes** (Redis + RabbitMQ) |
 | Async event processing | No | No | No | **Yes** (RabbitMQ) |
+| Microservice readiness | No | Low | Medium | **High** (isolated domains) |
+| Kubernetes readiness | No | No | No | **Yes** (health probes + graceful shutdown) |
+| Broker swappability | No | No | No | **Yes** (EventBus interface abstraction) |
 | Missing merged-plan items | N/A | 2 | 3 | **0** |
 
 ---
