@@ -19,6 +19,10 @@ The system uses SQLite (with Write-Ahead Logging `WAL` and busy timeout configur
 
 ```sql
 -- 000001_initial_schema.up.sql
+-- Baseline tables: users (with old fields), sessions, topics (old fields), comments, votes, chats, messages, notifications, oauth_states, schema_migrations.
+-- Note: schema_migrations is used by custom migration system.
+
+-- Altered in 000002_user_profile_fields.up.sql: added date_of_birth, about_me, is_private; dropped age.
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
@@ -40,16 +44,19 @@ CREATE TABLE IF NOT EXISTS sessions (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Altered in 000003_topic_privacy.up.sql: added visibility, image_url.
 CREATE TABLE IF NOT EXISTS topics (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     author_id TEXT NOT NULL,
     visibility TEXT NOT NULL CHECK(visibility IN ('public', 'almost_private', 'private')),
+    image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Created in 000003_topic_privacy.up.sql
 CREATE TABLE IF NOT EXISTS topic_allowed_users (
     topic_id TEXT NOT NULL,
     user_id TEXT NOT NULL,
@@ -58,11 +65,13 @@ CREATE TABLE IF NOT EXISTS topic_allowed_users (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Comments table supporting image/GIF attachments (image_url)
 CREATE TABLE IF NOT EXISTS comments (
     id TEXT PRIMARY KEY,
     topic_id TEXT NOT NULL,
     author_id TEXT NOT NULL,
     content TEXT NOT NULL,
+    image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE,
     FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
@@ -146,6 +155,29 @@ CREATE TABLE IF NOT EXISTS group_chat_messages (
     FOREIGN KEY(sender_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS group_posts (
+    id TEXT PRIMARY KEY,
+    group_id TEXT NOT NULL,
+    author_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
+    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS group_post_comments (
+    id TEXT PRIMARY KEY,
+    post_id TEXT NOT NULL,
+    author_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(post_id) REFERENCES group_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- 000006_events.up.sql
 CREATE TABLE IF NOT EXISTS events (
     id TEXT PRIMARY KEY,
@@ -157,14 +189,22 @@ CREATE TABLE IF NOT EXISTS events (
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS event_options (
+    id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS event_rsvps (
     event_id TEXT NOT NULL,
     user_id TEXT NOT NULL,
-    status TEXT NOT NULL CHECK(status IN ('going', 'not_going')),
+    option_id TEXT NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(event_id, user_id),
     FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(option_id) REFERENCES event_options(id) ON DELETE CASCADE
 );
 
 -- Additional Infrastructure tables (chat, notifications, oauth)
