@@ -7,7 +7,7 @@ This document provides a concise, high-level overview of the architectural patte
 ## 1. Guiding Principles
 
 1. **One Pattern, Everywhere**: Maintain strict consistency across features. If multiple approaches exist, we select one standard pattern and enforce it uniformly.
-2. **Feature-Based Vertical Slices**: Features are modular, self-contained packages. All domain logic, commands, queries, storage, and transport handlers for a given feature reside together.
+2. **Feature-Based Vertical Slices with CQRS**: Features are modular, self-contained packages. Each use case (one business operation) lives in its own file inside `commands/` (writes) or `queries/` (reads) subfolders. Store and transport remain shared per-feature.
 3. **Decoupled Infrastructure**: External services (database, event bus, cache) are behind abstract interfaces in `internal/platform/`. Changing the concrete implementation (e.g., SQLite to PostgreSQL, or memory channel to RabbitMQ) requires zero modification to feature slices.
 
 ---
@@ -22,19 +22,18 @@ The project is structured around self-contained vertical slices inside `internal
 │   └── server/
 │       └── main.go         # Application entry point & service bootstrap configuration
 ├── db/
-│   └── migrations/         # Numbered database up/down migration SQL scripts
+│   └── migrations/         # Numbered database up/down migration SQL scripts (includes optional seed data via 000007_seed_data)
 ├── internal/
-│   # ─── Feature Slices (Vertical Slices) ───
-│   ├── chat/               # Direct messages & chat presence
-│   ├── comment/            # Comment creation and querying
-│   ├── event/              # Event management & RSVPs
+│   # ─── Feature Slices (Vertical Slices with CQRS) ───
+│   ├── user/               # User profiles, auth, privacy toggle, activity tracking
 │   ├── follow/             # Follow relationships & request workflow
-│   ├── group/              # Group definitions, memberships, invites, and group chat
-│   ├── notification/       # Notification delivery and subscription
+│   ├── topic/              # Posts with visibility, categories, voting
+│   ├── comment/            # Comment creation and querying
+│   ├── group/              # Group definitions, memberships, invites, group chat, group posts
+│   ├── event/              # Event management & RSVPs
+│   ├── chat/               # Direct messages & chat presence
+│   ├── notification/       # Notification delivery and event subscription
 │   ├── oauth/              # OAuth state & third-party auth delegation
-│   ├── topic/              # Posts and category management
-│   ├── user/               # User profiles & activity tracking
-│   ├── vote/               # Voting logic for posts and comments
 │   #
 │   # ─── Cross-Cutting Core ───
 │   ├── core/
@@ -52,34 +51,44 @@ The project is structured around self-contained vertical slices inside `internal
 │   # ─── Bootstrap & Config ───
 │   ├── bootstrap/          # Composition root (wiring slices and platform services)
 │   └── config/             # Config loaders
-└── internal/pkg/           # Reusable helper packages (bcrypt, uuid, validator, oauth)
+└── internal/pkg/           # Reusable helper packages (bcrypt, uuid, validator, imgutil, oauth)
 ```
 
 ---
 
 ## 3. Vertical Slice Layout
 
-Each feature slice within `internal/<feature>/` adheres to a strict internal package structure:
+Each feature slice within `internal/<feature>/` adheres to a strict internal structure. Each **use case** is its own file inside `commands/` or `queries/`:
 
 ```
 internal/<feature>/
-  ├── <feature>.go       # Domain entity structs and Repository interface definition
-  ├── commands.go        # Mutative operations (writes)
-  ├── queries.go         # Read-only operations (reads)
+  ├── <feature>.go           # Domain entity structs, Repository interface, domain errors
+  ├── commands/
+  │     ├── <use_case>.go    # One file per write operation (validation + logic + event publishing)
+  │     └── ...              # Additional command use cases
+  ├── queries/
+  │     ├── <use_case>.go    # One file per read operation (access checks + data projection)
+  │     └── ...              # Additional query use cases
   ├── transport/
-  │     ├── http.go      # REST HTTP handlers
-  │     └── ws.go        # WebSocket connection/message handlers (chat & group chat only)
+  │     ├── http.go          # REST HTTP handlers — delegates to commands/queries
+  │     └── ws.go            # WebSocket handlers (chat & group chat only)
   └── store/
-        └── sqlite.go    # Concrete SQLite repository implementation
+        └── sqlite.go        # Concrete SQLite repository implementation (all SQL in one file)
 ```
+
+**Why this layout:**
+- The **commands/ and queries/** layer is where complexity lives (privacy checks, event publishing, MIME validation). Splitting it per use case isolates each operation.
+- The **store** layer is thin SQL (5–15 lines per method). One file per feature keeps all queries reviewable in one place.
+- The **transport** layer is a thin HTTP adapter. One file per feature avoids handler fragmentation.
 
 ### Boundary & Dependency Rules
 
 To keep vertical slices clean and decouple business logic from infrastructure details, we enforce strict boundary checks:
 
-1. **No Outward Store/Transport Imports**: The feature root (`commands.go`, `queries.go`, `<feature>.go`) **must not** import its own `transport/` or `store/` packages, nor may it import another feature's `transport/` or `store/` packages.
+1. **No Outward Store/Transport Imports**: The feature root (`<feature>.go`) and `commands/`/`queries/` files **must not** import their own `transport/` or `store/` packages, nor may they import another feature's `transport/` or `store/` packages.
 2. **Platform Interfaces Only**: Feature logic interacts with storage only through its own `Repository` interface and with database connections via the `platform/database.DB` interface.
-3. **No Direct Feature-to-Feature Cross-Imports**: Slices communicate with each other through **narrow consumer-defined interfaces** or asynchronously via the **Event Bus**.
+3. **No Direct Feature-to-Feature Cross-Imports**: Slices communicate with each other through **narrow consumer-defined interfaces** (defined locally in the command/query file) or asynchronously via the **Event Bus**.
+4. **Store Isolation**: `store/sqlite.go` must not import `commands/`, `queries/`, or `transport/`.
 
 ---
 
@@ -90,8 +99,8 @@ To prevent circular dependencies and tight coupling, features interact via three
 | Integration Type | Strategy | Implementation Example |
 |------------------|----------|------------------------|
 | **Data References** | ID-only mapping | A `Comment` struct contains an `AuthorID string` rather than embedding a `User` struct. |
-| **Synchronous Queries** | Consumer-defined interfaces | `internal/chat/commands.go` defines a narrow local `FollowChecker` interface, which is satisfied by `internal/follow/Service` during bootstrapping. |
-| **Asynchronous Effects** | Event Bus pub/sub | `internal/follow/` publishes a `follow.requested` event. `internal/notification/` subscribes to it to dispatch alerts. |
+| **Synchronous Queries** | Consumer-defined interfaces | `internal/chat/commands/send_private_msg.go` defines a narrow local `FollowChecker` interface, which is satisfied by `internal/follow` during bootstrapping. |
+| **Asynchronous Effects** | Event Bus pub/sub | `internal/follow/commands/follow_user.go` publishes a `follow.requested` event. `internal/notification/commands/consume_events.go` subscribes to it to dispatch alerts. |
 
 ---
 
@@ -105,7 +114,6 @@ session        → user
 follow         → user, eventbus
 topic          → user
 comment        → user, topic
-vote           → user, topic, comment, eventbus
 group          → user, eventbus
 event          → group, eventbus
 chat           → user, FollowChecker (interface, not follow import)
@@ -120,12 +128,17 @@ oauth          → user
 ## 6. Technology Stack & Runtime Infrastructure
 
 ### Backend (Go)
-- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and a busy timeout configured to prevent locking. Portability for PostgreSQL is built-in.
-- **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/core/realtime/` with token verification on handshake.
+- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and a busy timeout configured to prevent locking. Portability for PostgreSQL is built-in. Seed data migration (`000007_seed_data`) available as a bonus feature.
+- **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/core/realtime/` with token verification on handshake. Chat messages support Unicode/emoji via standard UTF-8 JSON encoding.
 - **Asynchronous Processing**: Non-blocking channel-based event bus for localized operations. Portability for RabbitMQ is built-in.
 
 ### Frontend (Next.js)
 - **Architecture**: Next.js App Router providing server and client-side rendering.
 - **Component Library**: **shadcn/ui** is used for core reusable elements (buttons, inputs, dialogs, cards, dropdowns, etc.), providing accessible and customizable components.
 - **Styling**: **Tailwind CSS** coupled with Vanilla CSS overrides for the design system (glassmorphism, dark/light themes, customized HSL color palettes, and interactive transitions).
-- **Communication**: REST APIs for basic CRUD operations, WebSocket channels for real-time chat, and SSE or WebSockets for live notifications.
+- **Communication**: REST APIs for basic CRUD operations, WebSocket channels for real-time chat (emoji support via UTF-8), and SSE or WebSockets for live notifications.
+- **UI Conventions**: Destructive operations (unfollow, privacy toggle, decline requests) use `shadcn/ui` Dialog overlays for confirmation. Notifications are displayed in a dedicated panel (bell icon, unread count), visually distinct from the Chat panel.
+
+### Docker
+- **Two containers**: Backend (Go, port 8080) and Frontend (Next.js, port 3000), orchestrated via `docker-compose.yml`.
+- **Build script**: Optional `scripts/docker-build.sh` convenience script for automated image building and container startup.
