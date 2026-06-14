@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS notifications (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
-    type TEXT NOT NULL, -- 'follow-request', 'group-invite', 'group-join', 'event-creation', 'direct-message'
+    type TEXT NOT NULL, -- 'follow-request', 'follow-accepted', 'group-invite', 'group-join', 'event-creation', 'direct-message'
     source_id TEXT NOT NULL, -- references the triggering entity (user, group, event, chat)
     content TEXT NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT 0,
@@ -202,6 +202,11 @@ CREATE TABLE IF NOT EXISTS oauth_states (
     state TEXT PRIMARY KEY,
     provider TEXT NOT NULL,
     expires_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS schema_migrations (
+    version INTEGER PRIMARY KEY,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -381,7 +386,7 @@ type Cache interface {
 
 ## 4. Real-time Communication Specification
 
-Real-time interactions are controlled by a WebSocket Hub located in `internal/infra/realtime/`.
+Real-time interactions are controlled by a WebSocket Hub located in `internal/core/realtime/`.
 
 ### 4.1 Connection Flow
 1. **Authentication Handshake**: Next.js client initiates a WebSocket connection request. The gateway verifies the browser's auth token cookie *during the initial HTTP Upgrade request*. Unauthenticated sockets are rejected with a `401 Unauthorized` status (no anonymous sockets permitted).
@@ -419,9 +424,9 @@ Messages are framed in JSON format:
 
 ---
 
-## 5. Security & Infrastructure Middleware
+## 5. Security & Core Middleware
 
-All middleware reside in `internal/infra/middleware/` and compose standard HTTP routing filters.
+All middleware reside in `internal/core/middleware/` and compose standard HTTP routing filters.
 
 ### 5.1 Password Protection
 All user passwords must be hashed using `bcrypt` (with a cost factor of at least `12`) via the `golang.org/x/crypto/bcrypt` library. Plaintext password variables must be wiped immediately from memory when no longer needed.
@@ -577,11 +582,12 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 ### 7.2 Next.js Frontend Validation Pipeline
 
 #### 7.2.1 Static Analysis & Code Style
-- **Linter**: ESLint configured with the Next.js `eslint-config-next` preset. Enforces component rendering rules, clean imports, and hook dependencies.
-  - Execution command: `npm run lint`
+- **Linter & Formatter**: **Biome** is used as the unified tool for fast linting, formatting, and import sorting (replacing ESLint and Prettier).
+  - Configuration: Defined in `biome.json` in the frontend root.
+  - Linting command: `npx @biomejs/biome lint src/`
+  - Formatting command: `npx @biomejs/biome format --write src/`
 - **Type Checking**: TypeScript compiler running without emitting output files to ensure complete type safety across API calls, state properties, and socket payloads.
   - Execution command: `tsc --noEmit`
-- **Formatter**: Prettier enforces a shared layout config (spaces, line-width, and quote style).
 
 #### 7.2.2 Automated Testing
 - **Unit & Component Testing**: **Vitest** paired with **React Testing Library** handles state, hook execution, and custom DOM element checks.

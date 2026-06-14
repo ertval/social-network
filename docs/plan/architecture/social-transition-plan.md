@@ -195,7 +195,7 @@ Create SQL scripts inside `db/migrations/` to establish:
 
 ---
 
-## Phase 2: Platform & Cross-Cutting Infrastructure
+## Phase 2: Platform & Cross-Cutting Core
 
 *Transitioning to vertical slices requires a strong platform and cross-cutting foundation.*
 
@@ -204,7 +204,7 @@ Create SQL scripts inside `db/migrations/` to establish:
 - **Redis Cache & Pub/Sub**: `platform/redis/` for session caching, rate limiting, and real-time event fan-out.
 - **EventBus & RabbitMQ**: `platform/eventbus/` (interface) and `platform/rabbitmq/` for async event dispatch (e.g., `follow.requested`, `event.created`).
 
-### 2.2 Cross-Cutting Infrastructure
+### 2.2 Cross-Cutting Core
 - **Session (`internal/session/`)**: Session entity, manager, and Redis cache.
 - **Realtime (`internal/realtime/`)**: WS connection hub, client lifecycle (`defer recover()`), routing.
 - **Middleware (`internal/middleware/`)**: Auth, CORS, Ratelimiter (using Redis), Logging.

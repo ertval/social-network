@@ -36,8 +36,8 @@ The project is structured around self-contained vertical slices inside `internal
 │   ├── user/               # User profiles & activity tracking
 │   ├── vote/               # Voting logic for posts and comments
 │   #
-│   # ─── Cross-Cutting Infrastructure ───
-│   ├── infra/
+│   # ─── Cross-Cutting Core ───
+│   ├── core/
 │   │   ├── middleware/     # Auth checks, CORS, logging, and rate limiting
 │   │   ├── realtime/       # WebSocket hub, connection lifecycle, and routing
 │   │   ├── server/         # HTTP server configuration & graceful shutdown
@@ -52,7 +52,7 @@ The project is structured around self-contained vertical slices inside `internal
 │   # ─── Bootstrap & Config ───
 │   ├── bootstrap/          # Composition root (wiring slices and platform services)
 │   └── config/             # Config loaders
-└── pkg/                    # Reusable helper packages (bcrypt, uuid, validator, oauth)
+└── internal/pkg/           # Reusable helper packages (bcrypt, uuid, validator, oauth)
 ```
 
 ---
@@ -95,11 +95,33 @@ To prevent circular dependencies and tight coupling, features interact via three
 
 ---
 
-## 5. Technology Stack & Runtime Infrastructure
+## 5. Dependency Graph
+
+Features import only what they need, keeping the graph acyclic:
+
+```
+user           → (nothing)
+session        → user
+follow         → user, eventbus
+topic          → user
+comment        → user, topic
+vote           → user, topic, comment, eventbus
+group          → user, eventbus
+event          → group, eventbus
+chat           → user, FollowChecker (interface, not follow import)
+notification   → user (subscribes to eventbus, no feature imports)
+oauth          → user
+```
+
+`notification` is never imported by other features. It subscribes to events at boot time, preventing circular dependencies.
+
+---
+
+## 6. Technology Stack & Runtime Infrastructure
 
 ### Backend (Go)
 - **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and a busy timeout configured to prevent locking. Portability for PostgreSQL is built-in.
-- **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/infra/realtime/` with token verification on handshake.
+- **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/core/realtime/` with token verification on handshake.
 - **Asynchronous Processing**: Non-blocking channel-based event bus for localized operations. Portability for RabbitMQ is built-in.
 
 ### Frontend (Next.js)

@@ -92,7 +92,7 @@ Dead-letter exchange for failed messages with configurable retry policy.
 
 ---
 
-## Phase 1: Cross-cutting Infrastructure
+## Phase 1: Cross-cutting Core
 
 ### 1.1 Session (`internal/session/`)
 
