@@ -50,8 +50,8 @@ The project is structured around self-contained vertical slices inside `internal
 │   #
 │   # ─── Bootstrap & Config ───
 │   ├── bootstrap/          # Composition root (wiring slices and platform services)
-│   └── config/             # Config loaders
-└── internal/pkg/           # Reusable helper packages (bcrypt, uuid, validator, imgutil, oauth)
+│   ├── config/             # Config loaders
+│   └── pkg/                # Reusable helper packages (bcrypt, uuid, validator, imgutil, oauth)
 ```
 
 ---
