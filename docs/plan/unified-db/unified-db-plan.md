@@ -277,3 +277,108 @@ Each driver package maps its native error codes (`pq.Error` for Postgres, `sqlit
 - [ ] Update `internal/bootstrap/bootstrap.go` to wire repositories and session managers dynamically using the selected provider.
 - [ ] Verify local execution and migrations run seamlessly on startup.
 - [ ] Run test suite to verify no regressions.
+
+---
+
+# Database Unification: Dynamic Dual-Driver SQLite & PostgreSQL Support
+
+This plan implements dynamic support for both SQLite3 and PostgreSQL database backends at runtime using a Registry/Provider Factory pattern, based on the loaded configuration. It resolves compiling errors, dead code, connection pool limitations, and database query inefficiencies identified in the review.
+
+## User Review Required
+
+> [!IMPORTANT]
+> * **Refactoring in Place**: We will execute this plan by refactoring the current branch in place (building on top of the existing PostgreSQL repo implementations) rather than starting from scratch from `main`.
+> * **Dynamic Runtime Switch**: The database engine is determined at startup via the `DB_DRIVER` configuration variable (set to either `sqlite3` or `postgres`).
+> * **New Dependency Approval**: Implementing embedded migrations on startup requires adding `github.com/golang-migrate/migrate/v4`. Additionally, we plan to swap the legacy PostgreSQL driver `github.com/lib/pq` for `github.com/jackc/pgx/v5` for improved performance and maintenance. These will be scanned for safety using `scan_dependencies` first.
+> * **Redundant Constraints Removals**: In PostgreSQL migration `db/postgres/migrations/000008_create_votes.up.sql`, the redundant table-level `UNIQUE (user_id, topic_id)` and `UNIQUE (user_id, comment_id)` constraints will be removed, leaving only the partial unique indexes to manage uniqueness and enable clean upsert operations.
+
+## Open Questions
+
+> [!NOTE]
+> There are no open questions currently. The design decisions have been aligned to standard Go clean-architecture practices.
+
+## Proposed Changes
+
+### 1. Storage Core Abstraction
+**The Problem**:
+* There is no storage abstraction layer, causing hardcoded DB references to break when swapping drivers.
+* Database errors are unmapped and leak driver specifics (like `pq.Error`).
+* Transaction boilerplate is copied everywhere.
+
+**Best Practice Solution**:
+Introduce a registry provider system and common package.
+* #### [NEW] [storage.go](internal/infra/storage/storage.go)
+  Defines the shared `Repositories` struct and the backend `Provider` interface.
+* #### [NEW] [registry.go](internal/infra/storage/registry.go)
+  Coordinates database provider registration and opening.
+* #### [NEW] [errors.go](internal/infra/storage/common/errors.go)
+  Defines shared database-agnostic error sentinels (`ErrUniqueViolation`, `ErrNotFound`, `ErrForeignKeyViolation`).
+* #### [NEW] [transactions.go](internal/infra/storage/common/transactions.go)
+  Provides a generic transaction helper `WithTransaction` to eliminate duplicate rollback/commit boilerplates.
+
+---
+
+### 2. Infrastructure Code Update
+**The Problem**:
+* Initializing repositories and session manager in `main.go` and `bootstrap.go` is hardcoded to Postgres.
+* The file `services.go` is outdated and references SQLite, causing compilation errors.
+
+**Best Practice Solution**:
+Dynamically bind database backends during bootstrap.
+* #### [MODIFY] [services.go](internal/infra/services.go)
+  Fix compilation issues by referencing the new driver-agnostic `storage.Repositories` instead of `sqlite.Repositories`.
+* #### [MODIFY] [bootstrap.go](internal/bootstrap/bootstrap.go)
+  Update to wire repositories and session stores dynamically based on the configured database provider.
+* #### [MODIFY] [main.go](cmd/server/main.go)
+  Change database initialization to call the unified registry `storage.Open(...)` rather than hardcoding the PostgreSQL initialization function.
+
+---
+
+### 3. Database Driver Implementations
+**The Problem**:
+* SQLite code is rotted and contains an OAuth scan syntax bug (`rows.Scan(ctx, ...)`).
+* PostgreSQL lacks connection pooling configurations (`MaxOpenConns` defaults to `1` which is slow).
+* PostgreSQL migrations require manual execution of an external CLI tool.
+
+**Best Practice Solution**:
+* #### [NEW] [sqlite.go](internal/infra/storage/sqlite/sqlite.go)
+  Implements `storage.Provider` for SQLite3. Sets `MaxOpenConns = 1` and runs embedded migrations.
+* #### [MODIFY] [init.go](internal/infra/storage/sqlite/init.go)
+  Remove dead/unused initialization code, delegating standard setup tasks to `sqlite.go`.
+* #### [MODIFY] [oauthRepo.go](internal/infra/storage/sqlite/oauth/oauthRepo.go)
+  Fix the syntax error where `ctx` was passed into `rows.Scan(...)`.
+* #### [NEW] [postgres.go](internal/infra/storage/postgres/postgres.go)
+  Implements `storage.Provider` for PostgreSQL. Configures connection pooling limits dynamically (`MaxOpenConns = 25`, etc.) and runs embedded PostgreSQL migrations, eliminating the CLI tool dependency.
+* #### [MODIFY] [init.go](internal/infra/storage/postgres/init.go)
+  Remove dead/unused initialization code, clean up signature of `OpenDB` to return `(*sql.DB, error)`.
+* #### [MODIFY] [000008_create_votes.up.sql](db/postgres/migrations/000008_create_votes.up.sql)
+  Remove redundant table-level unique constraints, leaving only the partial unique indexes.
+
+---
+
+### 4. Code Quality & Repo Optimizations
+**The Problem**:
+* `PrepareContext` is abused for single-use operations.
+* Date formatting logic is leaked into storage read queries.
+* Query parameter formatting uses manual tracking.
+* Category syncing performs N serial DELETE/INSERT queries.
+
+**Best Practice Solution**:
+* #### [MODIFY] [topicRepo.go](internal/infra/storage/postgres/topics/topicRepo.go) (and similar files in `postgres` and `sqlite` repos)
+  * Replace single-use `PrepareContext` calls with direct `QueryContext`/`ExecContext`.
+  * Move presentation/date-formatting logic to HTTP handler/serializer layer.
+  * Simplify the `syncTopicCategories` delete and insert queries to avoid serial loops.
+  * Update repos to map native driver errors to shared error types in `storage/common/errors.go`.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- Run `go test ./...` to verify that code compiles cleanly and unit tests pass.
+- Implement storage integration tests that execute identical query test cases against both SQLite3 (in-memory or temporary file) and PostgreSQL backends.
+
+### Manual Verification
+1. Spin up the Postgres container using `make postgres-up`.
+2. Configure `.env` with `DB_DRIVER=postgres` and launch the app via `go run cmd/server/main.go`. Verify embedded migrations execute on startup and the server functions correctly.
+3. Configure `.env` with `DB_DRIVER=sqlite3` and launch the app. Verify SQLite file is created, migrations apply, and the server runs successfully.
