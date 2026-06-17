@@ -3,13 +3,10 @@ package infra
 import (
 	"database/sql"
 
-	"github.com/arnald/forum/internal/app"
 	"github.com/arnald/forum/internal/bootstrap"
 	"github.com/arnald/forum/internal/config"
 	"github.com/arnald/forum/internal/infra/http"
-	"github.com/arnald/forum/internal/infra/logger"
 	"github.com/arnald/forum/internal/infra/storage/sqlite"
-	"github.com/arnald/forum/internal/infra/ws"
 )
 
 type Services struct {
