@@ -53,3 +53,7 @@ tmp/
 
 # Agent skills lock file
 skills-lock.json
+
+# graphify knowledge graph (http://github.com/safishamsi/graphify)
+graphify-out/cost.json
+# graphify-out/cache/          # uncomment to keep repo small (slows rebuild on checkout)
