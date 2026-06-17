@@ -1,16 +1,16 @@
 # Graph Report - social-network  (2026-06-18)
 
 ## Corpus Check
-- 507 files · ~319,448 words
+- 509 files · ~320,051 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4698 nodes · 5827 edges · 526 communities (406 shown, 120 thin omitted)
+- 4679 nodes · 5801 edges · 517 communities (398 shown, 119 thin omitted)
 - Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 330 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `026425c9`
+- Built from commit: `53d661d3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -146,7 +146,7 @@
 - [[_COMMUNITY_middleware_getclientip_getclientipmiddle, middleware_getclientip, middleware_getclientip_getclientip|middleware_getclientip_getclientipmiddle, middleware_getclientip, middleware_getclientip_getclientip]]
 - [[_COMMUNITY_sprints_sprint_4_be_a_backend_a_tickets, sprints_sprint_4_be_b_backend_b_tickets, sprints_sprint_4_sprint_4_group_event_fe|sprints_sprint_4_be_a_backend_a_tickets, sprints_sprint_4_be_b_backend_b_tickets, sprints_sprint_4_sprint_4_group_event_fe]]
 - [[_COMMUNITY_server_backenderror, server_clientserver_newrequestwithcookie, server_clientserver_logout|server_backenderror, server_clientserver_newrequestwithcookie, server_clientserver_logout]]
-- [[_COMMUNITY_workflows_sn_code_audit_ds_layer_d_secur, workflows_sn_code_audit_ds_phase_2_layer, workflows_sn_code_audit_ds_phase_1_deter|workflows_sn_code_audit_ds_layer_d_secur, workflows_sn_code_audit_ds_phase_2_layer, workflows_sn_code_audit_ds_phase_1_deter]]
+- [[_COMMUNITY_Community 131|Community 131]]
 - [[_COMMUNITY_server_topicsresponse, server_topics_handler, server_topicsrequest|server_topicsresponse, server_topics_handler, server_topicsrequest]]
 - [[_COMMUNITY_server_clientserver_proxyvoterequest, server_clientserver_getvotecounts, cmd_client_server_vote_handlers_go_serve|server_clientserver_proxyvoterequest, server_clientserver_getvotecounts, cmd_client_server_vote_handlers_go_serve]]
 - [[_COMMUNITY_commands_createcategoryrequesthandler, commands_createcategory_newcreatecategor, commands_createcategory|commands_createcategoryrequesthandler, commands_createcategory_newcreatecategor, commands_createcategory]]
@@ -181,11 +181,11 @@
 - [[_COMMUNITY_architecture_target_architecture_with_ph, architecture_target_architecture_with_ph, architecture_target_architecture_with_ph|architecture_target_architecture_with_ph, architecture_target_architecture_with_ph, architecture_target_architecture_with_ph]]
 - [[_COMMUNITY_architecture_target_architecture_with_ph, architecture_target_architecture_with_ph, architecture_target_architecture_with_ph|architecture_target_architecture_with_ph, architecture_target_architecture_with_ph, architecture_target_architecture_with_ph]]
 - [[_COMMUNITY_bcrypt_encryption, bcrypt_encryptionprovider, bcrypt_provider|bcrypt_encryption, bcrypt_encryptionprovider, bcrypt_provider]]
-- [[_COMMUNITY_workflows_sn_code_audit_oc_layer_d_secur, workflows_sn_code_audit_oc, workflows_sn_code_audit_oc_phase_1_deter|workflows_sn_code_audit_oc_layer_d_secur, workflows_sn_code_audit_oc, workflows_sn_code_audit_oc_phase_1_deter]]
+- [[_COMMUNITY_Community 166|Community 166]]
 - [[_COMMUNITY_server_topic_crud_handlers, server_topic_crud_handlers_cleanupimage, server_createpostdata|server_topic_crud_handlers, server_topic_crud_handlers_cleanupimage, server_createpostdata]]
 - [[_COMMUNITY_handlers_chatclosehandler, handlers_chatclosehandler_newchatcloseha, handlers_chatclosehandler_handle|handlers_chatclosehandler, handlers_chatclosehandler_newchatcloseha, handlers_chatclosehandler_handle]]
 - [[_COMMUNITY_handlers_chatopenhandler, handlers_chatopenhandler_newchatopenhand, handlers_chatopenhandler_handle|handlers_chatopenhandler, handlers_chatopenhandler_newchatopenhand, handlers_chatopenhandler_handle]]
-- [[_COMMUNITY_handlers_chattypinghandler, handlers_chattypinghandler_newchattyping, handlers_chattypinghandler_handle|handlers_chattypinghandler, handlers_chattypinghandler_newchattyping, handlers_chattypinghandler_handle]]
+- [[_COMMUNITY_Community 170|Community 170]]
 - [[_COMMUNITY_internal_infra_realtime_notifications_no, internal_infra_realtime_notifications_no, notifications_notifier_unregisterclient|internal_infra_realtime_notifications_no, internal_infra_realtime_notifications_no, notifications_notifier_unregisterclient]]
 - [[_COMMUNITY_old_backend_api_reference_auth_and_user, old_backend_api_reference_post_api_v1_re, old_backend_api_reference_post_api_v1_lo|old_backend_api_reference_auth_and_user, old_backend_api_reference_post_api_v1_re, old_backend_api_reference_post_api_v1_lo]]
 - [[_COMMUNITY_old_backend_api_reference_categories, old_backend_api_reference_post_api_v1_ca, old_backend_api_reference_put_api_v1_cat|old_backend_api_reference_categories, old_backend_api_reference_post_api_v1_ca, old_backend_api_reference_put_api_v1_cat]]
@@ -308,7 +308,7 @@
 - [[_COMMUNITY_vercel_react_best_practices_agents_3_ser, vercel_react_best_practices_agents_3_1_a, vercel_react_best_practices_agents_3_2_a|vercel_react_best_practices_agents_3_ser, vercel_react_best_practices_agents_3_1_a, vercel_react_best_practices_agents_3_2_a]]
 - [[_COMMUNITY_agents_skills_caveman_compress_scripts_c, agents_skills_caveman_compress_scripts_c, agents_skills_caveman_compress_scripts_c|agents_skills_caveman_compress_scripts_c, agents_skills_caveman_compress_scripts_c, agents_skills_caveman_compress_scripts_c]]
 - [[_COMMUNITY_agents_skills_compress_scripts_compress_, agents_skills_compress_scripts_compress_, agents_skills_compress_scripts_compress_|agents_skills_compress_scripts_compress_, agents_skills_compress_scripts_compress_, agents_skills_compress_scripts_compress_]]
-- [[_COMMUNITY_queries_userloginemail_newuserloginemail, queries_userloginemailrequesthandler, queries_userloginemailrequesthandler_han|queries_userloginemail_newuserloginemail, queries_userloginemailrequesthandler, queries_userloginemailrequesthandler_han]]
+- [[_COMMUNITY_Community 319|Community 319]]
 - [[_COMMUNITY_design_an_interface_skill_workflow, design_an_interface_skill_design_an_inte, design_an_interface_skill|design_an_interface_skill_workflow, design_an_interface_skill_design_an_inte, design_an_interface_skill]]
 - [[_COMMUNITY_grill_with_docs_skill_during_the_session, grill_with_docs_skill, grill_with_docs_skill_domain_awareness|grill_with_docs_skill_during_the_session, grill_with_docs_skill, grill_with_docs_skill_domain_awareness]]
 - [[_COMMUNITY_migrate_to_shoehorn_skill_migrate_to_sho, migrate_to_shoehorn_skill_migration_patt, migrate_to_shoehorn_skill|migrate_to_shoehorn_skill_migrate_to_sho, migrate_to_shoehorn_skill_migration_patt, migrate_to_shoehorn_skill]]
@@ -479,10 +479,9 @@
 - [[_COMMUNITY_tdd_interface_design, tdd_interface_design_interface_design_fo|tdd_interface_design, tdd_interface_design_interface_design_fo]]
 - [[_COMMUNITY_tdd_refactoring, tdd_refactoring_refactor_candidates|tdd_refactoring, tdd_refactoring_refactor_candidates]]
 - [[_COMMUNITY_workflows_graphify, workflows_graphify_workflow_graphify|workflows_graphify, workflows_graphify_workflow_graphify]]
-- [[_COMMUNITY_js_helpers, js_helpers_normalizecolor, js_helpers_isvalidhexcolor|js_helpers, js_helpers_normalizecolor, js_helpers_isvalidhexcolor]]
+- [[_COMMUNITY_Community 499|Community 499]]
 - [[_COMMUNITY_getallcategories_handler, getallcategories_getallcategorieshandler, getallcategories_getallcategorieshandler|getallcategories_handler, getallcategories_getallcategorieshandler, getallcategories_getallcategorieshandler]]
 - [[_COMMUNITY_httpclient_client, httpclient_client_postwithurlencodedpara, httpclient_client_post|httpclient_client, httpclient_client_postwithurlencodedpara, httpclient_client_post]]
-- [[_COMMUNITY_server_clientserver_categoriespage, cmd_client_server_categories_handler_go_, server_categories_handler_getqueryintor|server_clientserver_categoriespage, cmd_client_server_categories_handler_go_, server_categories_handler_getqueryintor]]
 - [[_COMMUNITY_cmd_client_config_config_go_config_confi, config_client, config_httptimeouts|cmd_client_config_config_go_config_confi, config_client, config_httptimeouts]]
 - [[_COMMUNITY_path_path_newresolver, path_resolver, path_path|path_path_newresolver, path_resolver, path_path]]
 - [[_COMMUNITY_config_oauthconfig, githuboauthconfig, googleoauthconfig|config_oauthconfig, githuboauthconfig, googleoauthconfig]]
@@ -491,20 +490,12 @@
 - [[_COMMUNITY_Community 509|Community 509]]
 - [[_COMMUNITY_Community 510|Community 510]]
 - [[_COMMUNITY_Community 511|Community 511]]
-- [[_COMMUNITY_Community 512|Community 512]]
-- [[_COMMUNITY_Community 513|Community 513]]
 - [[_COMMUNITY_Community 514|Community 514]]
 - [[_COMMUNITY_Community 515|Community 515]]
-- [[_COMMUNITY_Community 516|Community 516]]
-- [[_COMMUNITY_Community 517|Community 517]]
 - [[_COMMUNITY_Community 518|Community 518]]
 - [[_COMMUNITY_Community 519|Community 519]]
 - [[_COMMUNITY_Community 520|Community 520]]
-- [[_COMMUNITY_Community 521|Community 521]]
-- [[_COMMUNITY_Community 522|Community 522]]
-- [[_COMMUNITY_Community 523|Community 523]]
 - [[_COMMUNITY_Community 524|Community 524]]
-- [[_COMMUNITY_Community 525|Community 525]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `escapeHTML()` - 43 edges
@@ -519,33 +510,33 @@
 10. `ValidateStruct()` - 20 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `LoadClientConfig()` --calls--> `NewResolver()`  [INFERRED]
-  cmd/client/config/config.go → internal/pkg/path/path.go
 - `RenderTemplate()` --calls--> `NewResolver()`  [INFERRED]
   cmd/client/helpers/templates/templates.go → internal/pkg/path/path.go
 - `NotFoundHandler()` --calls--> `NewResolver()`  [INFERRED]
   cmd/client/helpers/templates/templates.go → internal/pkg/path/path.go
-- `main()` --calls--> `Bootstrap()`  [INFERRED]
-  cmd/server/main.go → internal/bootstrap/bootstrap.go
 - `main()` --calls--> `LoadConfig()`  [INFERRED]
   cmd/server/main.go → internal/config/config.go
+- `main()` --calls--> `NewServer()`  [INFERRED]
+  cmd/server/main.go → internal/infra/http/server.go
+- `main()` --calls--> `InitializeDB()`  [INFERRED]
+  cmd/server/main.go → internal/infra/storage/sqlite/init.go
 
 ## Import Cycles
 - None detected.
 
-## Communities (526 total, 120 thin omitted)
+## Communities (517 total, 119 thin omitted)
 
 ### Community 0 - "internal_config_config_go_config_config, config_serverconfig, internal_config_config_go_duration"
-Cohesion: 0.11
-Nodes (20): DatabaseConfig, GitHubOAuthConfig, GoogleOAuthConfig, HandlerTimeoutsConfig, OAuthConfig, RateLimitConfig, ServerConfig, SessionManagerConfig (+12 more)
+Cohesion: 0.05
+Nodes (52): BackendURLs, main(), Duration, Client, HandlerFunc, ServeMux, ClientServer, Config (+44 more)
 
 ### Community 1 - "js_chat, js_chat_render, js_navbar"
 Cohesion: 0.10
 Nodes (45): ApiError, fetchChatUsers(), initializeChat(), chatState, cleanupChat(), closeChatModal(), closeChatWindow(), getTimeAgo() (+37 more)
 
 ### Community 2 - "queries_userloginemailtestcase, queries_userloginemail_test_runuserlogin, queries_userloginemail_test"
-Cohesion: 0.16
-Nodes (17): Context, Provider, Repository, User, MockEncryptionProvider, MockRepository, T, User (+9 more)
+Cohesion: 0.29
+Nodes (10): MockEncryptionProvider, MockRepository, T, User, newUserLoginEmailTestCases(), runUserLoginEmailTest(), TestNewUserLoginEmailHandler(), TestUserLoginEmailHandler_Handle() (+2 more)
 
 ### Community 3 - "old_chat_feature_chat_feature_backend_do, old_chat_feature_full_workflow_step_by_s, old_chat_feature_websocket_protocol"
 Cohesion: 0.04
@@ -556,8 +547,8 @@ Cohesion: 0.04
 Nodes (44): 0.1 SQL Migration Delimiter Correction, 0.2 SQLite DSN Configuration & Busy Timeout, 0.3 Fix OAuth Repository Scan Bug, 0.4 Harden WebSocket Origin Checking, 0.5 Prevent SQL Injection in Ordering Whitelist, 0.6 Fix Prepared Statement Execution, 0.7 WebSocket Panic Recovery, 0.8 RateLimiter Ticker Cleanup Goroutine Leak (+36 more)
 
 ### Community 5 - "old_requirements_compliance_readme_md_re, old_requirements_compliance_requirements, old_requirements_compliance_audit_md_lin"
-Cohesion: 0.13
-Nodes (15): Allowed Packages (L229-238), Authentication (L123-141), Backend 3-Part Structure (L39-58), Chat (L201-211), Chat / Realtime Requirements, Docker (L101-121), Followers (L143-149), Frontend (L16-36) (+7 more)
+Cohesion: 0.05
+Nodes (42): 1. Allowed Packages (Redis, RabbitMQ, PostgreSQL drivers), 1. Technical Stack & Infrastructure, 2. Authentication & Security, 2. "Server, App, Database" Architectural Mapping, 3. Docker "Two Containers" Limitation, 3. Social & Profiles, 4. Content (Posts & Comments), 5. Groups & Events (+34 more)
 
 ### Community 6 - "audit_codebase_audit_report_20260614_bp_, audit_codebase_audit_report_20260614_bp_, audit_codebase_audit_report_20260614_bp_"
 Cohesion: 0.15
@@ -636,8 +627,8 @@ Cohesion: 0.09
 Nodes (26): After following another user successfully try to unfollow him., Are you able to change between private profile and public profile?, Are you able to follow the public user without the need of sending a following request?, Are you able to see a followed user private profile?, Are you able to see a followed user public profile?, Are you able to see a non-followed user public profile?, Are you able to send a following request to the private user?, Are you prevented from seeing a non-followed user private profile? (+18 more)
 
 ### Community 26 - "templates_templates_notfoundhandler, server_clientserver_deletecommentpost, server_clientserver_createcommentpost"
-Cohesion: 0.33
-Nodes (6): Request, ResponseWriter, Request, ResponseWriter, ClientServer, NotFoundHandler()
+Cohesion: 0.21
+Nodes (9): Request, ResponseWriter, Request, ResponseWriter, ClientServer, Request, ResponseWriter, ClientServer (+1 more)
 
 ### Community 27 - "commands_createtopic_newcreatetopichandl, commands_createtopictestcase, commands_createtopic_test_runcreatetopic"
 Cohesion: 0.12
@@ -664,8 +655,8 @@ Cohesion: 0.42
 Nodes (7): 1. Think Before Coding, 2. Simplicity First, 3. Surgical Changes, 4. Goal-Driven Execution, 5. Documentation Conventions, 6. Git Branch Naming, graphify
 
 ### Community 33 - "commands_userregistertestcase, commands_userregister_newuserregisterhan, commands_userregister_test_runuserregist"
-Cohesion: 0.26
-Nodes (11): newUserRegisterTestCases(), runUserRegisterTest(), TestNewUserRegisterHandler(), TestUserRegisterHandler_Handle(), userRegisterTestCase, MockEncryptionProvider, MockRepository, T (+3 more)
+Cohesion: 0.15
+Nodes (18): NewUserRegisterHandler(), newUserRegisterTestCases(), runUserRegisterTest(), TestNewUserRegisterHandler(), TestUserRegisterHandler_Handle(), UserRegisterRequest, UserRegisterRequestHandler, userRegisterTestCase (+10 more)
 
 ### Community 34 - "js_router_navigate, pages_register, pages_login"
 Cohesion: 0.20
@@ -684,12 +675,12 @@ Cohesion: 0.29
 Nodes (10): MockEncryptionProvider, MockRepository, T, User, newUserLoginUsernameTestCases(), runUserLoginUsernameTest(), TestNewUserLoginUsernameHandler(), TestUserLoginUsernameHandler_Handle() (+2 more)
 
 ### Community 38 - "bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth"
-Cohesion: 0.16
-Nodes (14): App, Bootstrap(), InitOAuth(), DB, FileStorageManager, Hub, Logger, Manager (+6 more)
+Cohesion: 0.14
+Nodes (15): App, Bootstrap(), InitOAuth(), DB, FileStorageManager, Hub, Logger, Manager (+7 more)
 
 ### Community 39 - "cmd_client_server_server_go_server_clien, server_server_newclientserver, server_server"
-Cohesion: 0.13
-Nodes (14): 1. Allowed Packages (Redis, RabbitMQ, PostgreSQL drivers), 1. Technical Stack & Infrastructure, 2. Authentication & Security, 2. "Server, App, Database" Architectural Mapping, 3. Docker "Two Containers" Limitation, 3. Social & Profiles, 4. Content (Posts & Comments), 5. Groups & Events (+6 more)
+Cohesion: 0.33
+Nodes (7): Context, Provider, Repository, User, NewUserLoginEmailHandler(), UserLoginEmailRequest, UserLoginEmailRequestHandler
 
 ### Community 40 - "sessionstore_manager, sessionstore_sessionmanager_newsessionma, sessionstore_sessionmanager"
 Cohesion: 0.16
@@ -700,7 +691,7 @@ Cohesion: 0.11
 Nodes (18): Allowed Packages, App, Authentication, Backend, Chat, docker, Followers, Framework (+10 more)
 
 ### Community 42 - "middleware_getclientip_getipfromcontext, helpers_setipheaders_setipheaders, server_clientserver_activitypage"
-Cohesion: 0.19
+Cohesion: 0.18
 Nodes (12): Request, Request, ResponseWriter, ClientServer, Request, ResponseWriter, ClientServer, Request (+4 more)
 
 ### Community 43 - "js_router, js_router_handleroute, js_auth"
@@ -724,16 +715,16 @@ Cohesion: 0.24
 Nodes (8): Context, DB, Topic, NullString, Repo, NewRepo(), parseCategoryData(), Tx
 
 ### Community 48 - "helpers_decoderesp_decodebackendresponse, server_clientserver_homepage, server_clientserver_topicpage"
-Cohesion: 0.09
-Nodes (19): Response, T, Category, LoggedInUser, Pagination, Request, ResponseWriter, ClientServer (+11 more)
+Cohesion: 0.08
+Nodes (24): Response, T, Request, ResponseWriter, ClientServer, Category, LoggedInUser, Pagination (+16 more)
 
 ### Community 49 - "ws_hub, internal_infra_ws_hub_go_client, ws_hub_broadcastisonlinestatus"
 Cohesion: 0.20
 Nodes (5): Client, Message, RWMutex, Hub, NewHub()
 
 ### Community 50 - "old_vertical_slices_design_vertical_slic, old_vertical_slices_design_2_standard_ve, old_vertical_slices_design_4_cqrs_execut"
-Cohesion: 0.15
-Nodes (13): audit.md — Line-by-Line Verification, Authentication, Backend 3-Tier Separation, Bonus, Chat, Database, Docker, Followers (+5 more)
+Cohesion: 0.08
+Nodes (27): Request, ResponseWriter, Request, ResponseWriter, Request, ResponseWriter, Request, ResponseWriter (+19 more)
 
 ### Community 51 - "requirements_audit_authentication, requirements_audit_try_to_register_a_use, requirements_audit_try_to_log_in_with_th"
 Cohesion: 0.13
@@ -792,8 +783,8 @@ Cohesion: 0.21
 Nodes (12): Services, NewHTTPServer(), NewInfraProviders(), App, DB, ServerConfig, DB, Repository (+4 more)
 
 ### Community 65 - "logger_level_string, logger_logger, oauth_repo"
-Cohesion: 0.17
-Nodes (11): Context, DB, Provider, User, Level, Logger, New(), Mutex (+3 more)
+Cohesion: 0.19
+Nodes (10): Client, NewClient(), Context, DB, Provider, User, Context, NewOAuthRepository() (+2 more)
 
 ### Community 66 - "commands_openstreamhandler, commands_openstream_newopenstreamhandler, commands_openstream"
 Cohesion: 0.31
@@ -872,8 +863,8 @@ Cohesion: 0.29
 Nodes (8): Category, Context, Repository, Topic, NewGetAllTopicsHandler(), GetAllTopicsRequest, GetAllTopicsRequestHandler, GetAllTopicsResponse
 
 ### Community 85 - "server_clientserver_createtopicpage, notifications_repo, server_clientserver_createtopicpost"
-Cohesion: 0.20
-Nodes (8): Request, ResponseWriter, ClientServer, Context, DB, Notification, NewRepo(), Repo
+Cohesion: 0.31
+Nodes (5): Context, DB, Notification, NewRepo(), Repo
 
 ### Community 86 - "votes_repo, votes_repo_getcounts, votes_votesrepo_newrepo"
 Cohesion: 0.31
@@ -953,19 +944,19 @@ Nodes (14): Admin (requires admin access), Authentication, Branches, Comments, G
 
 ### Community 105 - "sprints_sprint_3_be_a_backend_a_tickets, sprints_sprint_3_be_b_backend_b_tickets, sprints_sprint_3_sprint_3_follow_comment"
 Cohesion: 0.05
-Nodes (38): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S3-BE-01: Follow: Entities & Repository Interface, S3-BE-02: Follow: SQLite Store, S3-BE-03: Follow: Follow User Command, S3-BE-04: Follow: Unfollow User Command (+30 more)
+Nodes (40): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S3-BE-01: Follow: Entities & Repository Interface, S3-BE-02: Follow: SQLite Store, S3-BE-03: Follow: Follow User Command, S3-BE-04: Follow: Unfollow User Command (+32 more)
 
 ### Community 106 - "sprints_sprint_2_be_a_backend_a_tickets, sprints_sprint_2_be_b_backend_b_tickets, sprints_sprint_2_sprint_2_user_topic_fea"
 Cohesion: 0.05
-Nodes (36): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S2-BE-01: User: Entity & Repository Interface, S2-BE-02: User: SQLite Store, S2-BE-03: User: Register Command, S2-BE-04: User: Login Command (+28 more)
+Nodes (37): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S2-BE-01: User: Entity & Repository Interface, S2-BE-02: User: SQLite Store, S2-BE-03: User: Register Command, S2-BE-04: User: Login Command (+29 more)
 
 ### Community 107 - "getcommentsbytopic_handler, updatecomment_handler, getcommentsbytopic_getcommentsbytopichan"
 Cohesion: 0.39
 Nodes (7): NewHandler(), Handler, ResponseModel, Comment, Logger, ServerConfig, Services
 
 ### Community 108 - "gettopic_handler, gettopic_gettopichandler_newhandler, gettopic_gettopichandler"
-Cohesion: 0.39
-Nodes (7): NewHandler(), Handler, ResponseModel, Comment, Logger, ServerConfig, Services
+Cohesion: 0.31
+Nodes (5): Level, Logger, New(), Mutex, Writer
 
 ### Community 109 - "handlers_chathistoryhandler, handlers_chat_history_newchathistoryhand, handlers_chathistoryhandler_handle"
 Cohesion: 0.36
@@ -1048,16 +1039,16 @@ Cohesion: 0.33
 Nodes (6): Handler, HandlerFunc, Request, contextIP, getClientIP(), GetClientIPMiddleware()
 
 ### Community 129 - "sprints_sprint_4_be_a_backend_a_tickets, sprints_sprint_4_be_b_backend_b_tickets, sprints_sprint_4_sprint_4_group_event_fe"
-Cohesion: 0.06
-Nodes (35): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S4-BE-01: Group: Entities & Repository Interface, S4-BE-02: Group: SQLite Store, S4-BE-03: Group: Create Group Command, S4-BE-04: Group: Invite Member Command (+27 more)
+Cohesion: 0.05
+Nodes (36): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S4-BE-01: Group: Entities & Repository Interface, S4-BE-02: Group: SQLite Store, S4-BE-03: Group: Create Group Command, S4-BE-04: Group: Invite Member Command (+28 more)
 
 ### Community 130 - "server_backenderror, server_clientserver_newrequestwithcookie, server_clientserver_logout"
 Cohesion: 0.22
 Nodes (8): Context, Request, ResponseWriter, ClientServer, Context, Request, Response, backendError
 
-### Community 131 - "workflows_sn_code_audit_ds_layer_d_secur, workflows_sn_code_audit_ds_phase_2_layer, workflows_sn_code_audit_ds_phase_1_deter"
-Cohesion: 0.18
-Nodes (12): Layer A — Software Design & Architecture (Clean Architecture / DDD), Layer B — Allowed Packages & Dependency Audit, Layer C — Idiomatic Go Correctness, Layer E — Performance, Layer F — Bonus Capabilities Audit, Phase 2: Layered Codebase Analysis (Cognitive), Phase 4: Aggregation & Synthesis, Phase 4 quality gates (+4 more)
+### Community 131 - "Community 131"
+Cohesion: 0.39
+Nodes (7): NewHandler(), Handler, ResponseModel, Comment, Logger, ServerConfig, Services
 
 ### Community 132 - "server_topicsresponse, server_topics_handler, server_topicsrequest"
 Cohesion: 0.29
@@ -1195,9 +1186,9 @@ Nodes (12): Automated Verification (run after every phase), Backend (Go), Backen
 Cohesion: 0.40
 Nodes (3): NewProvider(), encryptionProvider, Provider
 
-### Community 166 - "workflows_sn_code_audit_oc_layer_d_secur, workflows_sn_code_audit_oc, workflows_sn_code_audit_oc_phase_1_deter"
-Cohesion: 0.06
-Nodes (30): D1. Registration & Authentication, D2. SQL Injection & SQLite Configuration, D3. Profile Privacy & Follower Flows, D4. Posts & Comments, D5. Groups & Events, D6. WebSocket Chat Security, D7. Notifications Engine, Layer A — Software Design & Architecture (Clean Architecture / DDD) (+22 more)
+### Community 166 - "Community 166"
+Cohesion: 0.48
+Nodes (4): Notification, Notifier, RWMutex, NewNotifier()
 
 ### Community 167 - "server_topic_crud_handlers, server_topic_crud_handlers_cleanupimage, server_createpostdata"
 Cohesion: 0.33
@@ -1211,9 +1202,9 @@ Nodes (5): ChatCloseHandler, NewChatCloseHandler(), Client, Envelope, Hub
 Cohesion: 0.47
 Nodes (5): ChatOpenHandler, NewChatOpenHandler(), Client, Envelope, Hub
 
-### Community 170 - "handlers_chattypinghandler, handlers_chattypinghandler_newchattyping, handlers_chattypinghandler_handle"
-Cohesion: 0.47
-Nodes (5): ChatTypingHandler, NewChatTypingHandler(), Client, Envelope, Hub
+### Community 170 - "Community 170"
+Cohesion: 0.29
+Nodes (6): 🤖 HumanLayer RPI Ticket Implementation Prompts & Personas, Research Checklists:, 🔬 Subagent 1: Research Agent, 📐 Subagent 2: Planning Agent, 💻 Subagent 3: TDD Implementation Agent, 🔍 Subagent 4: Quality Gate Validator
 
 ### Community 171 - "internal_infra_realtime_notifications_no, internal_infra_realtime_notifications_no, notifications_notifier_unregisterclient"
 Cohesion: 0.18
@@ -1288,8 +1279,8 @@ Cohesion: 0.40
 Nodes (5): GET `/api/v1/auth/github/callback`, GET `/api/v1/auth/github/login`, GET `/api/v1/auth/google/callback`, GET `/api/v1/auth/google/login`, OAuth
 
 ### Community 190 - "sprints_sprint_5_be_a_backend_a_tickets, sprints_sprint_5_be_b_backend_b_tickets, sprints_sprint_5_sprint_5_chat_oauth_wee"
-Cohesion: 0.07
-Nodes (30): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S5-BE-01: Chat: Entity & Repository Interface, S5-BE-02: Chat: SQLite Store, S5-BE-03: Chat: Send Private Message Command, S5-BE-04: Chat: Get Chat History Query (+22 more)
+Cohesion: 0.06
+Nodes (31): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S5-BE-01: Chat: Entity & Repository Interface, S5-BE-02: Chat: SQLite Store, S5-BE-03: Chat: Send Private Message Command, S5-BE-04: Chat: Get Chat History Query (+23 more)
 
 ### Community 191 - "requirements_audit_docker, requirements_audit_try_to_run_the_applic, requirements_audit_try_to_access_the_soc"
 Cohesion: 0.40
@@ -1356,8 +1347,8 @@ Cohesion: 1.00
 Nodes (3): OAuth, Provider, StateManager
 
 ### Community 264 - "sprints_general_instructions_social_netw, sprints_general_instructions_appendix_a_, sprints_general_instructions_refactoring"
-Cohesion: 0.08
-Nodes (23): A1: Testing Pyramid, A2: Commit Convention, A3: Feature Toggle Pattern, A4: Observability (Add in Sprint 1 if time), A5: Risk Mitigation, A6: Definition of Done, Appendix A: Best Practices Summary, Appendix B: Dependency Map (Visual) (+15 more)
+Cohesion: 0.15
+Nodes (12): Boundary check, Debugging & Quality Assurance Plan, Meta, Q1: Bug Fix First (Phase 1), Q2: Verification Gates (per sprint), R1: Strangler Fig Pattern, R2: TDD Workflow (Red → Green → Refactor), R3: Database Migration Discipline (+4 more)
 
 ### Community 265 - "workflows_go_code_audit_oc_phase_1_deter, workflows_go_code_audit_oc, workflows_go_code_audit_oc_phase_3_adver"
 Cohesion: 0.18
@@ -1575,9 +1566,9 @@ Nodes (9): Path, build_compress_prompt(), build_fix_prompt(), call_claude(), com
 Cohesion: 0.33
 Nodes (9): Path, build_compress_prompt(), build_fix_prompt(), call_claude(), compress_file(), is_sensitive_path(), Heuristic denylist for files that must never be shipped to a third-party API., Strip outer ```markdown ... ``` fence when it wraps the entire output. (+1 more)
 
-### Community 319 - "queries_userloginemail_newuserloginemail, queries_userloginemailrequesthandler, queries_userloginemailrequesthandler_han"
-Cohesion: 0.24
-Nodes (13): Duration, Client, LoadClientConfig(), LoadConfig(), HTTPTimeouts, GetEnv(), GetEnvBool(), GetEnvDuration() (+5 more)
+### Community 319 - "Community 319"
+Cohesion: 0.29
+Nodes (6): 🛠️ Execution Phases, Paste short, successful test summary here, Phase 1: Branch and Commit Integrity Verification, Phase 2: Verification Against Sprint Rules & Conventions, Phase 3: Draft the PR Message, PR Description Template:
 
 ### Community 320 - "design_an_interface_skill_workflow, design_an_interface_skill_design_an_inte, design_an_interface_skill"
 Cohesion: 0.20
@@ -1689,7 +1680,7 @@ Nodes (8): Directory naming, Example: stubbing from a plan, Exercise variants, L
 
 ### Community 347 - "sprints_ticket_tracker_social_network_re, sprints_ticket_tracker_sprint_6_integrat, sprints_ticket_tracker_be_a_backend_a"
 Cohesion: 0.07
-Nodes (45): BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-B (Backend B) (+37 more)
+Nodes (49): BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-A (Backend A), BE-B (Backend B) (+41 more)
 
 ### Community 348 - "to_prd_skill, to_prd_skill_process, to_prd_skill_problem_statement"
 Cohesion: 0.22
@@ -1776,8 +1767,8 @@ Cohesion: 0.40
 Nodes (5): 🛠️ Execution Phases, Phase 1: Deterministic Grounding & Tool Scanning, Phase 2: Layered Codebase Analysis, Phase 3: Adversarial Validation (The "Judge" Pass), Phase 4: Aggregation & Synthesis
 
 ### Community 369 - "workflows_sn_code_audit, workflows_sn_code_audit_execution_phases, workflows_sn_code_audit_phase_1_determin"
-Cohesion: 0.40
-Nodes (5): 🛠️ Execution Phases, Phase 1: Deterministic Grounding & Tool Scanning, Phase 2: Layered Codebase Analysis, Phase 3: Adversarial Validation (The "Judge" Pass), Phase 4: Aggregation & Synthesis
+Cohesion: 0.06
+Nodes (31): D1. Registration & Authentication, D2. SQL Injection & SQLite Configuration, D3. Profile Privacy & Follower Flows, D4. Posts & Comments, D5. Groups & Events, D6. WebSocket Chat Security, D7. Notifications Engine, Layer A — Software Design & Architecture (Clean Architecture / DDD) (+23 more)
 
 ### Community 370 - "writing_shape_skill, writing_shape_skill_the_loop, writing_shape_skill_conversational_feel"
 Cohesion: 0.29
@@ -1915,21 +1906,17 @@ Nodes (3): Formatting Rules, Review Comment Template, Template
 Cohesion: 0.50
 Nodes (3): File format, What is a fragment, Writing rhythm
 
-### Community 499 - "js_helpers, js_helpers_normalizecolor, js_helpers_isvalidhexcolor"
-Cohesion: 0.25
-Nodes (8): D1. Registration & Authentication, D2. SQL Injection & SQLite Configuration, D3. Profile Privacy & Follower Flows, D4. Posts & Comments, D5. Groups & Events, D6. WebSocket Chat Security, D7. Notifications Engine, Layer D — Security & Functional Specification
+### Community 499 - "Community 499"
+Cohesion: 0.29
+Nodes (6): 🛠️ Execution Phases, Phase 1: Research (Fact-Gathering Subagent), Phase 2: Plan (Architectural & Strategy Planning Subagent), Phase 3: Implement (TDD Implementation Subagent), Phase 4: Validate (Quality Gate Validator Subagent), 🧭 Workflow Structure (HumanLayer RPI)
 
 ### Community 500 - "getallcategories_handler, getallcategories_getallcategorieshandler, getallcategories_getallcategorieshandler"
 Cohesion: 0.39
 Nodes (7): NewHandler(), Handler, ResponseModel, Category, Logger, ServerConfig, Services
 
 ### Community 501 - "httpclient_client, httpclient_client_postwithurlencodedpara, httpclient_client_post"
-Cohesion: 0.36
-Nodes (4): Client, NewClient(), Context, Reader
-
-### Community 502 - "server_clientserver_categoriespage, cmd_client_server_categories_handler_go_, server_categories_handler_getqueryintor"
-Cohesion: 0.43
-Nodes (5): Request, ResponseWriter, ClientServer, getQueryIntOr(), getQueryStringOr()
+Cohesion: 0.47
+Nodes (5): ChatTypingHandler, NewChatTypingHandler(), Client, Envelope, Hub
 
 ### Community 503 - "cmd_client_config_config_go_config_confi, config_client, config_httptimeouts"
 Cohesion: 0.25
@@ -1963,14 +1950,6 @@ Nodes (6): Phase 3: Adversarial Validation (Judge/Critic Pass), Step 3.1 — Evi
 Cohesion: 0.33
 Nodes (6): Phase 3: Adversarial Validation (Judge/Critic Pass), Step 3.1 — Evidence audit, Step 3.2 — Gap analysis, Step 3.3 — Mitigation check, Step 3.4 — Socratic challenge, Step 3.5 — Confidence scoring
 
-### Community 512 - "Community 512"
-Cohesion: 0.33
-Nodes (6): Phase 1: Deterministic Grounding & Tool Scanning, Step 1.1 — Linting, Step 1.2 — Vulnerability scan, Step 1.3 — Go vet, Step 1.4 — Module audit, Step 1.5 — Record baseline
-
-### Community 513 - "Community 513"
-Cohesion: 0.33
-Nodes (6): Phase 3: Adversarial Validation (Judge/Critic Pass), Step 3.1 — Evidence audit, Step 3.2 — Gap analysis, Step 3.3 — Mitigation check, Step 3.4 — Socratic challenge, Step 3.5 — Spec compliance double-check
-
 ### Community 514 - "Community 514"
 Cohesion: 0.40
 Nodes (5): Create Issue, Issues, List Issues, Modify Issues, View Issue
@@ -1978,14 +1957,6 @@ Nodes (5): Create Issue, Issues, List Issues, Modify Issues, View Issue
 ### Community 515 - "Community 515"
 Cohesion: 0.40
 Nodes (5): After being part of a group, can the user create posts and comment already created posts?, Can a user make a group entering request (a request to enter a group)?, Can a user make group invitations, after being part of the group (being the user different from the creator of the group)?, Did the owner of the group received a request that he/she can refuse/accept?, Using the same browsers and the same users, with one of the users create a group and with the other try to make a group entering request.
-
-### Community 516 - "Community 516"
-Cohesion: 0.08
-Nodes (27): Request, ResponseWriter, Request, ResponseWriter, Request, ResponseWriter, Request, ResponseWriter (+19 more)
-
-### Community 517 - "Community 517"
-Cohesion: 0.20
-Nodes (10): BackendURLs, main(), Client, HandlerFunc, ServeMux, ClientServer, Config, applyMiddleware() (+2 more)
 
 ### Community 518 - "Community 518"
 Cohesion: 0.50
@@ -1999,35 +1970,23 @@ Nodes (4): Example: Create Release with Assets, Example: Feature Branch → PR, 
 Cohesion: 0.67
 Nodes (3): Do, Don't, Guidelines
 
-### Community 521 - "Community 521"
-Cohesion: 0.42
-Nodes (8): DB, ServerConfig, main(), execSQLFile(), InitializeDB(), migrateDB(), OpenDB(), seedDB()
-
-### Community 522 - "Community 522"
-Cohesion: 0.33
-Nodes (7): NewUserRegisterHandler(), UserRegisterRequest, UserRegisterRequestHandler, Context, Provider, Repository, User
-
-### Community 523 - "Community 523"
-Cohesion: 0.48
-Nodes (4): Notification, Notifier, RWMutex, NewNotifier()
-
 ### Community 524 - "Community 524"
 Cohesion: 0.33
 Nodes (5): 🛠️ Execution Phases, Phase 1: Deterministic Grounding & Tool Gates, Phase 2: Cognitive Subagent Review, Phase 3: Adversarial Validation (Judge Pass), Phase 4: Synthesis & Output Report
 
 ## Knowledge Gaps
-- **2313 isolated node(s):** `block-dangerous-git.sh script`, `$schema`, `plugin`, `HTTPTimeouts`, `Duration` (+2308 more)
+- **2297 isolated node(s):** `block-dangerous-git.sh script`, `$schema`, `plugin`, `HTTPTimeouts`, `Duration` (+2292 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **120 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **119 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `NewServices()` connect `app_services_newservices, internal_app_services_go_repository, internal_app_services_go_notifier` to `queries_userloginemailtestcase, queries_userloginemail_test_runuserlogin, queries_userloginemail_test`, `commands_createcategoryrequesthandler, commands_createcategory_newcreatecategor, commands_createcategory`, `commands_deletecategoryrequesthandler, commands_deletecategory_newdeletecategor, commands_deletecategory`, `commands_deletevoterequesthandler, commands_deletevote_newdeletevotehandler, commands_deletevote`, `commands_markallasreadhandler, commands_markallasread_newmarkallasreadh, commands_markallasread`, `app_commands, app_queries, app_services`, `commands_updatecategoryrequesthandler, commands_updatecategory_newupdatecategor, commands_updatecategory`, `Community 522`, `queries_getunreadcounthandler, queries_getunreadcount_newgetunreadcount, queries_getunreadcount`, `commands_createtopic_newcreatetopichandl, commands_createtopictestcase, commands_createtopic_test_runcreatetopic`, `commands_updatetopicrequesthandler, commands_updatetopic_newupdatetopichandl, commands_updatetopicrequest`, `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth`, `commands_openstreamhandler, commands_openstream_newopenstreamhandler, commands_openstream`, `commands_castvoterequesthandler, commands_castvote_newcastvotehandler, commands_castvoterequest`, `commands_sendchathandler, commands_chatsend_newsendchathandler, commands_chatsend`, `commands_createcommentrequesthandler, commands_createcomment_newcreatecommentr, commands_createcommentrequesthandler_han`, `queries_userloginusername_newuserloginus, queries_userloginusernamerequesthandler, queries_userloginusernamerequesthandler_`, `queries_getchatusershandler, queries_getchatusers_newgetchatusershand, queries_getchatusers`, `queries_getalltopics, queries_getalltopicsresponse, queries_getalltopicsrequesthandler`, `commands_createnotificationhandler, commands_createnotification_newcreatenot, commands_createnotification`, `commands_deletetopicrequesthandler, commands_deletetopic_newdeletetopichandl, commands_deletetopic`, `commands_updatecommentrequesthandler, commands_updatecomment_newupdatecommentr, commands_updatecommentrequesthandler_han`, `oauth_oauthservice, oauth_oauth_newoauthservice, internal_app_oauth_oauth_go_provider`, `queries_getcountsrequesthandler, queries_getvotecounts_newgetcountsreques, queries_getcountsrequesthandler_handle`, `commands_deletecommentrequesthandler, commands_deletecomment_newdeletecommenth, commands_deletecomment`, `commands_initchathandler, commands_initchat_newinitchathandler, commands_initchathandler_handle`, `queries_getuseractivityhandler, queries_getuseractivity_newgetuseractivi, queries_getuseractivityhandler_handle`, `queries_getallcategoriesrequesthandler, queries_getallcategories_newgetallcatego, queries_getallcategoriesrequesthandler_h`, `queries_getcategorybyidhandler, queries_getcategorybyid_newgetcategoryby, queries_getcategorybyidhandler_handle`, `queries_getchathistoryhandler, queries_getchathistory_newgetchathistory, queries_getchathistoryhandler_handle`, `queries_getcommentrequesthandler, queries_getcomment_newgetcommenthandler, queries_getcommentrequesthandler_handle`, `queries_getcommentsbytopicrequesthandler, queries_getcommentsbytopic_newgetcomment, queries_getcommentsbytopicrequesthandler`, `queries_getnotificationshandler, queries_getnotifications_newgetnotificat, queries_getnotificationshandler_handle`, `queries_gettopicrequesthandler, queries_gettopic_newgettopichandler, queries_gettopicrequesthandler_handle`, `queries_getallusersrequesthandler, queries_getallusers_newgetallusersreques, queries_getallusers`?**
+- **Why does `NewServices()` connect `app_services_newservices, internal_app_services_go_repository, internal_app_services_go_notifier` to `commands_createcategoryrequesthandler, commands_createcategory_newcreatecategor, commands_createcategory`, `commands_deletecategoryrequesthandler, commands_deletecategory_newdeletecategor, commands_deletecategory`, `commands_deletevoterequesthandler, commands_deletevote_newdeletevotehandler, commands_deletevote`, `commands_markallasreadhandler, commands_markallasread_newmarkallasreadh, commands_markallasread`, `app_commands, app_queries, app_services`, `commands_updatecategoryrequesthandler, commands_updatecategory_newupdatecategor, commands_updatecategory`, `queries_getunreadcounthandler, queries_getunreadcount_newgetunreadcount, queries_getunreadcount`, `commands_createtopic_newcreatetopichandl, commands_createtopictestcase, commands_createtopic_test_runcreatetopic`, `commands_updatetopicrequesthandler, commands_updatetopic_newupdatetopichandl, commands_updatetopicrequest`, `commands_userregistertestcase, commands_userregister_newuserregisterhan, commands_userregister_test_runuserregist`, `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth`, `cmd_client_server_server_go_server_clien, server_server_newclientserver, server_server`, `commands_openstreamhandler, commands_openstream_newopenstreamhandler, commands_openstream`, `commands_castvoterequesthandler, commands_castvote_newcastvotehandler, commands_castvoterequest`, `commands_sendchathandler, commands_chatsend_newsendchathandler, commands_chatsend`, `commands_createcommentrequesthandler, commands_createcomment_newcreatecommentr, commands_createcommentrequesthandler_han`, `queries_userloginusername_newuserloginus, queries_userloginusernamerequesthandler, queries_userloginusernamerequesthandler_`, `queries_getchatusershandler, queries_getchatusers_newgetchatusershand, queries_getchatusers`, `queries_getalltopics, queries_getalltopicsresponse, queries_getalltopicsrequesthandler`, `commands_createnotificationhandler, commands_createnotification_newcreatenot, commands_createnotification`, `commands_deletetopicrequesthandler, commands_deletetopic_newdeletetopichandl, commands_deletetopic`, `commands_updatecommentrequesthandler, commands_updatecomment_newupdatecommentr, commands_updatecommentrequesthandler_han`, `oauth_oauthservice, oauth_oauth_newoauthservice, internal_app_oauth_oauth_go_provider`, `queries_getcountsrequesthandler, queries_getvotecounts_newgetcountsreques, queries_getcountsrequesthandler_handle`, `commands_deletecommentrequesthandler, commands_deletecomment_newdeletecommenth, commands_deletecomment`, `commands_initchathandler, commands_initchat_newinitchathandler, commands_initchathandler_handle`, `queries_getuseractivityhandler, queries_getuseractivity_newgetuseractivi, queries_getuseractivityhandler_handle`, `queries_getallcategoriesrequesthandler, queries_getallcategories_newgetallcatego, queries_getallcategoriesrequesthandler_h`, `queries_getcategorybyidhandler, queries_getcategorybyid_newgetcategoryby, queries_getcategorybyidhandler_handle`, `queries_getchathistoryhandler, queries_getchathistory_newgetchathistory, queries_getchathistoryhandler_handle`, `queries_getcommentrequesthandler, queries_getcomment_newgetcommenthandler, queries_getcommentrequesthandler_handle`, `queries_getcommentsbytopicrequesthandler, queries_getcommentsbytopic_newgetcomment, queries_getcommentsbytopicrequesthandler`, `queries_getnotificationshandler, queries_getnotifications_newgetnotificat, queries_getnotificationshandler_handle`, `queries_gettopicrequesthandler, queries_gettopic_newgettopichandler, queries_gettopicrequesthandler_handle`, `queries_getallusersrequesthandler, queries_getallusers_newgetallusersreques, queries_getallusers`?**
   _High betweenness centrality (0.048) - this node is a cross-community bridge._
-- **Why does `main()` connect `Community 521` to `http_server, http_server_newserver, http_server_addhttproutes`, `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth`, `queries_userloginemail_newuserloginemail, queries_userloginemailrequesthandler, queries_userloginemailrequesthandler_han`?**
+- **Why does `main()` connect `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth` to `internal_config_config_go_config_config, config_serverconfig, internal_config_config_go_duration`, `http_server, http_server_newserver, http_server_addhttproutes`?**
   _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **Why does `Bootstrap()` connect `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth` to `infra_services_newhttpserver, sqlite_repositories_newrepositories, infra_services`, `sessionstore_manager, sessionstore_sessionmanager_newsessionma, sessionstore_sessionmanager`, `Community 521`, `Community 523`, `ws_hub, internal_infra_ws_hub_go_client, ws_hub_broadcastisonlinestatus`, `authcookies_manager, authcookies_manager_newsessioncookie, authcookies_manager_setcookies`, `middleware_services_newmiddleware, middleware_entities_newauthorizationmidd, internal_infra_middleware_entities_go_mi`, `app_services_newservices, internal_app_services_go_repository, internal_app_services_go_notifier`, `local_localstorage, local_storage_cleanpath, local_storage`?**
+- **Why does `Bootstrap()` connect `bootstrap_bootstrap_bootstrap, bootstrap_app, bootstrap_bootstrap_initoauth` to `infra_services_newhttpserver, sqlite_repositories_newrepositories, infra_services`, `Community 166`, `sessionstore_manager, sessionstore_sessionmanager_newsessionma, sessionstore_sessionmanager`, `ws_hub, internal_infra_ws_hub_go_client, ws_hub_broadcastisonlinestatus`, `authcookies_manager, authcookies_manager_newsessioncookie, authcookies_manager_setcookies`, `middleware_services_newmiddleware, middleware_entities_newauthorizationmidd, internal_infra_middleware_entities_go_mi`, `app_services_newservices, internal_app_services_go_repository, internal_app_services_go_notifier`, `local_localstorage, local_storage_cleanpath, local_storage`?**
   _High betweenness centrality (0.047) - this node is a cross-community bridge._
 - **Are the 34 inferred relationships involving `NewServices()` (e.g. with `Bootstrap()` and `NewCastVoteHandler()`) actually correct?**
   _`NewServices()` has 34 INFERRED edges - model-reasoned connections that need verification._
@@ -2036,4 +1995,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 28 inferred relationships involving `RespondWithJSON()` (e.g. with `.CastVote()` and `.CreateCategory()`) actually correct?**
   _`RespondWithJSON()` has 28 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Caveman compress scripts.  This package provides tools to compress natural langu`, `Heuristic denylist for files that must never be shipped to a third-party API.`, `Strip outer ```markdown ... ``` fence when it wraps the entire output.` to the rest of the system?**
-  _2331 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _2315 weakly-connected nodes found - possible documentation gaps or missing edges._

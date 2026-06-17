@@ -2739,14 +2739,29 @@
     "ast_hash": "4c49d6532142967aeffa66594d9a0bb2",
     "semantic_hash": ""
   },
-  ".agents/workflows/pr-workflow-agy.md": {
-    "mtime": 1781738196.4240172,
-    "ast_hash": "ee44c9bf77d1a5ed494090950b2d0d66",
+  ".agents/prompts/pr-implement.md": {
+    "mtime": 1781738827.4908628,
+    "ast_hash": "5cf04dbd247fefc9234c2916f34e09cb",
     "semantic_hash": ""
   },
-  ".agents/workflows/pr-workflow-oc.md": {
-    "mtime": 1781738200.9281342,
-    "ast_hash": "928787092c97f80518f10bf01e8d6934",
+  ".agents/workflows/pr-create.md": {
+    "mtime": 1781738529.149493,
+    "ast_hash": "cd4a5378a87061005be793210addb36c",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/pr-implement.md": {
+    "mtime": 1781738821.618935,
+    "ast_hash": "1be2893cc78f8c4b62e5879ae15e0ad0",
+    "semantic_hash": ""
+  },
+  ".agents/prompts/pr-implement-qrspi.md": {
+    "mtime": 1781738982.1756608,
+    "ast_hash": "15bbdd5da2c4fbe8e59c664603d4a8fa",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/pr-implement-qrspi.md": {
+    "mtime": 1781738976.8903816,
+    "ast_hash": "bf67409eda0448dde884a06eb5631c41",
     "semantic_hash": ""
   }
 }
