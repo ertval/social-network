@@ -1,7 +1,7 @@
 ---
 trigger: always_on
 glob:
-description:
+description: Always use `rtk <cmd>` instead of raw commands. RTK filters and compresses command output before it reaches the LLM context, saving 60-90% tokens on common operations. 
 ---
 # RTK - Rust Token Killer (Google Antigravity)
 
