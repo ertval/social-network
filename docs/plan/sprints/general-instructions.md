@@ -123,11 +123,11 @@ Every PR must pass:
 | B1.1 | Migration delimiter `":"` → `";"` | `infra/storage/sqlite/init.go` | BE-A |
 | B1.2 | SQLite DSN missing WAL/busy timeout | `init.go`, `.env` | BE-A |
 | B1.3 | OAuth `Scan()` with `ctx` arg | `infra/storage/sqlite/oauth/oauthRepo.go` | BE-B |
-| B1.4 | WebSocket CheckOrigin returns true | `infra/ws/handler.go` | BE-B |
+| B1.4 | WebSocket CheckOrigin returns true | `infra/http/ws/handler.go` | BE-B |
 | B1.5 | SQL injection in ORDER BY | `sqlite/topics/topicRepo.go`, `sqlite/categories/categoryRepo.go` | BE-A |
 | B1.6 | Prepared stmt uses `db.Exec` | `sqlite/users/userRepo.go` | BE-B |
 | B1.7 | WS goroutine panic recovery | `infra/ws/client.go` | BE-B |
-| B1.8 | RateLimiter ticker leak | `middleware/ratelimiter/rateLimiter.go` | BE-A |
+| B1.8 | RateLimiter ticker leak (core GCRA, not HTTP wrapper) | `infra/middleware/ratelimiter/rateLimiter.go` | BE-B |
 
 **Process:**
 1. Write reproducer test (failing) for each bug
@@ -137,7 +137,7 @@ Every PR must pass:
 
 ### Q2: Verification Gates (per sprint)
 
-After every sprint, run the full verification from architecture doc:
+**Mandatory:** After every sprint, before marking complete, run:
 
 ```bash
 # Backend
@@ -152,6 +152,10 @@ npx @biomejs/biome lint src/
 npx @biomejs/biome format src/
 tsc --noEmit
 npx vitest run
+
+# Boundary check
+grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
+```
 
 # Boundary check
 grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
@@ -303,9 +307,9 @@ Sprint 6:  Cleanup + Integration + Docker ────┘
 |--------|-----------|-----------|--------|-------|
 | Sprint 0 | 5 | 2 | 3 | 10 |
 | Sprint 1 | 11 | 4 | 0 | 15 |
-| Sprint 2 | 22 | 8 | 0 | 30 |
-| Sprint 3 | 24 | 8 | 0 | 32 |
-| Sprint 4 | 21 | 8 | 0 | 29 |
-| Sprint 5 | 16 | 7 | 0 | 23 |
+| Sprint 2 | 23 | 8 | 0 | 31 |
+| Sprint 3 | 26 | 8 | 0 | 34 |
+| Sprint 4 | 22 | 8 | 0 | 30 |
+| Sprint 5 | 17 | 7 | 0 | 24 |
 | Sprint 6 | 8 | 7 | 5 | 20 |
-| **Total** | **107** | **44** | **8** | **159** |
+| **Total** | **112** | **44** | **8** | **164** |

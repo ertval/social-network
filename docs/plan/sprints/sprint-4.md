@@ -2,6 +2,24 @@
 
 **Outcome:** Groups with membership, group feed, group chat via WebSocket, and the event RSVP voting system work end-to-end.
 
+> **Missing migration DDL:** Architecture specifies `000005_groups.up.sql` and `000006_events.up.sql`. S1-BE-04 created `000005` and `000006` stubs (empty or minimal). S4-BE-02 and S4-BE-17 must extend these files with actual Group and Event table DDL — or create replacement migration files if stubs were not created. If S1-BE-04 was skipped, create `000005` and `000006` migration pairs as part of S4-BE-02 and S4-BE-17.
+>
+> **GroupPost entity:** Architecture lists GroupPost (GroupID, AuthorID, Content, ImagePath, CreatedAt) as a named entity distinct from Topic posts. Explicitly defined in S4-BE-01. Group feed (S4-BE-12) queries GroupPost, not Topic.
+
+---
+
+### S4-BE-JOINT: Wire Group & Event bootstrap routes
+* **Priority:** P0
+* **Assignee:** BE-A + BE-B
+* **Story Points:** 3
+* **Dependencies:** S4-BE-14, S4-BE-15, S4-BE-21
+* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
+* **Detailed Steps:**
+  1. In `internal/bootstrap/bootstrap.go`, import group and event transport packages.
+  2. Call their route registration functions on the HTTP mux and WS router.
+  3. Register event bus consumers for group events.
+* **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
+
 ---
 
 ## BE-A (Backend A) Tickets
@@ -13,7 +31,7 @@
 * **Description:** Establish domain model entities mapping group lifecycles.
 * **Detailed Steps:**
   1. Create `internal/group/group.go`.
-  2. Define `Group` (ID, Title, Description, CreatorID, CreatedAt), `GroupMember` (GroupID, UserID, Role: owner/member, JoinedAt), `Invitation` (GroupID, InviterID, InviteeID, Status: pending/accepted/declined, CreatedAt), and `JoinRequest` (GroupID, RequesterID, Status, CreatedAt).
+   2. Define `Group` (ID, Title, Description, CreatorID, CreatedAt), `GroupMember` (GroupID, UserID, Role: owner/member, JoinedAt), `Invitation` (GroupID, InviterID, InviteeID, Status: pending/accepted/declined, CreatedAt), `JoinRequest` (GroupID, RequesterID, Status, CreatedAt), and `GroupPost` (ID, GroupID, AuthorID, Content, ImagePath, CreatedAt).
 * **Verification:** Compile check `go build ./internal/group/...`.
 
 ---
@@ -23,10 +41,11 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-01
-* **Description:** Implement SQLite storage mapping group structure.
+* **Description:** Implement SQLite storage mapping group structure. If `000005_groups.up.sql` does not yet contain Group table DDL, create it here (or extend the existing migration).
 * **Detailed Steps:**
-  1. Create `internal/group/store/sqlite.go`. Implement queries checking group membership: `IsMember(ctx context.Context, groupID, userID string) (bool, error)`.
-* **Verification:** Integration tests checking memberships writing.
+   1. Create `internal/group/store/sqlite.go`. Implement queries checking group membership: `IsMember(ctx context.Context, groupID, userID string) (bool, error)`.
+   2. **If S1-BE-04 left `000005_groups.up.sql` as a stub:** replace with full DDL: `CREATE TABLE groups (...)`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`, `group_posts`. Provide corresponding `.down.sql`.
+* **Verification:** Integration tests checking memberships writing. Verify `000005` migration creates all Group tables.
 
 ---
 
@@ -46,13 +65,15 @@
 ### S4-BE-04: Group: Invite Member Command
 * **Priority:** P1
 * **Assignee:** BE-A
-* **Story Points:** 2
+* **Story Points:** 3
 * **Dependencies:** S4-BE-01
-* **Description:** Invite follower to group, firing event notifications.
+* **Description:** Invite follower to group, firing event notifications. Architecture requires invite-gating: only users who follow the inviter can be invited.
 * **Detailed Steps:**
-  1. Create `internal/group/commands/invite_member.go`. Ensure requester is group member.
-  2. Insert invitation, publish `group.invited` event.
-* **Verification:** Unit tests verifying constraints and event outputs.
+   1. Create `internal/group/commands/invite_member.go`. Ensure requester is group member.
+   2. Define a local `FollowChecker` interface (same pattern as S2-BE-08, S2-BE-17): `AreConnected(ctx context.Context, a, b string) (bool, error)`.
+   3. Before inserting invitation, verify that invitee follows the inviter. Reject with 403 if not connected.
+   4. Insert invitation, publish `group.invited` event.
+* **Verification:** Unit tests verifying: successful invite when follower, rejected invite when not connected, event outputs.
 
 ---
 
@@ -217,10 +238,11 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S4-BE-16
-* **Description:** Store query mappings for events.
+* **Description:** Store query mappings for events. If `000006_events.up.sql` does not yet contain Event table DDL, create it here (or extend the existing migration).
 * **Detailed Steps:**
-  1. Create `internal/event/store/sqlite.go`.
-* **Verification:** Integration tests checking storage.
+   1. Create `internal/event/store/sqlite.go`.
+   2. **If S1-BE-04 left `000006_events.up.sql` as a stub:** replace with full DDL: `CREATE TABLE events (...)`, `event_options`, `event_rsvps`. Provide corresponding `.down.sql`.
+* **Verification:** Integration tests checking storage. Verify `000006` migration creates all Event tables.
 
 ---
 

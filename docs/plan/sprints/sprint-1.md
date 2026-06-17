@@ -74,6 +74,7 @@
    1. **Auth Middleware:** Verifies request session cookie, queries session store, and attaches UserID into the Go request Context.
    2. **CORS Middleware:** Performs strict header checks against configured origin domains.
    3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE-03 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
+   4. **(Phase 3.3)** Implement `internal/infra/middleware/logging.go` — request logging middleware that records method, path, status, duration, and request ID.
 * **Note:** Rate limiter depends on Cache (S1-BE-03, P1). Since both are P1 in same sprint, implement Cache first or mark rate limiter as soft-blocked on Cache completion.
 * **Verification:** Write tests hitting mock HTTP endpoints through the middleware chain, confirming correct status codes (401 Unauthorized for bad sessions, 429 Too Many Requests for rate limits, etc.).
 
@@ -127,10 +128,11 @@
 * **Story Points:** 5
 * **Description:** Setup the real-time WebSocket connection manager (Hub + Clients) for messaging and notification pushes.
 * **Detailed Steps:**
-  1. Create `internal/core/realtime/hub.go` containing the central coordinator tracking active clients.
-  2. Implement client registration, deregistration, and broadcast loops.
-  3. Implement `client.go` mapping WebSocket connections. Ensure panic recovery is set up on read/write loops.
-  4. Enforce read connection limit constraints and connection timeouts/deadlines.
+   1. Create `internal/core/realtime/hub.go` containing the central coordinator tracking active clients.
+   2. Implement client registration, deregistration, and broadcast loops.
+   3. Implement `client.go` mapping WebSocket connections. Ensure panic recovery is set up on read/write loops.
+   4. Enforce read connection limit constraints and connection timeouts/deadlines.
+   5. **(Phase 3.2)** Implement `internal/infra/ws/router.go` for WebSocket message routing. Map incoming message types (chat.send, typing, etc.) to handler functions per vertical slice. Register routes for each slice's WS handlers.
 * **Verification:** Write mock WS clients and test broadcast delivery speeds, client disconnects, and thread safety.
 
 ---
@@ -142,9 +144,10 @@
 * **Dependencies:** S1-BE-06, S1-BE-07
 * **Description:** Create the core HTTP server wrapper featuring graceful shutdown.
 * **Detailed Steps:**
-  1. Implement `internal/core/server/server.go`.
-  2. Set up standard `http.Server` timeouts (ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout).
-  3. Handle OS signals (`SIGINT`, `SIGTERM`) to trigger graceful shutdown, allowing up to 10 seconds for draining ongoing connections.
+   1. Implement `internal/core/server/server.go`.
+   2. Set up standard `http.Server` timeouts (ReadHeaderTimeout, ReadTimeout, WriteTimeout, IdleTimeout).
+   3. Handle OS signals (`SIGINT`, `SIGTERM`) to trigger graceful shutdown, allowing up to 10 seconds for draining ongoing connections.
+   4. **(Phase 3.4)** Implement `internal/core/server/routes.go` for centralized route registration. New vertical slices register their routes here rather than modifying `server.go` directly.
 * **Verification:** Send mock kill signals to a running server process and ensure it logs shutdown progress and terminates cleanly.
 
 ---
@@ -153,11 +156,11 @@
 * **Priority:** P2
 * **Assignee:** BE-B
 * **Story Points:** 1
-* **Description:** Restructure and refactor the old oauth code packages to match new structure. **Prerequisite for Sprint 5 OAuth client implementations.**
+* **Description:** Move and restructure OAuth packages to `pkg/oauth/` per the target architecture. **Prerequisite for Sprint 5 OAuth client implementations.**
 * **Detailed Steps:**
-   1. Rename `internal/pkg/oAuth/` to `internal/pkg/oauth/`.
-   2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `internal/pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `internal/pkg/oauth/google/client.go`.
-   3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `internal/pkg/oauth/client.go`.
+   1. Move `internal/pkg/oAuth/` to `pkg/oauth/` (repo root, per target architecture — not `internal/pkg/oauth/`).
+   2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/client.go`.
+   3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
 * **Verification:** Ensure old auth compilation paths are updated and all projects compile. `go build ./...` passes.
 
 ---

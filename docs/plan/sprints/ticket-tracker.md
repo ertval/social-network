@@ -66,6 +66,9 @@ For step-by-step ticket instructions, see individual sprint files:
 ---
 
 ## Sprint 2: User & Topic Features (Week 5–6)
+### Joint BE-A & BE-B
+- [ ] **S2-BE-JOINT:** Wire User & Topic bootstrap routes
+
 ### BE-A (Backend A)
 - [ ] **S2-BE-01:** User: Entity & Repository Interface
 - [ ] **S2-BE-02:** User: SQLite Store
@@ -119,7 +122,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S3-BE-07:** Follow: Get Followers Query
 - [ ] **S3-BE-08:** Follow: Get Following Query
 - [ ] **S3-BE-09:** Follow: Get Pending Requests Query
-- [ ] **S3-BE-10:** Follow: Are Connected Query
+- [ ] **S3-BE-10:** Follow: Are Connected Query **P0**
 - [ ] **S3-BE-11:** Follow: HTTP Transport Routing
 
 ### BE-B (Backend B)
@@ -134,6 +137,10 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S3-BE-22:** Notification: Mark Read Command
 - [ ] **S3-BE-23:** Notification: List Notifications Query
 - [ ] **S3-BE-24:** Notification: HTTP Transport Routing
+- [ ] **S3-BE-25:** Notification: Old Schema→New Schema Migration
+
+### Joint BE-A & BE-B
+- [ ] **S3-BE-JOINT:** Wire Follow, Comment & Notification bootstrap routes
 
 ### SD-QA (System Design/QA)
 - [ ] **S3-BE-12:** Follow: Event Publishing Verification
@@ -154,6 +161,9 @@ For step-by-step ticket instructions, see individual sprint files:
 ---
 
 ## Sprint 4: Group & Event Features (Week 9–10)
+### Joint BE-A & BE-B
+- [ ] **S4-BE-JOINT:** Wire Group & Event bootstrap routes
+
 ### BE-A (Backend A)
 - [ ] **S4-BE-01:** Group: Entities & Repository Interface
 - [ ] **S4-BE-02:** Group: SQLite Store
@@ -196,6 +206,9 @@ For step-by-step ticket instructions, see individual sprint files:
 ---
 
 ## Sprint 5: Chat & OAuth (Week 11–12)
+### Joint BE-A & BE-B
+- [ ] **S5-BE-JOINT:** Wire Chat & OAuth bootstrap routes
+
 ### BE-A (Backend A)
 - [ ] **S5-BE-01:** Chat: Entity & Repository Interface
 - [ ] **S5-BE-02:** Chat: SQLite Store

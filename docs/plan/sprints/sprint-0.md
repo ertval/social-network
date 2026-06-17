@@ -2,6 +2,8 @@
 
 **Outcome:** Setup project tooling, backend scaffold, frontend Next.js base, docker development environment, and fix critical bugs. All team members can run a clean build and development setup.
 
+> **Note:** Several files referenced in Sprint 0 already exist in the repo (Makefile, `.golangci.yml`, `docker-compose.yml`, `docker-compose.dev.yml`, `frontend/`, etc.). Tickets describing creation from scratch **must audit and update** existing files rather than recreating them. Verify existing content first, then extend or fix as needed.
+
 ---
 
 ## BE-A (Backend A) Tickets
@@ -67,10 +69,10 @@
 * **Description:** Fix OAuth Scanner, WebSocket origin policy, Prepared statements, WS panics, and RateLimiter leaks.
 * **Detailed Steps:**
   1. **B1.3 (OAuth Scan):** In `infra/storage/sqlite/oauth/oauthRepo.go`, adjust `Scan()` arguments to exclude `ctx` since the driver does not take context directly inside `Scan()`.
-  2. **B1.4 (WS CheckOrigin):** In `infra/ws/handler.go`, restrict origins. Do not return unconditional `true` for `CheckOrigin`. Read origin configuration environment variables.
+   2. **B1.4 (WS CheckOrigin):** In `infra/http/ws/handler.go`, restrict origins. Do not return unconditional `true` for `CheckOrigin`. Read origin configuration environment variables.
   3. **B1.6 (Prepared Stmt db.Exec):** In `sqlite/users/userRepo.go`, call `stmt.ExecContext(...)` instead of `db.Exec(...)` to ensure prepared statements are actually executed on the prepared query plan.
   4. **B1.7 (WS Panic Recovery):** In `infra/ws/client.go` inside `ReadPump` and `WritePump` goroutines, add `defer func() { if r := recover(); r != nil { ... } }()` to prevent a single connection crash from bringing down the entire server.
-  5. **B1.8 (RateLimiter Leak):** In `middleware/ratelimiter/rateLimiter.go`, add a `stop` channel to close the cleanup ticker when shutting down rate limiting instances to prevent thread/memory leaks.
+   5. **B1.8 (RateLimiter Leak - core GCRA):** In `infra/middleware/ratelimiter/rateLimiter.go` (not `infra/middleware/rateLimiter.go` which is the HTTP wrapper), add a `stop` channel to close the cleanup ticker when shutting down rate limiting instances to prevent thread/memory leaks.
 * **Verification:** Write specific unit tests and run `go test -race ./...` to check concurrent behaviors.
 
 ---

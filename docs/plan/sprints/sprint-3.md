@@ -3,6 +3,26 @@
 **Outcome:** Social relationships (follow requests, accepts, lists), commenting capability with media validation, and the event-driven notification dispatch pipeline work end-to-end.
 
 > **Migration note:** New slices use `/api/` prefix. Old code uses `/api/v1/`. During Strangler Fig migration, both must coexist. Register new routes alongside old ones — old code stays active until Sprint 6 cleanup. Feature-flag the new routes behind a config toggle if needed. Old notification types (reply, mention, like, dislike) are replaced entirely by new types (follow_request, follow_accept, group_invite, group_join_request, event_created). Existing notification data with old types is kept for history but not migrated to new types.
+>
+> **Notification schema breaking changes (FE):** Old schema had `Title`, `Message`, `RelatedType` with SSE streaming (`markAllAsRead`, `openStream`, direct `createNotification`). New schema has `Type`, `SenderID`, `ResourceID` with per-ID `mark_read` and eventbus `consume_events` — no SSE. FE must poll or use WS for real-time delivery (see S3-FE-06). Old notification rows with `Title/Message/RelatedType` are kept as-is; new notifications use the new schema. A one-time migration script (S3-BE-25) converts old rows to new schema.
+>
+> **WebSocket vs polling resolution (S3-FE-06):** SSE for notifications, WS for chat only. Notifications panel polls `GET /api/notifications/unread-count` with a configurable interval (default 15s). S3-BE-24 provides the polling endpoint. No notification-specific WS channel — piggybacking on chat WS is deferred to Sprint 5.
+>
+> **Old notification data migration:** S3-BE-25 migrates old rows (Title, Message, RelatedType) to new schema (Type, SenderID, ResourceID). See that ticket.
+
+---
+
+### S3-BE-JOINT: Wire Follow, Comment & Notification bootstrap routes
+* **Priority:** P0
+* **Assignee:** BE-A + BE-B
+* **Story Points:** 3
+* **Dependencies:** S3-BE-11, S3-BE-17, S3-BE-24
+* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
+* **Detailed Steps:**
+  1. In `internal/bootstrap/bootstrap.go`, import follow, comment, and notification transport packages.
+  2. Call their route registration functions on the HTTP mux.
+  3. Register event bus consumers for notification events.
+* **Verification:** `go build ./...` passes, new endpoints respond 200/401 (not 404).
 
 ---
 
@@ -123,7 +143,7 @@
 ---
 
 ### S3-BE-10: Follow: Are Connected Query
-* **Priority:** P1
+* **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-01
@@ -289,6 +309,20 @@
 
 ---
 
+### S3-BE-25: Notification: Old Schema→New Schema Migration
+* **Priority:** P1
+* **Assignee:** BE-B
+* **Story Points:** 3
+* **Dependencies:** S3-BE-19
+* **Description:** One-time data migration converting old notification rows to the new schema.
+* **Detailed Steps:**
+   1. Create `db/migrations/000008_migrate_notifications.up.sql`. Map old rows: `Title` → stored as metadata, `Message` → stored as metadata, `RelatedType` → mapped to new `Type` enum where possible (reply→comment, mention→follow, like/dislike→dropped). Rows with unmappable types get `Type = "legacy"`.
+   2. Create `000008_migrate_notifications.down.sql` to reverse.
+   3. Old rows keep their IDs; new notifications use the new schema going forward.
+* **Verification:** Run migration up/down. Verify old rows are converted without data loss.
+
+---
+
 ## SD-QA (System Design/QA) Tickets
 
 ### S3-BE-12: Follow: Event Publishing Verification
@@ -404,9 +438,10 @@
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
-* **Description:** Establish real-time notifications loading utilizing SSE or WebSockets.
+* **Description:** Implement polling-based notification badge updates.
 * **Detailed Steps:**
-   1. Connect to websocket hub / realtime server channels.
-   2. Dispatch incoming event messages to update global notification badge count dynamically.
-* **Note:** The BE notification transport (S3-BE-24) provides REST endpoints only — no WS transport for notifications per architecture. This FE ticket must poll `GET /api/notifications/unread-count` periodically OR the BE must add a notification WS channel. Resolve approach during sprint planning: either (a) add a notification-specific WS channel in core/realtime/, or (b) use polling with the unread-count endpoint, or (c) piggyback on the existing chat WS connection.
-* **Verification:** Trigger mock WebSocket messages and check panel response.
+   1. Use polling: call `GET /api/notifications/unread-count` on a 15-second interval. Back off to 60s on error.
+   2. Dispatch received unread-count updates to global notification badge state.
+   3. On notification panel open, fetch `GET /api/notifications` for the full list.
+* **Note:** Architecture decision: SSE for notifications, WS for chat only. No notification-specific WS channel. Chat WS piggyback deferred to Sprint 5.
+* **Verification:** Start server, create a notification via another user, confirm badge count updates within polling interval.

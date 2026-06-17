@@ -3,6 +3,12 @@
 **Outcome:** All legacy code structures are removed. Slices are fully integrated in `bootstrap.go`. Full automated test coverage verifies the codebase, including a specific automated test suite executing all requirements mapped from `audit.md`. Production Docker structures are deployed and verified.
 
 > **Dependency chain warning:** Sprint 6 assumes Phase 5 migrations (Sprints 2, 3, 5) are fully complete. Cleanup tickets S6-BE-01..03 delete old layers (`domain/`, `app/`, `infra/`) — if migrations are incomplete, `bootstrap.go` still imports old packages and the build breaks. Do not start Sprint 6 until all vertical slices exist and compile independently.
+>
+> **S6-DEV-04 ordering:** S6-DEV-04 (12-factor env var config) changes env var names used by old code (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT` → `DATABASE_DRIVER`, `DATABASE_DSN`, etc.). Must run AFTER S6-BE-01..03 (old code deleted) or old code breaks. Re-order: S6-DEV-04 depends on S6-BE-03.
+>
+> **cmd/client/ cleanup:** Current Dockerfile builds both `cmd/server` and `cmd/client`. New 2-service design only needs `cmd/server`. S6-DEV-01 rewrites Dockerfile — include removal of `cmd/client/` binary build step. No separate cleanup ticket needed — fold into S6-DEV-01.
+>
+> **Sprint-level verification gate:** After every sprint, run: `go vet ./... && go build ./... && go test -race -coverprofile=coverage.out ./... && golangci-lint run`. This is required before marking the sprint complete (see general-instructions.md Q2).
 
 ---
 
@@ -202,7 +208,8 @@
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars.
+* **Dependencies:** S6-BE-03 (old code must be gone before env var rename)
+* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars. **Must run after S6-BE-01..03** — old code references old env var names.
 * **Detailed Steps:**
    1. Update `internal/config/config.go` to load from env vars: `DATABASE_DRIVER`, `DATABASE_DSN`, `SESSION_SECRET`, `PORT`, `CORS_ORIGIN`, `REDIS_URL` (optional), `RABBITMQ_URL` (optional).
    2. Remove legacy env var names (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT`).

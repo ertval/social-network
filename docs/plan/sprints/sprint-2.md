@@ -2,6 +2,24 @@
 
 **Outcome:** User account features (register, login, profile, privacy toggle) and Topic features (posts with public/almost_private/private visibility, post creation, voting) work end-to-end. Both frontend and backend implementations are completed.
 
+> **FollowChecker stubs:** S2-BE-08 and S2-BE-17 define local `FollowChecker` interfaces. The Follow slice does not exist until Sprint 3. Until then, inject a stub that always returns `true` (public profiles bypass) or `false` (private profiles blocked, no follow-gating until Sprint 3). Mark with `// TODO: replace with real FollowChecker in Sprint 3`.
+>
+> **Migration dependencies:** S1-BE-04 must have created `000002_user_profile_fields` before S2-BE-01 User repo works, and `000003_topic_privacy` before S2-BE-13 Topic repo works. Verify migration order — these are implicit dependencies on S1-BE-04.
+
+---
+
+### S2-BE-JOINT: Wire User & Topic bootstrap routes
+* **Priority:** P0
+* **Assignee:** BE-A + BE-B
+* **Story Points:** 3
+* **Dependencies:** S2-BE-11, S2-BE-21
+* **Description:** Register new slice HTTP routes in `bootstrap.go` so endpoints are live immediately after this sprint. Without this ticket, new slices compile but are unreachable.
+* **Detailed Steps:**
+  1. In `internal/bootstrap/bootstrap.go`, import `internal/user/transport` and `internal/topic/transport`.
+  2. Call their route registration functions on the HTTP mux (e.g. `userTransport.RegisterRoutes(mux)`).
+  3. Verify with `curl http://localhost:8080/api/register` and `curl http://localhost:8080/api/feed`.
+* **Verification:** `go build ./...` passes, endpoints respond 200/401 (not 404).
+
 ---
 
 ## BE-A (Backend A) Tickets
@@ -107,8 +125,9 @@
 * **Detailed Steps:**
   1. Create `internal/user/queries/get_profile.go`.
   2. Accept target UserID and requester UserID.
-  3. Define a local `FollowChecker` interface to check if requester follows the profile.
-  4. If private and not following, return limited details (nickname/avatar only) and a privacy error.
+   3. Define a local `FollowChecker` interface to check if requester follows the profile.
+   4. **Stub for Sprint 2:** Inject a `FollowChecker` stub — use `true` (no follow-gating, show all) or `false` (block all private profiles). Annotate with `// TODO: replace with real FollowChecker in Sprint 3`.
+   5. If private and not following, return limited details (nickname/avatar only) and a privacy error.
 * **Verification:** Unit tests checking: public profile gets full info, private profile followed gets full info, private profile non-followed gets blocked.
 
 ---
@@ -163,7 +182,7 @@
   1. Create `internal/topic/topic.go`.
   2. Define `Topic` entity containing: ID, AuthorID, Content, ImagePath, Visibility (public, almost_private, private), and CreatedAt.
   3. Define `AllowedUser` entity to map which specific users can view private posts.
-  4. Define `Vote` entity (UserID, TargetID, TargetType: post/comment, Direction: +1/-1).
+   4. Define `Vote` entity (UserID, TargetID, TargetType: post, Direction: +1/-1). **Defer `TargetType: comment` to Sprint 3** (comment slice) to avoid hidden `topic → comment` dependency (arch D6).
   5. Define the `Repository` interface.
 * **Verification:** Compile check `go build ./internal/topic/...`.
 
@@ -218,8 +237,9 @@
 * **Detailed Steps:**
   1. Create `internal/topic/queries/get_feed.go`.
   2. Retrieve list of topics. Accept requester UserID.
-  3. Define a local `FollowChecker` interface.
-  4. Build visibility filter:
+   3. Define a local `FollowChecker` interface.
+   4. **Stub for Sprint 2:** Inject a `FollowChecker` stub — use `true` (show all visible posts) or annotate with `// TODO: replace with real FollowChecker in Sprint 3`.
+   5. Build visibility filter:
      - Public posts are visible to everyone.
      - `almost_private` posts are visible to author and followers.
      - `private` posts are visible to author and explicitly allowed users.
@@ -282,12 +302,13 @@
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S2-BE-11
-* **Description:** Verify the new vertical slice matches the exact behavior of the old monolithic repository.
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-11 (new slice for verification)
+* **Description:** Per Strangler Fig (Step 1 then Step 3), first write contract tests against the OLD repo, then verify the NEW slice passes the same tests.
 * **Detailed Steps:**
-  1. Create `internal/user/store/sqlite_migration_test.go`.
-  2. Execute queries on both the old user repository implementation and the new vertical slice store, asserting identical data mapping.
-* **Verification:** Contract tests pass with 100% data compatibility.
+   1. **(Step 1)** Create `internal/user/store/sqlite_migration_test.go`. Write tests against the old repository (`internal/infra/storage/sqlite/...` queries) to capture current behavior.
+   2. **(Step 2)** New slice is built (S2-BE-02).
+   3. **(Step 3)** Run same contract tests against the new `internal/user/store/sqlite.go` — assert identical data mapping.
+* **Verification:** Contract tests pass with 100% data compatibility against old repo first, then new slice.
 
 ---
 
@@ -295,11 +316,12 @@
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S2-BE-21
-* **Description:** Verify new slice matching queries of the old database interface.
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-21 (new slice for verification)
+* **Description:** Per Strangler Fig (Step 1 then Step 3), write contract tests against OLD repo first, then verify NEW slice passes the same tests.
 * **Detailed Steps:**
-  1. Create `internal/topic/store/sqlite_migration_test.go`.
-* **Verification:** Assert equality of returned structures.
+   1. **(Step 1)** Create `internal/topic/store/sqlite_migration_test.go`. Write tests against old topic repository.
+   2. **(Step 3)** Run same tests against new vertical slice store.
+* **Verification:** Assert equality of returned structures. Old-then-new ordering verified.
 
 ---
 

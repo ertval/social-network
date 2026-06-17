@@ -2,6 +2,22 @@
 
 **Outcome:** 1-on-1 private messaging featuring follow check constraints, emojis, and third-party login delegations (GitHub/Google OAuth) work end-to-end.
 
+> **Old chat commands dropped:** Old code had `markAsRead`, `initChat`, `getChatUsers` WS/RPC methods. These are not mapped to the new slice. `initChat` is replaced by implicit conversation creation on first message (S5-BE-03). `markAsRead` dropped (no per-message read tracking in arch). `getChatUsers` dropped (conversation partner derived from `GET /api/chat/conversations`). Document this in the FE migration notes.
+
+---
+
+### S5-BE-JOINT: Wire Chat & OAuth bootstrap routes
+* **Priority:** P0
+* **Assignee:** BE-A + BE-B
+* **Story Points:** 3
+* **Dependencies:** S5-BE-06, S5-BE-07, S5-BE-13
+* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
+* **Detailed Steps:**
+  1. In `internal/bootstrap/bootstrap.go`, import chat and oauth transport packages.
+  2. Call their route registration functions on the HTTP mux and WS router.
+  3. Wire OAuth provider clients (github, google) per S5-BE-14/15.
+* **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
+
 ---
 
 ## BE-A (Backend A) Tickets
@@ -186,7 +202,7 @@
 
 ## Sprint 1 Dependency Note
 
-> **Prerequisite:** S1-BE-09 (OAuth package rename) must be completed before S5-BE-14/15 (OAuth client implementations). The client files at `pkg/oauth/github/client.go` and `pkg/oauth/google/client.go` assume the Sprint 1 rename from `internal/pkg/oAuth/` is done. If Sprint 1 was skipped, extend S5-BE-14/15 to include the rename.
+> **Prerequisite:** S1-BE-09 (OAuth package move to `pkg/oauth/`) must be completed before S5-BE-14/15 (OAuth client implementations). The client files at `pkg/oauth/github/client.go` and `pkg/oauth/google/client.go` assume the Sprint 1 move from `internal/pkg/oAuth/` to `pkg/oauth/`. If Sprint 1 was skipped, extend S5-BE-14/15 to include the move.
 
 ## SD-QA (System Design/QA) Tickets
 
@@ -256,10 +272,13 @@
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Dependencies:** S5-FE-01
-* **Description:** Connect real-time WebSocket messaging handling typing indicators, online indicators, and incoming message dispatches.
+* **Description:** Connect real-time WebSocket messaging handling typing indicators, online presence indicators, and incoming message dispatches.
 * **Detailed Steps:**
-  1. Connect to websocket. Handle incoming payload types.
-* **Verification:** Playwright message delivery checks.
+   1. Connect to websocket. Handle incoming payload types (`chat.message`, `chat.typing`, `chat.presence`).
+   2. **Typing indicators:** On keystroke (debounced 500ms), send `chat.typing` WS message with recipientID. On receiving `chat.typing`, show "typing..." bubble for 2s after last event.
+   3. **Online presence:** On WS connect/disconnect, broadcast `chat.presence` with status (online/offline). Track via hub client registry. Display green dot on online conversation partners.
+   4. Dispatch incoming `chat.message` payloads to chat store and update badge count.
+* **Verification:** Playwright message delivery checks. Verify typing bubble appears and disappears. Verify online indicator shows for active WS connections.
 
 ---
 
