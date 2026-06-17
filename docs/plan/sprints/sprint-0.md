@@ -4,7 +4,7 @@
 
 ---
 
-## Backend Tickets
+## BE-A (Backend A) Tickets
 
 ### S0-BE-01: Go Project Scaffold
 * **Priority:** P0 (Blocks everything)
@@ -23,6 +23,22 @@
 * **Verification:** Run `go vet ./...` and `go build ./cmd/server/`. It should compile successfully (even with empty main function).
 
 ---
+
+### S0-BE-04: Bug Fixes (B1.1, B1.2, B1.5)
+* **Priority:** P0
+* **Assignee:** BE-A
+* **Story Points:** 3
+* **Dependencies:** S0-BE-01
+* **Description:** Fix migration path delimiter, SQLiteWAL/timeout settings, and SQL injections.
+* **Detailed Steps:**
+  1. **B1.1 (Migration Delimiter):** In `infra/storage/sqlite/init.go`, change the SQL parsing delimiter from `":"` to `";"` so multi-statement SQL runs correctly.
+  2. **B1.2 (SQLite DSN WAL/Timeout):** Modify SQLite connection setup to pass query parameters: `?_journal_mode=WAL&_busy_timeout=5000` to prevent database locks.
+  3. **B1.5 (SQL Injection):** In `sqlite/topics/topicRepo.go` and `sqlite/categories/categoryRepo.go`, sanitize inputs or use an allowed whitelist for dynamic `ORDER BY` directions (`ASC` or `DESC` only). Do NOT interpolate raw input directly into the query template.
+* **Verification:** Write unit/integration tests reproducing the issues, ensure they fail before, and pass after implementing the fixes.
+
+---
+
+## BE-B (Backend B) Tickets
 
 ### S0-BE-02: Makefile + CI Pipeline
 * **Priority:** P0 (Blocks everything)
@@ -43,34 +59,6 @@
 
 ---
 
-### S0-BE-03: golangci-lint Config
-* **Priority:** P0
-* **Assignee:** BE-A
-* **Story Points:** 1
-* **Dependencies:** S0-BE-02
-* **Description:** Configure `.golangci.yml` at the project root to enforce code cleanliness and strict slice boundaries.
-* **Detailed Steps:**
-  1. Enable linters: `gofumpt`, `goimports`, `gci`, `staticcheck`, `errcheck`, `govet`, `revive`.
-  2. Configure `revive` rules to enforce boundary checks (e.g. preventing direct imports between transport/store directories of different slices).
-  3. Set execution timeout to 5 minutes.
-* **Verification:** Execute `golangci-lint run --timeout=5m` and confirm it succeeds.
-
----
-
-### S0-BE-04: Bug Fixes (B1.1, B1.2, B1.5)
-* **Priority:** P0
-* **Assignee:** BE-A
-* **Story Points:** 3
-* **Dependencies:** S0-BE-01
-* **Description:** Fix migration path delimiter, SQLiteWAL/timeout settings, and SQL injections.
-* **Detailed Steps:**
-  1. **B1.1 (Migration Delimiter):** In `infra/storage/sqlite/init.go`, change the SQL parsing delimiter from `":"` to `";"` so multi-statement SQL runs correctly.
-  2. **B1.2 (SQLite DSN WAL/Timeout):** Modify SQLite connection setup to pass query parameters: `?_journal_mode=WAL&_busy_timeout=5000` to prevent database locks.
-  3. **B1.5 (SQL Injection):** In `sqlite/topics/topicRepo.go` and `sqlite/categories/categoryRepo.go`, sanitize inputs or use an allowed whitelist for dynamic `ORDER BY` directions (`ASC` or `DESC` only). Do NOT interpolate raw input directly into the query template.
-* **Verification:** Write unit/integration tests reproducing the issues, ensure they fail before, and pass after implementing the fixes.
-
----
-
 ### S0-BE-05: Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 * **Priority:** P0
 * **Assignee:** BE-B
@@ -87,45 +75,25 @@
 
 ---
 
-## Frontend Tickets
+## SD-QA (System Design/QA) Tickets
 
-### S0-FE-01: Next.js Scaffold + Tooling
-* **Priority:** P0 (Blocks everything)
-* **Assignee:** FE-A
-* **Story Points:** 5
-* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
+### S0-BE-03: golangci-lint Config
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 1
+* **Dependencies:** S0-BE-02
+* **Description:** Configure `.golangci.yml` at the project root to enforce code cleanliness and strict slice boundaries.
 * **Detailed Steps:**
-  1. Create a `frontend/` subdirectory in the project root.
-  2. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
-  3. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json` to run `npx @biomejs/biome check src/`.
-  4. Install `shadcn/ui` tooling and Tailwind custom presets.
-  5. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
-* **Verification:** Run `bun run lint`, `bun run format`, `bun run build`, and `bun run test` to verify everything is green.
+  1. Enable linters: `gofumpt`, `goimports`, `gci`, `staticcheck`, `errcheck`, `govet`, `revive`.
+  2. Configure `revive` rules to enforce boundary checks (e.g. preventing direct imports between transport/store directories of different slices).
+  3. Set execution timeout to 5 minutes.
+* **Verification:** Execute `golangci-lint run --timeout=5m` and confirm it succeeds.
 
 ---
-
-### S0-FE-02: shadcn/ui Components + Layout
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Dependencies:** S0-FE-01
-* **Description:** Set up core UI shell structure and shadcn primitives.
-* **Detailed Steps:**
-  1. Add shadcn components: Button, Input, Card, Dialog, DropdownMenu, Avatar, Badge, Switch, Toast, Tooltip.
-  2. Create a global layout file `src/app/layout.tsx` containing:
-     - Navigation sidebar (responsive)
-     - Header area (user profile dropdown, theme switcher, notification icon placeholder)
-     - Main content container (glassmorphic styling, responsive layout)
-  3. Create routing page files for `/login`, `/register`, `/feed`, and `/profile/[id]`.
-* **Verification:** Start the dev server (`bun run dev`) and visually check that the layout and components render correctly on port 3000.
-
----
-
-## DevOps Tickets
 
 ### S0-DEV-01: Docker Compose Development Environment
 * **Priority:** P1
-* **Assignee:** BE-B + FE-A (pair)
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01, S0-FE-01
 * **Description:** Set up local docker compose environments for both development (hot reload) and production.
@@ -142,7 +110,7 @@
 
 ### S0-DEV-02: Pre-commit Hooks
 * **Priority:** P1
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S0-BE-01
 * **Description:** Establish quality git hooks using Husky/lefthook to prevent bad code from committing or pushing.
@@ -159,7 +127,7 @@
 
 ### S0-DEV-03: Dev Environment Docs
 * **Priority:** P2
-* **Assignee:** Rotating
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** All Sprint 0 tickets
 * **Description:** Create onboarding documentation for the development environment.
@@ -171,3 +139,39 @@
      - Docker compose command sequences
      - Branch naming conventions and pull request rules
 * **Verification:** A fresh developer should be able to set up their machine by following `DEVELOPMENT.md` alone.
+
+---
+
+## FE-A (Frontend A) Tickets
+
+### S0-FE-01: Next.js Scaffold + Tooling
+* **Priority:** P0 (Blocks everything)
+* **Assignee:** FE-A
+* **Story Points:** 5
+* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
+* **Detailed Steps:**
+  1. Create a `frontend/` subdirectory in the project root.
+  2. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
+  3. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json` to run `npx @biomejs/biome check src/`.
+  4. Install `shadcn/ui` tooling and Tailwind custom presets.
+  5. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
+* **Verification:** Run `bun run lint`, `bun run format`, `bun run build`, and `bun run test` to verify everything is green.
+
+---
+
+## FE-B (Frontend B) Tickets
+
+### S0-FE-02: shadcn/ui Components + Layout
+* **Priority:** P1
+* **Assignee:** FE-B
+* **Story Points:** 3
+* **Dependencies:** S0-FE-01
+* **Description:** Set up core UI shell structure and shadcn primitives.
+* **Detailed Steps:**
+  1. Add shadcn components: Button, Input, Card, Dialog, DropdownMenu, Avatar, Badge, Switch, Toast, Tooltip.
+  2. Create a global layout file `src/app/layout.tsx` containing:
+     - Navigation sidebar (responsive)
+     - Header area (user profile dropdown, theme switcher, notification icon placeholder)
+     - Main content container (glassmorphic styling, responsive layout)
+  3. Create routing page files for `/login`, `/register`, `/feed`, and `/profile/[id]`.
+* **Verification:** Start the dev server (`bun run dev`) and visually check that the layout and components render correctly on port 3000.

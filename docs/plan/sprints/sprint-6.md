@@ -2,9 +2,11 @@
 
 **Outcome:** All legacy code structures are removed. Slices are fully integrated in `bootstrap.go`. Full automated test coverage verifies the codebase, including a specific automated test suite executing all requirements mapped from `audit.md`. Production Docker structures are deployed and verified.
 
+> **Dependency chain warning:** Sprint 6 assumes Phase 5 migrations (Sprints 2, 3, 5) are fully complete. Cleanup tickets S6-BE-01..03 delete old layers (`domain/`, `app/`, `infra/`) — if migrations are incomplete, `bootstrap.go` still imports old packages and the build breaks. Do not start Sprint 6 until all vertical slices exist and compile independently.
+
 ---
 
-## Backend Tickets
+## BE-A (Backend A) Tickets
 
 ### S6-BE-01: Clean Legacy Slices: Domain
 * **Priority:** P1
@@ -28,6 +30,8 @@
 
 ---
 
+## BE-B (Backend B) Tickets
+
 ### S6-BE-03: Clean Legacy Slices: Infra
 * **Priority:** P1
 * **Assignee:** BE-B
@@ -38,6 +42,8 @@
 * **Verification:** Compilation check `go build ./...`.
 
 ---
+
+## Joint BE-A & BE-B Tickets
 
 ### S6-BE-04: Bootstrap Wiring
 * **Priority:** P0
@@ -52,9 +58,11 @@
 
 ---
 
+## SD-QA (System Design/QA) Tickets
+
 ### S6-BE-05: Full Integration Test Suite
 * **Priority:** P1
-* **Assignee:** BE-A + BE-B
+* **Assignee:** SD-QA
 * **Story Points:** 5
 * **Dependencies:** S6-BE-04
 * **Description:** Write global integration tests targeting workflows spanning across multiple slices.
@@ -66,7 +74,7 @@
 
 ### S6-BE-06: Performance Benchmarks
 * **Priority:** P2
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Profile critical pathways (Home feed, logins, messaging).
 * **Detailed Steps:**
@@ -77,7 +85,7 @@
 
 ### S6-BE-07: Vertical Slice Boundary Checks
 * **Priority:** P2
-* **Assignee:** BE-B
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Description:** Automate analysis verifying slice isolation rules (e.g. no direct imports between feature stores/transports).
 * **Detailed Steps:**
@@ -88,7 +96,7 @@
 
 ### S6-BE-08: Audit.md Automation Test Suite (Gap Fix)
 * **Priority:** P1
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 4
 * **Dependencies:** S6-BE-05
 * **Description:** Implement a specific automated verification script/runner that executes scenarios mapping directly to the questions checklist in `docs/requirements/audit.md`.
@@ -104,11 +112,9 @@
 
 ---
 
-## Frontend Tickets
-
 ### S6-FE-01: Full E2E Test Suite
 * **Priority:** P0
-* **Assignee:** FE-A + FE-B
+* **Assignee:** SD-QA
 * **Story Points:** 8
 * **Description:** Implement Playwright automated test scripts checking standard user workflows.
 * **Detailed Steps:**
@@ -117,31 +123,9 @@
 
 ---
 
-### S6-FE-02: Responsive Design Check
-* **Priority:** P1
-* **Assignee:** FE-A
-* **Story Points:** 3
-* **Description:** Audit layouts across different viewports.
-* **Detailed Steps:**
-  1. Inspect responsiveness across mobile, tablet, and desktop views.
-* **Verification:** Visually confirm correct scaling.
-
----
-
-### S6-FE-03: Components Error Boundaries & Loading States
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Description:** Build fallback components and loading skeletons for async cards.
-* **Detailed Steps:**
-  1. Integrate React Error Boundaries. Render card loading skeletons.
-* **Verification:** Ensure page does not crash when backend APIs return server errors.
-
----
-
 ### S6-FE-04: Accessibility (a11y) Audit
 * **Priority:** P2
-* **Assignee:** FE-A
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Check keyboard navigation and screen-reader mappings.
 * **Detailed Steps:**
@@ -152,7 +136,7 @@
 
 ### S6-FE-05: Frontend Performance Audits
 * **Priority:** P2
-* **Assignee:** FE-B
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Audit bundles sizes and check asset loading.
 * **Detailed Steps:**
@@ -161,20 +145,9 @@
 
 ---
 
-### S6-FE-06: Production Build Validation
-* **Priority:** P1
-* **Assignee:** FE-A + FE-B
-* **Story Points:** 5
-* **Description:** Build production bundle and execute full smoke tests.
-* **Detailed Steps:**
-  1. Run `bun run build`. Verify bundle compiles.
-* **Verification:** Production bundle builds successfully.
-
----
-
 ### S6-FE-07: E2E Audit.md Playwright Suite (Gap Fix)
 * **Priority:** P1
-* **Assignee:** FE-A
+* **Assignee:** SD-QA
 * **Story Points:** 4
 * **Dependencies:** S6-FE-01
 * **Description:** Implement Playwright browser E2E test scripts specifically mapping to the frontend verification steps listed in `docs/requirements/audit.md`.
@@ -189,22 +162,23 @@
 
 ---
 
-## DevOps Tickets
-
 ### S6-DEV-01: Production Docker Setup
 * **Priority:** P1
-* **Assignee:** BE-B
-* **Story Points:** 2
-* **Description:** Deploy final production compose settings utilizing multi-stage docker builds.
+* **Assignee:** SD-QA
+* **Story Points:** 5
+* **Description:** Rewrite production Docker setup from scratch per Phase 7 of the architecture plan. Old compose is single-service (forum on port 3001/8080) — replace with two-service design (backend:8080, frontend:3000).
 * **Detailed Steps:**
-  1. Finalize `docker-compose.yml` to bundle production backend and frontend. Connect to persistent volume arrays.
-* **Verification:** Run `docker-compose up` and confirm both services connect.
+   1. Rewrite `docker-compose.yml` with two services: backend (port 8080) and frontend (port 3000), with persistent volume for SQLite data.
+   2. Create `frontend/Dockerfile` (multi-stage Node/Bun build).
+   3. Update backend `Dockerfile` (multi-stage Go build -> minimal alpine image).
+   4. Configure environment variables per arch spec: `DATABASE_DRIVER=sqlite`, `DATABASE_DSN=/app/data/social.db?_journal_mode=WAL&_busy_timeout=5000`, `NEXT_PUBLIC_API_URL=http://backend:8080`.
+* **Verification:** Run `docker-compose up` and confirm both services connect. curl backend:8080/healthz returns 200. Frontend:3000 serves the app.
 
 ---
 
 ### S6-DEV-02: Health Check Endpoints
 * **Priority:** P2
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 1
 * **Description:** Create probes reporting status.
 * **Detailed Steps:**
@@ -215,7 +189,7 @@
 
 ### S6-DEV-03: Graceful Server Shutdowns
 * **Priority:** P1
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Description:** Handle SIGTERM system signals.
 * **Detailed Steps:**
@@ -226,21 +200,62 @@
 
 ### S6-DEV-04: Twelve-Factor Configurations Mappings
 * **Priority:** P2
-* **Assignee:** BE-B
+* **Assignee:** SD-QA
 * **Story Points:** 2
-* **Description:** Restructure config parameters loading strictly from environment variables.
+* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars.
 * **Detailed Steps:**
-  1. Feed parameters via docker config environment variables files.
-* **Verification:** Configuration loads parameters correctly.
+   1. Update `internal/config/config.go` to load from env vars: `DATABASE_DRIVER`, `DATABASE_DSN`, `SESSION_SECRET`, `PORT`, `CORS_ORIGIN`, `REDIS_URL` (optional), `RABBITMQ_URL` (optional).
+   2. Remove legacy env var names (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT`).
+   3. Update `docker-compose.yml` to pass new env var names (see S6-DEV-01).
+* **Verification:** Configuration loads parameters correctly from env vars. Old env names produce errors.
 
 ---
 
 ### S6-DEV-05: Docker Smoke Verification Script
 * **Priority:** P1
-* **Assignee:** BE-B + FE-A
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S6-DEV-01
 * **Description:** Automate startup checks verifying container statuses.
 * **Detailed Steps:**
   1. Script that brings up docker containers, checks that `docker ps` returns active states, and runs curl queries.
 * **Verification:** Automated verification script passes.
+
+---
+
+## FE-A (Frontend A) Tickets
+
+### S6-FE-02: Responsive Design Check
+* **Priority:** P1
+* **Assignee:** FE-A
+* **Story Points:** 3
+* **Description:** Audit layouts across different viewports.
+* **Detailed Steps:**
+  1. Inspect responsiveness across mobile, tablet, and desktop views.
+* **Verification:** Visually confirm correct scaling.
+
+---
+
+## FE-B (Frontend B) Tickets
+
+### S6-FE-03: Components Error Boundaries & Loading States
+* **Priority:** P1
+* **Assignee:** FE-B
+* **Story Points:** 3
+* **Description:** Build fallback components and loading skeletons for async cards.
+* **Detailed Steps:**
+  1. Integrate React Error Boundaries. Render card loading skeletons.
+* **Verification:** Ensure page does not crash when backend APIs return server errors.
+
+---
+
+## Joint FE-A & FE-B Tickets
+
+### S6-FE-06: Production Build Validation
+* **Priority:** P1
+* **Assignee:** FE-A + FE-B
+* **Story Points:** 5
+* **Description:** Build production bundle and execute full smoke tests.
+* **Detailed Steps:**
+  1. Run `bun run build`. Verify bundle compiles.
+* **Verification:** Production bundle builds successfully.

@@ -2,9 +2,11 @@
 
 **Outcome:** Social relationships (follow requests, accepts, lists), commenting capability with media validation, and the event-driven notification dispatch pipeline work end-to-end.
 
+> **Migration note:** New slices use `/api/` prefix. Old code uses `/api/v1/`. During Strangler Fig migration, both must coexist. Register new routes alongside old ones — old code stays active until Sprint 6 cleanup. Feature-flag the new routes behind a config toggle if needed. Old notification types (reply, mention, like, dislike) are replaced entirely by new types (follow_request, follow_accept, group_invite, group_join_request, event_created). Existing notification data with old types is kept for history but not migrated to new types.
+
 ---
 
-## Backend Track — Follow (`internal/follow/`)
+## BE-A (Backend A) Tickets
 
 ### S3-BE-01: Follow: Entities & Repository Interface
 * **Priority:** P0
@@ -146,29 +148,16 @@
 
 ---
 
-### S3-BE-12: Follow: Event Publishing Verification
-* **Priority:** P1
-* **Assignee:** BE-A
-* **Story Points:** 2
-* **Dependencies:** S3-BE-03..06
-* **Description:** Verify follow events are published onto the event bus correctly.
-* **Detailed Steps:**
-  1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.
-  2. Trigger commands and assert listeners receive expected structures.
-* **Verification:** Tests pass without event drops.
-
----
-
-## Backend Track — Comment & Notification
+## BE-B (Backend B) Tickets
 
 ### S3-BE-13: Comment: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 1
-* **Description:** Setup Domain model for post comments.
+* **Description:** Setup Domain model for post comments. **Note:** Old code has `DeleteComment`, `UpdateComment`, `GetCommentByID` — these are intentionally dropped in the vertical slice. Only create and list are needed per the target architecture. Comment routes change from old RPC style (`/comments/create`) to RESTful (`POST /api/posts/:id/comments`) — breaking API change, update FE accordingly.
 * **Detailed Steps:**
-  1. Create `internal/comment/comment.go`.
-  2. Define `Comment` entity (ID, TopicID, AuthorID, Content, ImagePath, CreatedAt) and `Repository` interface.
+   1. Create `internal/comment/comment.go`.
+   2. Define `Comment` entity (ID, TopicID, AuthorID, Content, ImagePath, CreatedAt) and `Repository` interface (Create, GetByTopicID).
 * **Verification:** Verify package compilation.
 
 ---
@@ -221,18 +210,6 @@
   1. Create `internal/comment/transport/http.go`.
   2. Route `POST /api/posts/:id/comments`, `GET /api/posts/:id/comments`.
 * **Verification:** Integration tests testing json payload returns.
-
----
-
-### S3-BE-18: Comment Slice: Contract Tests
-* **Priority:** P1
-* **Assignee:** BE-B
-* **Story Points:** 2
-* **Dependencies:** S3-BE-17
-* **Description:** Ensure comments vertical slice compatibility with old domain.
-* **Detailed Steps:**
-  1. Create `internal/comment/store/sqlite_migration_test.go`.
-* **Verification:** Assert matching outputs.
 
 ---
 
@@ -304,15 +281,64 @@
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S3-BE-21..23
-* **Description:** Bind HTTP routes.
+* **Description:** Bind HTTP routes. Add unread count endpoint for frontend badge display.
 * **Detailed Steps:**
-  1. Create `internal/notification/transport/http.go`.
-  2. Route `GET /api/notifications`, `POST /api/notifications/:id/read`.
+   1. Create `internal/notification/transport/http.go`.
+   2. Route `GET /api/notifications`, `GET /api/notifications/unread-count` (returns count of IsRead=false for current user), `POST /api/notifications/:id/read`.
 * **Verification:** HTTP calls assert.
 
 ---
 
-## Frontend Track
+## SD-QA (System Design/QA) Tickets
+
+### S3-BE-12: Follow: Event Publishing Verification
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S3-BE-03..06
+* **Description:** Verify follow events are published onto the event bus correctly.
+* **Detailed Steps:**
+  1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.
+  2. Trigger commands and assert listeners receive expected structures.
+* **Verification:** Tests pass without event drops.
+
+---
+
+### S3-BE-18: Comment Slice: Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S3-BE-17
+* **Description:** Ensure comments vertical slice compatibility with old domain.
+* **Detailed Steps:**
+  1. Create `internal/comment/store/sqlite_migration_test.go`.
+* **Verification:** Assert matching outputs.
+
+---
+
+### S3-FE-07: E2E: Relationships Notifications Flow
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** E2E testing of relationship workflows.
+* **Detailed Steps:**
+  1. User A follows User B (private) -> B receives notification -> B accepts -> relationship established.
+* **Verification:** Running Playwright test passes.
+
+---
+
+### S3-FE-08: E2E: Posts Comments Notification Flow
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Description:** E2E testing of commenting actions.
+* **Detailed Steps:**
+  1. User A creates post -> User B comments -> verify comments listing updating.
+* **Verification:** Running Playwright test passes.
+
+---
+
+## FE-A (Frontend A) Tickets
 
 ### S3-FE-01: Follow Button with Popup
 * **Priority:** P0
@@ -349,6 +375,8 @@
 
 ---
 
+## FE-B (Frontend B) Tickets
+
 ### S3-FE-04: Comment Section Components
 * **Priority:** P0
 * **Assignee:** FE-B
@@ -378,28 +406,7 @@
 * **Story Points:** 3
 * **Description:** Establish real-time notifications loading utilizing SSE or WebSockets.
 * **Detailed Steps:**
-  1. Connect to websocket hub / realtime server channels.
-  2. Dispatch incoming event messages to update global notification badge count dynamically.
+   1. Connect to websocket hub / realtime server channels.
+   2. Dispatch incoming event messages to update global notification badge count dynamically.
+* **Note:** The BE notification transport (S3-BE-24) provides REST endpoints only — no WS transport for notifications per architecture. This FE ticket must poll `GET /api/notifications/unread-count` periodically OR the BE must add a notification WS channel. Resolve approach during sprint planning: either (a) add a notification-specific WS channel in core/realtime/, or (b) use polling with the unread-count endpoint, or (c) piggyback on the existing chat WS connection.
 * **Verification:** Trigger mock WebSocket messages and check panel response.
-
----
-
-### S3-FE-07: E2E: Relationships Notifications Flow
-* **Priority:** P0
-* **Assignee:** FE-A + FE-B
-* **Story Points:** 3
-* **Description:** E2E testing of relationship workflows.
-* **Detailed Steps:**
-  1. User A follows User B (private) -> B receives notification -> B accepts -> relationship established.
-* **Verification:** Running Playwright test passes.
-
----
-
-### S3-FE-08: E2E: Posts Comments Notification Flow
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 2
-* **Description:** E2E testing of commenting actions.
-* **Detailed Steps:**
-  1. User A creates post -> User B comments -> verify comments listing updating.
-* **Verification:** Running Playwright test passes.

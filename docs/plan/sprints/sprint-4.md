@@ -4,7 +4,7 @@
 
 ---
 
-## Backend Track — Group (`internal/group/`)
+## BE-A (Backend A) Tickets
 
 ### S4-BE-01: Group: Entities & Repository Interface
 * **Priority:** P0
@@ -169,11 +169,21 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-03..13
-* **Description:** Bind HTTP routes.
+* **Description:** Bind HTTP routes. Every command and query must have at least one route.
 * **Detailed Steps:**
-  1. Create `internal/group/transport/http.go`.
-  2. Route `POST /api/groups`, `GET /api/groups`, `POST /api/groups/:id/invite`, `POST /api/groups/:id/join`.
-* **Verification:** Mock requests integration tests.
+   1. Create `internal/group/transport/http.go`.
+   2. Route:
+      - `POST /api/groups` — create_group (S4-BE-03)
+      - `GET /api/groups` — list_groups (S4-BE-10)
+      - `GET /api/groups/:id` — get_group (S4-BE-11)
+      - `GET /api/groups/:id/feed` — get_group_feed (S4-BE-12)
+      - `GET /api/groups/:id/chat` — get_group_chat (S4-BE-13)
+      - `POST /api/groups/:id/invite` — invite_member (S4-BE-04)
+      - `POST /api/groups/:id/invite/respond` — respond_invite (S4-BE-05)
+      - `POST /api/groups/:id/join` — request_join (S4-BE-06)
+      - `POST /api/groups/:id/join/respond` — respond_join (S4-BE-07)
+      - `POST /api/groups/:id/posts` — create_group_post (S4-BE-08)
+* **Verification:** Mock requests integration tests. Every command handler has a corresponding route.
 
 ---
 
@@ -189,15 +199,15 @@
 
 ---
 
-## Backend Track — Event (`internal/event/`)
+## BE-B (Backend B) Tickets
 
 ### S4-BE-16: Event: Entities & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Establish domain structures for events and RSVP votes.
+* **Description:** Establish domain structures for events and RSVP votes. Use separate `Option` entity per the architecture spec for extensibility (e.g. adding "maybe" later).
 * **Detailed Steps:**
-  1. Create `internal/event/event.go`. Define `Event` (ID, GroupID, CreatorID, Title, Description, ScheduledTime, CreatedAt) and `EventRSVP` (EventID, UserID, Option: going/not_going, UpdatedAt).
+   1. Create `internal/event/event.go`. Define `Event` (ID, GroupID, CreatorID, Title, Description, ScheduledTime, CreatedAt), `Option` (EventID, Label string, e.g. "going", "not_going"), and `EventRSVP` (EventID, UserID, OptionID, UpdatedAt).
 * **Verification:** Build checks.
 
 ---
@@ -266,7 +276,20 @@
 
 ---
 
-## Frontend Track
+## SD-QA (System Design/QA) Tickets
+
+### S4-FE-08: E2E: Complete Groups Workspace Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** Playwright testing group cycles.
+* **Detailed Steps:**
+  1. Script: Create Group -> Join members -> Post message -> Create Event -> Vote RSVP.
+* **Verification:** Execution completes successfully in CI.
+
+---
+
+## FE-A (Frontend A) Tickets
 
 ### S4-FE-01: Groups Directory Page
 * **Priority:** P1
@@ -312,6 +335,8 @@
 
 ---
 
+## FE-B (Frontend B) Tickets
+
 ### S4-FE-05: Event Creation Dialog
 * **Priority:** P1
 * **Assignee:** FE-B
@@ -342,14 +367,3 @@
 * **Detailed Steps:**
   1. Click going/not going button updates choice immediately via websocket/REST call.
 * **Verification:** Unit tests verifying update tallies visual checks.
-
----
-
-### S4-FE-08: E2E: Complete Groups Workspace Journey
-* **Priority:** P0
-* **Assignee:** FE-A + FE-B
-* **Story Points:** 3
-* **Description:** Playwright testing group cycles.
-* **Detailed Steps:**
-  1. Script: Create Group -> Join members -> Post message -> Create Event -> Vote RSVP.
-* **Verification:** Execution completes successfully in CI.

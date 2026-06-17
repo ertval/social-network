@@ -4,16 +4,16 @@
 
 ---
 
-## Backend Tickets
+## BE-A (Backend A) Tickets
 
 ### S2-BE-01: User: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations.
+* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
 * **Detailed Steps:**
-  1. Create `internal/user/user.go`. Define the `User` struct (ID, Email, PasswordHash, FirstName, LastName, DateOfBirth, Nickname, AboutMe, AvatarPath, IsPrivate, CreatedAt).
-  2. Define the `Repository` interface specifying required CRUD queries (e.g. `Create`, `GetByID`, `GetByEmail`, `Update`, `TogglePrivacy`, `ListAll`).
+   1. Create `internal/user/user.go`. Define the `User` struct (ID, Email, PasswordHash, FirstName, LastName, DateOfBirth, Nickname, AboutMe, AvatarPath, IsPrivate, CreatedAt). **Explicitly drop `Age` field** — replaced by `DateOfBirth` for age calculation at runtime.
+   2. Define the `Repository` interface specifying required CRUD queries (e.g. `Create`, `GetByID`, `GetByEmail`, `Update`, `TogglePrivacy`, `ListAll`).
 * **Verification:** Compile check `go build ./internal/user/...`.
 
 ---
@@ -146,24 +146,13 @@
 * **Dependencies:** S2-BE-03..10
 * **Description:** Bind all user commands and queries to HTTP handler endpoints.
 * **Detailed Steps:**
-  1. Create `internal/user/transport/http.go`.
-  2. Wire up `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/users/:id/profile`, `PUT /api/profile`, `POST /api/profile/privacy`.
-* **Verification:** Integration tests verifying status codes and JSON response outputs over mock HTTP requests.
+   1. Create `internal/user/transport/http.go`.
+   2. Wire up `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/users/:id/profile`, `GET /api/users/:id/activity` (maps to S2-BE-09 get_activity), `GET /api/users` (maps to S2-BE-10 list_users), `PUT /api/profile`, `POST /api/profile/privacy`.
+* **Verification:** Integration tests verifying status codes and JSON response outputs over mock HTTP requests. Every command and query must have at least one route.
 
 ---
 
-### S2-BE-12: User Slice: Migration Verification Contract Tests
-* **Priority:** P1
-* **Assignee:** BE-A
-* **Story Points:** 3
-* **Dependencies:** S2-BE-11
-* **Description:** Verify the new vertical slice matches the exact behavior of the old monolithic repository.
-* **Detailed Steps:**
-  1. Create `internal/user/store/sqlite_migration_test.go`.
-  2. Execute queries on both the old user repository implementation and the new vertical slice store, asserting identical data mapping.
-* **Verification:** Contract tests pass with 100% data compatibility.
-
----
+## BE-B (Backend B) Tickets
 
 ### S2-BE-13: Topic: Entity & Repository Interface
 * **Priority:** P0
@@ -281,15 +270,30 @@
 * **Dependencies:** S2-BE-15..20
 * **Description:** Setup HTTP routing handlers for posts and votes.
 * **Detailed Steps:**
-  1. Create `internal/topic/transport/http.go`.
-  2. Wire up `POST /api/posts`, `GET /api/feed`, `GET /api/posts/:id`, `POST /api/posts/:id/vote`.
-* **Verification:** HTTP mock integration tests verifying correct endpoint codes.
+   1. Create `internal/topic/transport/http.go`.
+   2. Wire up `POST /api/posts`, `GET /api/feed`, `GET /api/posts/:id`, `GET /api/users/:id/posts` (maps to S2-BE-18 get_user_topics), `GET /api/posts/:id/votes` (maps to S2-BE-20 get_votes), `POST /api/posts/:id/vote`.
+* **Verification:** HTTP mock integration tests verifying correct endpoint codes. Every command and query must have at least one route.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S2-BE-12: User Slice: Migration Verification Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S2-BE-11
+* **Description:** Verify the new vertical slice matches the exact behavior of the old monolithic repository.
+* **Detailed Steps:**
+  1. Create `internal/user/store/sqlite_migration_test.go`.
+  2. Execute queries on both the old user repository implementation and the new vertical slice store, asserting identical data mapping.
+* **Verification:** Contract tests pass with 100% data compatibility.
 
 ---
 
 ### S2-BE-22: Topic Slice: Migration Verification Contract Tests
 * **Priority:** P1
-* **Assignee:** BE-B
+* **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S2-BE-21
 * **Description:** Verify new slice matching queries of the old database interface.
@@ -299,7 +303,18 @@
 
 ---
 
-## Frontend Tickets
+### S2-FE-08: E2E: User Signup to Feed Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** Core integration Playwright test validating registration, login, and posting to feed.
+* **Detailed Steps:**
+  1. Playwright scripts: Signup user -> Log in -> Write Post -> Inspect Feed for new post.
+* **Verification:** Script executes successfully in headless CI runner.
+
+---
+
+## FE-A (Frontend A) Tickets
 
 ### S2-FE-01: Registration Form
 * **Priority:** P0
@@ -350,6 +365,8 @@
 
 ---
 
+## FE-B (Frontend B) Tickets
+
 ### S2-FE-05: Home Feed Page
 * **Priority:** P0
 * **Assignee:** FE-B
@@ -381,14 +398,3 @@
 * **Detailed Steps:**
   1. Render header (author name, timestamp), Content, Image if present, and vote counts buttons.
 * **Verification:** Test component renders correctly with varying input datasets.
-
----
-
-### S2-FE-08: E2E: User Signup to Feed Journey
-* **Priority:** P0
-* **Assignee:** FE-A + FE-B
-* **Story Points:** 3
-* **Description:** Core integration Playwright test validating registration, login, and posting to feed.
-* **Detailed Steps:**
-  1. Playwright scripts: Signup user -> Log in -> Write Post -> Inspect Feed for new post.
-* **Verification:** Script executes successfully in headless CI runner.

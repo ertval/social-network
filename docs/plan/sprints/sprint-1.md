@@ -4,7 +4,7 @@
 
 ---
 
-## Backend Tickets
+## BE-A (Backend A) Tickets
 
 ### S1-BE-01: Platform: DB Factory
 * **Priority:** P0 (Prerequisite for migrations and features)
@@ -22,6 +22,76 @@
 * **Verification:** Write unit tests in `sqlite_test.go` verifying WAL is active, timeout is set, and maximum open connections is restricted to 1.
 
 ---
+
+### S1-BE-04: Custom Migration System
+* **Priority:** P0
+* **Assignee:** BE-A
+* **Story Points:** 8
+* **Dependencies:** S1-BE-01
+* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Create ALL migration files (000001-000006) per the architecture plan. Seed migration (000007) is handled by S1-BE-11.
+* **Detailed Steps:**
+   1. Implement a migration runner in `internal/platform/database/migrations.go`.
+   2. Create a metadata database table named `schema_migrations` to track applied version IDs.
+   3. Implement parser that reads SQL scripts, breaks statements on `";"`, and executes them sequentially.
+   4. Write migration files for basic schema under `db/migrations/`:
+      - `000001_initial_schema.up.sql` (Tables: users, posts, categories, comments, votes, sessions, chats, notifications, oauth_states)
+      - `000001_initial_schema.down.sql` (Drop all tables)
+      - `000002_user_profile_fields.up.sql` (Add `date_of_birth`, `about_me`, `is_private` to users; drop `age`)
+      - `000002_user_profile_fields.down.sql` (Reverse)
+      - `000003_topic_privacy.up.sql` (Add `visibility` to topics; create `topic_allowed_users`)
+      - `000003_topic_privacy.down.sql` (Reverse)
+      - `000004_follow_system.up.sql` (Create `follows`, `follow_requests`)
+      - `000004_follow_system.down.sql` (Reverse)
+      - `000005_groups.up.sql` (Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`)
+      - `000005_groups.down.sql` (Reverse)
+      - `000006_events.up.sql` (Create `events`, `event_rsvps`)
+      - `000006_events.down.sql` (Reverse)
+* **Verification:** Write integration tests verifying that executing the migrations runner creates the correct database tables, running up twice does not error, and executing down rolls back the database cleanly. Run migrations from 000001 up to 000006 and verify all tables exist.
+
+---
+
+### S1-BE-05: Core: Session Management
+* **Priority:** P1
+* **Assignee:** BE-A
+* **Story Points:** 3
+* **Dependencies:** S1-BE-01
+* **Description:** Setup backend cookie-based session management.
+* **Detailed Steps:**
+  1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface.
+  2. Implement SQLite-backed session storage in `store/sqlite.go` matching the migration schema.
+  3. Provide creation (`Create`), lookup (`Get`), and invalidation (`Revoke`) methods.
+* **Verification:** Write tests using TDD to assert sessions write to SQLite, lookups find correct IDs, and expired session lookups return errors.
+
+---
+
+### S1-BE-07: Core: Middlewares
+* **Priority:** P1
+* **Assignee:** BE-A
+* **Story Points:** 3
+* **Dependencies:** S1-BE-05, S1-BE-03
+* **Description:** Build the generic middleware pipeline (Auth check, CORS origin validator, RateLimiter).
+* **Detailed Steps:**
+   1. **Auth Middleware:** Verifies request session cookie, queries session store, and attaches UserID into the Go request Context.
+   2. **CORS Middleware:** Performs strict header checks against configured origin domains.
+   3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE-03 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
+* **Note:** Rate limiter depends on Cache (S1-BE-03, P1). Since both are P1 in same sprint, implement Cache first or mark rate limiter as soft-blocked on Cache completion.
+* **Verification:** Write tests hitting mock HTTP endpoints through the middleware chain, confirming correct status codes (401 Unauthorized for bad sessions, 429 Too Many Requests for rate limits, etc.).
+
+---
+
+### S1-BE-10: Shared: Image Type Verification Utility
+* **Priority:** P2
+* **Assignee:** BE-A
+* **Story Points:** 1
+* **Description:** Add helper to verify image mime types using Magic Bytes headers.
+* **Detailed Steps:**
+  1. Create `internal/pkg/imgutil/detect.go`.
+  2. Write a helper function that inspects the first 512 bytes of a file reader using `http.DetectContentType` to enforce only `image/jpeg`, `image/png`, and `image/gif` are accepted.
+* **Verification:** Unit tests asserting that valid image files (JPG, PNG, GIF) return true, and PDFs or executables are rejected.
+
+---
+
+## BE-B (Backend B) Tickets
 
 ### S1-BE-02: Platform: Event Bus
 * **Priority:** P0
@@ -51,37 +121,6 @@
 
 ---
 
-### S1-BE-04: Custom Migration System
-* **Priority:** P0
-* **Assignee:** BE-A
-* **Story Points:** 5
-* **Dependencies:** S1-BE-01
-* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically.
-* **Detailed Steps:**
-  1. Implement a migration runner in `internal/platform/database/migrations.go`.
-  2. Create a metadata database table named `schema_migrations` to track applied version IDs.
-  3. Implement parser that reads SQL scripts, breaks statements on `";"`, and executes them sequentially.
-  4. Write migration files for basic schema under `db/migrations/`:
-     - `000001_initial_schema.up.sql` (Tables: users, posts, categories, comments, votes, sessions, chats, notifications)
-     - `000001_initial_schema.down.sql` (Drop all tables)
-* **Verification:** Write integration tests verifying that executing the migrations runner creates the correct database tables, running up twice does not error, and executing down rolls back the database cleanly.
-
----
-
-### S1-BE-05: Core: Session Management
-* **Priority:** P1
-* **Assignee:** BE-A
-* **Story Points:** 3
-* **Dependencies:** S1-BE-01
-* **Description:** Setup backend cookie-based session management.
-* **Detailed Steps:**
-  1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface.
-  2. Implement SQLite-backed session storage in `store/sqlite.go` matching the migration schema.
-  3. Provide creation (`Create`), lookup (`Get`), and invalidation (`Revoke`) methods.
-* **Verification:** Write tests using TDD to assert sessions write to SQLite, lookups find correct IDs, and expired session lookups return errors.
-
----
-
 ### S1-BE-06: Core: Realtime WebSocket Hub
 * **Priority:** P1
 * **Assignee:** BE-B
@@ -93,20 +132,6 @@
   3. Implement `client.go` mapping WebSocket connections. Ensure panic recovery is set up on read/write loops.
   4. Enforce read connection limit constraints and connection timeouts/deadlines.
 * **Verification:** Write mock WS clients and test broadcast delivery speeds, client disconnects, and thread safety.
-
----
-
-### S1-BE-07: Core: Middlewares
-* **Priority:** P1
-* **Assignee:** BE-A
-* **Story Points:** 3
-* **Dependencies:** S1-BE-05
-* **Description:** Build the generic middleware pipeline (Auth check, CORS origin validator, RateLimiter).
-* **Detailed Steps:**
-  1. **Auth Middleware:** Verifies request session cookie, queries session store, and attaches UserID into the Go request Context.
-  2. **CORS Middleware:** Performs strict header checks against configured origin domains.
-  3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE-03 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
-* **Verification:** Write tests hitting mock HTTP endpoints through the middleware chain, confirming correct status codes (401 Unauthorized for bad sessions, 429 Too Many Requests for rate limits, etc.).
 
 ---
 
@@ -128,30 +153,20 @@
 * **Priority:** P2
 * **Assignee:** BE-B
 * **Story Points:** 1
-* **Description:** Restructure and refactor the old oauth code packages to matches new structure.
+* **Description:** Restructure and refactor the old oauth code packages to match new structure. **Prerequisite for Sprint 5 OAuth client implementations.**
 * **Detailed Steps:**
-  1. Rename `pkg/oAuth/` to `pkg/oauth/`.
-  2. Structure subdirectories: `pkg/oauth/github/` and `pkg/oauth/google/`.
-  3. Move raw HTTP OAuth token exchange clients into `pkg/oauth/client.go`.
-* **Verification:** Ensure old auth compilation paths are updated and all projects compile.
+   1. Rename `internal/pkg/oAuth/` to `internal/pkg/oauth/`.
+   2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `internal/pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `internal/pkg/oauth/google/client.go`.
+   3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `internal/pkg/oauth/client.go`.
+* **Verification:** Ensure old auth compilation paths are updated and all projects compile. `go build ./...` passes.
 
 ---
 
-### S1-BE-10: Shared: Image Type Verification Utility
-* **Priority:** P2
-* **Assignee:** BE-A
-* **Story Points:** 1
-* **Description:** Add helper to verify image mime types using Magic Bytes headers.
-* **Detailed Steps:**
-  1. Create `internal/pkg/imgutil/detect.go`.
-  2. Write a helper function that inspects the first 512 bytes of a file reader using `http.DetectContentType` to enforce only `image/jpeg`, `image/png`, and `image/gif` are accepted.
-* **Verification:** Unit tests asserting that valid image files (JPG, PNG, GIF) return true, and PDFs or executables are rejected.
-
----
+## SD-QA (System Design/QA) Tickets
 
 ### S1-BE-11: Platform: Database Seeding (Gap Fix)
 * **Priority:** P2
-* **Assignee:** BE-A
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-04
 * **Description:** Implement database seed migrations to inject realistic test data into the database when running in development mode.
@@ -167,7 +182,21 @@
 
 ---
 
-## Frontend Tickets
+### S1-FE-04: API Mocking Service
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S1-FE-02
+* **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions.
+* **Detailed Steps:**
+  1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.
+  2. Implement mock route handlers mimicking backend response JSON payloads for login, registration, and logout commands.
+  3. Conditionalize browser boot to initialize MSW when running in mock environments.
+* **Verification:** Mock login actions in playwright tests and confirm route redirects are working.
+
+---
+
+## FE-A (Frontend A) Tickets
 
 ### S1-FE-01: Auth Pages (Login & Registration UI)
 * **Priority:** P0
@@ -195,6 +224,8 @@
 
 ---
 
+## FE-B (Frontend B) Tickets
+
 ### S1-FE-03: Nav Layout Shell
 * **Priority:** P1
 * **Assignee:** FE-B
@@ -205,17 +236,3 @@
   2. Build theme system provider (supporting Dark/Light HSL toggling).
   3. Implement responsive drawer menu for mobile breakpoints.
 * **Verification:** Check visual rendering across mobile, tablet, and desktop breakpoints.
-
----
-
-### S1-FE-04: API Mocking Service
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Dependencies:** S1-FE-02
-* **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions.
-* **Detailed Steps:**
-  1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.
-  2. Implement mock route handlers mimicking backend response JSON payloads for login, registration, and logout commands.
-  3. Conditionalize browser boot to initialize MSW when running in mock environments.
-* **Verification:** Mock login actions in playwright tests and confirm route redirects are working.

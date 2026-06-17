@@ -4,7 +4,7 @@
 
 ---
 
-## Backend Track — Chat (`internal/chat/`)
+## BE-A (Backend A) Tickets
 
 ### S5-BE-01: Chat: Entity & Repository Interface
 * **Priority:** P0
@@ -87,26 +87,16 @@
 * **Assignee:** BE-A
 * **Story Points:** 5
 * **Dependencies:** S5-BE-06
-* **Description:** Bind real-time WS chat handler messaging pathways.
+* **Description:** Migrate old WebSocket chat handlers from `internal/infra/ws/handlers/` into the new vertical slice and bind to core WebSocket hub.
 * **Detailed Steps:**
-  1. Create `internal/chat/transport/ws.go`. Connect routing events to core WebSockets.
+   1. Create `internal/chat/transport/ws.go`.
+   2. Move WS message handlers from `internal/infra/ws/handlers/` (chat_send.go, chat_history.go, etc.) into the new slice.
+   3. Connect routing events to `internal/core/realtime/` hub.
 * **Verification:** Test messaging over connections.
 
 ---
 
-### S5-BE-08: Chat Slice: Contract Tests
-* **Priority:** P1
-* **Assignee:** BE-A
-* **Story Points:** 2
-* **Dependencies:** S5-BE-07
-* **Description:** Verify chat vertical slice compatibility with old domain.
-* **Detailed Steps:**
-  1. Create `internal/chat/store/sqlite_migration_test.go`.
-* **Verification:** Assert equality of returned structures.
-
----
-
-## Backend Track — OAuth (`internal/oauth/`)
+## BE-B (Backend B) Tickets
 
 ### S5-BE-09: OAuth: Entity & Repository Interface
 * **Priority:** P0
@@ -194,9 +184,27 @@
 
 ---
 
+## Sprint 1 Dependency Note
+
+> **Prerequisite:** S1-BE-09 (OAuth package rename) must be completed before S5-BE-14/15 (OAuth client implementations). The client files at `pkg/oauth/github/client.go` and `pkg/oauth/google/client.go` assume the Sprint 1 rename from `internal/pkg/oAuth/` is done. If Sprint 1 was skipped, extend S5-BE-14/15 to include the rename.
+
+## SD-QA (System Design/QA) Tickets
+
+### S5-BE-08: Chat Slice: Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S5-BE-07
+* **Description:** Verify chat vertical slice compatibility with old domain.
+* **Detailed Steps:**
+  1. Create `internal/chat/store/sqlite_migration_test.go`.
+* **Verification:** Assert equality of returned structures.
+
+---
+
 ### S5-BE-16: OAuth Slice: Contract Tests
 * **Priority:** P1
-* **Assignee:** BE-B
+* **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S5-BE-13
 * **Description:** Ensure OAuth vertical slice compatibility with old domain.
@@ -206,7 +214,31 @@
 
 ---
 
-## Frontend Track
+### S5-FE-06: E2E: Messaging Real-Time Delivery Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S5-FE-02
+* **Description:** Full E2E Playwright test validating messaging loops.
+* **Detailed Steps:**
+  1. User A follows User B -> A messages B -> B receives in real-time.
+* **Verification:** Runs successfully in CI.
+
+---
+
+### S5-FE-07: E2E: GitHub OAuth Sign In
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S5-FE-04
+* **Description:** E2E Playwright testing OAuth mock flows.
+* **Detailed Steps:**
+  1. Launch Playwright browser -> Click GitHub login -> redirect callback success -> logged in.
+* **Verification:** Test validates successfully.
+
+---
+
+## FE-A (Frontend A) Tickets
 
 ### S5-FE-01: Chat Feed View
 * **Priority:** P0
@@ -243,6 +275,8 @@
 
 ---
 
+## FE-B (Frontend B) Tickets
+
 ### S5-FE-04: GitHub OAuth Button Integration
 * **Priority:** P1
 * **Assignee:** FE-B
@@ -263,27 +297,3 @@
 * **Detailed Steps:**
   1. Add login option. Click routes to `/api/auth/oauth/google/init`.
 * **Verification:** Test clicking routes to correct URL.
-
----
-
-### S5-FE-06: E2E: Messaging Real-Time Delivery Journey
-* **Priority:** P0
-* **Assignee:** FE-A
-* **Story Points:** 3
-* **Dependencies:** S5-FE-02
-* **Description:** Full E2E Playwright test validating messaging loops.
-* **Detailed Steps:**
-  1. User A follows User B -> A messages B -> B receives in real-time.
-* **Verification:** Runs successfully in CI.
-
----
-
-### S5-FE-07: E2E: GitHub OAuth Sign In
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Dependencies:** S5-FE-04
-* **Description:** E2E Playwright testing OAuth mock flows.
-* **Detailed Steps:**
-  1. Launch Playwright browser -> Click GitHub login -> redirect callback success -> logged in.
-* **Verification:** Test validates successfully.
