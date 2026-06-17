@@ -33,6 +33,8 @@ go.work.sum
 
 # Sqlite Database
 *.db
+*.db-shm
+*.db-wal
 
 # Certificate files
 *.pem
@@ -42,3 +44,12 @@ node_modules/
 dist/
 build/
 coverage/
+
+#AI agents
+.agents/
+.audit/
+tmp/
+.agentignore
+
+# Agent skills lock file
+skills-lock.json

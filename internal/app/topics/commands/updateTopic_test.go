@@ -86,7 +86,7 @@ func runUpdateTopicTest(tt updateTopicTestCase) func(t *testing.T) {
 		repo := &testhelpers.MockRepository{}
 		tt.setupMocks(repo)
 
-		handler := NewUpdateTopicHandler(repo)
+		handler := NewUpdateTopicHandler(repo, &mockFileStorage{})
 		got, err := handler.Handle(context.Background(), tt.request)
 
 		if !errors.Is(err, tt.wantError) {
@@ -99,7 +99,7 @@ func runUpdateTopicTest(tt updateTopicTestCase) func(t *testing.T) {
 
 func TestNewUpdateTopicHandler(t *testing.T) {
 	repo := &testhelpers.MockRepository{}
-	handler := NewUpdateTopicHandler(repo)
+	handler := NewUpdateTopicHandler(repo, &mockFileStorage{})
 
 	if handler == nil {
 		t.Fatal("expected non-nil handler")
