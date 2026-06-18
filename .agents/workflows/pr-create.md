@@ -82,29 +82,35 @@ Once the PR message is written and saved to `.git/PR_DESCRIPTION.md`, execute th
 2. **Push the Branch**:
    - Run: `rtk git push -u origin <branch-name>`
 
-3. **Fetch collaborators and create the Pull Request**:
-   - First, dynamically fetch all repo collaborators via the Gitea API (excluding the PR author):
-     ```bash
-     COLLABORATORS=$(rtk curl -s \
-       "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/collaborators" \
-       -H "Authorization: token $(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')" \
-       2>/dev/null | python3 -c "import json,sys; users=json.load(sys.stdin); print(','.join(u['login'] for u in users if u['login']!='$(rtk tea whoami 2>/dev/null | head -1)'))" 2>/dev/null)
-     ```
-   - Create the PR (note: `--reviewer` flag does NOT exist on `tea pulls create`):
-     ```bash
-     PR_OUTPUT=$(rtk tea pulls create \
-       --title "[Ticket ID]: [Brief Title]" \
-       --description "$(cat .git/PR_DESCRIPTION.md)" \
-       --base main \
-       --head [branch-name] \
-       --output simple)
-     echo "$PR_OUTPUT"
-     ```
-   - Extract the PR number and add reviewers via `tea pulls edit`:
-     ```bash
-     PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
-     rtk tea pulls edit --add-reviewers "$COLLABORATORS" "$PR_NUMBER"
-     ```
+ 3. **Build reviewer list and create the Pull Request**:
+    - Fetch all known devs from conventions, minus the PR author:
+      ```bash
+      KNOWN_DEVS="epapamic,ekaramet,dkotsi,geoikonomou,smichail"
+      PR_AUTHOR=$(rtk tea whoami 2>/dev/null | head -1)
+      # Remove PR author from the list (if present)
+      REVIEWERS=$(echo "$KNOWN_DEVS" | python3 -c "import sys; author='$PR_AUTHOR'; devs=sys.stdin.read().strip().split(','); print(','.join(d for d in devs if d != author))" 2>/dev/null)
+      # Also fetch collaborators from API and merge (to catch any devs not in the static list)
+      API_COLLABS=$(rtk curl -s \
+        "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/collaborators" \
+        -H "Authorization: token $(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')" \
+        2>/dev/null | python3 -c "import json,sys; author='$PR_AUTHOR'; users=json.load(sys.stdin); print(','.join(u['login'] for u in users if u['login']!=author))" 2>/dev/null)
+      ALL_REVIEWERS=$(echo "$REVIEWERS,$API_COLLABS" | python3 -c "import sys; parts=sys.stdin.read().strip().split(','); print(','.join(dict.fromkeys(d for d in parts if d)))" 2>/dev/null)
+      ```
+    - Create the PR (note: `--reviewer` flag does NOT exist on `tea pulls create`):
+      ```bash
+      PR_OUTPUT=$(rtk tea pulls create \
+        --title "[Ticket ID]: [Brief Title]" \
+        --description "$(cat .git/PR_DESCRIPTION.md)" \
+        --base main \
+        --head [branch-name] \
+        --output simple)
+      echo "$PR_OUTPUT"
+      ```
+    - Extract the PR number and add all reviewers via `tea pulls edit`:
+      ```bash
+      PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
+      rtk tea pulls edit --add-reviewers "$ALL_REVIEWERS" "$PR_NUMBER"
+      ```
     - Print the generated PR URL and details to the user.
     - Clean up the temporary description file: `rm .git/PR_DESCRIPTION.md`.
 
