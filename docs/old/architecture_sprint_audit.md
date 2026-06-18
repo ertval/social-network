@@ -1,6 +1,6 @@
 # Architecture & Sprint Implementation Audit Report
 
-This report documents the results of a comprehensive audit comparing the architectural specification files in `docs/plan/architecture/` with the implementation sprint files in `docs/plan/sprints/`. It identifies critical sync discrepancies, functional gaps, and ordering conflicts, proposing specific resolutions and a linear progressive disclosure chain for implementation.
+This report documents the results of a comprehensive audit comparing the architectural specification files in `docs/architecture/` with the implementation sprint files in `docs/sprints/`. It identifies critical sync discrepancies, functional gaps, and ordering conflicts, proposing specific resolutions and a linear progressive disclosure chain for implementation.
 
 **Status:** **RESOLVED** — All identified gaps and discrepancies have been fixed in the architecture and sprint plan files according to industry and Go design best practices.
 
@@ -74,24 +74,24 @@ graph TD
 * Read [.agents/rules/conventions.md](file:///home/ertval/code/zone-modules/social-network/.agents/rules/conventions.md) to align on vertical slice boundaries, Go packages rules, and unit testing guidelines.
 
 ### Stage 2: Methodology & Strangler Fig Strategy
-* Read [general-instructions.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/general-instructions.md) to understand the TDD workflow (Red-Green-Refactor) and the Strangler Fig transition steps (how old and new packages coexist).
+* Read [general-instructions.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/general-instructions.md) to understand the TDD workflow (Red-Green-Refactor) and the Strangler Fig transition steps (how old and new packages coexist).
 
 ### Stage 3: Architecture Definition
-* Read [architecture.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/architecture.md) to visualize the directory layout of vertical slices and how they decouple from platform database/cache/eventbus layers.
+* Read [architecture.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/architecture.md) to visualize the directory layout of vertical slices and how they decouple from platform database/cache/eventbus layers.
 
 ### Stage 4: System Design and DDL Specs
-* Read [sds.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/sds.md) to check exact table DDL schemas, magic byte image validation, real-time message payloads, and middleware implementations.
+* Read [sds.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/sds.md) to check exact table DDL schemas, magic byte image validation, real-time message payloads, and middleware implementations.
 
 ### Stage 5: Execution Roadmaps
-* Read [target-architecture-with-phases.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/target-architecture-with-phases.md) to understand the chronological migration phases.
-* Open [ticket-tracker.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/ticket-tracker.md) to check the general ticket checklist.
+* Read [target-architecture-with-phases.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/target-architecture-with-phases.md) to understand the chronological migration phases.
+* Open [ticket-tracker.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/ticket-tracker.md) to check the general ticket checklist.
 
 ### Stage 6: Sprint Implementation Slices
 * Move sequentially through the sprint files:
-  1. [sprint-0.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-0.md) (Scaffolding & Bug Fixes)
-  2. [sprint-1.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-1.md) (Platform & Infrastructure)
-  3. [sprint-2.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-2.md) (User & Topic CQRS)
-  4. [sprint-3.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-3.md) (Follow, Comment & Notification)
-  5. [sprint-4.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-4.md) (Group & Event Slices)
-  6. [sprint-5.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-5.md) (Chat & OAuth Integration)
-  7. [sprint-6.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-6.md) (Legacy Deletions & Final Bootstrap Muxing)
+  1. [sprint-0.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-0.md) (Scaffolding & Bug Fixes)
+  2. [sprint-1.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-1.md) (Platform & Infrastructure)
+  3. [sprint-2.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-2.md) (User & Topic CQRS)
+  4. [sprint-3.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-3.md) (Follow, Comment & Notification)
+  5. [sprint-4.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-4.md) (Group & Event Slices)
+  6. [sprint-5.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-5.md) (Chat & OAuth Integration)
+  7. [sprint-6.md](file:///home/ertval/code/zone-modules/social-network/docs/sprints/sprint-6.md) (Legacy Deletions & Final Bootstrap Muxing)

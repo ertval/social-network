@@ -1265,14 +1265,14 @@
     "semantic_hash": "e2cb4cf24aabda4856a6c9565731da20"
   },
   "AGENTS.md": {
-    "mtime": 1781797401.3552282,
-    "ast_hash": "a1f9d761984b58a6dd18f7ddac32007a",
+    "mtime": 1781797858.7673175,
+    "ast_hash": "c7b7dde8978ac7cd30d8ddd1a9747537",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1781791253.8184156,
-    "ast_hash": "94dd32248e8ded939369ae8b40a47b4c",
-    "semantic_hash": "94dd32248e8ded939369ae8b40a47b4c"
+    "mtime": 1781799830.0101824,
+    "ast_hash": "5ee1eace330f8faec6992c755cc1ebcf",
+    "semantic_hash": ""
   },
   "docker-compose.dev.yml": {
     "mtime": 1781404830.5640512,
@@ -1345,29 +1345,9 @@
     "semantic_hash": "d2bef72cee8b8f31c5bc42dc947d4bf0"
   },
   "docs/old/vertical_slices_design.md": {
-    "mtime": 1781791253.8264174,
-    "ast_hash": "be6264ee0d3c43a3539102c933dae509",
-    "semantic_hash": "be6264ee0d3c43a3539102c933dae509"
-  },
-  "docs/plan/architecture/architecture.md": {
-    "mtime": 1781794800.418965,
-    "ast_hash": "3b90a9d70a555f794f2921ed8f82ae30",
+    "mtime": 1781798393.4902132,
+    "ast_hash": "f4b4073b8d4f5d1ed5000d2453eb5978",
     "semantic_hash": ""
-  },
-  "docs/plan/architecture/sds.md": {
-    "mtime": 1781796359.7954304,
-    "ast_hash": "93ce8eb40e42bc440cdd53f4f3927e43",
-    "semantic_hash": ""
-  },
-  "docs/plan/architecture/target-architecture-with-phases.md": {
-    "mtime": 1781793598.5786734,
-    "ast_hash": "49ad35706cfbe98c770b6b246bb31329",
-    "semantic_hash": ""
-  },
-  "docs/plan/unified-db/unified-db-plan.md": {
-    "mtime": 1781791253.8344193,
-    "ast_hash": "b5b52f8934a04a701968bcb7f7845b99",
-    "semantic_hash": "b5b52f8934a04a701968bcb7f7845b99"
   },
   "docs/refactor/refactor_http_handler_packages.md": {
     "mtime": 1781791253.8344193,
@@ -2664,51 +2644,6 @@
     "ast_hash": "79a086317dab17c140d75f40420d9c8b",
     "semantic_hash": ""
   },
-  "docs/plan/sprints/general-instructions.md": {
-    "mtime": 1781797395.0112276,
-    "ast_hash": "bfcf5e953c4955e145e1879e75dce689",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-0.md": {
-    "mtime": 1781796981.6610167,
-    "ast_hash": "8fbf8bbd3c2ef6a1872836811107b3b4",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-1.md": {
-    "mtime": 1781796981.6610167,
-    "ast_hash": "3ce23326ba01a6452aa999e2ec367bd9",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-2.md": {
-    "mtime": 1781796981.6650083,
-    "ast_hash": "a2013ae254702857a943e4a9c7a2d274",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-3.md": {
-    "mtime": 1781796981.6650083,
-    "ast_hash": "709f66ee20516275c91227b3b6234710",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-4.md": {
-    "mtime": 1781796981.6650083,
-    "ast_hash": "db11d0b31c98367d6b143c5882b295ec",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-5.md": {
-    "mtime": 1781796981.6650083,
-    "ast_hash": "a045cb9d675a0ec0f0ede663ba8a779a",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/sprint-6.md": {
-    "mtime": 1781796981.669,
-    "ast_hash": "e0dbfc45fdf1fb2ee2f95018d27c5629",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/ticket-tracker.md": {
-    "mtime": 1781796981.669,
-    "ast_hash": "5ace9508dbf397bc4120de08b5b22fcb",
-    "semantic_hash": ""
-  },
   ".agents/skills/shadcn/assets/shadcn-small.png": {
     "mtime": 1781791253.7784064,
     "ast_hash": "72349c6b7f303e6be598a2196391291b",
@@ -2720,13 +2655,13 @@
     "semantic_hash": "cb56bf002d36bb860c3d320a23bd871a"
   },
   ".agents/scratch/organize_sprints.py": {
-    "mtime": 1781791253.710391,
-    "ast_hash": "27868e85261b96b2d2a572b610910571",
-    "semantic_hash": "27868e85261b96b2d2a572b610910571"
+    "mtime": 1781798411.6006958,
+    "ast_hash": "014c30f05b2a0702931ce1cd32a977b9",
+    "semantic_hash": ""
   },
   ".agents/rules/conventions.md": {
-    "mtime": 1781791253.7063901,
-    "ast_hash": "dff6cb694aa7f71ec0d1ec5209935cf0",
+    "mtime": 1781798387.0647411,
+    "ast_hash": "cb0584386e5c65f997226205f454266e",
     "semantic_hash": ""
   },
   ".agents/prompts/pr-review.md": {
@@ -2745,13 +2680,13 @@
     "semantic_hash": ""
   },
   ".agents/workflows/pr-create.md": {
-    "mtime": 1781797421.9722562,
-    "ast_hash": "bc236420c64a13a1c58a35eedc7d9e4c",
+    "mtime": 1781798387.7034771,
+    "ast_hash": "4c828a66c6eef68a8de2e46a153beec2",
     "semantic_hash": ""
   },
   ".agents/workflows/pr-implement.md": {
-    "mtime": 1781797428.1703227,
-    "ast_hash": "25af3fa9c0303cb36cd4ee0fb42011df",
+    "mtime": 1781798388.338183,
+    "ast_hash": "bb5d128ed09471c0faee6ed162d51007",
     "semantic_hash": ""
   },
   ".agents/prompts/pr-implement-qrspi.md": {
@@ -2760,23 +2695,88 @@
     "semantic_hash": ""
   },
   ".agents/workflows/pr-implement-qrspi.md": {
-    "mtime": 1781797438.4035137,
-    "ast_hash": "f12915aec723fc3c80e5c62a237297e9",
+    "mtime": 1781798389.01277,
+    "ast_hash": "cc282dc707119080bba534abdee2047a",
     "semantic_hash": ""
   },
   "docs/audit/VERIFICATION_REPORT.md": {
-    "mtime": 1781792567.8510773,
-    "ast_hash": "203e9cc6849dd4940939717964bfa178",
-    "semantic_hash": ""
-  },
-  "docs/plan/sprints/frontend-gap-analysis.md": {
-    "mtime": 1781795210.5780773,
-    "ast_hash": "738609dbb18e8a54db33e60caa3a6cd1",
+    "mtime": 1781798389.5635622,
+    "ast_hash": "590f30568658def3c54e59a3ffd40b9b",
     "semantic_hash": ""
   },
   "docs/old/architecture_sprint_audit.md": {
-    "mtime": 1781796477.0044096,
-    "ast_hash": "b1e63ea4b34b59774f4acb1950d9b734",
+    "mtime": 1781798391.519052,
+    "ast_hash": "669835a98cf8342b627e3086992e46bc",
+    "semantic_hash": ""
+  },
+  "docs/architecture/architecture.md": {
+    "mtime": 1781794800.418965,
+    "ast_hash": "3b90a9d70a555f794f2921ed8f82ae30",
+    "semantic_hash": ""
+  },
+  "docs/architecture/sds.md": {
+    "mtime": 1781796359.7954304,
+    "ast_hash": "93ce8eb40e42bc440cdd53f4f3927e43",
+    "semantic_hash": ""
+  },
+  "docs/architecture/target-architecture-with-phases.md": {
+    "mtime": 1781793598.5786734,
+    "ast_hash": "49ad35706cfbe98c770b6b246bb31329",
+    "semantic_hash": ""
+  },
+  "docs/old/frontend-gap-analysis.md": {
+    "mtime": 1781798392.8238788,
+    "ast_hash": "31bb72ec6377ab07ba549f4051f0901f",
+    "semantic_hash": ""
+  },
+  "docs/old/unified-db/unified-db-plan.md": {
+    "mtime": 1781791253.8344193,
+    "ast_hash": "b5b52f8934a04a701968bcb7f7845b99",
+    "semantic_hash": ""
+  },
+  "docs/sprints/general-instructions.md": {
+    "mtime": 1781798390.146268,
+    "ast_hash": "5a4a4f61e0f13af90ec78182366502e7",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-0.md": {
+    "mtime": 1781796981.6610167,
+    "ast_hash": "8fbf8bbd3c2ef6a1872836811107b3b4",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-1.md": {
+    "mtime": 1781796981.6610167,
+    "ast_hash": "3ce23326ba01a6452aa999e2ec367bd9",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-2.md": {
+    "mtime": 1781796981.6650083,
+    "ast_hash": "a2013ae254702857a943e4a9c7a2d274",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-3.md": {
+    "mtime": 1781796981.6650083,
+    "ast_hash": "709f66ee20516275c91227b3b6234710",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-4.md": {
+    "mtime": 1781796981.6650083,
+    "ast_hash": "db11d0b31c98367d6b143c5882b295ec",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-5.md": {
+    "mtime": 1781796981.6650083,
+    "ast_hash": "a045cb9d675a0ec0f0ede663ba8a779a",
+    "semantic_hash": ""
+  },
+  "docs/sprints/sprint-6.md": {
+    "mtime": 1781796981.669,
+    "ast_hash": "e0dbfc45fdf1fb2ee2f95018d27c5629",
+    "semantic_hash": ""
+  },
+  "docs/sprints/ticket-tracker.md": {
+    "mtime": 1781796981.669,
+    "ast_hash": "5ace9508dbf397bc4120de08b5b22fcb",
     "semantic_hash": ""
   }
 }

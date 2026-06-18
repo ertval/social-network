@@ -159,15 +159,15 @@ frontend/
 ## Onboarding: Frontend Developers
 
 ### Step 1: Pick a Ticket
-1. Open `docs/plan/sprints/ticket-tracker.md` — find unchecked `FE-A` or `FE-B` items.
+1. Open `docs/sprints/ticket-tracker.md` — find unchecked `FE-A` or `FE-B` items.
 2. Check dependencies: does the ticket depend on a BE ticket not yet done?
    - If BE ticket is incomplete → pick a different FE ticket or ask if API mock exists (S1-SD006).
 3. Assign yourself: update the checkbox in ticket-tracker.md with your name.
 4. Open the sprint file for detailed steps.
 
 ### Step 2: Read the Context
-- Read `docs/plan/sprints/general-instructions.md` sections F1–F6.
-- Read `docs/plan/architecture/target-architecture-with-phases.md` Phase 6.
+- Read `docs/sprints/general-instructions.md` sections F1–F6.
+- Read `docs/architecture/target-architecture-with-phases.md` Phase 6.
 - Read `docs/requirements/audit.md` for the grading checklist items your ticket covers.
 - Read the corresponding OpenAPI spec in `docs/api/<feature>.yaml` (if available).
 

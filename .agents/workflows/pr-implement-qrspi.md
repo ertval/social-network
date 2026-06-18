@@ -29,7 +29,7 @@ graph TD
 
 ### Stage 1: Questions (Alignment Subagent)
 *Goal: Identify ambiguity and raise clarifying questions before writing code or plans.*
-1. Read the ticket specifications in the corresponding sprint markdown file (e.g. `docs/plan/sprints/sprint-1.md`).
+1. Read the ticket specifications in the corresponding sprint markdown file (e.g. `docs/sprints/sprint-1.md`).
 2. Identify any underspecified requirements, configuration settings, or edge cases.
 3. Ask the user/team for clarification. Do not proceed until these requirements are cleared.
 4. Output questions and answers to `.agents/scratch/qrspi-questions.md`.
@@ -40,8 +40,8 @@ graph TD
 *Goal: Gather factual codebase context without forming premature plans or writing code.*
 1. Scan the codebase using grep/search and knowledge graph queries to locate related files.
 2. Review relevant guidelines:
-   - `docs/plan/architecture/target-architecture-with-phases.md`
-   - `docs/plan/sprints/general-instructions.md`
+   - `docs/architecture/target-architecture-with-phases.md`
+   - `docs/sprints/general-instructions.md`
    - `.agents/rules/conventions.md`
 3. Document existing models, helpers (e.g., `imgutil`, `session`), and highest database migration indexes under `db/migrations/`.
 4. Output facts to `.agents/scratch/qrspi-research.md`.

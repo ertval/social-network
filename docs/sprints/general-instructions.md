@@ -33,11 +33,11 @@ graph TD
 ```
 
 - **Stage 1: Rules and Guidelines**: Read [AGENTS.md](file://AGENTS.md) and [.agents/rules/conventions.md](file://.agents/rules/conventions.md).
-- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/plan/sprints/general-instructions.md](file://docs/plan/sprints/general-instructions.md).
-- **Stage 3: Architecture Definition**: Read [docs/plan/architecture/architecture.md](file://docs/plan/architecture/architecture.md).
-- **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md).
-- **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md).
-- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
+- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/sprints/general-instructions.md](file://docs/sprints/general-instructions.md).
+- **Stage 3: Architecture Definition**: Read [docs/architecture/architecture.md](file://docs/architecture/architecture.md).
+- **Stage 4: System Design and DDL Specs**: Read [docs/architecture/sds.md](file://docs/architecture/sds.md).
+- **Stage 5: Execution Roadmaps**: Read [docs/architecture/target-architecture-with-phases.md](file://docs/architecture/target-architecture-with-phases.md) and [docs/sprints/ticket-tracker.md](file://docs/sprints/ticket-tracker.md).
+- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/sprints/sprint-0.md), [sprint-1.md](file://docs/sprints/sprint-1.md), [sprint-2.md](file://docs/sprints/sprint-2.md), [sprint-3.md](file://docs/sprints/sprint-3.md), [sprint-4.md](file://docs/sprints/sprint-4.md), [sprint-5.md](file://docs/sprints/sprint-5.md), and [sprint-6.md](file://docs/sprints/sprint-6.md).
 
 ---
 
@@ -45,7 +45,7 @@ graph TD
 
 ### Onboarding Guide
 
-1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/plan/sprints/ticket-tracker.md`. Verify dependencies.
+1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/sprints/ticket-tracker.md`. Verify dependencies.
 2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `ekaramet/feat-user-slice`).
 3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
 4. **PR Guidelines**: Squash merge, run all validation gates (`make ci` for BE, Bun commands for FE), and draft description using the PR template.
@@ -66,7 +66,7 @@ Include the following template in the `.git/PR_DESCRIPTION.md` file when prepari
 | **Branch** | `[branch-name]` |
 
 > [!NOTE]
-> Resolves ticket: [Ticket Details](file://docs/plan/sprints/sprint-[N].md#[Ticket-Anchor])
+> Resolves ticket: [Ticket Details](file://docs/sprints/sprint-[N].md#[Ticket-Anchor])
 
 ## 🔍 Overview & Rationale
 *Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*

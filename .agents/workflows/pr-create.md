@@ -32,14 +32,14 @@ Before creating the PR, verify that local branch naming and commit history adher
 Verify that the implemented changes strictly comply with sprint tickets and core conventions.
 
 1. **Locate the Ticket Metadata**:
-   - Locate the ticket in `docs/plan/sprints/ticket-tracker.md` to confirm the sprint number and assignee group.
-   - Open the specific sprint file: `docs/plan/sprints/sprint-<number>.md` (e.g., `docs/plan/sprints/sprint-1.md`).
+   - Locate the ticket in `docs/sprints/ticket-tracker.md` to confirm the sprint number and assignee group.
+   - Open the specific sprint file: `docs/sprints/sprint-<number>.md` (e.g., `docs/sprints/sprint-1.md`).
    - Read the ticket's **Description**, **Detailed Steps**, and **Verification** sections.
 
 2. **Verify Code Implementation**:
    - Run: `rtk git diff origin/main..HEAD` (or `rtk git diff main..HEAD`) to see all changes.
    - Cross-reference the diff against the **Detailed Steps** in the sprint ticket. Ensure every step has been fully addressed.
-   - Check against `docs/plan/sprints/general-instructions.md` and `.agents/rules/conventions.md`:
+   - Check against `docs/sprints/general-instructions.md` and `.agents/rules/conventions.md`:
      - **Boundary Rules (D5)**: Feature roots, commands, queries, transport, and stores must not cross-import violating layers.
      - **Interface Strategy (D2)**: Narrow local interfaces for cross-slice behavior, duck typing.
      - **Cross-Slice Communication (D3)**: ID-only data references, async mutations via Event Bus.
@@ -83,7 +83,7 @@ Follow premium typographic best practices:
 | **Branch** | `[branch-name]` |
 
 > [!NOTE]
-> Resolves ticket: [Ticket Details](file://docs/plan/sprints/sprint-[N].md#[Ticket-Anchor])
+> Resolves ticket: [Ticket Details](file://docs/sprints/sprint-[N].md#[Ticket-Anchor])
 
 ## 🔍 Overview & Rationale
 *Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*

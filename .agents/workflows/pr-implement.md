@@ -26,13 +26,13 @@ graph TD
 ### Phase 1: Research (Fact-Gathering Subagent)
 *Goal: Gather exact context and identify dependencies. Do not make code edits or compile changes in this phase.*
 1. **Locate Ticket**:
-   - Locate the target ticket ID in `docs/plan/sprints/ticket-tracker.md` to confirm the sprint and role.
-   - Read the exact ticket specifications in the corresponding sprint markdown file (e.g., `docs/plan/sprints/sprint-1.md`).
+   - Locate the target ticket ID in `docs/sprints/ticket-tracker.md` to confirm the sprint and role.
+   - Read the exact ticket specifications in the corresponding sprint markdown file (e.g., `docs/sprints/sprint-1.md`).
 2. **Scan Codebase**:
    - Query the knowledge graph or search the codebase for related files, structs, or functions.
    - Review architectural files:
-     - `docs/plan/architecture/target-architecture-with-phases.md`
-     - `docs/plan/sprints/general-instructions.md`
+     - `docs/architecture/target-architecture-with-phases.md`
+     - `docs/sprints/general-instructions.md`
      - `.agents/rules/conventions.md`
 3. **Analyze Boundaries**:
    - Trace which slice package (`internal/<slice>`) is affected and what interfaces or dependencies are touched.

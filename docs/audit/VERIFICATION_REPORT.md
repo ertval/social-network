@@ -1,7 +1,7 @@
 # Sprint Plan Verification — Against Target Architecture
 
 Date: 2026-06-18
-Source: `docs/plan/architecture/target-architecture-with-phases.md`
+Source: `docs/architecture/target-architecture-with-phases.md`
 
 ## Summary
 

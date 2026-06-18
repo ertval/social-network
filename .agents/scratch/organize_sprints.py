@@ -2,8 +2,8 @@ import re
 import os
 import glob
 
-sprint_files = sorted(glob.glob('/home/ertval/code/zone-modules/social-network/docs/plan/sprints/sprint-*.md'))
-tracker_file = '/home/ertval/code/zone-modules/social-network/docs/plan/sprints/ticket-tracker.md'
+sprint_files = sorted(glob.glob('/home/ertval/code/zone-modules/social-network/docs/sprints/sprint-*.md'))
+tracker_file = '/home/ertval/code/zone-modules/social-network/docs/sprints/ticket-tracker.md'
 
 # 5-developer assignees mapping
 assignees_map = {
