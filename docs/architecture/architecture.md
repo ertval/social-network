@@ -191,7 +191,7 @@ Quick-reference for all tools used across the software development lifecycle.
 ### CI Pipeline (`make ci`)
 
 ```
-ci-mod → format → check-format → lint → test
+ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
 
-Sequentially: verify modules tidy → format Go → assert no diff → staticcheck + golangci-lint → tests with race + coverage.
+Sequentially: verify modules tidy → format Go → assert no diff → staticcheck + golangci-lint + govulncheck → tests with race + coverage.

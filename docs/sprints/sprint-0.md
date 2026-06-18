@@ -55,7 +55,7 @@
      - `make check-format` -> Fail if code format changes.
      - `make lint` -> Run static checks and `golangci-lint`.
      - `make test` -> Run Go unit tests with race detector: `go test -race -cover ./...`.
-     - `make ci` -> Chains: `go mod tidy`, format checking, linting, running tests.
+     - `make ci` -> Chains: `go mod tidy`, format checking, linting (staticcheck + golangci-lint + govulncheck), running tests.
      - `make db-reset` -> Helper to wipe local SQLite db files for fresh runs.
      - `make seed` -> seed database with test data
      # add also some comands to test run and dev the project, seperate front, back and both

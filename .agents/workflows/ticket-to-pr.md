@@ -1,0 +1,119 @@
+---
+name: ticket-to-pr
+description: End-to-end orchestrator: ticket → implement → review → fix (loop) → create PR.
+---
+
+This workflow takes a ticket ID from `docs/sprints/ticket-tracker.md`, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
+
+---
+
+## 🧭 Orchestration Flow
+
+```mermaid
+graph TD
+    Ticket[Input: Ticket ID] --> Read[Read sprint ticket spec]
+    Read --> Implement[Subagent: pr-implement]
+    Implement --> Review[Subagent: pr-review]
+    Review -->|Pass| CreatePR[Subagent: pr-create]
+    Review -->|Fail| Fix[Subagent: fix issues from review]
+    Fix --> Review
+```
+
+---
+
+## 🛠️ Input
+
+A ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S1-BE-05`, `S3-FE-14`).
+
+---
+
+## 🛠️ Execution Phases
+
+### Phase 0: Locate Ticket
+1. Search `docs/sprints/ticket-tracker.md` for the target ticket ID.
+2. Determine the sprint number and open the corresponding sprint file (`docs/sprints/sprint-<N>.md`).
+3. Read the ticket's Description, Detailed Steps, and Verification sections.
+
+---
+
+### Phase 1: Implement (pr-implement subagent)
+Dispatch a subagent with the command:
+
+```
+Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TICKET_ID>.
+```
+
+This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
+
+**Exit gate:** Implementation complete, branch checked out, code committed.
+
+---
+
+### Phase 2: Review (pr-review subagent)
+Dispatch a subagent with the command:
+
+```
+Follow the prompt in .agents/prompts/pr-review.md to review the current branch (<branch-name>) against ticket <TICKET_ID>.
+Run all deterministic gates (CI, lint, format, test). Perform the full 4-phase review pipeline.
+Save the report to docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md.
+```
+
+**Exit gates:**
+- `🟢 APPROVED` — proceed to Phase 4.
+- `🟡 PASS WITH RECOMMENDATIONS` — proceed to Phase 4.
+- `🔴 CHANGES REQUESTED` — proceed to Phase 3.
+
+---
+
+### Phase 3: Fix (remediation subagent)
+Dispatch a subagent with the command:
+
+```
+Read docs/reviews/PR_REVIEW_REPORT.md. Fix every Critical and Warning finding.
+Perform surgical edits only — do not touch unrelated code.
+After fixes, run the deterministic gates again (make ci / lint / test / format:check).
+Commit each fix group with conventional commit messages.
+```
+
+After the fix subagent completes, **go back to Phase 2** (re-run review).
+
+**Loop limit:** If review fails 3+ times, stop and report unresolved findings to the user.
+
+---
+
+### Phase 4: Create PR (pr-create subagent)
+Dispatch a subagent with the command:
+
+```
+Follow the workflow in .agents/workflows/pr-create.md to verify, draft, and publish the PR for branch <branch-name> matching ticket <TICKET_ID>.
+```
+
+This subagent verifies branch/convention rules, drafts the PR description to `.git/PR_DESCRIPTION.md`, pushes the branch, and publishes the PR via `tea` CLI with all repo collaborators as reviewers.
+
+---
+
+## 🔁 Review-Fix Loop Protocol
+
+| Attempt | Action |
+|---------|--------|
+| 1st review fail | Dispatch fix subagent, re-run review |
+| 2nd review fail | Dispatch fix subagent, re-run review |
+| 3rd review fail | Stop. Output the accumulated review report and ask the user for guidance. |
+
+Each fix iteration must:
+- Read only the review report to identify issues
+- Make surgical edits (scope-locked to findings)
+- Re-run deterministic gates locally
+- Commit fixes
+- Then trigger a fresh review
+
+---
+
+## 📝 Output Artifacts
+
+| Artifact | Location |
+|----------|----------|
+| Research facts | `.agents/scratch/research.md` |
+| Implementation plan | `.agents/scratch/plan.md` |
+| Review report | `docs/reviews/PR_REVIEW_REPORT.md` |
+| PR description | `.git/PR_DESCRIPTION.md` (cleaned up after PR creation) |

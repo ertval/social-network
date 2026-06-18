@@ -266,7 +266,7 @@ bun run test
 | `make ci` for backend | YES — Phase 2 Step 3 | ✅ |
 | **Frontend lint/format:check** | **PARTIAL** — says `npm run lint` and `npm run format:check` but should be `bun run` | **LOW** — commands use `npm` not `bun` |
 | **Frontend specific checks (F1-F6)** | **NO** | **HIGH** — no verification of frontend audit feature mapping, component structure, or image handling |
-| **Frontend DoD checklist** | **NO** | **HIGH** — DoD in PR template is backend-only (D5, D2, etc.) |
+| **Frontend DoD checklist** | **NO** | **HIGH** — DoD in `.github/PULL_REQUEST_TEMPLATE.md` is backend-only (D5, D2, etc.) |
 | **Manual smoke test traceability** | PARTIAL — mentions Q3 scenarios | **MEDIUM** — no mapping from FE ticket to specific smoke test scenarios |
 
 **Proposed changes to pr-create.md:**
@@ -276,7 +276,7 @@ bun run test
    - File upload supports JPG/PNG/GIF (F4)
    - Auth is cookie-based, no localStorage-only (F3)
    - Notification bell present in global nav (F2)
-3. PR template DoD: Add frontend-specific items (Biome, tsc, Vitest, FE cross-review, audit checklist coverage)
+3. `.github/PULL_REQUEST_TEMPLATE.md` DoD: Add frontend-specific items (Biome, tsc, Vitest, FE cross-review, audit checklist coverage)
 
 ### 3.2 pr-implement-qrspi.md
 
@@ -400,7 +400,7 @@ bun run test
 1. **general-instructions.md**: Add sections F1–F6 (frontend feature mapping, interaction patterns, state management, file handling, project structure, build/deploy)
 2. **general-instructions.md**: Add Onboarding section for FE devs (pick ticket → read context → branch → TDD → PR)
 3. **ALL PR workflows**: Replace `npm run` with `bun run`. Add `tsc --noEmit` and `bun run test`
-4. **pr-create.md**: Add FE-specific DoD items to PR template
+4. **pr-create.md**: Add FE-specific DoD items to `.github/PULL_REQUEST_TEMPLATE.md`
 5. **pr-implement-qrspi.md**: Add FE TDD loop + FE structural constraints
 6. **pr-implement.md**: Add FE plan/implement/validate path
 7. **pr-review.md**: Add Frontend & UI Compliance subagent

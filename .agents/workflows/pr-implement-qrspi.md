@@ -109,5 +109,5 @@ graph TD
    - Run frontend validation (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
-2. Draft a beautiful markdown PR description message using the template from `general-instructions.md` (including the Audit Checklist Coverage table).
+2. Draft a beautiful markdown PR description message using the template from `@.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
 3. Publish the PR via CLI tools (Gitea `tea` CLI).

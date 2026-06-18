@@ -243,11 +243,11 @@ make ci
 ```
 This commands runs:
 ```
-ci-mod ──> format ──> check-format ──> lint ──> test
+ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test
 ```
 *   `ci-mod`: Runs `go mod tidy` and asserts no changes.
 *   `format`: Runs `gofumpt` and `goimports`.
-*   `lint`: Evaluates code against `staticcheck` and `golangci-lint`.
+*   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
 *   `test`: Runs unit/integration tests with race checks and generates a coverage report.
 
 ### ⚛️ Frontend Validation
@@ -347,5 +347,5 @@ A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
 3. Code compiles and linting/formatting passes cleanly on both layers (`make ci` + `bun run lint`).
-4. PR follows the standard PR description template (found in `docs/sprints/general-instructions.md`).
+4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).
