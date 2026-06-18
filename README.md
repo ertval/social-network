@@ -346,5 +346,5 @@ A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
 3. Code compiles and linting/formatting passes cleanly (`make ci`).
-4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
+4. PR follows the standard PR description template (found in `.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).
