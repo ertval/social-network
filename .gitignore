@@ -63,5 +63,4 @@ skills-lock.json
 .opencode/bun.lock
 
 # graphify knowledge graph (http://github.com/safishamsi/graphify)
-graphify-out/cost.json
-# graphify-out/cache/          # uncomment to keep repo small (slows rebuild on checkout)
+graphify-out/
