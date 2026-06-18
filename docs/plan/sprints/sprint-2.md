@@ -28,7 +28,7 @@
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
+* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `internal/domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
 * **Detailed Steps:**
    1. Create `internal/user/user.go`. Define the `User` struct (ID, Email, PasswordHash, FirstName, LastName, DateOfBirth, Nickname, AboutMe, AvatarPath, IsPrivate, CreatedAt). **Explicitly drop `Age` field** — replaced by `DateOfBirth` for age calculation at runtime.
    2. Define the `Repository` interface specifying required CRUD queries (e.g. `Create`, `GetByID`, `GetByEmail`, `Update`, `TogglePrivacy`, `ListAll`).
@@ -137,11 +137,12 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-01
-* **Description:** Retrieve list of posts created by the user.
+* **Description:** Retrieve the user's activity log. This query absorbs the old `internal/domain/activity/` and `internal/app/activities/` logic. It retrieves the user's own posts, comments, votes, as well as lists of followers and following.
 * **Detailed Steps:**
   1. Create `internal/user/queries/get_activity.go`.
-  2. Query user's own posts, comments, or votes counts.
-* **Verification:** Unit tests asserting correctness of count retrievals.
+  2. Query the counts of posts, comments, and votes created by the user.
+  3. Retrieve lists of the user's followers and users they are following (in Sprint 2 this uses the `FollowChecker` stub; it will be wired to the real follow slice in Sprint 3).
+* **Verification:** Unit tests asserting correctness of count retrievals and follower/following list responses.
 
 ---
 
@@ -177,12 +178,12 @@
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Define domain entity model for posts/topics, categories, privacy scopes, and votes.
+* **Description:** Define domain entity model for posts/topics, visibility scopes, and votes. Topic absorbs the old `internal/domain/category/` and `internal/domain/vote/` domains. Category entities from the old code are merged directly into Topic as a visibility aspect or replaced by the `Visibility` enum; votes are modeled directly inside the Topic slice.
 * **Detailed Steps:**
   1. Create `internal/topic/topic.go`.
-  2. Define `Topic` entity containing: ID, AuthorID, Content, ImagePath, Visibility (public, almost_private, private), and CreatedAt.
+  2. Define `Topic` entity containing: ID, AuthorID, Content, ImagePath, Visibility (public, almost_private, private), and CreatedAt. Merge the old `Category` concept into the Topic entity or visibility layout.
   3. Define `AllowedUser` entity to map which specific users can view private posts.
-   4. Define `Vote` entity (UserID, TargetID, TargetType: post, Direction: +1/-1). **Defer `TargetType: comment` to Sprint 3** (comment slice) to avoid hidden `topic → comment` dependency (arch D6).
+  4. Define `Vote` entity (UserID, TargetID, TargetType: post, Direction: +1/-1) to absorb the old post voting logic. **Defer `TargetType: comment` to Sprint 3** (comment slice) to avoid hidden `topic → comment` dependency (arch D6).
   5. Define the `Repository` interface.
 * **Verification:** Compile check `go build ./internal/topic/...`.
 
@@ -193,7 +194,7 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-13
-* **Description:** Implement Topic `Repository` queries in SQLite.
+* **Description:** Implement Topic `Repository` queries in SQLite. Topic absorbs the old `internal/infra/storage/sqlite/topics/` and `internal/infra/storage/sqlite/categories/` storage queries.
 * **Detailed Steps:**
   1. Create `internal/topic/store/sqlite.go`.
   2. Implement storage queries using `platform/database.DB`. Write complex visibility queries checking permissions, followers, and allowed lists.
@@ -420,3 +421,18 @@
 * **Detailed Steps:**
   1. Playwright scripts: Signup user -> Log in -> Write Post -> Inspect Feed for new post.
 * **Verification:** Script executes successfully in headless CI runner.
+
+---
+
+### S2-BE-23: Platform: User & Topic Migrations (000002 & 000003)
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S1-BE-04
+* **Description:** Create the database migration files for the User and Topic vertical slices (Phases 2.4 / 5).
+* **Detailed Steps:**
+  1. Create `db/migrations/000002_user_profile_fields.up.sql` to add `date_of_birth`, `about_me`, and `is_private` to the `users` table, and drop the `age` field.
+  2. Create `db/migrations/000002_user_profile_fields.down.sql` to reverse these changes.
+  3. Create `db/migrations/000003_topic_privacy.up.sql` to add `visibility` to the `topics` table and create the `topic_allowed_users` table.
+  4. Create `db/migrations/000003_topic_privacy.down.sql` to reverse these changes.
+* **Verification:** Run `make db-reset` or execute the migration runner and verify that these migrations apply and rollback cleanly, creating the expected schema changes.

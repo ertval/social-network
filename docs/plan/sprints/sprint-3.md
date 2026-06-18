@@ -268,7 +268,8 @@
   1. Create `internal/notification/commands/consume_events.go`.
   2. Subscribe to event types: `follow.requested`, `follow.accepted`, `group.invited`, `group.join_requested`, `event.created`.
   3. When an event fires, insert a record into the notifications table for the target user.
-* **Verification:** Write event delivery test, triggering an event on the bus and inspecting database notifications update.
+  4. **Event Availability Warning:** Note that `group.invited`, `group.join_requested`, and `event.created` will not be published in the codebase until Sprint 4. The subscription registration code must be written now, and tested using synthetic/mock events to verify integration without crashing before the real events exist.
+* **Verification:** Write event delivery test, triggering an event on the bus (including mock group/event events) and inspecting database notifications update.
 
 ---
 
@@ -445,3 +446,16 @@
 * **Detailed Steps:**
   1. User A creates post -> User B comments -> verify comments listing updating.
 * **Verification:** Running Playwright test passes.
+
+---
+
+### S3-BE-26: Platform: Follow System Migrations (000004)
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S1-BE-04
+* **Description:** Create the database migration files for the Follow vertical slice (Phases 2.4 / 5).
+* **Detailed Steps:**
+  1. Create `db/migrations/000004_follow_system.up.sql` to create `follows` and `follow_requests` tables.
+  2. Create `db/migrations/000004_follow_system.down.sql` to reverse these changes.
+* **Verification:** Run `make db-reset` or execute the migration runner and verify that this migration applies and rolls back cleanly.

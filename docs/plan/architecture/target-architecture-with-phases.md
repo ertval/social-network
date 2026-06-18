@@ -462,14 +462,14 @@ internal/
 
 | # | Bug | File (current path) | Fix |
 |---|-----|---------------------|-----|
-| 1.1 | Migration delimiter | `infra/storage/sqlite/init.go` | `":"` → `";"` |
-| 1.2 | SQLite DSN missing WAL/timeout | `init.go`, `.env` | Add `_journal_mode=WAL&_busy_timeout=5000` |
-| 1.3 | OAuth `Scan()` with `ctx` arg | `infra/storage/sqlite/oauth/oauthRepo.go` | Remove `ctx` from `Scan()` params |
-| 1.4 | WebSocket `CheckOrigin` returns `true` | `infra/ws/handler.go` | Validate against configured origin |
-| 1.5 | SQL injection in ORDER BY | `sqlite/topics/topicRepo.go`, `sqlite/categories/categoryRepo.go` | Whitelist `["ASC", "DESC"]` |
-| 1.6 | Prepared stmt uses `db.Exec` | `sqlite/users/userRepo.go` | Use `stmt.ExecContext` |
-| 1.7 | WS goroutine panic recovery | `infra/ws/client.go` | Add `defer recover()` to ReadPump/WritePump |
-| 1.8 | RateLimiter ticker leak | `middleware/ratelimiter/rateLimiter.go` | Add `stop chan struct{}` |
+| 1.1 | Migration delimiter | `internal/infra/storage/sqlite/init.go` | `":"` → `";"` |
+| 1.2 | SQLite DSN missing WAL/timeout | `internal/infra/storage/sqlite/init.go`, `.env` | Add `_journal_mode=WAL&_busy_timeout=5000` |
+| 1.3 | OAuth `Scan()` with `ctx` arg | `internal/infra/storage/sqlite/oauth/oauthRepo.go` | Remove `ctx` from `Scan()` params |
+| 1.4 | WebSocket `CheckOrigin` returns `true` | `internal/infra/http/ws/handler.go` | Validate against configured origin |
+| 1.5 | SQL injection in ORDER BY | `internal/infra/storage/sqlite/topics/topicRepo.go`, `internal/infra/storage/sqlite/categories/categoryRepo.go` | Whitelist `["ASC", "DESC"]` |
+| 1.6 | Prepared stmt uses `db.Exec` | `internal/infra/storage/sqlite/users/userRepo.go` | Use `stmt.ExecContext` |
+| 1.7 | WS goroutine panic recovery | `internal/infra/ws/client.go` | Add `defer recover()` to ReadPump/WritePump |
+| 1.8 | RateLimiter ticker leak | `internal/infra/middleware/ratelimiter/rateLimiter.go` | Add `stop chan struct{}` |
 
 **Verify**: `go vet ./...` + `go test -race ./...`
 
@@ -528,11 +528,11 @@ Create numbered migration scripts:
 ### 3.1 Session (`internal/core/session/`)
 
 - `session.go` — Session entity, `Manager` interface
-- `store/sqlite.go` — SQLite session store (moved from `infra/storage/sessionstore/`)
+- `store/sqlite.go` — SQLite session store (moved from `internal/infra/storage/sessionstore/`)
 
 ### 3.2 Realtime (`internal/core/realtime/`)
 
-- `hub.go` — WebSocket hub (moved from `infra/ws/`)
+- `hub.go` — WebSocket hub (moved from `internal/infra/ws/`)
 - `client.go` — Client lifecycle with `defer recover()` (bug 1.7 applied here)
 - `router.go` — WS message routing by type
 
@@ -550,10 +550,10 @@ Create numbered migration scripts:
 
 ### 3.5 Shared Utilities
 
-- Rename `pkg/oAuth/` → `pkg/oauth/`
-- Rename `pkg/oAuth/githubclient/` → `pkg/oauth/github/`
-- Rename `pkg/oAuth/googleclient/` → `pkg/oauth/google/`
-- Flatten `pkg/oAuth/httpclient/` → `pkg/oauth/client.go`
+- Rename `internal/pkg/oAuth/` → `pkg/oauth/`
+- Rename `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/`
+- Rename `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/`
+- Flatten `internal/pkg/oAuth/httpclient/` → `pkg/oauth/client.go`
 - Create `pkg/imgutil/detect.go` — `http.DetectContentType` wrapper
 
 **Verify**: `go vet ./...` + `go test -race ./...` — everything still compiles and passes.
@@ -632,18 +632,18 @@ Create numbered migration scripts:
 
 ## Phase 5: Migrate Existing Features to Vertical Slices
 
-*Move existing code from `domain/ → app/ → infra/` into vertical slices. One feature at a time.*
+*Move existing code from `internal/domain/` → `internal/app/` → `internal/infra/` into vertical slices. One feature at a time.*
 
 ### Per-Feature Migration Steps
 
 For each feature (user, topic, comment, chat, notification, oauth):
 
 1. Create `internal/<feature>/` with D1 layout (`<feature>.go`, `commands/`, `queries/`, `transport/`, `store/`)
-2. Copy entity from `domain/<feature>/` → `<feature>/<feature>.go`
-3. Split CQRS from `app/<feature>/commands/` into individual files under `commands/` (one per use case)
-4. Split CQRS from `app/<feature>/queries/` into individual files under `queries/` (one per use case)
-5. Merge handlers from `infra/http/<feature>/` → `transport/http.go`
-6. Copy store from `infra/storage/sqlite/<feature>/` → `store/sqlite.go`
+2. Copy entity from `internal/domain/<feature>/` → `internal/<feature>/<feature>.go`
+3. Split CQRS from `internal/app/<feature>/commands/` into individual files under `commands/` (one per use case)
+4. Split CQRS from `internal/app/<feature>/queries/` into individual files under `queries/` (one per use case)
+5. Merge handlers from `internal/infra/http/<feature>/` → `transport/http.go`
+6. Copy store from `internal/infra/storage/sqlite/<feature>/` → `store/sqlite.go`
 7. Update imports
 8. `go vet ./...` + `go test -race ./...`
 9. Delete old directories
@@ -651,14 +651,14 @@ For each feature (user, topic, comment, chat, notification, oauth):
 ### Special Merge Notes
 
 **`user/` — absorbs `activity/`**
-- `domain/user/user.go` + `domain/activity/` → `user/user.go`
+- `internal/domain/user/user.go` + `internal/domain/activity/` → `internal/user/user.go`
 - Add `DateOfBirth`, `AboutMe`, `IsPrivate` fields (drop `Age`)
 - Split into: `commands/register.go`, `commands/login.go`, `commands/logout.go`, `commands/update_profile.go`, `commands/toggle_privacy.go`
 - Split into: `queries/get_profile.go`, `queries/get_activity.go`, `queries/list_users.go`
 - All handlers → `user/transport/http.go`
 
 **`topic/` — absorbs `category/` and `vote/`**
-- `domain/topic/` + `domain/category/` + `domain/vote/` → `topic/topic.go`
+- `internal/domain/topic/` + `internal/domain/category/` + `internal/domain/vote/` → `internal/topic/topic.go`
 - Add `Visibility` enum (`public`, `almost_private`, `private`), `AllowedUser` entity, `Vote` entity
 - Split into: `commands/create_topic.go`, `commands/cast_vote.go`
 - Split into: `queries/get_feed.go`, `queries/get_user_topics.go`, `queries/get_topic.go`, `queries/get_votes.go`
@@ -669,7 +669,7 @@ For each feature (user, topic, comment, chat, notification, oauth):
 - Split into: `queries/get_comments.go`
 
 **`chat/` — gets `transport/ws.go`**
-- Move WS message handlers from `infra/ws/handlers/` → `chat/transport/ws.go`
+- Move WS message handlers from `internal/infra/ws/handlers/` → `chat/transport/ws.go`
 - Split into: `commands/send_private_msg.go` (requires follow relationship via `FollowChecker` interface)
 - Split into: `queries/get_chat_history.go`, `queries/list_conversations.go`
 

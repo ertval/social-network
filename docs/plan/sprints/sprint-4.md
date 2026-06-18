@@ -40,12 +40,11 @@
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-01
-* **Description:** Implement SQLite storage mapping group structure. If `000005_groups.up.sql` does not yet contain Group table DDL, create it here (or extend the existing migration).
+* **Dependencies:** S4-BE-01, S4-BE-22
+* **Description:** Implement SQLite storage mapping group structure.
 * **Detailed Steps:**
    1. Create `internal/group/store/sqlite.go`. Implement queries checking group membership: `IsMember(ctx context.Context, groupID, userID string) (bool, error)`.
-   2. **If S1-BE-04 left `000005_groups.up.sql` as a stub:** replace with full DDL: `CREATE TABLE groups (...)`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`, `group_posts`. Provide corresponding `.down.sql`.
-* **Verification:** Integration tests checking memberships writing. Verify `000005` migration creates all Group tables.
+* **Verification:** Integration tests checking memberships writing against the tables created by the `000005` migration.
 
 ---
 
@@ -237,12 +236,11 @@
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S4-BE-16
-* **Description:** Store query mappings for events. If `000006_events.up.sql` does not yet contain Event table DDL, create it here (or extend the existing migration).
+* **Dependencies:** S4-BE-16, S4-BE-22
+* **Description:** Store query mappings for events.
 * **Detailed Steps:**
    1. Create `internal/event/store/sqlite.go`.
-   2. **If S1-BE-04 left `000006_events.up.sql` as a stub:** replace with full DDL: `CREATE TABLE events (...)`, `event_options`, `event_rsvps`. Provide corresponding `.down.sql`.
-* **Verification:** Integration tests checking storage. Verify `000006` migration creates all Event tables.
+* **Verification:** Integration tests checking storage against the tables created by the `000006` migration.
 
 ---
 
@@ -389,3 +387,18 @@
 * **Detailed Steps:**
   1. Script: Create Group -> Join members -> Post message -> Create Event -> Vote RSVP.
 * **Verification:** Execution completes successfully in CI.
+
+---
+
+### S4-BE-22: Platform: Group & Event Migrations (000005 & 000006)
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S1-BE-04
+* **Description:** Create the database migration files for the Group and Event vertical slices (Phases 2.4 / 4).
+* **Detailed Steps:**
+  1. Create `db/migrations/000005_groups.up.sql` to create tables: `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_posts`, `group_chat_messages`.
+  2. Create `db/migrations/000005_groups.down.sql` to reverse these changes.
+  3. Create `db/migrations/000006_events.up.sql` to create tables: `events`, `event_options`, `event_rsvps`.
+  4. Create `db/migrations/000006_events.down.sql` to reverse these changes.
+* **Verification:** Run `make db-reset` or execute the migration runner and verify that these migrations apply and rollback cleanly.

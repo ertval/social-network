@@ -1774,7 +1774,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "templates_templates_rendertemplate",
-      "community": 8,
+      "community": 26,
       "norm_label": "rendertemplate()"
     },
     {
@@ -2154,7 +2154,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_server_clientserver",
-      "community": 42,
+      "community": 48,
       "norm_label": "clientserver"
     },
     {
@@ -2164,7 +2164,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "server_clientserver_activitypage",
-      "community": 42,
+      "community": 48,
       "norm_label": ".activitypage()"
     },
     {
@@ -2174,7 +2174,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_responsewriter",
-      "community": 42,
+      "community": 48,
       "norm_label": "responsewriter"
     },
     {
@@ -2184,7 +2184,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_request",
-      "community": 42,
+      "community": 48,
       "norm_label": "request"
     },
     {
@@ -2694,7 +2694,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "server_backenderror",
-      "community": 130,
+      "community": 522,
       "norm_label": "backenderror"
     },
     {
@@ -2704,7 +2704,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "server_backenderror_error",
-      "community": 130,
+      "community": 522,
       "norm_label": ".error()"
     },
     {
@@ -3414,7 +3414,7 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "server_clientserver_newrequest",
-      "community": 130,
+      "community": 522,
       "norm_label": ".newrequest()"
     },
     {
@@ -3424,7 +3424,7 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_context",
-      "community": 130,
+      "community": 522,
       "norm_label": "context"
     },
     {
@@ -3434,7 +3434,7 @@
       "source_location": "L250",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_response",
-      "community": 130,
+      "community": 522,
       "norm_label": "response"
     },
     {
@@ -3444,7 +3444,7 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "server_clientserver_newrequestwithcookies",
-      "community": 130,
+      "community": 522,
       "norm_label": ".newrequestwithcookies()"
     },
     {
@@ -3454,7 +3454,7 @@
       "source_location": "L273",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_request",
-      "community": 130,
+      "community": 522,
       "norm_label": "request"
     },
     {
@@ -3514,7 +3514,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_server_clientserver",
-      "community": 85,
+      "community": 26,
       "norm_label": "clientserver"
     },
     {
@@ -3524,7 +3524,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "server_clientserver_createtopicpage",
-      "community": 85,
+      "community": 26,
       "norm_label": ".createtopicpage()"
     },
     {
@@ -3534,7 +3534,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_responsewriter",
-      "community": 85,
+      "community": 26,
       "norm_label": "responsewriter"
     },
     {
@@ -3544,7 +3544,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_request",
-      "community": 85,
+      "community": 26,
       "norm_label": "request"
     },
     {
@@ -3554,7 +3554,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "server_clientserver_createtopicpost",
-      "community": 85,
+      "community": 26,
       "norm_label": ".createtopicpost()"
     },
     {
@@ -3564,7 +3564,7 @@
       "source_location": "L255",
       "_origin": "ast",
       "id": "server_clientserver_updatetopicpost",
-      "community": 85,
+      "community": 26,
       "norm_label": ".updatetopicpost()"
     },
     {
@@ -3574,7 +3574,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "server_clientserver_deletetopicpost",
-      "community": 85,
+      "community": 26,
       "norm_label": ".deletetopicpost()"
     },
     {
@@ -3984,7 +3984,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "js_api_apierror",
-      "community": 1,
+      "community": 523,
       "norm_label": "apierror"
     },
     {
@@ -3994,7 +3994,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "js_api_apierror_constructor",
-      "community": 1,
+      "community": 523,
       "norm_label": ".constructor()"
     },
     {
@@ -4004,7 +4004,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "js_api_apierror_isunauthorized",
-      "community": 1,
+      "community": 523,
       "norm_label": ".isunauthorized()"
     },
     {
@@ -4014,7 +4014,7 @@
       "source_location": "L116",
       "_origin": "ast",
       "id": "js_api_apierror_isforbidden",
-      "community": 1,
+      "community": 523,
       "norm_label": ".isforbidden()"
     },
     {
@@ -4024,7 +4024,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "js_api_apierror_isnotfound",
-      "community": 1,
+      "community": 523,
       "norm_label": ".isnotfound()"
     },
     {
@@ -4034,7 +4034,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "js_api_apierror_istoomanyrequests",
-      "community": 1,
+      "community": 523,
       "norm_label": ".istoomanyrequests()"
     },
     {
@@ -12274,7 +12274,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "getchatusers_handler_getchatusers",
-      "community": 144,
+      "community": 13,
       "norm_label": ".getchatusers()"
     },
     {
@@ -12284,7 +12284,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "internal_infra_http_chat_getchatusers_getchatusershandler_go_responsewriter",
-      "community": 144,
+      "community": 13,
       "norm_label": "responsewriter"
     },
     {
@@ -12294,7 +12294,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "internal_infra_http_chat_getchatusers_getchatusershandler_go_request",
-      "community": 144,
+      "community": 13,
       "norm_label": "request"
     },
     {
@@ -14384,7 +14384,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginemailhandler_go_login_handler",
-      "community": 13,
+      "community": 9,
       "norm_label": "handler"
     },
     {
@@ -14394,7 +14394,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "login_handler_userloginemail",
-      "community": 13,
+      "community": 9,
       "norm_label": ".userloginemail()"
     },
     {
@@ -14404,7 +14404,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginemailhandler_go_responsewriter",
-      "community": 13,
+      "community": 9,
       "norm_label": "responsewriter"
     },
     {
@@ -14414,7 +14414,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginemailhandler_go_request",
-      "community": 13,
+      "community": 9,
       "norm_label": "request"
     },
     {
@@ -14524,7 +14524,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginusernamehandler_go_login_handler",
-      "community": 9,
+      "community": 13,
       "norm_label": "handler"
     },
     {
@@ -14534,7 +14534,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "login_handler_userloginusername",
-      "community": 9,
+      "community": 13,
       "norm_label": ".userloginusername()"
     },
     {
@@ -14544,7 +14544,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginusernamehandler_go_responsewriter",
-      "community": 9,
+      "community": 13,
       "norm_label": "responsewriter"
     },
     {
@@ -14554,7 +14554,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "internal_infra_http_user_login_loginusernamehandler_go_request",
-      "community": 9,
+      "community": 13,
       "norm_label": "request"
     },
     {
@@ -14614,7 +14614,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "logout_handler_logout",
-      "community": 13,
+      "community": 186,
       "norm_label": ".logout()"
     },
     {
@@ -14624,7 +14624,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "internal_infra_http_user_logout_logouthandler_go_responsewriter",
-      "community": 13,
+      "community": 186,
       "norm_label": "responsewriter"
     },
     {
@@ -14634,7 +14634,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "internal_infra_http_user_logout_logouthandler_go_request",
-      "community": 13,
+      "community": 186,
       "norm_label": "request"
     },
     {
@@ -15054,7 +15054,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "getvotecounts_handler_getcounts",
-      "community": 13,
+      "community": 148,
       "norm_label": ".getcounts()"
     },
     {
@@ -15064,7 +15064,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "internal_infra_http_vote_getvotecounts_getvotecountshandler_go_responsewriter",
-      "community": 13,
+      "community": 148,
       "norm_label": "responsewriter"
     },
     {
@@ -15074,7 +15074,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "internal_infra_http_vote_getvotecounts_getvotecountshandler_go_request",
-      "community": 13,
+      "community": 148,
       "norm_label": "request"
     },
     {
@@ -15174,7 +15174,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "logger_logger",
-      "community": 65,
+      "community": 517,
       "norm_label": "logger"
     },
     {
@@ -15184,7 +15184,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "logger_level",
-      "community": 65,
+      "community": 517,
       "norm_label": "level"
     },
     {
@@ -15204,7 +15204,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "writer",
-      "community": 65,
+      "community": 517,
       "norm_label": "writer"
     },
     {
@@ -15214,7 +15214,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "mutex",
-      "community": 65,
+      "community": 517,
       "norm_label": "mutex"
     },
     {
@@ -15224,7 +15224,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "logger_logger_new",
-      "community": 65,
+      "community": 517,
       "norm_label": "new()"
     },
     {
@@ -15234,7 +15234,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "logger_logger_printinfo",
-      "community": 65,
+      "community": 517,
       "norm_label": ".printinfo()"
     },
     {
@@ -15244,7 +15244,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "logger_logger_printerror",
-      "community": 65,
+      "community": 517,
       "norm_label": ".printerror()"
     },
     {
@@ -15254,7 +15254,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "logger_logger_printfatal",
-      "community": 65,
+      "community": 517,
       "norm_label": ".printfatal()"
     },
     {
@@ -15264,7 +15264,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "logger_logger_write",
-      "community": 65,
+      "community": 517,
       "norm_label": ".write()"
     },
     {
@@ -15274,7 +15274,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "logger_logger_print",
-      "community": 65,
+      "community": 517,
       "norm_label": ".print()"
     },
     {
@@ -19364,7 +19364,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "httpclient_httpclient",
-      "community": 517,
+      "community": 65,
       "norm_label": "httpclient.go"
     },
     {
@@ -19374,7 +19374,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "httpclient_client",
-      "community": 517,
+      "community": 65,
       "norm_label": "client"
     },
     {
@@ -19384,7 +19384,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "httpclient_httpclient_newclient",
-      "community": 517,
+      "community": 65,
       "norm_label": "newclient()"
     },
     {
@@ -19394,7 +19394,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "httpclient_client_post",
-      "community": 517,
+      "community": 65,
       "norm_label": ".post()"
     },
     {
@@ -19404,7 +19404,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "internal_pkg_oauth_httpclient_httpclient_go_context",
-      "community": 517,
+      "community": 65,
       "norm_label": "context"
     },
     {
@@ -19414,7 +19414,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "httpclient_client_get",
-      "community": 517,
+      "community": 65,
       "norm_label": ".get()"
     },
     {
@@ -19424,7 +19424,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "httpclient_client_postwithurlencodedparams",
-      "community": 517,
+      "community": 65,
       "norm_label": ".postwithurlencodedparams()"
     },
     {
@@ -19434,7 +19434,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "reader",
-      "community": 517,
+      "community": 65,
       "norm_label": "reader"
     },
     {
@@ -42328,14 +42328,124 @@
       "norm_label": "q2: verification gates (per sprint)"
     },
     {
-      "label": "Boundary check",
+      "label": "Q3: Manual Smoke Test Scenarios",
       "file_type": "document",
       "source_file": "docs/plan/sprints/general-instructions.md",
       "source_location": "L160",
       "_origin": "ast",
-      "id": "sprints_general_instructions_boundary_check",
+      "id": "sprints_general_instructions_q3_manual_smoke_test_scenarios",
       "community": 264,
-      "norm_label": "boundary check"
+      "norm_label": "q3: manual smoke test scenarios"
+    },
+    {
+      "label": "Q4: Contract Testing (BE \u2194 FE)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L180",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_q4_contract_testing_be_fe",
+      "community": 264,
+      "norm_label": "q4: contract testing (be \u2194 fe)"
+    },
+    {
+      "label": "Q5: Performance Regression Check",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L187",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_q5_performance_regression_check",
+      "community": 264,
+      "norm_label": "q5: performance regression check"
+    },
+    {
+      "label": "Appendix A: Best Practices Summary",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L195",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "community": 264,
+      "norm_label": "appendix a: best practices summary"
+    },
+    {
+      "label": "A1: Testing Pyramid",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L197",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a1_testing_pyramid",
+      "community": 264,
+      "norm_label": "a1: testing pyramid"
+    },
+    {
+      "label": "A2: Commit Convention",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L208",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a2_commit_convention",
+      "community": 264,
+      "norm_label": "a2: commit convention"
+    },
+    {
+      "label": "A3: Feature Toggle Pattern",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L223",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a3_feature_toggle_pattern",
+      "community": 264,
+      "norm_label": "a3: feature toggle pattern"
+    },
+    {
+      "label": "A4: Observability (Add in Sprint 1 if time)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L234",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a4_observability_add_in_sprint_1_if_time",
+      "community": 264,
+      "norm_label": "a4: observability (add in sprint 1 if time)"
+    },
+    {
+      "label": "A5: Risk Mitigation",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L240",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a5_risk_mitigation",
+      "community": 264,
+      "norm_label": "a5: risk mitigation"
+    },
+    {
+      "label": "A6: Definition of Done",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L251",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_a6_definition_of_done",
+      "community": 264,
+      "norm_label": "a6: definition of done"
+    },
+    {
+      "label": "Appendix B: Dependency Map (Visual)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L264",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_appendix_b_dependency_map_visual",
+      "community": 264,
+      "norm_label": "appendix b: dependency map (visual)"
+    },
+    {
+      "label": "Appendix C: Ticket Count Summary",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L300",
+      "_origin": "ast",
+      "id": "sprints_general_instructions_appendix_c_ticket_count_summary",
+      "community": 264,
+      "norm_label": "appendix c: ticket count summary"
     },
     {
       "label": "sprint-0.md",
@@ -42418,60 +42528,10 @@
       "norm_label": "s0-be-05: bug fixes (b1.3, b1.4, b1.6, b1.7, b1.8)"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L80",
-      "_origin": "ast",
-      "id": "sprints_sprint_0_sd_qa_system_design_qa_tickets",
-      "community": 285,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S0-BE-03: golangci-lint Config",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L82",
-      "_origin": "ast",
-      "id": "sprints_sprint_0_s0_be_03_golangci_lint_config",
-      "community": 285,
-      "norm_label": "s0-be-03: golangci-lint config"
-    },
-    {
-      "label": "S0-DEV-01: Docker Compose Development Environment",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L96",
-      "_origin": "ast",
-      "id": "sprints_sprint_0_s0_dev_01_docker_compose_development_environment",
-      "community": 285,
-      "norm_label": "s0-dev-01: docker compose development environment"
-    },
-    {
-      "label": "S0-DEV-02: Pre-commit Hooks",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L113",
-      "_origin": "ast",
-      "id": "sprints_sprint_0_s0_dev_02_pre_commit_hooks",
-      "community": 285,
-      "norm_label": "s0-dev-02: pre-commit hooks"
-    },
-    {
-      "label": "S0-DEV-03: Dev Environment Docs",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L130",
-      "_origin": "ast",
-      "id": "sprints_sprint_0_s0_dev_03_dev_environment_docs",
-      "community": 285,
-      "norm_label": "s0-dev-03: dev environment docs"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L147",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "sprints_sprint_0_fe_a_frontend_a_tickets",
       "community": 285,
@@ -42481,7 +42541,7 @@
       "label": "S0-FE-01: Next.js Scaffold + Tooling",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L149",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "sprints_sprint_0_s0_fe_01_next_js_scaffold_tooling",
       "community": 285,
@@ -42491,7 +42551,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L164",
+      "source_location": "L97",
       "_origin": "ast",
       "id": "sprints_sprint_0_fe_b_frontend_b_tickets",
       "community": 285,
@@ -42501,11 +42561,61 @@
       "label": "S0-FE-02: shadcn/ui Components + Layout",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L166",
+      "source_location": "L99",
       "_origin": "ast",
       "id": "sprints_sprint_0_s0_fe_02_shadcn_ui_components_layout",
       "community": 285,
       "norm_label": "s0-fe-02: shadcn/ui components + layout"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L116",
+      "_origin": "ast",
+      "id": "sprints_sprint_0_sd_qa_system_design_qa_tickets",
+      "community": 285,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S0-BE-03: golangci-lint Config",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L118",
+      "_origin": "ast",
+      "id": "sprints_sprint_0_s0_be_03_golangci_lint_config",
+      "community": 285,
+      "norm_label": "s0-be-03: golangci-lint config"
+    },
+    {
+      "label": "S0-DEV-01: Docker Compose Development Environment",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L132",
+      "_origin": "ast",
+      "id": "sprints_sprint_0_s0_dev_01_docker_compose_development_environment",
+      "community": 285,
+      "norm_label": "s0-dev-01: docker compose development environment"
+    },
+    {
+      "label": "S0-DEV-02: Pre-commit Hooks",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L149",
+      "_origin": "ast",
+      "id": "sprints_sprint_0_s0_dev_02_pre_commit_hooks",
+      "community": 285,
+      "norm_label": "s0-dev-02: pre-commit hooks"
+    },
+    {
+      "label": "S0-DEV-03: Dev Environment Docs",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L166",
+      "_origin": "ast",
+      "id": "sprints_sprint_0_s0_dev_03_dev_environment_docs",
+      "community": 285,
+      "norm_label": "s0-dev-03: dev environment docs"
     },
     {
       "label": "sprint-1.md",
@@ -42648,40 +42758,10 @@
       "norm_label": "s1-be-09: shared: refactor oauth packages"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L168",
-      "_origin": "ast",
-      "id": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
-      "community": 275,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S1-BE-11: Platform: Database Seeding (Gap Fix)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L170",
-      "_origin": "ast",
-      "id": "sprints_sprint_1_s1_be_11_platform_database_seeding_gap_fix",
-      "community": 275,
-      "norm_label": "s1-be-11: platform: database seeding (gap fix)"
-    },
-    {
-      "label": "S1-FE-04: API Mocking Service",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L188",
-      "_origin": "ast",
-      "id": "sprints_sprint_1_s1_fe_04_api_mocking_service",
-      "community": 275,
-      "norm_label": "s1-fe-04: api mocking service"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L202",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "sprints_sprint_1_fe_a_frontend_a_tickets",
       "community": 275,
@@ -42691,7 +42771,7 @@
       "label": "S1-FE-01: Auth Pages (Login & Registration UI)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L204",
+      "source_location": "L170",
       "_origin": "ast",
       "id": "sprints_sprint_1_s1_fe_01_auth_pages_login_registration_ui",
       "community": 275,
@@ -42701,7 +42781,7 @@
       "label": "S1-FE-02: API Client Wrapper",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L217",
+      "source_location": "L183",
       "_origin": "ast",
       "id": "sprints_sprint_1_s1_fe_02_api_client_wrapper",
       "community": 275,
@@ -42711,7 +42791,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L230",
+      "source_location": "L196",
       "_origin": "ast",
       "id": "sprints_sprint_1_fe_b_frontend_b_tickets",
       "community": 275,
@@ -42721,11 +42801,41 @@
       "label": "S1-FE-03: Nav Layout Shell",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L232",
+      "source_location": "L198",
       "_origin": "ast",
       "id": "sprints_sprint_1_s1_fe_03_nav_layout_shell",
       "community": 275,
       "norm_label": "s1-fe-03: nav layout shell"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-1.md",
+      "source_location": "L211",
+      "_origin": "ast",
+      "id": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
+      "community": 275,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S1-BE-11: Platform: Database Seeding (Gap Fix)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-1.md",
+      "source_location": "L213",
+      "_origin": "ast",
+      "id": "sprints_sprint_1_s1_be_11_platform_database_seeding_gap_fix",
+      "community": 275,
+      "norm_label": "s1-be-11: platform: database seeding (gap fix)"
+    },
+    {
+      "label": "S1-FE-04: API Mocking Service",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-1.md",
+      "source_location": "L231",
+      "_origin": "ast",
+      "id": "sprints_sprint_1_s1_fe_04_api_mocking_service",
+      "community": 275,
+      "norm_label": "s1-fe-04: api mocking service"
     },
     {
       "label": "sprint-2.md",
@@ -42978,50 +43088,10 @@
       "norm_label": "s2-be-21: topic: http transport routing"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L299",
-      "_origin": "ast",
-      "id": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
-      "community": 106,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S2-BE-12: User Slice: Migration Verification Contract Tests",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L301",
-      "_origin": "ast",
-      "id": "sprints_sprint_2_s2_be_12_user_slice_migration_verification_contract_tests",
-      "community": 106,
-      "norm_label": "s2-be-12: user slice: migration verification contract tests"
-    },
-    {
-      "label": "S2-BE-22: Topic Slice: Migration Verification Contract Tests",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L315",
-      "_origin": "ast",
-      "id": "sprints_sprint_2_s2_be_22_topic_slice_migration_verification_contract_tests",
-      "community": 106,
-      "norm_label": "s2-be-22: topic slice: migration verification contract tests"
-    },
-    {
-      "label": "S2-FE-08: E2E: User Signup to Feed Journey",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L328",
-      "_origin": "ast",
-      "id": "sprints_sprint_2_s2_fe_08_e2e_user_signup_to_feed_journey",
-      "community": 106,
-      "norm_label": "s2-fe-08: e2e: user signup to feed journey"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L339",
+      "source_location": "L299",
       "_origin": "ast",
       "id": "sprints_sprint_2_fe_a_frontend_a_tickets",
       "community": 106,
@@ -43031,7 +43101,7 @@
       "label": "S2-FE-01: Registration Form",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L341",
+      "source_location": "L301",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_01_registration_form",
       "community": 106,
@@ -43041,7 +43111,7 @@
       "label": "S2-FE-02: Login Page",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L354",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_02_login_page",
       "community": 106,
@@ -43051,7 +43121,7 @@
       "label": "S2-FE-03: Profile Page",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L365",
+      "source_location": "L325",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_03_profile_page",
       "community": 106,
@@ -43061,7 +43131,7 @@
       "label": "S2-FE-04: Privacy Toggle with Confirmation Popup (Bonus)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L378",
+      "source_location": "L338",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_04_privacy_toggle_with_confirmation_popup_bonus",
       "community": 106,
@@ -43071,7 +43141,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L390",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "sprints_sprint_2_fe_b_frontend_b_tickets",
       "community": 106,
@@ -43081,7 +43151,7 @@
       "label": "S2-FE-05: Home Feed Page",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L392",
+      "source_location": "L352",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_05_home_feed_page",
       "community": 106,
@@ -43091,7 +43161,7 @@
       "label": "S2-FE-06: Post Creation Form",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L403",
+      "source_location": "L363",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_06_post_creation_form",
       "community": 106,
@@ -43101,11 +43171,51 @@
       "label": "S2-FE-07: Post Card Component",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L415",
+      "source_location": "L375",
       "_origin": "ast",
       "id": "sprints_sprint_2_s2_fe_07_post_card_component",
       "community": 106,
       "norm_label": "s2-fe-07: post card component"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L386",
+      "_origin": "ast",
+      "id": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
+      "community": 106,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S2-BE-12: User Slice: Migration Verification Contract Tests",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L388",
+      "_origin": "ast",
+      "id": "sprints_sprint_2_s2_be_12_user_slice_migration_verification_contract_tests",
+      "community": 106,
+      "norm_label": "s2-be-12: user slice: migration verification contract tests"
+    },
+    {
+      "label": "S2-BE-22: Topic Slice: Migration Verification Contract Tests",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L402",
+      "_origin": "ast",
+      "id": "sprints_sprint_2_s2_be_22_topic_slice_migration_verification_contract_tests",
+      "community": 106,
+      "norm_label": "s2-be-22: topic slice: migration verification contract tests"
+    },
+    {
+      "label": "S2-FE-08: E2E: User Signup to Feed Journey",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L415",
+      "_origin": "ast",
+      "id": "sprints_sprint_2_s2_fe_08_e2e_user_signup_to_feed_journey",
+      "community": 106,
+      "norm_label": "s2-fe-08: e2e: user signup to feed journey"
     },
     {
       "label": "sprint-3.md",
@@ -43388,60 +43498,10 @@
       "norm_label": "s3-be-25: notification: old schema\u2192new schema migration"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L326",
-      "_origin": "ast",
-      "id": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
-      "community": 105,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S3-BE-12: Follow: Event Publishing Verification",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L328",
-      "_origin": "ast",
-      "id": "sprints_sprint_3_s3_be_12_follow_event_publishing_verification",
-      "community": 105,
-      "norm_label": "s3-be-12: follow: event publishing verification"
-    },
-    {
-      "label": "S3-BE-18: Comment Slice: Contract Tests",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L341",
-      "_origin": "ast",
-      "id": "sprints_sprint_3_s3_be_18_comment_slice_contract_tests",
-      "community": 105,
-      "norm_label": "s3-be-18: comment slice: contract tests"
-    },
-    {
-      "label": "S3-FE-07: E2E: Relationships Notifications Flow",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L353",
-      "_origin": "ast",
-      "id": "sprints_sprint_3_s3_fe_07_e2e_relationships_notifications_flow",
-      "community": 105,
-      "norm_label": "s3-fe-07: e2e: relationships notifications flow"
-    },
-    {
-      "label": "S3-FE-08: E2E: Posts Comments Notification Flow",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L364",
-      "_origin": "ast",
-      "id": "sprints_sprint_3_s3_fe_08_e2e_posts_comments_notification_flow",
-      "community": 105,
-      "norm_label": "s3-fe-08: e2e: posts comments notification flow"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L375",
+      "source_location": "L326",
       "_origin": "ast",
       "id": "sprints_sprint_3_fe_a_frontend_a_tickets",
       "community": 105,
@@ -43451,7 +43511,7 @@
       "label": "S3-FE-01: Follow Button with Popup",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L377",
+      "source_location": "L328",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_01_follow_button_with_popup",
       "community": 105,
@@ -43461,7 +43521,7 @@
       "label": "S3-FE-02: Followers List Pages",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L390",
+      "source_location": "L341",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_02_followers_list_pages",
       "community": 105,
@@ -43471,7 +43531,7 @@
       "label": "S3-FE-03: Follow Request Notifications",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L401",
+      "source_location": "L352",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_03_follow_request_notifications",
       "community": 105,
@@ -43481,7 +43541,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L412",
+      "source_location": "L363",
       "_origin": "ast",
       "id": "sprints_sprint_3_fe_b_frontend_b_tickets",
       "community": 105,
@@ -43491,7 +43551,7 @@
       "label": "S3-FE-04: Comment Section Components",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L414",
+      "source_location": "L365",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_04_comment_section_components",
       "community": 105,
@@ -43501,7 +43561,7 @@
       "label": "S3-FE-05: Notifications Panel",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L426",
+      "source_location": "L377",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_05_notifications_panel",
       "community": 105,
@@ -43511,11 +43571,61 @@
       "label": "S3-FE-06: Notifications Live Stream",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L437",
+      "source_location": "L388",
       "_origin": "ast",
       "id": "sprints_sprint_3_s3_fe_06_notifications_live_stream",
       "community": 105,
       "norm_label": "s3-fe-06: notifications live stream"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L402",
+      "_origin": "ast",
+      "id": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
+      "community": 105,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S3-BE-12: Follow: Event Publishing Verification",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L404",
+      "_origin": "ast",
+      "id": "sprints_sprint_3_s3_be_12_follow_event_publishing_verification",
+      "community": 105,
+      "norm_label": "s3-be-12: follow: event publishing verification"
+    },
+    {
+      "label": "S3-BE-18: Comment Slice: Contract Tests",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L417",
+      "_origin": "ast",
+      "id": "sprints_sprint_3_s3_be_18_comment_slice_contract_tests",
+      "community": 105,
+      "norm_label": "s3-be-18: comment slice: contract tests"
+    },
+    {
+      "label": "S3-FE-07: E2E: Relationships Notifications Flow",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L429",
+      "_origin": "ast",
+      "id": "sprints_sprint_3_s3_fe_07_e2e_relationships_notifications_flow",
+      "community": 105,
+      "norm_label": "s3-fe-07: e2e: relationships notifications flow"
+    },
+    {
+      "label": "S3-FE-08: E2E: Posts Comments Notification Flow",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L440",
+      "_origin": "ast",
+      "id": "sprints_sprint_3_s3_fe_08_e2e_posts_comments_notification_flow",
+      "community": 105,
+      "norm_label": "s3-fe-08: e2e: posts comments notification flow"
     },
     {
       "label": "sprint-4.md",
@@ -43778,30 +43888,10 @@
       "norm_label": "s4-be-21: event: http transport routing"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L301",
-      "_origin": "ast",
-      "id": "sprints_sprint_4_sd_qa_system_design_qa_tickets",
-      "community": 129,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S4-FE-08: E2E: Complete Groups Workspace Journey",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L303",
-      "_origin": "ast",
-      "id": "sprints_sprint_4_s4_fe_08_e2e_complete_groups_workspace_journey",
-      "community": 129,
-      "norm_label": "s4-fe-08: e2e: complete groups workspace journey"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L314",
+      "source_location": "L301",
       "_origin": "ast",
       "id": "sprints_sprint_4_fe_a_frontend_a_tickets",
       "community": 129,
@@ -43811,7 +43901,7 @@
       "label": "S4-FE-01: Groups Directory Page",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L316",
+      "source_location": "L303",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_01_groups_directory_page",
       "community": 129,
@@ -43821,7 +43911,7 @@
       "label": "S4-FE-02: Group Profile Page",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L327",
+      "source_location": "L314",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_02_group_profile_page",
       "community": 129,
@@ -43831,7 +43921,7 @@
       "label": "S4-FE-03: Group Posts Feed",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L338",
+      "source_location": "L325",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_03_group_posts_feed",
       "community": 129,
@@ -43841,7 +43931,7 @@
       "label": "S4-FE-04: Group Chat Workspace",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L349",
+      "source_location": "L336",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_04_group_chat_workspace",
       "community": 129,
@@ -43851,7 +43941,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L360",
+      "source_location": "L347",
       "_origin": "ast",
       "id": "sprints_sprint_4_fe_b_frontend_b_tickets",
       "community": 129,
@@ -43861,7 +43951,7 @@
       "label": "S4-FE-05: Event Creation Dialog",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L362",
+      "source_location": "L349",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_05_event_creation_dialog",
       "community": 129,
@@ -43871,7 +43961,7 @@
       "label": "S4-FE-06: Events List Component",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L373",
+      "source_location": "L360",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_06_events_list_component",
       "community": 129,
@@ -43881,11 +43971,31 @@
       "label": "S4-FE-07: RSVP Switch Actions",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L384",
+      "source_location": "L371",
       "_origin": "ast",
       "id": "sprints_sprint_4_s4_fe_07_rsvp_switch_actions",
       "community": 129,
       "norm_label": "s4-fe-07: rsvp switch actions"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-4.md",
+      "source_location": "L382",
+      "_origin": "ast",
+      "id": "sprints_sprint_4_sd_qa_system_design_qa_tickets",
+      "community": 129,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S4-FE-08: E2E: Complete Groups Workspace Journey",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-4.md",
+      "source_location": "L384",
+      "_origin": "ast",
+      "id": "sprints_sprint_4_s4_fe_08_e2e_complete_groups_workspace_journey",
+      "community": 129,
+      "norm_label": "s4-fe-08: e2e: complete groups workspace journey"
     },
     {
       "label": "sprint-5.md",
@@ -44088,60 +44198,10 @@
       "norm_label": "sprint 1 dependency note"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L207",
-      "_origin": "ast",
-      "id": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
-      "community": 190,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S5-BE-08: Chat Slice: Contract Tests",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L209",
-      "_origin": "ast",
-      "id": "sprints_sprint_5_s5_be_08_chat_slice_contract_tests",
-      "community": 190,
-      "norm_label": "s5-be-08: chat slice: contract tests"
-    },
-    {
-      "label": "S5-BE-16: OAuth Slice: Contract Tests",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L221",
-      "_origin": "ast",
-      "id": "sprints_sprint_5_s5_be_16_oauth_slice_contract_tests",
-      "community": 190,
-      "norm_label": "s5-be-16: oauth slice: contract tests"
-    },
-    {
-      "label": "S5-FE-06: E2E: Messaging Real-Time Delivery Journey",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L233",
-      "_origin": "ast",
-      "id": "sprints_sprint_5_s5_fe_06_e2e_messaging_real_time_delivery_journey",
-      "community": 190,
-      "norm_label": "s5-fe-06: e2e: messaging real-time delivery journey"
-    },
-    {
-      "label": "S5-FE-07: E2E: GitHub OAuth Sign In",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L245",
-      "_origin": "ast",
-      "id": "sprints_sprint_5_s5_fe_07_e2e_github_oauth_sign_in",
-      "community": 190,
-      "norm_label": "s5-fe-07: e2e: github oauth sign in"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L257",
+      "source_location": "L207",
       "_origin": "ast",
       "id": "sprints_sprint_5_fe_a_frontend_a_tickets",
       "community": 190,
@@ -44151,7 +44211,7 @@
       "label": "S5-FE-01: Chat Feed View",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L259",
+      "source_location": "L209",
       "_origin": "ast",
       "id": "sprints_sprint_5_s5_fe_01_chat_feed_view",
       "community": 190,
@@ -44161,7 +44221,7 @@
       "label": "S5-FE-02: Realtime Live Sockets Hook",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L270",
+      "source_location": "L220",
       "_origin": "ast",
       "id": "sprints_sprint_5_s5_fe_02_realtime_live_sockets_hook",
       "community": 190,
@@ -44171,7 +44231,7 @@
       "label": "S5-FE-03: Chat Message Bubble Component",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L285",
+      "source_location": "L235",
       "_origin": "ast",
       "id": "sprints_sprint_5_s5_fe_03_chat_message_bubble_component",
       "community": 190,
@@ -44181,7 +44241,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L297",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "sprints_sprint_5_fe_b_frontend_b_tickets",
       "community": 190,
@@ -44191,7 +44251,7 @@
       "label": "S5-FE-04: GitHub OAuth Button Integration",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L299",
+      "source_location": "L249",
       "_origin": "ast",
       "id": "sprints_sprint_5_s5_fe_04_github_oauth_button_integration",
       "community": 190,
@@ -44201,11 +44261,61 @@
       "label": "S5-FE-05: Google OAuth Button Integration",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L310",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "sprints_sprint_5_s5_fe_05_google_oauth_button_integration",
       "community": 190,
       "norm_label": "s5-fe-05: google oauth button integration"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L272",
+      "_origin": "ast",
+      "id": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
+      "community": 190,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S5-BE-08: Chat Slice: Contract Tests",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L274",
+      "_origin": "ast",
+      "id": "sprints_sprint_5_s5_be_08_chat_slice_contract_tests",
+      "community": 190,
+      "norm_label": "s5-be-08: chat slice: contract tests"
+    },
+    {
+      "label": "S5-BE-16: OAuth Slice: Contract Tests",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L286",
+      "_origin": "ast",
+      "id": "sprints_sprint_5_s5_be_16_oauth_slice_contract_tests",
+      "community": 190,
+      "norm_label": "s5-be-16: oauth slice: contract tests"
+    },
+    {
+      "label": "S5-FE-06: E2E: Messaging Real-Time Delivery Journey",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L298",
+      "_origin": "ast",
+      "id": "sprints_sprint_5_s5_fe_06_e2e_messaging_real_time_delivery_journey",
+      "community": 190,
+      "norm_label": "s5-fe-06: e2e: messaging real-time delivery journey"
+    },
+    {
+      "label": "S5-FE-07: E2E: GitHub OAuth Sign In",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L310",
+      "_origin": "ast",
+      "id": "sprints_sprint_5_s5_fe_07_e2e_github_oauth_sign_in",
+      "community": 190,
+      "norm_label": "s5-fe-07: e2e: github oauth sign in"
     },
     {
       "label": "sprint-6.md",
@@ -44298,150 +44408,10 @@
       "norm_label": "s6-be-04: bootstrap wiring"
     },
     {
-      "label": "SD-QA (System Design/QA) Tickets",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L67",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_sd_qa_system_design_qa_tickets",
-      "community": 199,
-      "norm_label": "sd-qa (system design/qa) tickets"
-    },
-    {
-      "label": "S6-BE-05: Full Integration Test Suite",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L69",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_be_05_full_integration_test_suite",
-      "community": 199,
-      "norm_label": "s6-be-05: full integration test suite"
-    },
-    {
-      "label": "S6-BE-06: Performance Benchmarks",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L81",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_be_06_performance_benchmarks",
-      "community": 199,
-      "norm_label": "s6-be-06: performance benchmarks"
-    },
-    {
-      "label": "S6-BE-07: Vertical Slice Boundary Checks",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L92",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_be_07_vertical_slice_boundary_checks",
-      "community": 199,
-      "norm_label": "s6-be-07: vertical slice boundary checks"
-    },
-    {
-      "label": "S6-BE-08: Audit.md Automation Test Suite (Gap Fix)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L103",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_be_08_audit_md_automation_test_suite_gap_fix",
-      "community": 199,
-      "norm_label": "s6-be-08: audit.md automation test suite (gap fix)"
-    },
-    {
-      "label": "S6-FE-01: Full E2E Test Suite",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L121",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_fe_01_full_e2e_test_suite",
-      "community": 199,
-      "norm_label": "s6-fe-01: full e2e test suite"
-    },
-    {
-      "label": "S6-FE-04: Accessibility (a11y) Audit",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L132",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_fe_04_accessibility_a11y_audit",
-      "community": 199,
-      "norm_label": "s6-fe-04: accessibility (a11y) audit"
-    },
-    {
-      "label": "S6-FE-05: Frontend Performance Audits",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L143",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_fe_05_frontend_performance_audits",
-      "community": 199,
-      "norm_label": "s6-fe-05: frontend performance audits"
-    },
-    {
-      "label": "S6-FE-07: E2E Audit.md Playwright Suite (Gap Fix)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L154",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_fe_07_e2e_audit_md_playwright_suite_gap_fix",
-      "community": 199,
-      "norm_label": "s6-fe-07: e2e audit.md playwright suite (gap fix)"
-    },
-    {
-      "label": "S6-DEV-01: Production Docker Setup",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L171",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_dev_01_production_docker_setup",
-      "community": 199,
-      "norm_label": "s6-dev-01: production docker setup"
-    },
-    {
-      "label": "S6-DEV-02: Health Check Endpoints",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L185",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_dev_02_health_check_endpoints",
-      "community": 199,
-      "norm_label": "s6-dev-02: health check endpoints"
-    },
-    {
-      "label": "S6-DEV-03: Graceful Server Shutdowns",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L196",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_dev_03_graceful_server_shutdowns",
-      "community": 199,
-      "norm_label": "s6-dev-03: graceful server shutdowns"
-    },
-    {
-      "label": "S6-DEV-04: Twelve-Factor Configurations Mappings",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L207",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_dev_04_twelve_factor_configurations_mappings",
-      "community": 199,
-      "norm_label": "s6-dev-04: twelve-factor configurations mappings"
-    },
-    {
-      "label": "S6-DEV-05: Docker Smoke Verification Script",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L221",
-      "_origin": "ast",
-      "id": "sprints_sprint_6_s6_dev_05_docker_smoke_verification_script",
-      "community": 199,
-      "norm_label": "s6-dev-05: docker smoke verification script"
-    },
-    {
       "label": "FE-A (Frontend A) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L233",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "sprints_sprint_6_fe_a_frontend_a_tickets",
       "community": 199,
@@ -44451,7 +44421,7 @@
       "label": "S6-FE-02: Responsive Design Check",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L235",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "sprints_sprint_6_s6_fe_02_responsive_design_check",
       "community": 199,
@@ -44461,7 +44431,7 @@
       "label": "FE-B (Frontend B) Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L246",
+      "source_location": "L80",
       "_origin": "ast",
       "id": "sprints_sprint_6_fe_b_frontend_b_tickets",
       "community": 199,
@@ -44471,7 +44441,7 @@
       "label": "S6-FE-03: Components Error Boundaries & Loading States",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L248",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "sprints_sprint_6_s6_fe_03_components_error_boundaries_loading_states",
       "community": 199,
@@ -44481,7 +44451,7 @@
       "label": "Joint FE-A & FE-B Tickets",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L259",
+      "source_location": "L93",
       "_origin": "ast",
       "id": "sprints_sprint_6_joint_fe_a_fe_b_tickets",
       "community": 199,
@@ -44491,11 +44461,151 @@
       "label": "S6-FE-06: Production Build Validation",
       "file_type": "document",
       "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L261",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "sprints_sprint_6_s6_fe_06_production_build_validation",
       "community": 199,
       "norm_label": "s6-fe-06: production build validation"
+    },
+    {
+      "label": "SD-QA (System Design/QA) Tickets",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L106",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_sd_qa_system_design_qa_tickets",
+      "community": 199,
+      "norm_label": "sd-qa (system design/qa) tickets"
+    },
+    {
+      "label": "S6-BE-05: Full Integration Test Suite",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L108",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_be_05_full_integration_test_suite",
+      "community": 199,
+      "norm_label": "s6-be-05: full integration test suite"
+    },
+    {
+      "label": "S6-BE-06: Performance Benchmarks",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L120",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_be_06_performance_benchmarks",
+      "community": 199,
+      "norm_label": "s6-be-06: performance benchmarks"
+    },
+    {
+      "label": "S6-BE-07: Vertical Slice Boundary Checks",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L131",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_be_07_vertical_slice_boundary_checks",
+      "community": 199,
+      "norm_label": "s6-be-07: vertical slice boundary checks"
+    },
+    {
+      "label": "S6-BE-08: Audit.md Automation Test Suite (Gap Fix)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L142",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_be_08_audit_md_automation_test_suite_gap_fix",
+      "community": 199,
+      "norm_label": "s6-be-08: audit.md automation test suite (gap fix)"
+    },
+    {
+      "label": "S6-FE-01: Full E2E Test Suite",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L160",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_fe_01_full_e2e_test_suite",
+      "community": 199,
+      "norm_label": "s6-fe-01: full e2e test suite"
+    },
+    {
+      "label": "S6-FE-04: Accessibility (a11y) Audit",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L171",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_fe_04_accessibility_a11y_audit",
+      "community": 199,
+      "norm_label": "s6-fe-04: accessibility (a11y) audit"
+    },
+    {
+      "label": "S6-FE-05: Frontend Performance Audits",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L182",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_fe_05_frontend_performance_audits",
+      "community": 199,
+      "norm_label": "s6-fe-05: frontend performance audits"
+    },
+    {
+      "label": "S6-FE-07: E2E Audit.md Playwright Suite (Gap Fix)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L193",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_fe_07_e2e_audit_md_playwright_suite_gap_fix",
+      "community": 199,
+      "norm_label": "s6-fe-07: e2e audit.md playwright suite (gap fix)"
+    },
+    {
+      "label": "S6-DEV-01: Production Docker Setup",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L210",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_dev_01_production_docker_setup",
+      "community": 199,
+      "norm_label": "s6-dev-01: production docker setup"
+    },
+    {
+      "label": "S6-DEV-02: Health Check Endpoints",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L224",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_dev_02_health_check_endpoints",
+      "community": 199,
+      "norm_label": "s6-dev-02: health check endpoints"
+    },
+    {
+      "label": "S6-DEV-03: Graceful Server Shutdowns",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L235",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_dev_03_graceful_server_shutdowns",
+      "community": 199,
+      "norm_label": "s6-dev-03: graceful server shutdowns"
+    },
+    {
+      "label": "S6-DEV-04: Twelve-Factor Configurations Mappings",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L246",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_dev_04_twelve_factor_configurations_mappings",
+      "community": 199,
+      "norm_label": "s6-dev-04: twelve-factor configurations mappings"
+    },
+    {
+      "label": "S6-DEV-05: Docker Smoke Verification Script",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L260",
+      "_origin": "ast",
+      "id": "sprints_sprint_6_s6_dev_05_docker_smoke_verification_script",
+      "community": 199,
+      "norm_label": "s6-dev-05: docker smoke verification script"
     },
     {
       "label": "ticket-tracker.md",
@@ -44548,20 +44658,10 @@
       "norm_label": "be-b (backend b)"
     },
     {
-      "label": "SD-QA (System Design/QA)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L26",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
       "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L32",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "sprints_ticket_tracker_fe_a_frontend_a",
       "community": 347,
@@ -44571,11 +44671,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L35",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "sprints_ticket_tracker_fe_b_frontend_b",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L32",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 1: Platform & Core Infrastructure (Week 3\u20134)",
@@ -44608,22 +44718,12 @@
       "norm_label": "be-b (backend b)"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L55",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_55",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L59",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_59",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_55",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44631,11 +44731,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L63",
+      "source_location": "L59",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_63",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_59",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_62",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 2: User & Topic Features (Week 5\u20136)",
@@ -44678,22 +44788,12 @@
       "norm_label": "be-b (backend b)"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L96",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_96",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L101",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_101",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_96",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44701,11 +44801,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L107",
+      "source_location": "L102",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_107",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_102",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L107",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_107",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 3: Follow, Comment & Notification (Week 7\u20138)",
@@ -44748,22 +44858,12 @@
       "norm_label": "joint be-a & be-b"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L145",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_145",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L151",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_151",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_145",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44771,11 +44871,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L156",
+      "source_location": "L150",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_156",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_150",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L155",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_155",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 4: Group & Event Features (Week 9\u201310)",
@@ -44818,22 +44928,12 @@
       "norm_label": "be-b (backend b)"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L192",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_192",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L195",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_195",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_192",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44841,11 +44941,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L201",
+      "source_location": "L198",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_201",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_198",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L203",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_203",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 5: Chat & OAuth (Week 11\u201312)",
@@ -44888,22 +44998,12 @@
       "norm_label": "be-b (backend b)"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L230",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_230",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L236",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_236",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_230",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44911,11 +45011,21 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L241",
+      "source_location": "L235",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_241",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_235",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L239",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_239",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "Sprint 6: Integration, Cleanup & Polish (Week 13\u201314)",
@@ -44958,22 +45068,12 @@
       "norm_label": "joint be-a & be-b"
     },
     {
-      "label": "SD-QA (System Design/QA)",
+      "label": "FE-A (Frontend A)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L258",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_258",
-      "community": 347,
-      "norm_label": "sd-qa (system design/qa)"
-    },
-    {
-      "label": "FE-A (Frontend A)",
-      "file_type": "document",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L273",
-      "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_a_frontend_a_273",
+      "id": "sprints_ticket_tracker_fe_a_frontend_a_258",
       "community": 347,
       "norm_label": "fe-a (frontend a)"
     },
@@ -44981,9 +45081,9 @@
       "label": "FE-B (Frontend B)",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L276",
+      "source_location": "L261",
       "_origin": "ast",
-      "id": "sprints_ticket_tracker_fe_b_frontend_b_276",
+      "id": "sprints_ticket_tracker_fe_b_frontend_b_261",
       "community": 347,
       "norm_label": "fe-b (frontend b)"
     },
@@ -44991,11 +45091,21 @@
       "label": "Joint FE-A & FE-B",
       "file_type": "document",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L279",
+      "source_location": "L264",
       "_origin": "ast",
       "id": "sprints_ticket_tracker_joint_fe_a_fe_b",
       "community": 347,
       "norm_label": "joint fe-a & fe-b"
+    },
+    {
+      "label": "SD-QA (System Design/QA)",
+      "file_type": "document",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L267",
+      "_origin": "ast",
+      "id": "sprints_ticket_tracker_sd_qa_system_design_qa_267",
+      "community": 347,
+      "norm_label": "sd-qa (system design/qa)"
     },
     {
       "label": "unified-db-plan.md",
@@ -82660,9 +82770,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi",
-      "target": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas"
     },
     {
       "relation": "contains",
@@ -82670,9 +82780,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_1_questions_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_1_questions_agent"
     },
     {
       "relation": "contains",
@@ -82680,9 +82790,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_2_research_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_2_research_agent"
     },
     {
       "relation": "contains",
@@ -82690,9 +82800,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L29",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_3_design_strategy_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_3_design_strategy_agent"
     },
     {
       "relation": "contains",
@@ -82700,9 +82810,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_4_structure_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_4_structure_agent"
     },
     {
       "relation": "contains",
@@ -82710,9 +82820,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_5_plan_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_5_plan_agent"
     },
     {
       "relation": "contains",
@@ -82720,9 +82830,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_6_worktree_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_6_worktree_agent"
     },
     {
       "relation": "contains",
@@ -82730,9 +82840,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_7_implementation_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_7_implementation_agent"
     },
     {
       "relation": "contains",
@@ -82740,9 +82850,9 @@
       "source_file": ".agents/prompts/pr-implement-qrspi.md",
       "source_location": "L88",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
-      "target": "prompts_pr_implement_qrspi_stage_8_pr_validation_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_qrspi_stage_8_pr_validation_agent"
     },
     {
       "relation": "contains",
@@ -95980,9 +96090,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi",
-      "target": "workflows_pr_implement_qrspi_execution_phases",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_execution_phases"
     },
     {
       "relation": "contains",
@@ -95990,9 +96100,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi",
-      "target": "workflows_pr_implement_qrspi_workflow_structure_humanlayer_qrspi",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_workflow_structure_humanlayer_qrspi"
     },
     {
       "relation": "contains",
@@ -96000,9 +96110,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_1_questions_alignment_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_1_questions_alignment_subagent"
     },
     {
       "relation": "contains",
@@ -96010,9 +96120,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_2_research_fact_gathering_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_2_research_fact_gathering_subagent"
     },
     {
       "relation": "contains",
@@ -96020,9 +96130,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L51",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_3_design_strategy_tradeoffs_architecture_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_3_design_strategy_tradeoffs_architecture_subagent"
     },
     {
       "relation": "contains",
@@ -96030,9 +96140,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_4_structure_constraints_enforcement_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_4_structure_constraints_enforcement_subagent"
     },
     {
       "relation": "contains",
@@ -96040,9 +96150,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L72",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_5_plan_execution_plan_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_5_plan_execution_plan_subagent"
     },
     {
       "relation": "contains",
@@ -96050,9 +96160,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_6_worktree_branch_environment_setup_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_6_worktree_branch_environment_setup_subagent"
     },
     {
       "relation": "contains",
@@ -96060,9 +96170,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_7_implement_tdd_implementation_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_7_implement_tdd_implementation_subagent"
     },
     {
       "relation": "contains",
@@ -96070,9 +96180,9 @@
       "source_file": ".agents/workflows/pr-implement-qrspi.md",
       "source_location": "L103",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_qrspi_execution_phases",
-      "target": "workflows_pr_implement_qrspi_stage_8_pr_validation_validator_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_qrspi_stage_8_pr_validation_validator_subagent"
     },
     {
       "relation": "contains",
@@ -102188,21 +102298,41 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/general-instructions.md",
-      "source_location": "L160",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_general_instructions",
-      "target": "sprints_general_instructions_boundary_check"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/general-instructions.md",
       "source_location": "L1",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "sprints_general_instructions",
       "target": "sprints_general_instructions_social_network_refactoring_general_instructions_reference"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L195",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_social_network_refactoring_general_instructions_reference",
+      "target": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L264",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_social_network_refactoring_general_instructions_reference",
+      "target": "sprints_general_instructions_appendix_b_dependency_map_visual",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L300",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_social_network_refactoring_general_instructions_reference",
+      "target": "sprints_general_instructions_appendix_c_ticket_count_summary",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -102303,6 +102433,96 @@
       "confidence_score": 1.0,
       "source": "sprints_general_instructions_debugging_quality_assurance_plan",
       "target": "sprints_general_instructions_q2_verification_gates_per_sprint"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_debugging_quality_assurance_plan",
+      "target": "sprints_general_instructions_q3_manual_smoke_test_scenarios",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L180",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_debugging_quality_assurance_plan",
+      "target": "sprints_general_instructions_q4_contract_testing_be_fe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L187",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_debugging_quality_assurance_plan",
+      "target": "sprints_general_instructions_q5_performance_regression_check",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L197",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a1_testing_pyramid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L208",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a2_commit_convention",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L223",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a3_feature_toggle_pattern",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L234",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a4_observability_add_in_sprint_1_if_time",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L240",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a5_risk_mitigation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/general-instructions.md",
+      "source_location": "L251",
+      "weight": 1.0,
+      "source": "sprints_general_instructions_appendix_a_best_practices_summary",
+      "target": "sprints_general_instructions_a6_definition_of_done",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -102408,6 +102628,26 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L147",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_0_fe_a_frontend_a_tickets",
+      "target": "sprints_sprint_0_s0_fe_01_next_js_scaffold_tooling"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-0.md",
+      "source_location": "L164",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_0_fe_b_frontend_b_tickets",
+      "target": "sprints_sprint_0_s0_fe_02_shadcn_ui_components_layout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-0.md",
       "source_location": "L80",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -102443,26 +102683,6 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_0_sd_qa_system_design_qa_tickets",
       "target": "sprints_sprint_0_s0_dev_03_dev_environment_docs"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L147",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_0_fe_a_frontend_a_tickets",
-      "target": "sprints_sprint_0_s0_fe_01_next_js_scaffold_tooling"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-0.md",
-      "source_location": "L164",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_0_fe_b_frontend_b_tickets",
-      "target": "sprints_sprint_0_s0_fe_02_shadcn_ui_components_layout"
     },
     {
       "relation": "contains",
@@ -102628,26 +102848,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L156",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_1_s1_be_11_platform_database_seeding_gap_fix"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-1.md",
-      "source_location": "L174",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_1_s1_fe_04_api_mocking_service"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-1.md",
       "source_location": "L190",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -102673,6 +102873,26 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_1_fe_b_frontend_b_tickets",
       "target": "sprints_sprint_1_s1_fe_03_nav_layout_shell"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-1.md",
+      "source_location": "L156",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_1_s1_be_11_platform_database_seeding_gap_fix"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-1.md",
+      "source_location": "L174",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_1_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_1_s1_fe_04_api_mocking_service"
     },
     {
       "relation": "contains",
@@ -102948,36 +103168,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L281",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_2_s2_be_12_user_slice_migration_verification_contract_tests"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L294",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_2_s2_be_22_topic_slice_migration_verification_contract_tests"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-2.md",
-      "source_location": "L306",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_2_s2_fe_08_e2e_user_signup_to_feed_journey"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-2.md",
       "source_location": "L319",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -103043,6 +103233,36 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_2_fe_b_frontend_b_tickets",
       "target": "sprints_sprint_2_s2_fe_07_post_card_component"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L281",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_2_s2_be_12_user_slice_migration_verification_contract_tests"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L294",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_2_s2_be_22_topic_slice_migration_verification_contract_tests"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-2.md",
+      "source_location": "L306",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_2_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_2_s2_fe_08_e2e_user_signup_to_feed_journey"
     },
     {
       "relation": "contains",
@@ -103348,46 +103568,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L292",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_3_s3_be_12_follow_event_publishing_verification"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L305",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_3_s3_be_18_comment_slice_contract_tests"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L317",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_3_s3_fe_07_e2e_relationships_notifications_flow"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-3.md",
-      "source_location": "L328",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_3_s3_fe_08_e2e_posts_comments_notification_flow"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-3.md",
       "source_location": "L341",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -103443,6 +103623,46 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_3_fe_b_frontend_b_tickets",
       "target": "sprints_sprint_3_s3_fe_06_notifications_live_stream"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L292",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_3_s3_be_12_follow_event_publishing_verification"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L305",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_3_s3_be_18_comment_slice_contract_tests"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L317",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_3_s3_fe_07_e2e_relationships_notifications_flow"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-3.md",
+      "source_location": "L328",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_3_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_3_s3_fe_08_e2e_posts_comments_notification_flow"
     },
     {
       "relation": "contains",
@@ -103728,16 +103948,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-4.md",
-      "source_location": "L271",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_4_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_4_s4_fe_08_e2e_complete_groups_workspace_journey"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-4.md",
       "source_location": "L284",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -103803,6 +104013,16 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_4_fe_b_frontend_b_tickets",
       "target": "sprints_sprint_4_s4_fe_07_rsvp_switch_actions"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-4.md",
+      "source_location": "L271",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_4_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_4_s4_fe_08_e2e_complete_groups_workspace_journey"
     },
     {
       "relation": "contains",
@@ -104038,46 +104258,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L187",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_5_s5_be_08_chat_slice_contract_tests"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L199",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_5_s5_be_16_oauth_slice_contract_tests"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L211",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_5_s5_fe_06_e2e_messaging_real_time_delivery_journey"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-5.md",
-      "source_location": "L223",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
-      "target": "sprints_sprint_5_s5_fe_07_e2e_github_oauth_sign_in"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-5.md",
       "source_location": "L237",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -104123,6 +104303,46 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_5_fe_b_frontend_b_tickets",
       "target": "sprints_sprint_5_s5_fe_05_google_oauth_button_integration"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L187",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_5_s5_be_08_chat_slice_contract_tests"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L199",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_5_s5_be_16_oauth_slice_contract_tests"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L211",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_5_s5_fe_06_e2e_messaging_real_time_delivery_journey"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-5.md",
+      "source_location": "L223",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_5_sd_qa_system_design_qa_tickets",
+      "target": "sprints_sprint_5_s5_fe_07_e2e_github_oauth_sign_in"
     },
     {
       "relation": "contains",
@@ -104243,6 +104463,36 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_6_joint_be_a_be_b_tickets",
       "target": "sprints_sprint_6_s6_be_04_bootstrap_wiring"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L221",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_6_fe_a_frontend_a_tickets",
+      "target": "sprints_sprint_6_s6_fe_02_responsive_design_check"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L234",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_6_fe_b_frontend_b_tickets",
+      "target": "sprints_sprint_6_s6_fe_03_components_error_boundaries_loading_states"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/sprint-6.md",
+      "source_location": "L247",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_sprint_6_joint_fe_a_fe_b_tickets",
+      "target": "sprints_sprint_6_s6_fe_06_production_build_validation"
     },
     {
       "relation": "contains",
@@ -104373,36 +104623,6 @@
       "confidence_score": 1.0,
       "source": "sprints_sprint_6_sd_qa_system_design_qa_tickets",
       "target": "sprints_sprint_6_s6_fe_07_e2e_audit_md_playwright_suite_gap_fix"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L221",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_6_fe_a_frontend_a_tickets",
-      "target": "sprints_sprint_6_s6_fe_02_responsive_design_check"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L234",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_6_fe_b_frontend_b_tickets",
-      "target": "sprints_sprint_6_s6_fe_03_components_error_boundaries_loading_states"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/sprint-6.md",
-      "source_location": "L247",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_sprint_6_joint_fe_a_fe_b_tickets",
-      "target": "sprints_sprint_6_s6_fe_06_production_build_validation"
     },
     {
       "relation": "contains",
@@ -104658,66 +104878,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L55",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L93",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_2_user_topic_features_week_5_6"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L138",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_3_follow_comment_notification_week_7_8"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L182",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_4_group_event_features_week_9_10"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L217",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_5_chat_oauth_week_11_12"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L245",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
-      "target": "sprints_ticket_tracker_sprint_6_integration_cleanup_polish_week_13_14"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L59",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -104838,6 +104998,66 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L55",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L93",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_2_user_topic_features_week_5_6"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L138",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_3_follow_comment_notification_week_7_8"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L182",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_4_group_event_features_week_9_10"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L217",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_5_chat_oauth_week_11_12"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L245",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "sprints_ticket_tracker_sd_qa_system_design_qa",
+      "target": "sprints_ticket_tracker_sprint_6_integration_cleanup_polish_week_13_14"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L41",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -104858,31 +105078,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L59",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_59"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L63",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_63"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/plan/sprints/ticket-tracker.md",
       "source_location": "L55",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_55"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_55",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4",
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_59",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/plan/sprints/ticket-tracker.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "sprints_ticket_tracker_sprint_1_platform_core_infrastructure_week_3_4",
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_62",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -104908,21 +105128,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L101",
+      "source_location": "L96",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_2_user_topic_features_week_5_6",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_101"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_96",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L107",
+      "source_location": "L102",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_2_user_topic_features_week_5_6",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_107"
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_102",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -104938,11 +105158,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L96",
+      "source_location": "L107",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_2_user_topic_features_week_5_6",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_96"
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_107",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -104978,21 +105198,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L151",
+      "source_location": "L145",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_3_follow_comment_notification_week_7_8",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_151"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_145",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L156",
+      "source_location": "L150",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_3_follow_comment_notification_week_7_8",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_156"
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_150",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105008,11 +105228,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L145",
+      "source_location": "L155",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_3_follow_comment_notification_week_7_8",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_145"
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_155",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105038,21 +105258,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L195",
+      "source_location": "L192",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_4_group_event_features_week_9_10",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_195"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_192",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L201",
+      "source_location": "L198",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_4_group_event_features_week_9_10",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_201"
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_198",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105068,11 +105288,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L192",
+      "source_location": "L203",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_4_group_event_features_week_9_10",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_192"
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_203",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105098,21 +105318,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L236",
+      "source_location": "L230",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_5_chat_oauth_week_11_12",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_236"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_230",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L241",
+      "source_location": "L235",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_5_chat_oauth_week_11_12",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_241"
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_235",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105128,11 +105348,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L230",
+      "source_location": "L239",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_5_chat_oauth_week_11_12",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_230"
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_239",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105158,21 +105378,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L273",
+      "source_location": "L258",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_6_integration_cleanup_polish_week_13_14",
-      "target": "sprints_ticket_tracker_fe_a_frontend_a_273"
+      "target": "sprints_ticket_tracker_fe_a_frontend_a_258",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L276",
+      "source_location": "L261",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_6_integration_cleanup_polish_week_13_14",
-      "target": "sprints_ticket_tracker_fe_b_frontend_b_276"
+      "target": "sprints_ticket_tracker_fe_b_frontend_b_261",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -105198,11 +105418,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/plan/sprints/ticket-tracker.md",
-      "source_location": "L258",
+      "source_location": "L267",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "sprints_ticket_tracker_sprint_6_integration_cleanup_polish_week_13_14",
-      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_258"
+      "target": "sprints_ticket_tracker_sd_qa_system_design_qa_267",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -107406,5 +107626,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "53d661d34ba1cfb6c0d7a2443f151d10c57739b9"
+  "built_at_commit": "977d33bb4cdbfa147536861c52c442ba3595dc7e"
 }

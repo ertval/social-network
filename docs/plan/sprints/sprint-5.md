@@ -182,9 +182,11 @@
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Implement GitHub profile load client.
+* **Dependencies:** S5-BE-17
+* **Description:** Move and adapt the existing GitHub profile client from `internal/pkg/oAuth/githubclient/` to `pkg/oauth/github/client.go` per the target architecture.
 * **Detailed Steps:**
-  1. Create `pkg/oauth/github/client.go`. Map credentials exchanges.
+  1. Move the existing file and update imports and structure.
+  2. Implement any necessary adjustments to fit the new slice interface.
 * **Verification:** Unit tests using mock web server responses.
 
 ---
@@ -193,16 +195,26 @@
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Implement Google profile load client.
+* **Dependencies:** S5-BE-17
+* **Description:** Move and adapt the existing Google profile client from `internal/pkg/oAuth/googleclient/` to `pkg/oauth/google/client.go` per the target architecture.
 * **Detailed Steps:**
-  1. Create `pkg/oauth/google/client.go`. Map credentials exchanges.
+  1. Move the existing file and update imports and structure.
+  2. Implement any necessary adjustments to fit the new slice interface.
 * **Verification:** Unit tests using mock web server responses.
 
 ---
 
-## Sprint 1 Dependency Note
-
-> **Prerequisite:** S1-BE-09 (OAuth package move to `pkg/oauth/`) must be completed before S5-BE-14/15 (OAuth client implementations). The client files at `pkg/oauth/github/client.go` and `pkg/oauth/google/client.go` assume the Sprint 1 move from `internal/pkg/oAuth/` to `pkg/oauth/`. If Sprint 1 was skipped, extend S5-BE-14/15 to include the move.
+### S5-BE-17: Shared: Refactor OAuth Packages
+* **Priority:** P0 (Prerequisite for S5-BE-14/15)
+* **Assignee:** BE-B
+* **Story Points:** 1
+* **Dependencies:** Sprint 0
+* **Description:** Move and restructure OAuth packages to `pkg/oauth/` per the target architecture, doing the rename in Sprint 5 to prevent breaking the old bootstrap compilation earlier.
+* **Detailed Steps:**
+   1. Move `internal/pkg/oAuth/` to `pkg/oauth/` (repo root, per target architecture — not `internal/pkg/oauth/`).
+   2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/client.go`.
+   3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
+* **Verification:** Ensure old auth compilation paths are updated (using alias imports if necessary) and all projects compile. `go build ./...` passes.
 
 ## FE-A (Frontend A) Tickets
 

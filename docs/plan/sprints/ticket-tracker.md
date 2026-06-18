@@ -50,7 +50,6 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S1-BE-03:** Platform: Cache
 - [ ] **S1-BE-06:** Core: Realtime WebSocket Hub
 - [ ] **S1-BE-08:** Core: HTTP Server Bootstrap
-- [ ] **S1-BE-09:** Shared: Refactor OAuth Packages
 
 ### FE-A (Frontend A)
 - [ ] **S1-FE-01:** Auth Pages (Login & Registration UI)
@@ -107,6 +106,7 @@ For step-by-step ticket instructions, see individual sprint files:
 ### SD-QA (System Design/QA)
 - [ ] **S2-BE-12:** User Slice: Migration Verification Contract Tests
 - [ ] **S2-BE-22:** Topic Slice: Migration Verification Contract Tests
+- [ ] **S2-BE-23:** Platform: User & Topic Migrations (000002 & 000003)
 - [ ] **S2-FE-08:** E2E: User Signup to Feed Journey
 
 ---
@@ -155,6 +155,7 @@ For step-by-step ticket instructions, see individual sprint files:
 ### SD-QA (System Design/QA)
 - [ ] **S3-BE-12:** Follow: Event Publishing Verification
 - [ ] **S3-BE-18:** Comment Slice: Contract Tests
+- [ ] **S3-BE-26:** Platform: Follow System Migrations (000004)
 - [ ] **S3-FE-07:** E2E: Relationships Notifications Flow
 - [ ] **S3-FE-08:** E2E: Posts Comments Notification Flow
 
@@ -201,6 +202,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S4-FE-07:** RSVP Switch Actions
 
 ### SD-QA (System Design/QA)
+- [ ] **S4-BE-22:** Platform: Group & Event Migrations (000005 & 000006)
 - [ ] **S4-FE-08:** E2E: Complete Groups Workspace Journey
 
 ---
@@ -226,6 +228,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S5-BE-13:** OAuth: HTTP Transport Routing
 - [ ] **S5-BE-14:** OAuth Client: GitHub Implementation
 - [ ] **S5-BE-15:** OAuth Client: Google Implementation
+- [ ] **S5-BE-17:** Shared: Refactor OAuth Packages
 
 ### FE-A (Frontend A)
 - [ ] **S5-FE-01:** Chat Feed View

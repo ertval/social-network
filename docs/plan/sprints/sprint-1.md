@@ -14,12 +14,12 @@
 * **Description:** Create the pluggable Database connection provider interface and SQLite initializer with specific pooling rules.
 * **Detailed Steps:**
   1. Create `internal/platform/database/database.go` and define the `DB` interface (containing standard methods `QueryContext`, `QueryRowContext`, `ExecContext`).
-  2. Implement `newSQLite(dsn string) (DB, error)` in `sqlite.go`.
+  2. Implement `newSQLite(dsn string) (DB, error)` in `internal/platform/database/sqlite.go`.
   3. Ensure WAL mode is active: execute `PRAGMA journal_mode=WAL;`.
   4. Ensure busy timeout is set: execute `PRAGMA busy_timeout=5000;`.
   5. **SQLite Pooling Limit (Gap Fix):** Configure SQLite connection limit explicitly to prevent concurrency locking: `db.SetMaxOpenConns(1)` (since SQLite does not support concurrent write operations across multiple connections).
   6. Expose `NewDB(cfg Config) (DB, error)` as a factory.
-* **Verification:** Write unit tests in `sqlite_test.go` verifying WAL is active, timeout is set, and maximum open connections is restricted to 1.
+* **Verification:** Write unit tests in `internal/platform/database/sqlite_test.go` verifying WAL is active, timeout is set, and maximum open connections is restricted to 1.
 
 ---
 
@@ -28,25 +28,15 @@
 * **Assignee:** BE-A
 * **Story Points:** 8
 * **Dependencies:** S1-BE-01
-* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Create ALL migration files (000001-000006) per the architecture plan. Seed migration (000007) is handled by S1-BE-11.
+* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Convert the existing schema (`db/migrations/schema.sql` + `indexes.sql`) into the initial numbered migration file (`000001_initial_schema.up.sql`). Migration files for subsequent features will be created in their respective feature sprints (Sprint 2 for 000002-000003, Sprint 3 for 000004, Sprint 4 for 000005-000006). Seed migration (000007) is handled by S1-BE-11.
 * **Detailed Steps:**
    1. Implement a migration runner in `internal/platform/database/migrations.go`.
    2. Create a metadata database table named `schema_migrations` to track applied version IDs.
    3. Implement parser that reads SQL scripts, breaks statements on `";"`, and executes them sequentially.
-   4. Write migration files for basic schema under `db/migrations/`:
-      - `000001_initial_schema.up.sql` (Tables: users, posts, categories, comments, votes, sessions, chats, notifications, oauth_states)
+   4. Write migration files under `db/migrations/`:
+      - `000001_initial_schema.up.sql` (Convert existing tables from `schema.sql` + `indexes.sql`: users, posts, categories, comments, votes, sessions, chats, notifications, oauth_states)
       - `000001_initial_schema.down.sql` (Drop all tables)
-      - `000002_user_profile_fields.up.sql` (Add `date_of_birth`, `about_me`, `is_private` to users; drop `age`)
-      - `000002_user_profile_fields.down.sql` (Reverse)
-      - `000003_topic_privacy.up.sql` (Add `visibility` to topics; create `topic_allowed_users`)
-      - `000003_topic_privacy.down.sql` (Reverse)
-      - `000004_follow_system.up.sql` (Create `follows`, `follow_requests`)
-      - `000004_follow_system.down.sql` (Reverse)
-      - `000005_groups.up.sql` (Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`)
-      - `000005_groups.down.sql` (Reverse)
-      - `000006_events.up.sql` (Create `events`, `event_rsvps`)
-      - `000006_events.down.sql` (Reverse)
-* **Verification:** Write integration tests verifying that executing the migrations runner creates the correct database tables, running up twice does not error, and executing down rolls back the database cleanly. Run migrations from 000001 up to 000006 and verify all tables exist.
+* **Verification:** Write integration tests verifying that executing the migrations runner creates the correct database tables, running up twice does not error, and executing down rolls back the database cleanly. Run migrations up to 000001 and verify all tables exist.
 
 ---
 
@@ -58,7 +48,7 @@
 * **Description:** Setup backend cookie-based session management.
 * **Detailed Steps:**
   1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface.
-  2. Implement SQLite-backed session storage in `store/sqlite.go` matching the migration schema.
+  2. Implement SQLite-backed session storage in `internal/core/session/store/sqlite.go` matching the migration schema.
   3. Provide creation (`Create`), lookup (`Get`), and invalidation (`Revoke`) methods.
 * **Verification:** Write tests using TDD to assert sessions write to SQLite, lookups find correct IDs, and expired session lookups return errors.
 
@@ -74,7 +64,7 @@
    1. **Auth Middleware:** Verifies request session cookie, queries session store, and attaches UserID into the Go request Context.
    2. **CORS Middleware:** Performs strict header checks against configured origin domains.
    3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE-03 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
-   4. **(Phase 3.3)** Implement `internal/infra/middleware/logging.go` — request logging middleware that records method, path, status, duration, and request ID.
+   4. **(Phase 3.3)** Implement `internal/core/middleware/logging.go` — request logging middleware that records method, path, status, duration, and request ID.
 * **Note:** Rate limiter depends on Cache (S1-BE-03, P1). Since both are P1 in same sprint, implement Cache first or mark rate limiter as soft-blocked on Cache completion.
 * **Verification:** Write tests hitting mock HTTP endpoints through the middleware chain, confirming correct status codes (401 Unauthorized for bad sessions, 429 Too Many Requests for rate limits, etc.).
 
@@ -130,9 +120,9 @@
 * **Detailed Steps:**
    1. Create `internal/core/realtime/hub.go` containing the central coordinator tracking active clients.
    2. Implement client registration, deregistration, and broadcast loops.
-   3. Implement `client.go` mapping WebSocket connections. Ensure panic recovery is set up on read/write loops.
+   3. Implement `internal/core/realtime/client.go` mapping WebSocket connections. Ensure panic recovery is set up on read/write loops.
    4. Enforce read connection limit constraints and connection timeouts/deadlines.
-   5. **(Phase 3.2)** Implement `internal/infra/ws/router.go` for WebSocket message routing. Map incoming message types (chat.send, typing, etc.) to handler functions per vertical slice. Register routes for each slice's WS handlers.
+   5. **(Phase 3.2)** Implement `internal/core/realtime/router.go` for WebSocket message routing. Map incoming message types (chat.send, typing, etc.) to handler functions per vertical slice. Register routes for each slice's WS handlers.
 * **Verification:** Write mock WS clients and test broadcast delivery speeds, client disconnects, and thread safety.
 
 ---
@@ -152,18 +142,7 @@
 
 ---
 
-### S1-BE-09: Shared: Refactor OAuth Packages
-* **Priority:** P2
-* **Assignee:** BE-B
-* **Story Points:** 1
-* **Description:** Move and restructure OAuth packages to `pkg/oauth/` per the target architecture. **Prerequisite for Sprint 5 OAuth client implementations.**
-* **Detailed Steps:**
-   1. Move `internal/pkg/oAuth/` to `pkg/oauth/` (repo root, per target architecture — not `internal/pkg/oauth/`).
-   2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/client.go`.
-   3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
-* **Verification:** Ensure old auth compilation paths are updated and all projects compile. `go build ./...` passes.
 
----
 
 ## FE-A (Frontend A) Tickets
 
@@ -223,7 +202,7 @@
      - 2 groups with membership details.
      - Basic follow relationships.
   2. Create migration file `db/migrations/000007_seed_data.down.sql` to clean up the seeded data.
-  3. Update `migrations.go` to optionally apply the seed migration only when a development environment flag (e.g. `ENV=development` or a flag in configs) is active.
+  3. Update `internal/platform/database/migrations.go` to optionally apply the seed migration only when a development environment flag (e.g. `ENV=development` or a flag in configs) is active.
 * **Verification:** Run `make db-reset` under development config and verify using `sqlite3` CLI that seed users and posts are inserted.
 
 ---

@@ -12,10 +12,10 @@
 * **Priority:** P0 (Blocks everything)
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Description:** Initialize the Go modules and establish the directory structure according to the vertical-slice target architecture.
+* **Description:** Adjust the existing codebase layout and establish the directory structure according to the vertical-slice target architecture, reusing existing files.
 * **Detailed Steps:**
-  1. Initialize the module at the project root: `go mod init social-network` (or reuse existing one, updating imports as needed).
-  2. Create the target structure:
+  1. Initialize the module at the project root: `go mod init social-network` (or reuse the existing one, updating imports as needed).
+  2. Adjust the existing structure to align with target structure:
      - `cmd/server/main.go` (main entry point)
      - `internal/core/` (sessions, middlewares, websocket base)
      - `internal/platform/` (database factory, cache, eventbus)
@@ -33,9 +33,9 @@
 * **Dependencies:** S0-BE-01
 * **Description:** Fix migration path delimiter, SQLiteWAL/timeout settings, and SQL injections.
 * **Detailed Steps:**
-  1. **B1.1 (Migration Delimiter):** In `infra/storage/sqlite/init.go`, change the SQL parsing delimiter from `":"` to `";"` so multi-statement SQL runs correctly.
-  2. **B1.2 (SQLite DSN WAL/Timeout):** Modify SQLite connection setup to pass query parameters: `?_journal_mode=WAL&_busy_timeout=5000` to prevent database locks.
-  3. **B1.5 (SQL Injection):** In `sqlite/topics/topicRepo.go` and `sqlite/categories/categoryRepo.go`, sanitize inputs or use an allowed whitelist for dynamic `ORDER BY` directions (`ASC` or `DESC` only). Do NOT interpolate raw input directly into the query template.
+  1. **B1.1 (Migration Delimiter):** In `internal/infra/storage/sqlite/init.go`, change the SQL parsing delimiter from `":"` to `";"` so multi-statement SQL runs correctly.
+  2. **B1.2 (SQLite DSN WAL/Timeout):** Modify SQLite connection setup in `internal/infra/storage/sqlite/init.go` and `.env` to pass query parameters: `?_journal_mode=WAL&_busy_timeout=5000` to prevent database locks.
+  3. **B1.5 (SQL Injection):** In `internal/infra/storage/sqlite/topics/topicRepo.go` and `internal/infra/storage/sqlite/categories/categoryRepo.go`, sanitize inputs or use an allowed whitelist for dynamic `ORDER BY` directions (`ASC` or `DESC` only). Do NOT interpolate raw input directly into the query template.
 * **Verification:** Write unit/integration tests reproducing the issues, ensure they fail before, and pass after implementing the fixes.
 
 ---
@@ -57,6 +57,9 @@
      - `make test` -> Run Go unit tests with race detector: `go test -race -cover ./...`.
      - `make ci` -> Chains: `go mod tidy`, format checking, linting, running tests.
      - `make db-reset` -> Helper to wipe local SQLite db files for fresh runs.
+     - `make seed` -> seed database with test data
+     # add also some comands to test run and dev the project, seperate front, back and both
+     # add also some comands to test run and dev the project, seperate front, back and both
 * **Verification:** Running `make ci` on the command line should execute all steps and finish with exit code 0.
 
 ---
@@ -68,11 +71,11 @@
 * **Dependencies:** S0-BE-01
 * **Description:** Fix OAuth Scanner, WebSocket origin policy, Prepared statements, WS panics, and RateLimiter leaks.
 * **Detailed Steps:**
-  1. **B1.3 (OAuth Scan):** In `infra/storage/sqlite/oauth/oauthRepo.go`, adjust `Scan()` arguments to exclude `ctx` since the driver does not take context directly inside `Scan()`.
-   2. **B1.4 (WS CheckOrigin):** In `infra/http/ws/handler.go`, restrict origins. Do not return unconditional `true` for `CheckOrigin`. Read origin configuration environment variables.
-  3. **B1.6 (Prepared Stmt db.Exec):** In `sqlite/users/userRepo.go`, call `stmt.ExecContext(...)` instead of `db.Exec(...)` to ensure prepared statements are actually executed on the prepared query plan.
-  4. **B1.7 (WS Panic Recovery):** In `infra/ws/client.go` inside `ReadPump` and `WritePump` goroutines, add `defer func() { if r := recover(); r != nil { ... } }()` to prevent a single connection crash from bringing down the entire server.
-   5. **B1.8 (RateLimiter Leak - core GCRA):** In `infra/middleware/ratelimiter/rateLimiter.go` (not `infra/middleware/rateLimiter.go` which is the HTTP wrapper), add a `stop` channel to close the cleanup ticker when shutting down rate limiting instances to prevent thread/memory leaks.
+  1. **B1.3 (OAuth Scan):** In `internal/infra/storage/sqlite/oauth/oauthRepo.go`, adjust `Scan()` arguments to exclude `ctx` since the driver does not take context directly inside `Scan()`.
+  2. **B1.4 (WS CheckOrigin):** In `internal/infra/http/ws/handler.go`, restrict origins. Do not return unconditional `true` for `CheckOrigin`. Read origin configuration environment variables.
+  3. **B1.6 (Prepared Stmt db.Exec):** In `internal/infra/storage/sqlite/users/userRepo.go`, call `stmt.ExecContext(...)` instead of `db.Exec(...)` to ensure prepared statements are actually executed on the prepared query plan.
+  4. **B1.7 (WS Panic Recovery):** In `internal/infra/ws/client.go` inside `ReadPump` and `WritePump` goroutines, add `defer func() { if r := recover(); r != nil { ... } }()` to prevent a single connection crash from bringing down the entire server.
+  5. **B1.8 (RateLimiter Leak - core GCRA):** In `internal/infra/middleware/ratelimiter/rateLimiter.go` (not `internal/infra/middleware/rateLimiter.go` which is the HTTP wrapper), add a `stop` channel to close the cleanup ticker when shutting down rate limiting instances to prevent thread/memory leaks.
 * **Verification:** Write specific unit tests and run `go test -race ./...` to check concurrent behaviors.
 
 ---

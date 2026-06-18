@@ -56,11 +56,15 @@
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 5
 * **Dependencies:** S6-BE-01..03
-* **Description:** Complete final wiring of all vertical slices inside the bootstrap module.
+* **Description:** Complete final wiring of all 10 vertical slices inside the bootstrap module. Due to bootstrap complexity, this is done in incremental wiring steps.
 * **Detailed Steps:**
-  1. Modify `internal/bootstrap/bootstrap.go`. Instantiate DB connections, EventBus implementations, session controllers, WS hubs.
-  2. Wire repositories, instantiate HTTP handler routes for all slices, and start the HTTP server.
-* **Verification:** Start server using `make dev` and assert that all routes are responsive.
+  1. **Phase 1: Platform & Core:** Instantiate DB connection factory, EventBus, Cache, session manager, and the WS hub in `internal/bootstrap/bootstrap.go`.
+  2. **Phase 2: User & Topic Slices:** Wire User store/transport and Topic/Vote store/transport (with stubs replaced by real services).
+  3. **Phase 3: Follow & Notification Slices:** Wire Follow store/transport, register the Notification subscriber on the EventBus, and wire Notification store/transport.
+  4. **Phase 4: Group & Event Slices:** Wire Group store/transport (with WS routing), and Event store/transport (injecting the GroupMemberChecker dependency).
+  5. **Phase 5: Chat & OAuth Slices:** Wire Chat store/transport/WS, and OAuth state store/providers.
+  6. Register all vertical slice HTTP handlers and WS routes on the central HTTP server mux and WS router.
+* **Verification:** Start server using `make dev` and assert that all 10 vertical slice routes are responsive and operational.
 
 ---
 
@@ -211,13 +215,13 @@
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 5
-* **Description:** Rewrite production Docker setup from scratch per Phase 7 of the architecture plan. Old compose is single-service (forum on port 3001/8080) — replace with two-service design (backend:8080, frontend:3000).
+* **Description:** Audit and rewrite the existing Docker setup (`Dockerfile`, `docker-compose.yml`, etc.) from single-service to two-service architecture per Phase 7 of the architecture plan.
 * **Detailed Steps:**
-   1. Rewrite `docker-compose.yml` with two services: backend (port 8080) and frontend (port 3000), with persistent volume for SQLite data.
-   2. Create `frontend/Dockerfile` (multi-stage Node/Bun build).
-   3. Update backend `Dockerfile` (multi-stage Go build -> minimal alpine image).
+   1. Rewrite the existing `docker-compose.yml` to define two separate services: `backend` (port 8080) and `frontend` (port 3000), with persistent volume for SQLite database storage.
+   2. Audit and rewrite/extend `frontend/Dockerfile` for the Next.js frontend (using Node/Bun multi-stage build).
+   3. Rewrite the root `Dockerfile` for the Go backend (multi-stage Go build -> minimal alpine image, removing the binary build step for the obsolete `cmd/client/`).
    4. Configure environment variables per arch spec: `DATABASE_DRIVER=sqlite`, `DATABASE_DSN=/app/data/social.db?_journal_mode=WAL&_busy_timeout=5000`, `NEXT_PUBLIC_API_URL=http://backend:8080`.
-* **Verification:** Run `docker-compose up` and confirm both services connect. curl backend:8080/healthz returns 200. Frontend:3000 serves the app.
+* **Verification:** Run `docker-compose up` and confirm both services start and connect. Hitting `backend:8080/healthz` returns 200. Hitting `frontend:3000` serves the frontend application.
 
 ---
 
