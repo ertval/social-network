@@ -1,57 +1,57 @@
-# Sprint 5: Chat & OAuth (Week 6)
+# Sprint 5: Chat & OAuth (Week 11–12)
 
 **Outcome:** 1-on-1 private messaging featuring follow check constraints, emojis, and third-party login delegations (GitHub/Google OAuth) work end-to-end.
 
-> **Old chat commands dropped:** Old code had `markAsRead`, `initChat`, `getChatUsers` WS/RPC methods. These are not mapped to the new slice. `initChat` is replaced by implicit conversation creation on first message (S5-BE084). `markAsRead` dropped (no per-message read tracking in arch). `getChatUsers` dropped (conversation partner derived from `GET /api/chat/conversations`). Document this in the FE migration notes.
+> **Old chat commands dropped:** Old code had `markAsRead`, `initChat`, `getChatUsers` WS/RPC methods. These are not mapped to the new slice. `initChat` is replaced by implicit conversation creation on first message (S5-BE-86). `markAsRead` dropped (no per-message read tracking in arch). `getChatUsers` dropped (conversation partner derived from `GET /api/chat/conversations`). Document this in the FE migration notes.
 
 ---
 
-### S5-BE081: Wire Chat & OAuth bootstrap routes
+### S5-BE-83: Wire Chat & OAuth bootstrap routes
 * **Priority:** P0
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
-* **Dependencies:** S5-BE087, S5-BE088, S5-BE093
+* **Dependencies:** S5-BE-89, S5-BE-90, S5-BE-96
 * **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import chat and oauth transport packages.
   2. Call their route registration functions on the HTTP mux and WS router.
-  3. Wire OAuth provider clients (github, google) per S5-BE094/S5-BE095.
+  3. Wire OAuth provider clients (github, google) per S5-BE-97/15.
 * **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
 
 ---
 
 ## BE-A (Backend A) Tickets
 
-### S5-BE082: Chat: Entity & Repository Interface
+### S5-BE-84: Chat: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Establish domain structures mapping messaging records.
 * **Detailed Steps:**
   1. Create `internal/chat/chat.go`.
-  2. Define `PrivateMessage` (ID, SenderID, ReceiverID, Content, CreatedAt) and `Repository` interface.
+  2. Define `PrivateMessage` (ID, ChatID string, SenderID, ReceiverID, Content, CreatedAt) and `Repository` interface. **Note:** Include `ChatID` (string) as required by the websocket payloads and `messages` table schema in `sds.md`.
   3. Define a local `FollowChecker` interface containing `AreConnected(ctx context.Context, a, b string) (bool, error)`.
 * **Verification:** Compile check `go build ./internal/chat/...`.
 
 ---
 
-### S5-BE083: Chat: SQLite Store
+### S5-BE-85: Chat: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S5-BE082
+* **Dependencies:** S5-BE-84, S5-BE-91
 * **Description:** Create SQLite storage queries mapping messages history.
 * **Detailed Steps:**
-  1. Create `internal/chat/store/sqlite.go`. Implement queries saving messages and loading chats history.
-* **Verification:** Integration tests checking message writes and retrieval.
+  1. Create `internal/chat/store/sqlite.go`. Implement queries saving messages and loading chats history mapping to the new `chats` and `messages` tables.
+* **Verification:** Integration tests checking message writes and retrieval against the newly migrated schema.
 
 ---
 
-### S5-BE084: Chat: Send Private Message Command
+### S5-BE-86: Chat: Send Private Message Command
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S5-BE082
+* **Dependencies:** S5-BE-84
 * **Description:** Process messaging delivery. Enforce follow relationship checks and route through realtime sockets.
 * **Detailed Steps:**
   1. Create `internal/chat/commands/send_private_msg.go`.
@@ -61,11 +61,11 @@
 
 ---
 
-### S5-BE085: Chat: Get Chat History Query
+### S5-BE-87: Chat: Get Chat History Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S5-BE082
+* **Dependencies:** S5-BE-84
 * **Description:** Retrieve historic messages log between active user and partner.
 * **Detailed Steps:**
   1. Create `internal/chat/queries/get_chat_history.go`. Check credentials.
@@ -73,11 +73,11 @@
 
 ---
 
-### S5-BE086: Chat: List Conversations Query
+### S5-BE-88: Chat: List Conversations Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S5-BE082
+* **Dependencies:** S5-BE-84
 * **Description:** Retrieve distinct list of active chat partners for sidebar listings.
 * **Detailed Steps:**
   1. Create `internal/chat/queries/list_conversations.go`.
@@ -85,11 +85,11 @@
 
 ---
 
-### S5-BE087: Chat: HTTP Transport Routing
+### S5-BE-89: Chat: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S5-BE084..S5-BE086
+* **Dependencies:** S5-BE-86..05
 * **Description:** Bind HTTP REST handlers.
 * **Detailed Steps:**
   1. Create `internal/chat/transport/http.go`.
@@ -98,11 +98,11 @@
 
 ---
 
-### S5-BE088: Chat: WS Transport Routing
+### S5-BE-90: Chat: WS Transport Routing
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 5
-* **Dependencies:** S5-BE087
+* **Dependencies:** S5-BE-89
 * **Description:** Migrate old WebSocket chat handlers from `internal/infra/ws/handlers/` into the new vertical slice and bind to core WebSocket hub.
 * **Detailed Steps:**
    1. Create `internal/chat/transport/ws.go`.
@@ -114,7 +114,7 @@
 
 ## BE-B (Backend B) Tickets
 
-### S5-BE089: OAuth: Entity & Repository Interface
+### S5-BE-92: OAuth: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 1
@@ -125,11 +125,11 @@
 
 ---
 
-### S5-BE090: OAuth: SQLite Store
+### S5-BE-93: OAuth: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 1
-* **Dependencies:** S5-BE089
+* **Dependencies:** S5-BE-92
 * **Description:** Create SQLite query maps for state validations.
 * **Detailed Steps:**
   1. Create `internal/oauth/store/sqlite.go`.
@@ -137,11 +137,11 @@
 
 ---
 
-### S5-BE091: OAuth: Initiate Login Command
+### S5-BE-94: OAuth: Initiate Login Command
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S5-BE089
+* **Dependencies:** S5-BE-92
 * **Description:** Generate state hashes and return third-party login redirection URLs.
 * **Detailed Steps:**
   1. Create `internal/oauth/commands/initiate.go`.
@@ -150,11 +150,11 @@
 
 ---
 
-### S5-BE092: OAuth: Callback Processor Command
+### S5-BE-95: OAuth: Callback Processor Command
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S5-BE089
+* **Dependencies:** S5-BE-92
 * **Description:** Consume callback queries. Validate states, request token swaps, login/register user, and return cookies.
 * **Detailed Steps:**
   1. Create `internal/oauth/commands/callback.go`.
@@ -166,11 +166,11 @@
 
 ---
 
-### S5-BE093: OAuth: HTTP Transport Routing
+### S5-BE-96: OAuth: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S5-BE091, S5-BE092
+* **Dependencies:** S5-BE-94, S5-BE-95
 * **Description:** Bind OAuth REST routes.
 * **Detailed Steps:**
   1. Create `internal/oauth/transport/http.go`. Route `GET /api/auth/oauth/:provider/init`, `GET /api/auth/oauth/:provider/callback`.
@@ -178,11 +178,11 @@
 
 ---
 
-### S5-BE094: OAuth Client: GitHub Implementation
+### S5-BE-97: OAuth Client: GitHub Implementation
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S5-BE096
+* **Dependencies:** S5-BE-99
 * **Description:** Move and adapt the existing GitHub profile client from `internal/pkg/oAuth/githubclient/` to `pkg/oauth/github/client.go` per the target architecture.
 * **Detailed Steps:**
   1. Move the existing file and update imports and structure.
@@ -191,11 +191,11 @@
 
 ---
 
-### S5-BE095: OAuth Client: Google Implementation
+### S5-BE-98: OAuth Client: Google Implementation
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S5-BE096
+* **Dependencies:** S5-BE-99
 * **Description:** Move and adapt the existing Google profile client from `internal/pkg/oAuth/googleclient/` to `pkg/oauth/google/client.go` per the target architecture.
 * **Detailed Steps:**
   1. Move the existing file and update imports and structure.
@@ -204,8 +204,8 @@
 
 ---
 
-### S5-BE096: Shared: Refactor OAuth Packages
-* **Priority:** P0 (Prerequisite for S5-BE094/S5-BE095)
+### S5-BE-99: Shared: Refactor OAuth Packages
+* **Priority:** P0 (Prerequisite for S5-BE-97/15)
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Dependencies:** Sprint 0
@@ -216,9 +216,24 @@
    3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
 * **Verification:** Ensure old auth compilation paths are updated (using alias imports if necessary) and all projects compile. `go build ./...` passes.
 
+---
+
+### S5-BE-91: Platform: Chat Migrations (Gap Fix)
+* **Priority:** P0
+* **Assignee:** BE-A
+* **Story Points:** 3
+* **Dependencies:** S1-BE-06
+* **Description:** Create the database migration files for the Chat vertical slice to transition legacy chats storage to the architecture's standard schemas.
+* **Detailed Steps:**
+  1. Create `db/migrations/000010_migrate_chats.up.sql` to create `chats` and `messages` tables (with clean columns and UUID message IDs) and migrate existing data from the legacy `direct_chats` and `chat_messages` tables.
+  2. Create `db/migrations/000010_migrate_chats.down.sql` to reverse this migration.
+* **Verification:** Run up/down migration tests and verify message logs and active conversation entries are preserved.
+
+---
+
 ## FE-A (Frontend A) Tickets
 
-### S5-FE026: Chat Feed View
+### S5-FE-28: Chat Feed View
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -229,11 +244,11 @@
 
 ---
 
-### S5-FE027: Realtime Live Sockets Hook
+### S5-FE-29: Realtime Live Sockets Hook
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 5
-* **Dependencies:** S5-FE026
+* **Dependencies:** S5-FE-28
 * **Description:** Connect real-time WebSocket messaging handling typing indicators, online presence indicators, and incoming message dispatches.
 * **Detailed Steps:**
    1. Connect to websocket. Handle incoming payload types (`chat.message`, `chat.typing`, `chat.presence`).
@@ -244,11 +259,11 @@
 
 ---
 
-### S5-FE028: Chat Message Bubble Component
+### S5-FE-30: Chat Message Bubble Component
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 2
-* **Dependencies:** S5-FE026
+* **Dependencies:** S5-FE-28
 * **Description:** Render chat text bubble matching timestamps and emoji characters.
 * **Detailed Steps:**
   1. Render styled message cells. Support emojis (Unicode formatting).
@@ -258,7 +273,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S5-FE029: GitHub OAuth Button Integration
+### S5-FE-31: GitHub OAuth Button Integration
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -269,11 +284,11 @@
 
 ---
 
-### S5-FE030: Google OAuth Button Integration
+### S5-FE-32: Google OAuth Button Integration
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
-* **Dependencies:** S5-FE029
+* **Dependencies:** S5-FE-31
 * **Description:** Implement Google button mapping clicks to initiation pathways.
 * **Detailed Steps:**
   1. Add login option. Click routes to `/api/auth/oauth/google/init`.
@@ -283,11 +298,11 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S5-SD018: Chat Slice: Contract Tests
+### S5-SD-18: Chat Slice: Contract Tests
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S5-BE088
+* **Dependencies:** S5-BE-90
 * **Description:** Verify chat vertical slice compatibility with old domain.
 * **Detailed Steps:**
   1. Create `internal/chat/store/sqlite_migration_test.go`.
@@ -295,11 +310,11 @@
 
 ---
 
-### S5-SD019: OAuth Slice: Contract Tests
+### S5-SD-19: OAuth Slice: Contract Tests
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S5-BE093
+* **Dependencies:** S5-BE-96
 * **Description:** Ensure OAuth vertical slice compatibility with old domain.
 * **Detailed Steps:**
   1. Create `internal/oauth/store/sqlite_migration_test.go`.
@@ -307,11 +322,11 @@
 
 ---
 
-### S5-SD020: E2E: Messaging Real-Time Delivery Journey
+### S5-SD-20: E2E: Messaging Real-Time Delivery Journey
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S5-FE027
+* **Dependencies:** S5-FE-29
 * **Description:** Full E2E Playwright test validating messaging loops.
 * **Detailed Steps:**
   1. User A follows User B -> A messages B -> B receives in real-time.
@@ -319,11 +334,11 @@
 
 ---
 
-### S5-SD021: E2E: GitHub OAuth Sign In
+### S5-SD-21: E2E: GitHub OAuth Sign In
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S5-FE029
+* **Dependencies:** S5-FE-31
 * **Description:** E2E Playwright testing OAuth mock flows.
 * **Detailed Steps:**
   1. Launch Playwright browser -> Click GitHub login -> redirect callback success -> logged in.

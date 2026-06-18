@@ -65,16 +65,18 @@ graph TD
 1. Document the exact boundary rules (D5) to be respected.
 2. Enforce the DB factory interface requirement: Stores must accept `platform/database.DB` (D4).
 3. Outline the SQLite constraints: WAL mode enabled, 5000ms busy timeout, connection pooling limits (MaxOpenConns = 1 in write path).
-4. Save the structural constraints checklist to `.agents/scratch/qrspi-structure.md`.
+4. For frontend tickets, document Next.js App Router conventions and F1-F6 constraints (auth cookies, image validation, WebSocket heartbeats, folder mapping).
+5. Save the structural constraints checklist to `.agents/scratch/qrspi-structure.md`.
 
 ---
 
 ### Stage 5: Plan (Execution Plan Subagent)
 *Goal: Write an atomic execution checklist with explicit success criteria.*
 1. Map out the exact files to be created (`[NEW]`) or modified (`[MODIFY]`).
-2. Detail the test plans: table-driven tests for commands/queries, isolated in-memory SQLite store tests.
-3. Construct a step-by-step TODO checklist.
-4. Save this plan to `.agents/scratch/qrspi-plan.md`.
+2. Detail the test plans: table-driven tests for commands/queries, isolated in-memory SQLite store tests for backend. For frontend tickets, plan component-level unit and integration tests using Vitest.
+3. For migration tickets, plan Strangler Fig migration sequences explicitly: contract tests first, parallel implementation, route swap, verification, and legacy code deletion.
+4. Construct a step-by-step TODO checklist.
+5. Save this plan to `.agents/scratch/qrspi-plan.md`.
 
 ---
 
@@ -92,9 +94,9 @@ graph TD
 *Goal: Implement the planned changes mechanically using TDD, checking off checklist items.*
 1. Work sequentially through the plan in `.agents/scratch/qrspi-plan.md`.
 2. Follow the TDD loop for every new behavior:
-   - **RED**: Write failing tests and verify failure.
-   - **GREEN**: Write the minimal code to pass the tests.
-   - **REFACTOR**: Tidy up and run lints/formatting.
+   - **RED**: Write failing tests (Vitest for frontend components/hooks, or Go testing for backend) and verify failure.
+   - **GREEN**: Write the minimal code/markup to pass the tests.
+   - **REFACTOR**: Tidy up and run lints/formatting (using Biome for frontend, standard formatting for backend).
 3. Perform surgical changes: do not fix adjacent formatting or delete pre-existing dead code. Clean up imports/variables orphaned by your changes.
 4. Keep the checklist in `.agents/scratch/qrspi-plan.md` updated.
 
@@ -103,8 +105,9 @@ graph TD
 ### Stage 8: PR / Validation (Validator Subagent)
 *Goal: Perform a formal code review and validation of all gates before submitting the PR.*
 1. Check the implementation against all gates defined in the structure stage:
-   - Run lints and tests (`make ci` for backend; `npm run lint` and `npm run format:check` for frontend).
+   - Run backend lints and tests: `rtk make ci` or `rtk make test`.
+   - Run frontend validation (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
-2. Draft a beautiful markdown PR description message.
+2. Draft a beautiful markdown PR description message using the template from `general-instructions.md` (including the Audit Checklist Coverage table).
 3. Publish the PR via CLI tools (Gitea `tea` CLI).

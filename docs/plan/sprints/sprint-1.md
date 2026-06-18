@@ -1,4 +1,4 @@
-# Sprint 1: Platform & Core Infrastructure (Week 2)
+# Sprint 1: Platform & Core Infrastructure (Week 3–4)
 
 **Outcome:** All platform abstractions (Database factory, Event bus, Cache, migration engine) and cross-cutting core layers (Sessions, Real-time WebSockets, auth middleware, and HTTP servers) are fully built and verified using TDD. The frontend has complete auth screens and api/mock wrappers.
 
@@ -6,7 +6,7 @@
 
 ## BE-A (Backend A) Tickets
 
-### S1-BE005: Platform: DB Factory
+### S1-BE-05: Platform: DB Factory
 * **Priority:** P0 (Prerequisite for migrations and features)
 * **Assignee:** BE-A
 * **Story Points:** 5
@@ -23,12 +23,12 @@
 
 ---
 
-### S1-BE006: Custom Migration System
+### S1-BE-06: Custom Migration System
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 8
-* **Dependencies:** S1-BE005
-* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Convert the existing schema (`db/migrations/schema.sql` + `indexes.sql`) into the initial numbered migration file (`000001_initial_schema.up.sql`). Migration files for subsequent features will be created in their respective feature sprints (Sprint 2 for 000002-000003, Sprint 3 for 000004, Sprint 4 for 000005-000006). Seed migration (000007) is handled by S1-SD005.
+* **Dependencies:** S1-BE-05
+* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Convert the existing schema (`db/migrations/schema.sql` + `indexes.sql`) into the initial numbered migration file (`000001_initial_schema.up.sql`). Migration files for subsequent features will be created in their respective feature sprints (Sprint 2 for 000002-000003, Sprint 3 for 000004, Sprint 4 for 000005-000006). Seed migration (000009) is handled by S1-SD-05.
 * **Detailed Steps:**
    1. Implement a migration runner in `internal/platform/database/migrations.go`.
    2. Create a metadata database table named `schema_migrations` to track applied version IDs.
@@ -40,11 +40,11 @@
 
 ---
 
-### S1-BE007: Core: Session Management
+### S1-BE-07: Core: Session Management
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S1-BE005
+* **Dependencies:** S1-BE-05
 * **Description:** Setup backend cookie-based session management.
 * **Detailed Steps:**
   1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface.
@@ -54,23 +54,23 @@
 
 ---
 
-### S1-BE008: Core: Middlewares
+### S1-BE-08: Core: Middlewares
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S1-BE007, S1-BE011
+* **Dependencies:** S1-BE-07, S1-BE-11
 * **Description:** Build the generic middleware pipeline (Auth check, CORS origin validator, RateLimiter).
 * **Detailed Steps:**
    1. **Auth Middleware:** Verifies request session cookie, queries session store, and attaches UserID into the Go request Context.
    2. **CORS Middleware:** Performs strict header checks against configured origin domains.
-   3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE011 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
+   3. **Rate Limiting Middleware:** Uses a sliding-window token bucket algorithm (utilizing S1-BE-11 Cache) to limit requests per IP. Ensure ticker cleanup doesn't leak threads.
    4. **(Phase 3.3)** Implement `internal/core/middleware/logging.go` — request logging middleware that records method, path, status, duration, and request ID.
-* **Note:** Rate limiter depends on Cache (S1-BE011, P1). Since both are P1 in same sprint, implement Cache first or mark rate limiter as soft-blocked on Cache completion.
+* **Note:** Rate limiter depends on Cache (S1-BE-11, P1). Since both are P1 in same sprint, implement Cache first or mark rate limiter as soft-blocked on Cache completion.
 * **Verification:** Write tests hitting mock HTTP endpoints through the middleware chain, confirming correct status codes (401 Unauthorized for bad sessions, 429 Too Many Requests for rate limits, etc.).
 
 ---
 
-### S1-BE009: Shared: Image Type Verification Utility
+### S1-BE-09: Shared: Image Type Verification Utility
 * **Priority:** P2
 * **Assignee:** BE-A
 * **Story Points:** 1
@@ -84,7 +84,7 @@
 
 ## BE-B (Backend B) Tickets
 
-### S1-BE010: Platform: Event Bus
+### S1-BE-10: Platform: Event Bus
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
@@ -99,7 +99,7 @@
 
 ---
 
-### S1-BE011: Platform: Cache
+### S1-BE-11: Platform: Cache
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
@@ -112,7 +112,7 @@
 
 ---
 
-### S1-BE012: Core: Realtime WebSocket Hub
+### S1-BE-12: Core: Realtime WebSocket Hub
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 5
@@ -127,11 +127,11 @@
 
 ---
 
-### S1-BE013: Core: HTTP Server Bootstrap
+### S1-BE-13: Core: HTTP Server Bootstrap
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S1-BE012, S1-BE008
+* **Dependencies:** S1-BE-12, S1-BE-08
 * **Description:** Create the core HTTP server wrapper featuring graceful shutdown.
 * **Detailed Steps:**
    1. Implement `internal/core/server/server.go`.
@@ -142,11 +142,9 @@
 
 ---
 
-
-
 ## FE-A (Frontend A) Tickets
 
-### S1-FE003: Auth Pages (Login & Registration UI)
+### S1-FE-03: Auth Pages (Login & Registration UI)
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -159,7 +157,7 @@
 
 ---
 
-### S1-FE004: API Client Wrapper
+### S1-FE-04: API Client Wrapper
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 2
@@ -174,7 +172,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S1-FE005: Nav Layout Shell
+### S1-FE-05: Nav Layout Shell
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -189,29 +187,29 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S1-SD005: Platform: Database Seeding (Gap Fix)
+### S1-SD-05: Platform: Database Seeding (Gap Fix)
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S1-BE006
-* **Description:** Implement database seed migrations to inject realistic test data into the database when running in development mode.
+* **Dependencies:** S1-BE-06
+* **Description:** Define the structure for database seed migrations to inject realistic test data into the database in development mode. Note that the seed data script itself is numbered `000009_seed_data.up.sql` to execute *after* all schemas (Sprints 2-4) are fully established.
 * **Detailed Steps:**
-  1. Create migration file `db/migrations/000007_seed_data.up.sql` containing seed SQL statements. Include at least:
-     - 4 test users with secure hashed passwords (using known testing hashes).
+  1. Create the template migration file `db/migrations/000009_seed_data.up.sql` containing placeholder SQL statements. Specify that the seeding script will include:
+     - 4 test users with secure hashed passwords.
      - 5 posts with various privacy scopes (public, almost private, private).
      - 2 groups with membership details.
      - Basic follow relationships.
-  2. Create migration file `db/migrations/000007_seed_data.down.sql` to clean up the seeded data.
-  3. Update `internal/platform/database/migrations.go` to optionally apply the seed migration only when a development environment flag (e.g. `ENV=development` or a flag in configs) is active.
-* **Verification:** Run `make db-reset` under development config and verify using `sqlite3` CLI that seed users and posts are inserted.
+  2. Create migration file `db/migrations/000009_seed_data.down.sql` to clean up the seeded data.
+  3. Update `internal/platform/database/migrations.go` in Sprint 1 to optionally apply seed migrations only when a development environment flag (e.g. `ENV=development`) is active, laying the platform runner logic.
+* **Verification:** Confirm the migration runner compiled during S1-BE-06 correctly processes the `000009` file stub when dev flag is on.
 
 ---
 
-### S1-SD006: API Mocking Service
+### S1-SD-06: API Mocking Service
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S1-FE004
+* **Dependencies:** S1-FE-04
 * **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions.
 * **Detailed Steps:**
   1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.

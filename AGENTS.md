@@ -82,32 +82,25 @@ Examples:
 
 `architecture.md` and `sds.md` describe the **target** vertical-slice state, not the current codebase (which is layered hex). Read in this order to avoid confusion:
 
+```mermaid
+graph TD
+    A["1. Project Rules & Guidelines <br> (AGENTS.md, conventions.md)"] --> B["2. Implementation Methodology <br> (general-instructions.md)"]
+    B --> C["3. Architectural Boundaries <br> (architecture.md)"]
+    B --> D["4. Technical Specifications <br> (sds.md)"]
+    D --> E["5. Transition Roadmap <br> (target-architecture-with-phases.md)"]
+    E --> F["6. Ticket Board Tracker <br> (ticket-tracker.md)"]
+    F --> G["7. Sprints Backlog <br> (sprint-0.md -> sprint-6.md)"]
 ```
-Layer 0 — Endgame
-  docs/plan/architecture/target-architecture-with-phases.md
-  → Full migration plan, target state, design decisions D1-D6
 
-Layer 1 — Process
-  docs/plan/sprints/general-instructions.md
-  → TDD, strangler fig, branch strategy, verification gates
+- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](file://AGENTS.md) and [.agents/rules/conventions.md](file://.agents/rules/conventions.md).
+- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/plan/sprints/general-instructions.md](file://docs/plan/sprints/general-instructions.md) to understand TDD, Strangler Fig phases, and verification gates.
+- **Stage 3: Architecture Definition**: Read [docs/plan/architecture/architecture.md](file://docs/plan/architecture/architecture.md) for the vertical slice code layout structure.
+- **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md) to inspect the data model, interfaces, and platform services.
+- **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) (migration roadmap, target state, design decisions D1-D6) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md) (all sprint tickets at a glance).
+- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
+- **Stage 7: Ticket Tracker: 
+- **Stage 7: Verification**: Read [docs/requirements/audit.md](file://docs/requirements/audit.md) and [docs/requirements/readme.md](file://docs/requirements/readme.md) for grading acceptance criteria.
 
-Layer 2 — Current Codebase (explore actual dirs)
-  internal/   → see domain/app/infra layers (current reality)
-  db/migrations/  → flat schema.sql + indexes.sql (no numbered migrations yet)
-  cmd/            → server + client entry points
-  frontend/        → vanilla SPA, not Next.js
-
-Layer 3 — Target Architecture Details
-  docs/plan/architecture/architecture.md   → vertical slice layout
-  docs/plan/architecture/sds.md            → data model, interfaces, platform
-
-Layer 4 — Sprint Scope
-  docs/plan/sprints/ticket-tracker.md  → all tickets at glance
-  docs/plan/sprints/sprint-N.md        → specific sprint
-
-Layer 5 — Verification
-  docs/requirements/audit.md  → acceptance criteria
-```
 
 ## graphify
 

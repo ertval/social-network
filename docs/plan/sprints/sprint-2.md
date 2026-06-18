@@ -1,18 +1,18 @@
-# Sprint 2: User & Topic Features (Week 3)
+# Sprint 2: User & Topic Features (Week 5–6)
 
 **Outcome:** User account features (register, login, profile, privacy toggle) and Topic features (posts with public/almost_private/private visibility, post creation, voting) work end-to-end. Both frontend and backend implementations are completed.
 
-> **FollowChecker stubs:** S2-BE022 and S2-BE030 define local `FollowChecker` interfaces. The Follow slice does not exist until Sprint 3. Until then, inject a stub that always returns `true` (public profiles bypass) or `false` (private profiles blocked, no follow-gating until Sprint 3). Mark with `// TODO: replace with real FollowChecker in Sprint 3`.
+> **FollowChecker stubs:** S2-BE-22 and S2-BE-30 define local `FollowChecker` interfaces. The Follow slice does not exist until Sprint 3. Until then, inject a stub that always returns `true` (public profiles bypass) or `false` (private profiles blocked, no follow-gating until Sprint 3). Mark with `// TODO: replace with real FollowChecker in Sprint 3`.
 >
-> **Migration dependencies:** S1-BE006 must have created `000002_user_profile_fields` before S2-BE015 User repo works, and `000003_topic_privacy` before S2-BE026 Topic repo works. Verify migration order — these are implicit dependencies on S1-BE006.
+> **Migration dependencies:** S1-BE-06 must have created `000002_user_profile_fields` before S2-BE-15 User repo works, and `000003_topic_privacy` before S2-BE-26 Topic repo works. Verify migration order — these are implicit dependencies on S1-BE-06.
 
 ---
 
-### S2-BE014: Wire User & Topic bootstrap routes
+### S2-BE-14: Wire User & Topic bootstrap routes
 * **Priority:** P0
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
-* **Dependencies:** S2-BE025, S2-BE034
+* **Dependencies:** S2-BE-25, S2-BE-34
 * **Description:** Register new slice HTTP routes in `bootstrap.go` so endpoints are live immediately after this sprint. Without this ticket, new slices compile but are unreachable.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import `internal/user/transport` and `internal/topic/transport`.
@@ -24,36 +24,38 @@
 
 ## BE-A (Backend A) Tickets
 
-### S2-BE015: User: Entity & Repository Interface
+### S2-BE-15: User: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `internal/domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
 * **Detailed Steps:**
    1. Create `internal/user/user.go`. Define the `User` struct (ID, Email, PasswordHash, FirstName, LastName, DateOfBirth, Nickname, AboutMe, AvatarPath, IsPrivate, CreatedAt). **Explicitly drop `Age` field** — replaced by `DateOfBirth` for age calculation at runtime.
-   2. Define the `Repository` interface specifying required CRUD queries (e.g. `Create`, `GetByID`, `GetByEmail`, `Update`, `TogglePrivacy`, `ListAll`).
+   2. **DB Schema Sync:** The Go struct's `Nickname` field must map to the SQLite `username` column, which is retained to prevent breaking legacy code running side-by-side.
+   3. Define the `Repository` interface specifying required CRUD queries (e.g. `Create`, `GetByID`, `GetByEmail`, `Update`, `TogglePrivacy`, `ListAll`).
 * **Verification:** Compile check `go build ./internal/user/...`.
 
 ---
 
-### S2-BE016: User: SQLite Store
+### S2-BE-16: User: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Implement the User `Repository` interface using SQLite database operations.
 * **Detailed Steps:**
   1. Create `internal/user/store/sqlite.go`. Implement the repository using the `platform/database.DB` interface.
-  2. Implement scan functions translating SQLite rows into `User` domain structures.
+  2. Map the `Nickname` field on the Go `User` struct to the `username` column in SQL queries.
+  3. Implement scan functions translating SQLite rows into `User` domain structures.
 * **Verification:** Write store integration tests in `sqlite_test.go` utilizing an in-memory SQLite database connection. Run `go test -v ./internal/user/store/...`.
 
 ---
 
-### S2-BE017: User: Register Command
+### S2-BE-17: User: Register Command
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Create the write-use-case handler for user registration with input validation.
 * **Detailed Steps:**
   1. Create `internal/user/commands/register.go`.
@@ -63,25 +65,25 @@
 
 ---
 
-### S2-BE018: User: Login Command
+### S2-BE-18: User: Login Command
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Implement credential validation and user session mapping.
 * **Detailed Steps:**
   1. Create `internal/user/commands/login.go`.
-  2. Query user by email or nickname. Check password matching with bcrypt.
+  2. Query user by email or username (maps to `Nickname` in code). Check password matching with bcrypt.
   3. Call session manager to generate a session cookie token.
 * **Verification:** Unit tests validating correct credentials login, wrong email rejection, and wrong password lockouts.
 
 ---
 
-### S2-BE019: User: Logout Command
+### S2-BE-19: User: Logout Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 1
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Handle session termination.
 * **Detailed Steps:**
   1. Create `internal/user/commands/logout.go`.
@@ -90,24 +92,24 @@
 
 ---
 
-### S2-BE020: User: Update Profile Command
+### S2-BE-20: User: Update Profile Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Handle user profile edits (First Name, Last Name, Nickname, About Me, Avatar).
 * **Detailed Steps:**
   1. Create `internal/user/commands/update_profile.go`.
-  2. Implement input sanitation, optional fields validation, and update db records.
+  2. Implement input sanitation, optional fields validation, and update db records (mapping Nickname to the username column).
 * **Verification:** Test updates to verify information modifies correctly in database.
 
 ---
 
-### S2-BE021: User: Toggle Privacy Command
+### S2-BE-21: User: Toggle Privacy Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Implement profile visibility toggle (public/private profiles).
 * **Detailed Steps:**
   1. Create `internal/user/commands/toggle_privacy.go`.
@@ -116,11 +118,11 @@
 
 ---
 
-### S2-BE022: User: Get Profile Query
+### S2-BE-22: User: Get Profile Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Implement profile retrieval. Block contents for non-followers when profile is private.
 * **Detailed Steps:**
   1. Create `internal/user/queries/get_profile.go`.
@@ -132,11 +134,11 @@
 
 ---
 
-### S2-BE023: User: Get Activity Query
+### S2-BE-23: User: Get Activity Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** Retrieve the user's activity log. This query absorbs the old `internal/domain/activity/` and `internal/app/activities/` logic. It retrieves the user's own posts, comments, votes, as well as lists of followers and following.
 * **Detailed Steps:**
   1. Create `internal/user/queries/get_activity.go`.
@@ -146,11 +148,11 @@
 
 ---
 
-### S2-BE024: User: List Users Query
+### S2-BE-24: User: List Users Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S2-BE015
+* **Dependencies:** S2-BE-15
 * **Description:** List/browse all registered users for exploration.
 * **Detailed Steps:**
   1. Create `internal/user/queries/list_users.go`.
@@ -159,54 +161,55 @@
 
 ---
 
-### S2-BE025: User: HTTP Transport Routing
+### S2-BE-25: User: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S2-BE017..S2-BE024
+* **Dependencies:** S2-BE-17..10
 * **Description:** Bind all user commands and queries to HTTP handler endpoints.
 * **Detailed Steps:**
    1. Create `internal/user/transport/http.go`.
-   2. Wire up `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/users/:id/profile`, `GET /api/users/:id/activity` (maps to S2-BE023 get_activity), `GET /api/users` (maps to S2-BE024 list_users), `PUT /api/profile`, `POST /api/profile/privacy`.
+   2. Wire up `POST /api/register`, `POST /api/login`, `POST /api/logout`, `GET /api/users/:id/profile`, `GET /api/users/:id/activity` (maps to S2-BE-23 get_activity), `GET /api/users` (maps to S2-BE-24 list_users), `PUT /api/profile`, `POST /api/profile/privacy`.
 * **Verification:** Integration tests verifying status codes and JSON response outputs over mock HTTP requests. Every command and query must have at least one route.
 
 ---
 
 ## BE-B (Backend B) Tickets
 
-### S2-BE026: Topic: Entity & Repository Interface
+### S2-BE-26: Topic: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Define domain entity model for posts/topics, visibility scopes, and votes. Topic absorbs the old `internal/domain/category/` and `internal/domain/vote/` domains. Category entities from the old code are merged directly into Topic as a visibility aspect or replaced by the `Visibility` enum; votes are modeled directly inside the Topic slice.
 * **Detailed Steps:**
   1. Create `internal/topic/topic.go`.
-  2. Define `Topic` entity containing: ID, AuthorID, Content, ImagePath, Visibility (public, almost_private, private), and CreatedAt. Merge the old `Category` concept into the Topic entity or visibility layout.
-  3. Define `AllowedUser` entity to map which specific users can view private posts.
-  4. Define `Vote` entity (UserID, TargetID, TargetType: post, Direction: +1/-1) to absorb the old post voting logic. **Defer `TargetType: comment` to Sprint 3** (comment slice) to avoid hidden `topic → comment` dependency (arch D6).
+  2. Define `Topic` entity containing: ID (int), UserID (string) [maps to user_id in DB], Title, Content, ImagePath, Visibility (public, almost_private, private), and CreatedAt. **Note:** Use `int` for IDs to match legacy database types and keep the side-by-side running code functional.
+  3. Define `AllowedUser` entity to map which specific users can view private posts: TopicID (int), UserID (string).
+  4. Define `Vote` entity: UserID (string), TopicID (int), CommentID (int), ReactionType (int: +1/-1) to absorb the legacy post voting schema. **Defer TargetType: comment voting to Sprint 3** (comment slice) to avoid a circular `topic → comment` dependency at compilation time.
   5. Define the `Repository` interface.
 * **Verification:** Compile check `go build ./internal/topic/...`.
 
 ---
 
-### S2-BE027: Topic: SQLite Store
+### S2-BE-27: Topic: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Implement Topic `Repository` queries in SQLite. Topic absorbs the old `internal/infra/storage/sqlite/topics/` and `internal/infra/storage/sqlite/categories/` storage queries.
 * **Detailed Steps:**
   1. Create `internal/topic/store/sqlite.go`.
-  2. Implement storage queries using `platform/database.DB`. Write complex visibility queries checking permissions, followers, and allowed lists.
+  2. Implement storage queries using `platform/database.DB`. Map Go entity columns directly to legacy DB columns: `user_id` instead of `author_id`, and `reaction_type` instead of `value` for votes.
+  3. Write complex visibility queries checking permissions, followers, and allowed lists.
 * **Verification:** Store integration tests using in-memory SQLite checking correct write/read of visibility permissions.
 
 ---
 
-### S2-BE028: Topic: Create Topic Command
+### S2-BE-28: Topic: Create Topic Command
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Build write-use-case for creating posts with visibility restrictions and file attachments.
 * **Detailed Steps:**
   1. Create `internal/topic/commands/create_topic.go`.
@@ -216,11 +219,11 @@
 
 ---
 
-### S2-BE029: Topic: Cast Vote Command
+### S2-BE-29: Topic: Cast Vote Command
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Cast upvotes and downvotes on posts.
 * **Detailed Steps:**
   1. Create `internal/topic/commands/cast_vote.go`.
@@ -229,11 +232,11 @@
 
 ---
 
-### S2-BE030: Topic: Get Feed Query
+### S2-BE-30: Topic: Get Feed Query
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 5
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Get home feed posts filtered by privacy scopes.
 * **Detailed Steps:**
   1. Create `internal/topic/queries/get_feed.go`.
@@ -248,11 +251,11 @@
 
 ---
 
-### S2-BE031: Topic: Get User Topics Query
+### S2-BE-31: Topic: Get User Topics Query
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Retrieve posts created by a specific user, ensuring visibility checks are enforced.
 * **Detailed Steps:**
   1. Create `internal/topic/queries/get_user_topics.go`.
@@ -260,11 +263,11 @@
 
 ---
 
-### S2-BE032: Topic: Get Topic Query
+### S2-BE-32: Topic: Get Topic Query
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Retrieve details for a single post with visibility checks.
 * **Detailed Steps:**
   1. Create `internal/topic/queries/get_topic.go`.
@@ -272,11 +275,11 @@
 
 ---
 
-### S2-BE033: Topic: Get Votes Query
+### S2-BE-33: Topic: Get Votes Query
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S2-BE026
+* **Dependencies:** S2-BE-26
 * **Description:** Retrieve total count of upvotes and downvotes for a target post.
 * **Detailed Steps:**
   1. Create `internal/topic/queries/get_votes.go`.
@@ -284,22 +287,22 @@
 
 ---
 
-### S2-BE034: Topic: HTTP Transport Routing
+### S2-BE-34: Topic: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S2-BE028..S2-BE033
+* **Dependencies:** S2-BE-28..20
 * **Description:** Setup HTTP routing handlers for posts and votes.
 * **Detailed Steps:**
    1. Create `internal/topic/transport/http.go`.
-   2. Wire up `POST /api/posts`, `GET /api/feed`, `GET /api/posts/:id`, `GET /api/users/:id/posts` (maps to S2-BE031 get_user_topics), `GET /api/posts/:id/votes` (maps to S2-BE033 get_votes), `POST /api/posts/:id/vote`.
+   2. Wire up `POST /api/posts`, `GET /api/feed`, `GET /api/posts/:id`, `GET /api/users/:id/posts` (maps to S2-BE-31 get_user_topics), `GET /api/posts/:id/votes` (maps to S2-BE-33 get_votes), `POST /api/posts/:id/vote`.
 * **Verification:** HTTP mock integration tests verifying correct endpoint codes. Every command and query must have at least one route.
 
 ---
 
 ## FE-A (Frontend A) Tickets
 
-### S2-FE006: Registration Form
+### S2-FE-06: Registration Form
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -312,7 +315,7 @@
 
 ---
 
-### S2-FE007: Login Page
+### S2-FE-07: Login Page
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -323,7 +326,7 @@
 
 ---
 
-### S2-FE008: Profile Page
+### S2-FE-08: Profile Page
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -336,7 +339,7 @@
 
 ---
 
-### S2-FE009: Privacy Toggle with Confirmation Popup (Bonus)
+### S2-FE-09: Privacy Toggle with Confirmation Popup (Bonus)
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 2
@@ -350,7 +353,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S2-FE010: Home Feed Page
+### S2-FE-10: Home Feed Page
 * **Priority:** P0
 * **Assignee:** FE-B
 * **Story Points:** 5
@@ -361,7 +364,7 @@
 
 ---
 
-### S2-FE011: Post Creation Form
+### S2-FE-11: Post Creation Form
 * **Priority:** P0
 * **Assignee:** FE-B
 * **Story Points:** 5
@@ -373,7 +376,7 @@
 
 ---
 
-### S2-FE012: Post Card Component
+### S2-FE-12: Post Card Component
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -386,25 +389,25 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S2-SD007: User Slice: Migration Verification Contract Tests
+### S2-SD-07: User Slice: Migration Verification Contract Tests
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S0-BE001 (old repo exists), S2-BE025 (new slice for verification)
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-25 (new slice for verification)
 * **Description:** Per Strangler Fig (Step 1 then Step 3), first write contract tests against the OLD repo, then verify the NEW slice passes the same tests.
 * **Detailed Steps:**
    1. **(Step 1)** Create `internal/user/store/sqlite_migration_test.go`. Write tests against the old repository (`internal/infra/storage/sqlite/...` queries) to capture current behavior.
-   2. **(Step 2)** New slice is built (S2-BE016).
+   2. **(Step 2)** New slice is built (S2-BE-16).
    3. **(Step 3)** Run same contract tests against the new `internal/user/store/sqlite.go` — assert identical data mapping.
 * **Verification:** Contract tests pass with 100% data compatibility against old repo first, then new slice.
 
 ---
 
-### S2-SD008: Topic Slice: Migration Verification Contract Tests
+### S2-SD-08: Topic Slice: Migration Verification Contract Tests
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S0-BE001 (old repo exists), S2-BE034 (new slice for verification)
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-34 (new slice for verification)
 * **Description:** Per Strangler Fig (Step 1 then Step 3), write contract tests against OLD repo first, then verify NEW slice passes the same tests.
 * **Detailed Steps:**
    1. **(Step 1)** Create `internal/topic/store/sqlite_migration_test.go`. Write tests against old topic repository.
@@ -413,7 +416,7 @@
 
 ---
 
-### S2-SD010: E2E: User Signup to Feed Journey
+### S2-SD-10: E2E: User Signup to Feed Journey
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -424,15 +427,15 @@
 
 ---
 
-### S2-SD009: Platform: User & Topic Migrations (000002 & 000003)
+### S2-SD-09: Platform: User & Topic Migrations (000002 & 000003)
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S1-BE006
+* **Dependencies:** S1-BE-06
 * **Description:** Create the database migration files for the User and Topic vertical slices (Phases 2.4 / 5).
 * **Detailed Steps:**
-  1. Create `db/migrations/000002_user_profile_fields.up.sql` to add `date_of_birth`, `about_me`, and `is_private` to the `users` table, and drop the `age` field.
+  1. Create `db/migrations/000002_user_profile_fields.up.sql` to add `date_of_birth`, `about_me`, and `is_private` to the `users` table, and drop the `age` field (retaining `username` column).
   2. Create `db/migrations/000002_user_profile_fields.down.sql` to reverse these changes.
-  3. Create `db/migrations/000003_topic_privacy.up.sql` to add `visibility` to the `topics` table and create the `topic_allowed_users` table.
+  3. Create `db/migrations/000003_topic_privacy.up.sql` to add `visibility` and `image_url` to the `topics` table and create the `topic_allowed_users` table (retaining topics auto-incrementing integer IDs).
   4. Create `db/migrations/000003_topic_privacy.down.sql` to reverse these changes.
 * **Verification:** Run `make db-reset` or execute the migration runner and verify that these migrations apply and rollback cleanly, creating the expected schema changes.

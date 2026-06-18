@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_name TEXT NOT NULL,
     date_of_birth DATE NOT NULL,
     avatar_url TEXT,
-    nickname TEXT UNIQUE,
+    username TEXT UNIQUE,
     about_me TEXT,
     is_private BOOLEAN NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -48,19 +48,19 @@ CREATE TABLE IF NOT EXISTS sessions (
 
 -- Altered in 000003_topic_privacy.up.sql: added visibility, image_url.
 CREATE TABLE IF NOT EXISTS topics (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    author_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
     visibility TEXT NOT NULL CHECK(visibility IN ('public', 'almost_private', 'private')),
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Created in 000003_topic_privacy.up.sql
 CREATE TABLE IF NOT EXISTS topic_allowed_users (
-    topic_id TEXT NOT NULL,
+    topic_id INTEGER NOT NULL,
     user_id TEXT NOT NULL,
     PRIMARY KEY (topic_id, user_id),
     FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE,
@@ -69,24 +69,30 @@ CREATE TABLE IF NOT EXISTS topic_allowed_users (
 
 -- Comments table supporting image/GIF attachments (image_url)
 CREATE TABLE IF NOT EXISTS comments (
-    id TEXT PRIMARY KEY,
-    topic_id TEXT NOT NULL,
-    author_id TEXT NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     content TEXT NOT NULL,
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE,
-    FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS votes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
-    target_id TEXT NOT NULL, -- can be topic_id or comment_id
-    target_type TEXT NOT NULL CHECK(target_type IN ('topic', 'comment')),
-    value INTEGER NOT NULL CHECK(value IN (-1, 1)),
-    PRIMARY KEY (user_id, target_id),
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    topic_id INTEGER,
+    comment_id INTEGER,
+    reaction_type INTEGER NOT NULL CHECK(reaction_type IN (-1, 1)),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, topic_id),
+    UNIQUE (user_id, comment_id),
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE,
+    FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE
 );
+
 
 -- 000004_follow_system.up.sql
 CREATE TABLE IF NOT EXISTS follows (

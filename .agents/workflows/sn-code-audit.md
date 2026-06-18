@@ -81,6 +81,7 @@ Analyze the codebase systematically across six layers. Each layer is independent
 3. **Startup migrations** — verify that database migrations are applied automatically at application startup (ref: `docs/requirements/readme.md` Migrate section). Check `main.go`, bootstrap code, or an `init()` function for migration execution. Flag if migrations require manual invocation.
 4. **Project structure** — verify migration files follow `db/migrations/sqlite/*.up.sql` / `*.down.sql` naming or an equivalent structured convention. Check if seed migrations exist (`db/seeds/`).
 5. **Frontend organization** — verify the frontend directory is well-organized, typically under `frontend/` with a JS framework (Next.js, Vue.js, Svelte, or Mithril per spec).
+6. **Legacy cleanup** — verify that old legacy codebase directories (`domain/`, `app/`, `infra/`) have been successfully removed when migration is complete, ensuring only the new vertical slices are left.
 
 ### Layer B — Allowed Packages & Dependency Audit
 
@@ -191,6 +192,20 @@ Verify notification triggers exist for ALL of the following (ref: `docs/requirem
    - Tag as BONUS-PRESENT or BONUS-MISSING.
 5. **Extra notifications** — check if there are notification types beyond the 4 required ones (bonus credit).
 6. **Overall project quality** — provide holistic assessment: code organization, testing coverage, documentation quality (ref: `docs/requirements/audit.md` "Do you think in general this project is well done?").
+
+### Layer G — Frontend Compliance Audit (New)
+
+Evaluate Next.js application compliance against grading specs and interaction best practices:
+1. **G1: Registration form completeness** — verify `/register` has inputs for Email, Password, First Name, Last Name, Date of Birth (required), and Nickname, About Me, Avatar/Image (optional).
+2. **G2: Cookie-based session persistence** — verify that session state is handled securely via HTTP-only, secure, SameSite cookies rather than localStorage, surviving page reload and keeping multi-browser sessions separate.
+3. **G3: Notification panel placement & visual message distinction** — verify that the notification panel/bell is globally accessible and visually distinguished from private chat messages.
+4. **G4: Image upload handling** — verify support for attaching images and GIFs (JPEG, PNG, GIF) in posts and comments with client-side file size (<10MB) and format validations.
+5. **G5: Profile privacy lock screen & post visibility toggles** — verify private profiles render a privacy lock screen to non-followers. Verify post creation supports three visibility levels (public, almost private, private).
+6. **G6: Follow/chat gating and request/approval flows** — verify follow requests can be accepted/declined, and that chat triggers validation if attempted between non-followed users.
+7. **G7: Group event form fields and RSVP buttons** — verify event creation form requires title, description, and datetime picker, and that RSVP supports Going/Not Going options updating in real-time.
+8. **G8: Chat Unicode emoji support** — verify native Unicode emoji rendering and selection in chat windows.
+9. **G9: RSC component boundaries** — verify correct React Server Component (RSC) and Client Component boundaries (e.g. data fetching in RSCs, interaction in Client Components).
+10. **G10: Confirmation popups** — verify confirmation dialogs trigger before unfollowing a user and when switching profile privacy.
 
 ---
 

@@ -1265,8 +1265,8 @@
     "semantic_hash": "e2cb4cf24aabda4856a6c9565731da20"
   },
   "AGENTS.md": {
-    "mtime": 1781794635.8523283,
-    "ast_hash": "d49e11e4eac2d2096bd9e68ad9377595",
+    "mtime": 1781797401.3552282,
+    "ast_hash": "a1f9d761984b58a6dd18f7ddac32007a",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1355,8 +1355,8 @@
     "semantic_hash": ""
   },
   "docs/plan/architecture/sds.md": {
-    "mtime": 1781794801.7895963,
-    "ast_hash": "a3bd1d3ce9e4459ddd5e5bd6d717dad5",
+    "mtime": 1781796359.7954304,
+    "ast_hash": "93ce8eb40e42bc440cdd53f4f3927e43",
     "semantic_hash": ""
   },
   "docs/plan/architecture/target-architecture-with-phases.md": {
@@ -2660,53 +2660,53 @@
     "semantic_hash": "0bc020d491fca99550c1ea3de0a5f862"
   },
   ".agents/workflows/sn-code-audit.md": {
-    "mtime": 1781791253.8144147,
-    "ast_hash": "a8d5af465699c8967f4a8cde3d0b2df1",
+    "mtime": 1781797448.6363106,
+    "ast_hash": "79a086317dab17c140d75f40420d9c8b",
     "semantic_hash": ""
   },
   "docs/plan/sprints/general-instructions.md": {
-    "mtime": 1781794802.514611,
-    "ast_hash": "9961322de60ada6efec8c9cda20b2163",
+    "mtime": 1781797395.0112276,
+    "ast_hash": "bfcf5e953c4955e145e1879e75dce689",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-0.md": {
-    "mtime": 1781795210.566056,
-    "ast_hash": "86c824810855a765adda7f890da62a63",
+    "mtime": 1781796981.6610167,
+    "ast_hash": "8fbf8bbd3c2ef6a1872836811107b3b4",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-1.md": {
-    "mtime": 1781795210.570063,
-    "ast_hash": "729b9fe7a42a6bded51c1e62e6fd28f4",
+    "mtime": 1781796981.6610167,
+    "ast_hash": "3ce23326ba01a6452aa999e2ec367bd9",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-2.md": {
-    "mtime": 1781795210.570063,
-    "ast_hash": "aeae1724b0d33676f70db9dac56e92b9",
+    "mtime": 1781796981.6650083,
+    "ast_hash": "a2013ae254702857a943e4a9c7a2d274",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-3.md": {
-    "mtime": 1781795210.570063,
-    "ast_hash": "35143f394524a73e162a3025a2738531",
+    "mtime": 1781796981.6650083,
+    "ast_hash": "709f66ee20516275c91227b3b6234710",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-4.md": {
-    "mtime": 1781795210.5740702,
-    "ast_hash": "a91bd9189ca74b5387a9c15e5751e6df",
+    "mtime": 1781796981.6650083,
+    "ast_hash": "db11d0b31c98367d6b143c5882b295ec",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-5.md": {
-    "mtime": 1781795210.5740702,
-    "ast_hash": "da09293d1d5ab4724716da28a06399a0",
+    "mtime": 1781796981.6650083,
+    "ast_hash": "a045cb9d675a0ec0f0ede663ba8a779a",
     "semantic_hash": ""
   },
   "docs/plan/sprints/sprint-6.md": {
-    "mtime": 1781795210.5780773,
-    "ast_hash": "b61706d76f140d3401af6867dbd08476",
+    "mtime": 1781796981.669,
+    "ast_hash": "e0dbfc45fdf1fb2ee2f95018d27c5629",
     "semantic_hash": ""
   },
   "docs/plan/sprints/ticket-tracker.md": {
-    "mtime": 1781795210.5780773,
-    "ast_hash": "b4ba6c99d7c5e648322816321bc42d22",
+    "mtime": 1781796981.669,
+    "ast_hash": "5ace9508dbf397bc4120de08b5b22fcb",
     "semantic_hash": ""
   },
   ".agents/skills/shadcn/assets/shadcn-small.png": {
@@ -2735,8 +2735,8 @@
     "semantic_hash": ""
   },
   ".agents/workflows/pr-review.md": {
-    "mtime": 1781792314.877738,
-    "ast_hash": "43734c296da6860ed41ff6c8e2c7917f",
+    "mtime": 1781797443.0120225,
+    "ast_hash": "ca5bc5df02173bb18184acd7b8b00696",
     "semantic_hash": ""
   },
   ".agents/prompts/pr-implement.md": {
@@ -2745,13 +2745,13 @@
     "semantic_hash": ""
   },
   ".agents/workflows/pr-create.md": {
-    "mtime": 1781791253.8144147,
-    "ast_hash": "cd4a5378a87061005be793210addb36c",
+    "mtime": 1781797421.9722562,
+    "ast_hash": "bc236420c64a13a1c58a35eedc7d9e4c",
     "semantic_hash": ""
   },
   ".agents/workflows/pr-implement.md": {
-    "mtime": 1781791253.8144147,
-    "ast_hash": "1be2893cc78f8c4b62e5879ae15e0ad0",
+    "mtime": 1781797428.1703227,
+    "ast_hash": "25af3fa9c0303cb36cd4ee0fb42011df",
     "semantic_hash": ""
   },
   ".agents/prompts/pr-implement-qrspi.md": {
@@ -2760,8 +2760,8 @@
     "semantic_hash": ""
   },
   ".agents/workflows/pr-implement-qrspi.md": {
-    "mtime": 1781791253.8144147,
-    "ast_hash": "bf67409eda0448dde884a06eb5631c41",
+    "mtime": 1781797438.4035137,
+    "ast_hash": "f12915aec723fc3c80e5c62a237297e9",
     "semantic_hash": ""
   },
   "docs/audit/VERIFICATION_REPORT.md": {
@@ -2769,14 +2769,14 @@
     "ast_hash": "203e9cc6849dd4940939717964bfa178",
     "semantic_hash": ""
   },
-  "docs/plan/architecture_sprint_audit.md": {
-    "mtime": 1781795284.1780949,
-    "ast_hash": "989a92c182a5a967e0c39b65ca6d5dbc",
-    "semantic_hash": ""
-  },
   "docs/plan/sprints/frontend-gap-analysis.md": {
     "mtime": 1781795210.5780773,
     "ast_hash": "738609dbb18e8a54db33e60caa3a6cd1",
+    "semantic_hash": ""
+  },
+  "docs/old/architecture_sprint_audit.md": {
+    "mtime": 1781796477.0044096,
+    "ast_hash": "b1e63ea4b34b59774f4acb1950d9b734",
     "semantic_hash": ""
   }
 }
