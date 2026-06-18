@@ -58,27 +58,7 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## 5. Documentation Conventions
-
-- **Use relative paths** in all plans, proposals, and documentation — never absolute/full file paths.
-  - ✅ `internal/user/service.go`, `docs/plan/arch-proposals.md`
-  - ❌ `/home/user/code/social-network/internal/user/service.go`
-- Reference paths from the project root (where `go.mod` lives).
-
-## 6. Git Branch Naming
-
-All branches must follow the format `<username>/<type>-<detail>`.
-
-- **username**: GitHub/Gitea username (e.g. `ekaramet`, `arnald`)
-- **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
-- **detail**: kebab-case description of the change
-
-Examples:
-- `ekaramet/feat-arch-proposal`
-- `arnald/fix-sqlite-busy-timeout`
-- `ekaramet/chore-update-deps`
-
-## 7. Progressive Disclosure — Doc Reading Order
+## 5. Progressive Disclosure — Doc Reading Order
 
 `architecture.md` and `sds.md` describe the **target** vertical-slice state, not the current codebase (which is layered hex). Read in this order to avoid confusion:
 
@@ -98,9 +78,28 @@ graph TD
 - **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md) to inspect the data model, interfaces, and platform services.
 - **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) (migration roadmap, target state, design decisions D1-D6) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md) (all sprint tickets at a glance).
 - **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
-- **Stage 7: Ticket Tracker: 
 - **Stage 7: Verification**: Read [docs/requirements/audit.md](file://docs/requirements/audit.md) and [docs/requirements/readme.md](file://docs/requirements/readme.md) for grading acceptance criteria.
 
+
+## 6. Documentation Conventions
+
+- **Use relative paths** in all plans, proposals, and documentation — never absolute/full file paths.
+  - ✅ `internal/user/service.go`, `docs/plan/arch-proposals.md`
+  - ❌ `/home/user/code/social-network/internal/user/service.go`
+- Reference paths from the project root (where `go.mod` lives).
+
+## 7. Git Branch Naming
+
+All branches must follow the format `<username>/<type>-<detail>`.
+
+- **username**: GitHub/Gitea username (e.g. `ekaramet`, `arnald`)
+- **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
+- **detail**: kebab-case description of the change
+
+Examples:
+- `ekaramet/feat-arch-proposal`
+- `arnald/fix-sqlite-busy-timeout`
+- `ekaramet/chore-update-deps`
 
 ## graphify
 
