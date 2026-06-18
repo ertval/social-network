@@ -13,7 +13,7 @@
 | Sprint length | 1 week |
 | Total duration | ~7 weeks (7 sprints) |
 | Methodology | TDD (Red → Green → Refactor), Strangler Fig, Trunk-Based Development |
-| Branch naming | `username/type-detail` (e.g. `ekaramet/feat-user-slice`) |
+| Branch naming | `username/type-detail` (e.g. `geoikonomou/feat-user-slice`) |
 | Ticket format | **ID** — component, priority, dependency, assignee, story points, acceptance criteria |
 
 ---
@@ -46,7 +46,7 @@ graph TD
 ### Onboarding Guide
 
 1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/sprints/ticket-tracker.md`. Verify dependencies.
-2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `ekaramet/feat-user-slice`).
+2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `geoikonomou/feat-user-slice`).
 3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
 4. **PR Guidelines**: Squash merge, run all validation gates (`make ci` for BE, Bun commands for FE), and draft description using the PR template.
 

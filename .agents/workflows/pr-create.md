@@ -145,15 +145,22 @@ Once the PR message is written and saved to `.git/PR_DESCRIPTION.md`, execute th
 2. **Push the Branch**:
    - Run: `rtk git push -u origin <branch-name>`
 
-3. **Create the Pull Request**:
-   - Run the non-interactive Gitea CLI command to publish the PR with all devs as reviewers:
+3. **Fetch collaborators and create the Pull Request**:
+   - First, dynamically fetch all repo collaborators via the Gitea API (excluding the PR author), then pass them as reviewers:
+     ```bash
+     COLLABORATORS=$(rtk curl -s \
+       "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/collaborators" \
+       -H "Authorization: token $(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')" \
+       2>/dev/null | python3 -c "import json,sys; users=json.load(sys.stdin); print(','.join(u['login'] for u in users if u['login']!='$(rtk tea whoami 2>/dev/null | head -1)'))" 2>/dev/null)
+     ```
+   - Then publish the PR with the dynamic reviewer list:
      ```bash
      rtk tea pulls create \
        --title "[Ticket ID]: [Brief Title]" \
        --description "$(cat .git/PR_DESCRIPTION.md)" \
        --base main \
        --head [branch-name] \
-        --reviewer ekaramet,dkotsi,epapamic,nwntaspap,smichail \
+       --reviewer "$COLLABORATORS" \
        --output simple
      ```
    - Print the generated PR URL and details to the user.

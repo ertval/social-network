@@ -174,14 +174,14 @@ Branches must be named in the following format:
 ```
 <username>/<type>-<detail>
 ```
-* **username**: Gitea username (check `origin` remote) — known devs: `ekaramet`, `dkotsi`, `epapamic`, `nwntaspap`, `smichail`
+* **username**: Gitea username (check `origin` remote) — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
 * **type**: Action category (`feat`, `fix`, `chore`, `refactor`, `docs`, `arch`)
 * **detail**: kebab-case description of the work. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, optional.
 
 **Examples:**
-- `ekaramet/feat-user-auth`
-- `dkotsi/fix-websocket-panic`
-- `epapamic/docs-dev-env`
+- `epapamic/feat-user-auth`
+- `ekaramet/fix-websocket-panic`
+- `geoikonomou/docs-dev-env`
 
 ### Pull Request & Commit Strategy
 1. **Trunk-Based Development**: Keep feature branches short-lived (≤ 3 days).

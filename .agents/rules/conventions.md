@@ -59,8 +59,8 @@ Every PR must pass:
 - [ ] No dead code: remove unused imports/variables/functions from your changes
 
 ## 6. Branching & Commits
-- **Branch Naming**: `<username>/<type>-<detail>` (e.g. `dkotsi/feat-user-slice`). Branches must live <= 3 days.
-- **Username**: Gitea username from `origin` remote — known devs: `ekaramet`, `dkotsi`, `epapamic`, `nwntaspap`, `smichail`.
+- **Branch Naming**: `<username>/<type>-<detail>` (e.g. `epapamic/feat-user-slice`). Branches must live <= 3 days.
+- **Username**: Gitea username from `origin` remote — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`.
 - **Type**: `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`.
 - **Detail**: kebab-case. Ticket ID (e.g. `S3-fix-`) may prefix type but is not required.
 - **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`). Allowed scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`.
