@@ -13,21 +13,12 @@ Since this repository enforces strict boundaries, architectural paradigms, and p
 
 ### Phase 1: Deterministic Grounding & Tool Gates
 Before spawning any cognitive subagents, verify code health using deterministic tooling.
-* Run backend commands:
-  - `rtk make ci-mod`
-  - `rtk make check-format`
-  - `rtk make lint`
-  - `rtk make test`
-* Run frontend commands (in `frontend/`):
-  - `rtk bun run lint`
-  - `rtk bun run format:check`
-  - `rtk tsc --noEmit`
-  - `rtk bun run test`
-* **Early Exit**: If any step fails, compile the errors and output a failing report immediately. Do not trigger Phase 2.
+ * Run full CI pipeline (BE + FE): `rtk make ci`
+ * **Early Exit**: If any step fails, compile the errors and output a failing report immediately. Do not trigger Phase 2.
 
 ### Phase 2: Cognitive Subagent Review
 If deterministic tools pass, launch specialized subagents using the guidelines in `.agents/prompts/pr-review.md`:
-1. **Ticket & Scope Drift Agent**: Scans for out-of-scope code, unused functions/variables (making sure your changes didn't create dead code), and requirements alignment. PR size.
+1. **Ticket & Scope Drift Agent**: Scans for out-of-scope code, unused functions/variables (making sure your changes didn't create dead code), and requirements alignment. PR size. **Verifies that `docs/sprints/ticket-tracker.md` was updated to mark the target ticket as completed.**
 2. **Logic & Correctness Agent**: Validates business logic, checks for database connection pooling (1-10 connections max), WAL mode configurations, and busy timeouts.
 3. **Architecture & Boundary Rules Agent**: Verifies vertical slice rules (`internal/<slice>`), D5 boundary rules (no cross-slice transport/store imports), and D3 ID-only communications/Event Bus mutations.
 4. **Code Quality, Security & Framework Best Practices Agent**: Checks for SQL injections, WebSocket timeouts/limits, unauthorized dependency updates, and Next.js / Go structured logging conventions.

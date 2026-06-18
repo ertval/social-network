@@ -105,8 +105,7 @@ graph TD
 ### Stage 8: PR / Validation (Validator Subagent)
 *Goal: Perform a formal code review and validation of all gates before submitting the PR.*
 1. Check the implementation against all gates defined in the structure stage:
-   - Run backend lints and tests: `rtk make ci` or `rtk make test`.
-   - Run frontend validation (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`.
+   - Run full CI pipeline: `rtk make ci`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
 2. Draft a beautiful markdown PR description message using the template from `@.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).

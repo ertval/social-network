@@ -81,8 +81,7 @@ graph TD
 *Goal: Check that all architectural, structural, and test gates have been respected.*
 1. Run the validator subagent prompts to check all boundary constraints (no cross-slice transport/store imports).
 2. Confirm branch names and conventional commit history structure.
-3. Run verification commands to ensure all validation gates pass cleanly:
-   - Backend: `rtk make ci` or `rtk make test`
-   - Frontend (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`
+3. Run verification commands to ensure all validation gates pass cleanly: `rtk make ci`
 4. If any gates fail, output error locations and revert to Phase 3.
+5. **Update Ticket Tracker**: Mark the ticket as completed in `docs/sprints/ticket-tracker.md` by changing `- [ ]` to `- [x]` for the target ticket ID. Commit: `git add docs/sprints/ticket-tracker.md && git commit -m "chore(tracker): mark <TICKET_ID> as completed"`.
 
