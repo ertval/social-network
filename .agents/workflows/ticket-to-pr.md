@@ -3,7 +3,7 @@ name: ticket-to-pr
 description: End-to-end orchestrator: ticket → implement → review → fix (loop) → create PR.
 ---
 
-This workflow takes a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
+Take a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
 
 ---
 
