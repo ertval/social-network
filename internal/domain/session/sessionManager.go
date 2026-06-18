@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/user"
 )
 
 type Manager interface {

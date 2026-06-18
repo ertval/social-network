@@ -3,8 +3,8 @@ package testhelpers
 import (
 	"testing"
 
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/user"
 )
 
 func AssertUserMatch(t *testing.T, got, want *user.User) {

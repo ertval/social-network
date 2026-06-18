@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"text/template"
 
-	"github.com/arnald/forum/cmd/client/domain"
-	"github.com/arnald/forum/cmd/client/helpers"
-	"github.com/arnald/forum/cmd/client/helpers/templates"
-	"github.com/arnald/forum/cmd/client/middleware"
+	"social-network/cmd/client/domain"
+	"social-network/cmd/client/helpers"
+	"social-network/cmd/client/helpers/templates"
+	"social-network/cmd/client/middleware"
 )
 
 const defaltPageSize = 12

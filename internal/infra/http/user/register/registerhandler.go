@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/arnald/forum/internal/app"
-	usercommands "github.com/arnald/forum/internal/app/user/commands"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
+	"social-network/internal/app"
+	usercommands "social-network/internal/app/user/commands"
+	"social-network/internal/config"
+	"social-network/internal/domain/session"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 type RegisterUserReguestModel struct {

@@ -3,7 +3,7 @@ package commentqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/comment"
+	"social-network/internal/domain/comment"
 )
 
 type GetCommentRequest struct {

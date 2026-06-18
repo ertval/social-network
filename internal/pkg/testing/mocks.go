@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/session"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/user"
 )
 
 var ErrTest = errors.New("test error")

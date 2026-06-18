@@ -4,13 +4,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/arnald/forum/internal/app"
-	commentQueries "github.com/arnald/forum/internal/app/comments/queries"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
+	"social-network/internal/app"
+	commentQueries "social-network/internal/app/comments/queries"
+	"social-network/internal/config"
+	"social-network/internal/domain/comment"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 type ResponseModel struct {

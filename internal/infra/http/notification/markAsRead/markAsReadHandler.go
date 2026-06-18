@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
-	"github.com/arnald/forum/internal/infra/middleware"
+	notificationcommands "social-network/internal/app/notifications/commands"
+	"social-network/internal/infra/middleware"
 )
 
 type Handler struct {

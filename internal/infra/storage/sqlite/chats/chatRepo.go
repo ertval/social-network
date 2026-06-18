@@ -6,8 +6,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/arnald/forum/internal/domain/chat"
-	"github.com/arnald/forum/internal/pkg/uuid"
+	"social-network/internal/domain/chat"
+	"social-network/internal/pkg/uuid"
 )
 
 type Repo struct {

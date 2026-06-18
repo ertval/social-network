@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"net/url"
 
-	oauthservice "github.com/arnald/forum/internal/app/oauth"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/oauth"
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/infra/http/authcookies"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
+	oauthservice "social-network/internal/app/oauth"
+	"social-network/internal/config"
+	"social-network/internal/domain/oauth"
+	"social-network/internal/domain/session"
+	"social-network/internal/infra/http/authcookies"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
+	oauthpkg "social-network/internal/pkg/oAuth"
 )
 
 type OAuthHandler struct {

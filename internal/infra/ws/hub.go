@@ -2,7 +2,7 @@ package ws
 
 import (
 	"encoding/json"
-	"github.com/arnald/forum/internal/domain/chat"
+	"social-network/internal/domain/chat"
 	"log"
 	"sync"
 )

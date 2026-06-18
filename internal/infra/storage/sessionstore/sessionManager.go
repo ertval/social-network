@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/domain/user"
-	"github.com/arnald/forum/internal/pkg/uuid"
+	"social-network/internal/config"
+	"social-network/internal/domain/session"
+	"social-network/internal/domain/user"
+	"social-network/internal/pkg/uuid"
 )
 
 const (

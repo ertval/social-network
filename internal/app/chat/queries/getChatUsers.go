@@ -5,9 +5,9 @@ import (
 	"sort"
 	"time"
 
-	chatapp "github.com/arnald/forum/internal/app/chat"
-	"github.com/arnald/forum/internal/domain/chat"
-	"github.com/arnald/forum/internal/domain/user"
+	chatapp "social-network/internal/app/chat"
+	"social-network/internal/domain/chat"
+	"social-network/internal/domain/user"
 )
 
 type GetChatUsersRequest struct {

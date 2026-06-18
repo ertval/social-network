@@ -1,10 +1,10 @@
 package getchatusers
 
 import (
-	chatqueries "github.com/arnald/forum/internal/app/chat/queries"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	chatqueries "social-network/internal/app/chat/queries"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 	"net/http"
 	"time"
 )

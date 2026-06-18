@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/arnald/forum/internal/domain/oauth"
-	"github.com/arnald/forum/internal/domain/user"
-	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
-	"github.com/arnald/forum/internal/pkg/uuid"
+	"social-network/internal/domain/oauth"
+	"social-network/internal/domain/user"
+	oauthpkg "social-network/internal/pkg/oAuth"
+	"social-network/internal/pkg/uuid"
 )
 
 type OAuthService struct {

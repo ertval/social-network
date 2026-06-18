@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/arnald/forum/internal/domain/user"
-	"github.com/arnald/forum/internal/pkg/bcrypt"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/uuid"
+	"social-network/internal/domain/user"
+	"social-network/internal/pkg/bcrypt"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/uuid"
 )
 
 type UserRegisterRequest struct {

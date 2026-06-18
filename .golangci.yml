@@ -102,4 +102,4 @@ formatters:
         sections:
           - standard   # Standard library
           - default    # Third-party imports
-          - prefix(github.com/arnald/forum)
+          - prefix(social-network)

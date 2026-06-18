@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/infra/http/authcookies"
+	"social-network/internal/domain/session"
+	"social-network/internal/infra/http/authcookies"
 )
 
 type authorization struct {

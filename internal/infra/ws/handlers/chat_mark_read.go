@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	chatcommands "github.com/arnald/forum/internal/app/chat/commands"
-	"github.com/arnald/forum/internal/infra/logger"
-	ws "github.com/arnald/forum/internal/infra/ws"
+	chatcommands "social-network/internal/app/chat/commands"
+	"social-network/internal/infra/logger"
+	ws "social-network/internal/infra/ws"
 )
 
 type ChatMarkReadHandler struct {

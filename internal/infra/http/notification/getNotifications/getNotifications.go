@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/arnald/forum/internal/app/notifications/queries"
-	"github.com/arnald/forum/internal/infra/middleware"
+	"social-network/internal/app/notifications/queries"
+	"social-network/internal/infra/middleware"
 )
 
 type Handler struct {

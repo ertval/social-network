@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/arnald/forum/internal/app/notifications"
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/notification"
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/vote"
+	"social-network/internal/app/notifications"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/notification"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/vote"
 )
 
 type CastVoteRequest struct {

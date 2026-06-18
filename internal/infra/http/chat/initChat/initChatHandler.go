@@ -3,10 +3,10 @@ package initchat
 import (
 	"net/http"
 
-	chatcommands "github.com/arnald/forum/internal/app/chat/commands"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	chatcommands "social-network/internal/app/chat/commands"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 )
 
 type Handler struct {

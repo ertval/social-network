@@ -3,8 +3,8 @@ package notificationcommands
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/app/notifications"
-	"github.com/arnald/forum/internal/domain/notification"
+	"social-network/internal/app/notifications"
+	"social-network/internal/domain/notification"
 )
 
 type CreateNotificationRequest struct {
