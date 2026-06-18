@@ -50,13 +50,9 @@ Verify that the implemented changes strictly comply with sprint tickets and core
      - **Surgical Changes**: Ensure NO scope drift, unrelated formatting improvements, or pre-existing dead code cleanups. Remove imports/variables orphaned by your own changes.
 
 3. **Run Verification Gates**:
-   - Run standard backend validation:
-     - `rtk make ci` or `rtk make test`
-   - Run standard frontend validation (run in the `frontend/` directory):
-     - `rtk bun run lint`
-     - `rtk bun run format:check`
-     - `rtk tsc --noEmit`
-     - `rtk bun run test`
+   - Run full CI pipeline:
+      - `rtk make ci`
+   - Or run individually: `rtk make be-ci` (BE) / `rtk make fe-ci` (FE)
    - Do not proceed with PR creation if these validation gates fail.
 
 ---

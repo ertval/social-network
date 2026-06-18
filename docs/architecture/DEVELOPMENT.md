@@ -62,7 +62,7 @@ make dev
 > `make dev` is an alias to `make docker-dev` which launches the dev compose configuration.
 
 ### 5. Verify Setup (Run CI Checks)
-Ensure everything compiles, formats, and tests successfully:
+Ensure everything compiles, formats, lints, and tests successfully (both BE and FE):
 ```bash
 make ci
 ```
@@ -146,7 +146,7 @@ Before pushing code or opening a pull request, ensure it passes all verification
 ### Backend Validation
 Run linter (`golangci-lint`, `staticcheck`, and `govulncheck`), formatting, and test checks:
 ```bash
-make ci
+make be-ci
 ```
 To run tests separately with code coverage:
 ```bash
@@ -154,13 +154,17 @@ make test
 ```
 
 ### Frontend Validation
-Navigate to `frontend/` and run standard format, lint, type checking, and unit tests:
+Run the composite frontend gate (or individual commands in `frontend/`):
 ```bash
-cd frontend
-bun run lint
-bun run format:check
-tsc --noEmit
-bun run test
+make fe-ci
+```
+
+Individual commands (run from `frontend/`):
+```bash
+bun run lint        # Biome lint
+bun run format:check  # Biome format check
+tsc --noEmit          # TypeScript type check
+bun run test          # Vitest
 ```
 
 ---

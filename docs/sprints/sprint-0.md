@@ -55,12 +55,14 @@
      - `make check-format` -> Fail if code format changes.
      - `make lint` -> Run static checks and `golangci-lint`.
      - `make test` -> Run Go unit tests with race detector: `go test -race -cover ./...`.
-     - `make ci` -> Chains: `go mod tidy`, format checking, linting (staticcheck + golangci-lint + govulncheck), running tests.
+     - `make be-ci` -> Backend: `go mod tidy`, format checking, linting (staticcheck + golangci-lint + govulncheck), running tests.
+     - `make fe-ci` -> Frontend: Biome lint, Biome format check, `tsc --noEmit`, Vitest.
+     - `make ci` -> Full gate (runs both `be-ci` and `fe-ci`).
      - `make db-reset` -> Helper to wipe local SQLite db files for fresh runs.
      - `make seed` -> seed database with test data
      # add also some comands to test run and dev the project, seperate front, back and both
      # add also some comands to test run and dev the project, seperate front, back and both
-* **Verification:** Running `make ci` on the command line should execute all steps and finish with exit code 0.
+* **Verification:** Running `make ci` on the command line should execute both BE and FE checks and finish with exit code 0.
 
 ---
 
@@ -176,7 +178,7 @@
   1. Create `DEVELOPMENT.md` in the project root.
   2. Document:
      - Prerequisite tools (Go 1.24, Bun, Docker, openssl)
-     - Step-by-step setup (`make setup`, `make dev`, `make ci`)
+     - Step-by-step setup (`make setup`, `make dev`, `make ci` (full gate))
      - Docker compose command sequences
      - Branch naming conventions and pull request rules
 * **Verification:** A fresh developer should be able to set up their machine by following `DEVELOPMENT.md` alone.

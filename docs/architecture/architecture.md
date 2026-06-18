@@ -190,8 +190,14 @@ Quick-reference for all tools used across the software development lifecycle.
 
 ### CI Pipeline (`make ci`)
 
+**`make ci`** runs the full gate: backend + frontend.
+
+**Backend** (`make be-ci`):
 ```
 ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
 
-Sequentially: verify modules tidy → format Go → assert no diff → staticcheck + golangci-lint + govulncheck → tests with race + coverage.
+**Frontend** (`make fe-ci`):
+```
+bun run lint → bun run format:check → tsc --noEmit → bun run test
+```

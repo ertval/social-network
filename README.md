@@ -236,15 +236,14 @@ bun run dev
 
 We enforce strict validation pipelines to ensure codebase stability.
 
-### ⚙️ CI Pipeline (Backend)
+### ⚙️ CI Pipeline
 Run the automated check suite locally before pushing:
 ```bash
 make ci
 ```
-This commands runs:
-```
-ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test
-```
+This runs the full gate: backend (`make be-ci`) + frontend (`make fe-ci`).
+- **Backend** (`make be-ci`): `ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test`
+- **Frontend** (`make fe-ci`): `bun run lint ──> bun run format:check ──> tsc --noEmit ──> bun run test`
 *   `ci-mod`: Runs `go mod tidy` and asserts no changes.
 *   `format`: Runs `gofumpt` and `goimports`.
 *   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
@@ -346,6 +345,6 @@ Squash-merged commits onto the main branch must follow the **Conventional Commit
 A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
-3. Code compiles and linting/formatting passes cleanly on both layers (`make ci` + `bun run lint`).
+3. Code compiles and linting/formatting passes cleanly (`make ci`).
 4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).

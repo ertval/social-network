@@ -118,8 +118,15 @@ test:
 test-short:
 	go test -short ./...
 
-# Full CI pipeline
-ci: ci-mod format check-format lint test 
+# Backend CI pipeline
+be-ci: ci-mod format check-format lint test 
+
+# Frontend CI pipeline
+fe-ci:
+	cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test
+
+# Full CI pipeline (backend + frontend)
+ci: be-ci fe-ci
 
 # Clean artifacts
 clean:
@@ -207,7 +214,8 @@ help:
 	@echo "\033[1mCI Commands:\033[0m"
 	@echo "  \033[36msetup\033[0m           Install development tools (alias to tools)"
 	@echo "  \033[36mdev\033[0m             Start development environment (alias to docker-dev)"
-	@echo "  \033[36mci\033[0m              Run full CI pipeline (format, lint, test)"
+	@echo "  \033[36mci\033[0m              Run full CI pipeline (BE + FE)"
+	@echo "  \033[36mbe-ci\033[0m           Run backend CI pipeline (format, lint, test)"
 	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint, govulncheck)"
 	@echo "  \033[36mci-mod\033[0m          Verify Go modules"
 	@echo "  \033[36mformat\033[0m          Format Go code"
@@ -240,6 +248,6 @@ help:
 	@echo "  \033[36mbench-clean\033[0m     Clean profiling files"
 	@echo "\n\033[3mNote: Benchmark commands require 'make bench-tools' and Graphviz for flame graphs\033[0m"
 
-.PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench ci clean \
+.PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench be-ci fe-ci ci clean \
         bench-compare bench-profile bench-flame bench-clean db-clean help \
         docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build

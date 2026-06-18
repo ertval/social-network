@@ -1,9 +1,8 @@
 ---
-name: ticket-to-pr
-description: End-to-end orchestrator: ticket → implement → review → fix (loop) → create PR.
+description: Take a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
 ---
 
-Take a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
+
 
 ---
 
@@ -52,6 +51,8 @@ Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TI
 
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
 
+**Must verify against [conventions.md](file://.agents/rules/conventions.md):** D2–D5 boundary rules, TDD requirement, SQLite rules, branching/commit format, security best practices, frontend build gates (Biome lint/format, `tsc --noEmit`, Vitest).
+
 **Exit gate:** Implementation complete, branch checked out, code committed.
 
 ---
@@ -61,7 +62,8 @@ Dispatch a subagent with the command:
 
 ```
 Follow the prompt in .agents/prompts/pr-review.md to review the current branch (<branch-name>) against ticket <TICKET_ID> or issue <ISSUE_ID>.
-Run all deterministic gates (CI, lint, format, test). Perform the full 4-phase review pipeline.
+Verify all checks from .agents/rules/conventions.md (D2-D5 boundaries, SQLite, TDD, security, frontend build gates).
+Run all deterministic gates (make ci). Perform the full 4-phase review pipeline.
 Save the report to docs/reviews/PR_<TICKET_ID_OR_ISSUE_ID>_REVIEW_REPORT.md.
 ```
 
@@ -78,7 +80,7 @@ Dispatch a subagent with the command:
 ```
 Read docs/reviews/PR_REVIEW_REPORT.md. Fix every Critical and Warning finding.
 Perform surgical edits only — do not touch unrelated code.
-After fixes, run the deterministic gates again (make ci / lint / test / format:check).
+After fixes, run the deterministic gates again (make ci).
 Commit each fix group with conventional commit messages.
 ```
 
