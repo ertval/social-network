@@ -6,7 +6,7 @@ description: Coding conventions, tech stack (Go, SQLite, TypeScript, Next.js), T
 
 # Conventions and Technologies
 
-Guidelines for project technologies, refactoring patterns, and Go development best practices. For detailed instructions, see [general-instructions.md](file://docs/sprints/general-instructions.md).
+Guidelines for project technologies, refactoring patterns, and Go development best practices. For detailed instructions, see [general-instructions.md](../../docs/sprints/general-instructions.md).
 
 ## 1. Technology Stack
 - **Backend**: Go (standard library preferred, `slog` for structured logging, `kin-openapi`).

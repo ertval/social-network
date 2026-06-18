@@ -198,7 +198,7 @@ Branches must be named in the following format:
    - `feat(user): add register command with age validation`
    - `fix(core): recover from WebSocket goroutine panic`
    - `docs(dev): add onboarding setup instructions`
-4. **PR Description**: Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` and fill in the details (source: [general-instructions.md](file://docs/sprints/general-instructions.md)).
+4. **PR Description**: Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` and fill in the details (source: [general-instructions.md](../sprints/general-instructions.md)).
 
 ---
 

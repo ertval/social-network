@@ -45,7 +45,7 @@
 ## ✅ PR Gate Checklist
 
 ### 📋 Required Checks
-- [ ] **Standards**: Reviewed [AGENTS.md](file://AGENTS.md) and [conventions.md](file://.agents/rules/conventions.md).
+- [ ] **Standards**: Reviewed [AGENTS.md](AGENTS.md) and [conventions.md](.agents/rules/conventions.md).
 - [ ] **Policy Compliance**: Ran `make ci` locally; all pass.
 - [ ] **Sprint Scope**: Work matches declared sprint ticket(s); no scope creep.
 - [ ] **Branching**: Branch name follows `<owner>/<type>-<detail>` convention.
