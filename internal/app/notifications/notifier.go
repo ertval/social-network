@@ -1,6 +1,6 @@
 package notifications
 
-import "github.com/arnald/forum/internal/domain/notification"
+import "social-network/internal/domain/notification"
 
 type Notifier interface {
 	RegisterClient(userID string) chan *notification.Notification

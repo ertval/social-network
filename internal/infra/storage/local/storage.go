@@ -21,9 +21,9 @@ var (
 )
 
 type LocalStorage struct {
-	//we will maybe need the base path as a dependency
-	//and the const above would be passed here as dependencies from the config
-	//but ill leave it for later
+	// we will maybe need the base path as a dependency
+	// and the const above would be passed here as dependencies from the config
+	// but ill leave it for later
 }
 
 func NewLocalStorage() *LocalStorage {
@@ -31,7 +31,8 @@ func NewLocalStorage() *LocalStorage {
 }
 
 func (s *LocalStorage) Upload(ctx context.Context, file []byte, filename string) error {
-	if err := ctx.Err(); err != nil {
+	err := ctx.Err()
+	if err != nil {
 		return err
 	}
 
@@ -42,15 +43,18 @@ func (s *LocalStorage) Upload(ctx context.Context, file []byte, filename string)
 
 	storagePath := filepath.Join(savingDir, fileName)
 
-	if err = os.MkdirAll(filepath.Dir(storagePath), dirPermission); err != nil {
+	err = os.MkdirAll(filepath.Dir(storagePath), dirPermission)
+	if err != nil {
 		return fmt.Errorf("create parent directory: %w", err)
 	}
 
-	if err = ctx.Err(); err != nil {
+	err = ctx.Err()
+	if err != nil {
 		return err
 	}
 
-	if err = os.WriteFile(storagePath, file, filePermission); err != nil {
+	err = os.WriteFile(storagePath, file, filePermission)
+	if err != nil {
 		return fmt.Errorf("write file: %w", err)
 	}
 
@@ -58,7 +62,8 @@ func (s *LocalStorage) Upload(ctx context.Context, file []byte, filename string)
 }
 
 func (s *LocalStorage) Delete(ctx context.Context, filename string) error {
-	if err := ctx.Err(); err != nil {
+	err := ctx.Err()
+	if err != nil {
 		return err
 	}
 

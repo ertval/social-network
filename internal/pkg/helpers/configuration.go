@@ -35,6 +35,7 @@ func ParseStrsToInts(list []string) []int {
 
 	return result
 }
+
 func ParseList(list string) []string {
 	if list == "" {
 		return []string{}

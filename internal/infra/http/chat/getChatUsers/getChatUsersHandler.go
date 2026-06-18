@@ -1,12 +1,13 @@
 package getchatusers
 
 import (
-	chatqueries "github.com/arnald/forum/internal/app/chat/queries"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
 	"net/http"
 	"time"
+
+	chatqueries "social-network/internal/app/chat/queries"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 )
 
 type Handler struct {
@@ -22,10 +23,10 @@ func NewHandler(getChatUserQuery chatqueries.GetChatUsersHandler, logger logger.
 }
 
 type ChatUser struct {
+	LastMessageAt *time.Time `json:"last_message_at"`
 	UserID        string     `json:"user_id"`
 	Nickname      string     `json:"nickname"`
 	IsOnline      bool       `json:"is_online"`
-	LastMessageAt *time.Time `json:"last_message_at"`
 }
 
 func (h *Handler) GetChatUsers(w http.ResponseWriter, r *http.Request) {

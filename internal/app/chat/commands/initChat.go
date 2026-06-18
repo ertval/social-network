@@ -3,7 +3,7 @@ package chatcommands
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/chat"
+	"social-network/internal/domain/chat"
 )
 
 type InitChatRequest struct {

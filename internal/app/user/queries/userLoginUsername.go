@@ -4,8 +4,8 @@ package userqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/user"
-	"github.com/arnald/forum/internal/pkg/bcrypt"
+	"social-network/internal/domain/user"
+	"social-network/internal/pkg/bcrypt"
 )
 
 type UserLoginUsernameRequest struct {

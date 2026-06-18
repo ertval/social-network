@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/arnald/forum/internal/domain/session"
+	"social-network/internal/domain/session"
 )
 
 // type optionalAuthMiddleware struct {

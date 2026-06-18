@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/arnald/forum/internal/app"
-	categoryqueries "github.com/arnald/forum/internal/app/categories/queries"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
+	"social-network/internal/app"
+	categoryqueries "social-network/internal/app/categories/queries"
+	"social-network/internal/config"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 type ResponseModel struct {

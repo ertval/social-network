@@ -1,11 +1,11 @@
 package userlogin
 
 import (
-	"github.com/arnald/forum/internal/app"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/infra/http/authcookies"
-	"github.com/arnald/forum/internal/infra/logger"
+	"social-network/internal/app"
+	"social-network/internal/config"
+	"social-network/internal/domain/session"
+	"social-network/internal/infra/http/authcookies"
+	"social-network/internal/infra/logger"
 )
 
 type Handler struct {

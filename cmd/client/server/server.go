@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 
-	"github.com/arnald/forum/cmd/client/config"
-	"github.com/arnald/forum/cmd/client/helpers"
-	"github.com/arnald/forum/cmd/client/middleware"
-	"github.com/arnald/forum/internal/pkg/path"
+	"social-network/cmd/client/config"
+	"social-network/cmd/client/helpers"
+	"social-network/cmd/client/middleware"
+	"social-network/internal/pkg/path"
 )
 
 // ClientServer represents the frontend client server.

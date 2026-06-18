@@ -3,13 +3,14 @@ package castvote
 import (
 	"context"
 	"encoding/json"
-	votecommands "github.com/arnald/forum/internal/app/votes/commands"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/vote"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
 	"net/http"
+
+	votecommands "social-network/internal/app/votes/commands"
+	"social-network/internal/config"
+	"social-network/internal/domain/vote"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 )
 
 type RequestModel struct {

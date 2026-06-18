@@ -1,6 +1,6 @@
 package category
 
-import "github.com/arnald/forum/internal/domain/topic"
+import "social-network/internal/domain/topic"
 
 type Category struct {
 	Name        string        `json:"name"`

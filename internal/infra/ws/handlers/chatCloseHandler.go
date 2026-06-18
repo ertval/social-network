@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 
-	ws "github.com/arnald/forum/internal/infra/ws"
+	ws "social-network/internal/infra/ws"
 )
 
 type ChatCloseHandler struct {
@@ -18,7 +18,8 @@ func NewChatCloseHandler(hub *ws.Hub) *ChatCloseHandler {
 
 func (h *ChatCloseHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.ChatOpenClosePayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}

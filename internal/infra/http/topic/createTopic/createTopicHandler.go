@@ -7,14 +7,15 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/arnald/forum/internal/app"
-	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
 	"github.com/google/uuid"
+
+	"social-network/internal/app"
+	topicCommands "social-network/internal/app/topics/commands"
+	"social-network/internal/config"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 const (
@@ -118,7 +119,8 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 		Title:       topicToCreate.Title,
 		Content:     topicToCreate.Content,
 		ImagePath:   topicToCreate.ImagePath,
-		ImageFile: topicCommands.TopicImage{File: &topicToCreate.ImageFile.Content,
+		ImageFile: topicCommands.TopicImage{
+			File:   &topicToCreate.ImageFile.Content,
 			Header: topicToCreate.ImageFile.Header,
 		},
 		User: user,

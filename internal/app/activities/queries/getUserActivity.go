@@ -3,7 +3,7 @@ package activityqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/activity"
+	"social-network/internal/domain/activity"
 )
 
 type GetUserActivityRequest struct {

@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/arnald/forum/internal/domain/oauth"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/oauth"
+	"social-network/internal/domain/user"
 )
 
 type Repo struct {

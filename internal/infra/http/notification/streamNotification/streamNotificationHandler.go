@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
-	"github.com/arnald/forum/internal/infra/middleware"
+	notificationcommands "social-network/internal/app/notifications/commands"
+	"social-network/internal/infra/middleware"
 )
 
 const tickerTime = 10

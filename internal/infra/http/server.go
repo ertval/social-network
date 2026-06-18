@@ -8,49 +8,49 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arnald/forum/internal/app"
-	"github.com/arnald/forum/internal/bootstrap"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/session"
-	getuseractivity "github.com/arnald/forum/internal/infra/http/activity/getUserActivity"
-	"github.com/arnald/forum/internal/infra/http/authcookies"
-	createcategory "github.com/arnald/forum/internal/infra/http/category/createCategory"
-	deletecategory "github.com/arnald/forum/internal/infra/http/category/deleteCategory"
-	getallcategories "github.com/arnald/forum/internal/infra/http/category/getAllCategories"
-	getcategorybyid "github.com/arnald/forum/internal/infra/http/category/getCategoryByID"
-	updatecategory "github.com/arnald/forum/internal/infra/http/category/updateCategory"
-	getchatusers "github.com/arnald/forum/internal/infra/http/chat/getChatUsers"
-	initchat "github.com/arnald/forum/internal/infra/http/chat/initChat"
-	createcomment "github.com/arnald/forum/internal/infra/http/comment/createComment"
-	deletecomment "github.com/arnald/forum/internal/infra/http/comment/deleteComment"
-	getcomment "github.com/arnald/forum/internal/infra/http/comment/getComment"
-	getcommentsbytopic "github.com/arnald/forum/internal/infra/http/comment/getCommentsByTopic"
-	updatecomment "github.com/arnald/forum/internal/infra/http/comment/updateComment"
-	"github.com/arnald/forum/internal/infra/http/health"
-	getnotifications "github.com/arnald/forum/internal/infra/http/notification/getNotifications"
-	getunreadcount "github.com/arnald/forum/internal/infra/http/notification/getUnreadCount"
-	markallasread "github.com/arnald/forum/internal/infra/http/notification/markAllAsRead"
-	markasread "github.com/arnald/forum/internal/infra/http/notification/markAsRead"
-	streamnotification "github.com/arnald/forum/internal/infra/http/notification/streamNotification"
-	oauthlogin "github.com/arnald/forum/internal/infra/http/oauth"
-	createtopic "github.com/arnald/forum/internal/infra/http/topic/createTopic"
-	deletetopic "github.com/arnald/forum/internal/infra/http/topic/deleteTopic"
-	getalltopics "github.com/arnald/forum/internal/infra/http/topic/getAllTopics"
-	gettopic "github.com/arnald/forum/internal/infra/http/topic/getTopic"
-	updatetopic "github.com/arnald/forum/internal/infra/http/topic/updateTopic"
-	getme "github.com/arnald/forum/internal/infra/http/user/getMe"
-	userLogin "github.com/arnald/forum/internal/infra/http/user/login"
-	"github.com/arnald/forum/internal/infra/http/user/logout"
-	userRegister "github.com/arnald/forum/internal/infra/http/user/register"
-	castvote "github.com/arnald/forum/internal/infra/http/vote/castVote"
-	deletevote "github.com/arnald/forum/internal/infra/http/vote/deleteVote"
-	getCounts "github.com/arnald/forum/internal/infra/http/vote/getVoteCounts"
-	wshttp "github.com/arnald/forum/internal/infra/http/ws"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/ws"
-	wshandlers "github.com/arnald/forum/internal/infra/ws/handlers"
-	oauth "github.com/arnald/forum/internal/pkg/oAuth"
+	"social-network/internal/app"
+	"social-network/internal/bootstrap"
+	"social-network/internal/config"
+	"social-network/internal/domain/session"
+	getuseractivity "social-network/internal/infra/http/activity/getUserActivity"
+	"social-network/internal/infra/http/authcookies"
+	createcategory "social-network/internal/infra/http/category/createCategory"
+	deletecategory "social-network/internal/infra/http/category/deleteCategory"
+	getallcategories "social-network/internal/infra/http/category/getAllCategories"
+	getcategorybyid "social-network/internal/infra/http/category/getCategoryByID"
+	updatecategory "social-network/internal/infra/http/category/updateCategory"
+	getchatusers "social-network/internal/infra/http/chat/getChatUsers"
+	initchat "social-network/internal/infra/http/chat/initChat"
+	createcomment "social-network/internal/infra/http/comment/createComment"
+	deletecomment "social-network/internal/infra/http/comment/deleteComment"
+	getcomment "social-network/internal/infra/http/comment/getComment"
+	getcommentsbytopic "social-network/internal/infra/http/comment/getCommentsByTopic"
+	updatecomment "social-network/internal/infra/http/comment/updateComment"
+	"social-network/internal/infra/http/health"
+	getnotifications "social-network/internal/infra/http/notification/getNotifications"
+	getunreadcount "social-network/internal/infra/http/notification/getUnreadCount"
+	markallasread "social-network/internal/infra/http/notification/markAllAsRead"
+	markasread "social-network/internal/infra/http/notification/markAsRead"
+	streamnotification "social-network/internal/infra/http/notification/streamNotification"
+	oauthlogin "social-network/internal/infra/http/oauth"
+	createtopic "social-network/internal/infra/http/topic/createTopic"
+	deletetopic "social-network/internal/infra/http/topic/deleteTopic"
+	getalltopics "social-network/internal/infra/http/topic/getAllTopics"
+	gettopic "social-network/internal/infra/http/topic/getTopic"
+	updatetopic "social-network/internal/infra/http/topic/updateTopic"
+	getme "social-network/internal/infra/http/user/getMe"
+	userLogin "social-network/internal/infra/http/user/login"
+	"social-network/internal/infra/http/user/logout"
+	userRegister "social-network/internal/infra/http/user/register"
+	castvote "social-network/internal/infra/http/vote/castVote"
+	deletevote "social-network/internal/infra/http/vote/deleteVote"
+	getCounts "social-network/internal/infra/http/vote/getVoteCounts"
+	wshttp "social-network/internal/infra/http/ws"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/infra/ws"
+	wshandlers "social-network/internal/infra/ws/handlers"
+	oauth "social-network/internal/pkg/oAuth"
 )
 
 const (
@@ -100,7 +100,6 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 }
 
 func (server *Server) initWSRouter() {
-
 	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
 
 	pingWShandler := wshandlers.NewPingHandler()
@@ -122,6 +121,7 @@ func (server *Server) initWSRouter() {
 		chatTypingHandler,
 	)
 }
+
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
