@@ -3,7 +3,7 @@ name: ticket-to-pr
 description: End-to-end orchestrator: ticket → implement → review → fix (loop) → create PR.
 ---
 
-This workflow takes a ticket ID from `docs/sprints/ticket-tracker.md`, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
+This workflow takes a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
 
 ---
 
@@ -11,8 +11,8 @@ This workflow takes a ticket ID from `docs/sprints/ticket-tracker.md`, dispatche
 
 ```mermaid
 graph TD
-    Ticket[Input: Ticket ID] --> Read[Read sprint ticket spec]
-    Read --> Implement[Subagent: pr-implement]
+    Input[Input: Ticket ID or Issue Number] --> Locate[Locate Ticket or Fetch Issue from Remote]
+    Locate --> Implement[Subagent: pr-implement]
     Implement --> Review[Subagent: pr-review]
     Review -->|Pass| CreatePR[Subagent: pr-create]
     Review -->|Fail| Fix[Subagent: fix issues from review]
@@ -23,16 +23,23 @@ graph TD
 
 ## 🛠️ Input
 
-A ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S1-BE-05`, `S3-FE-14`).
+Either:
+- A ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S1-BE-05`, `S3-FE-14`).
+- An issue ID/number from the repository (e.g. `42`, `#42`).
 
 ---
 
 ## 🛠️ Execution Phases
 
-### Phase 0: Locate Ticket
-1. Search `docs/sprints/ticket-tracker.md` for the target ticket ID.
-2. Determine the sprint number and open the corresponding sprint file (`docs/sprints/sprint-<N>.md`).
-3. Read the ticket's Description, Detailed Steps, and Verification sections.
+### Phase 0: Locate Ticket or Fetch Issue
+- **If Input is a Ticket ID (e.g., `S1-BE-05`):**
+  1. Search `docs/sprints/ticket-tracker.md` for the target ticket ID.
+  2. Determine the sprint number and open the corresponding sprint file (`docs/sprints/sprint-<N>.md`).
+  3. Read the ticket's Description, Detailed Steps, and Verification sections.
+- **If Input is an Issue ID/Number (e.g., `42` or `#42`):**
+  1. Fetch the issue description and title using Gitea CLI: `tea issue <number> --comments=false`.
+  2. If discussions or extra context are needed, fetch comments: `tea issue <number>`.
+  3. Identify core requirements and any reference code mentioned in the issue.
 
 ---
 
@@ -40,7 +47,7 @@ A ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S1-BE-05`, `S3-FE-14`).
 Dispatch a subagent with the command:
 
 ```
-Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TICKET_ID>.
+Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TICKET_ID> or issue <ISSUE_ID>.
 ```
 
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
@@ -53,9 +60,9 @@ This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → 
 Dispatch a subagent with the command:
 
 ```
-Follow the prompt in .agents/prompts/pr-review.md to review the current branch (<branch-name>) against ticket <TICKET_ID>.
+Follow the prompt in .agents/prompts/pr-review.md to review the current branch (<branch-name>) against ticket <TICKET_ID> or issue <ISSUE_ID>.
 Run all deterministic gates (CI, lint, format, test). Perform the full 4-phase review pipeline.
-Save the report to docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md.
+Save the report to docs/reviews/PR_<TICKET_ID_OR_ISSUE_ID>_REVIEW_REPORT.md.
 ```
 
 **Exit gates:**
@@ -85,10 +92,10 @@ After the fix subagent completes, **go back to Phase 2** (re-run review).
 Dispatch a subagent with the command:
 
 ```
-Follow the workflow in .agents/workflows/pr-create.md to verify, draft, and publish the PR for branch <branch-name> matching ticket <TICKET_ID>.
+Follow the workflow in .agents/workflows/pr-create.md to verify, draft, and publish the PR for branch <branch-name> matching ticket <TICKET_ID> or issue <ISSUE_ID>.
 ```
 
-This subagent verifies branch/convention rules, drafts the PR description to `.git/PR_DESCRIPTION.md`, pushes the branch, and publishes the PR via `tea` CLI with all repo collaborators as reviewers.
+This subagent verifies branch/convention rules, drafts the PR description to `.git/PR_DESCRIPTION.md` (including `Closes #<ISSUE_ID>` if referencing an issue), pushes the branch, and publishes the PR via `tea` CLI with all repo collaborators as reviewers.
 
 ---
 
