@@ -5,6 +5,7 @@ run:
   modules-download-mode: readonly
   issues-exit-code: 1
   tests: true
+  timeout: 5m
 
 output:
   formats:
@@ -19,7 +20,6 @@ linters:
   disable:
     - cyclop
     - gocyclo
-    - depguard
     - exhaustruct
     - funlen
     - godox
@@ -34,7 +34,6 @@ linters:
     - ireturn
     - tagliatelle
     - mnd
-    - revive
     - prealloc
     - err113
     - noinlineerr
@@ -48,14 +47,62 @@ linters:
     - dupword
     - exhaustive
     - maintidx
-    - errcheck
     - gosec
     - misspell
     - predeclared
-    - govet
-    - staticcheck
 
   settings:
+    depguard:
+      rules:
+        domain_boundary:
+          files:
+            - internal/domain/**
+          deny:
+            - pkg: "social-network/internal/app"
+              desc: "domain must not depend on app layer"
+            - pkg: "social-network/internal/infra"
+              desc: "domain must not depend on infra layer"
+            - pkg: "social-network/internal/bootstrap"
+              desc: "domain must not depend on bootstrap"
+            - pkg: "social-network/internal/config"
+              desc: "domain must not depend on config"
+            - pkg: "social-network/internal/platform"
+              desc: "domain must not depend on platform"
+            - pkg: "social-network/internal/core"
+              desc: "domain must not depend on core"
+        pkg_boundary:
+          files:
+            - internal/pkg/**
+          deny:
+            - pkg: "social-network/internal/app"
+              desc: "pkg must not depend on app layer"
+            - pkg: "social-network/internal/infra"
+              desc: "pkg must not depend on infra layer"
+            - pkg: "social-network/internal/bootstrap"
+              desc: "pkg must not depend on bootstrap"
+            - pkg: "social-network/internal/config"
+              desc: "pkg must not depend on config"
+            - pkg: "social-network/internal/domain"
+              desc: "pkg must not depend on domain layer"
+            - pkg: "social-network/internal/platform"
+              desc: "pkg must not depend on platform"
+            - pkg: "social-network/internal/core"
+              desc: "pkg must not depend on core"
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: exported
+        - name: if-return
+        - name: increment-decrement
+        - name: struct-tag
+        - name: time-equal
+        - name: unexported-return
+        - name: unreachable-code
+        - name: unused-parameter
     govet:
       enable-all: true
       settings:
@@ -106,6 +153,38 @@ linters:
       - linters:
             - tagliatelle
         path: internal/pkg/oAuth/ # Disabled it because third party apis need snake case json tags
+      - linters:
+            - govet
+        text: 'fieldalignment:'
+      - linters:
+            - errcheck
+        path: internal/infra/storage/sqlite/chats/chatRepo\.go
+        text: 'tx\.Rollback'
+      - linters:
+            - errcheck
+        path: internal/infra/ws/client\.go
+      - linters:
+            - errcheck
+        path: internal/app/topics/commands/
+      - linters:
+            - staticcheck
+        path: internal/pkg/helpers/body_request\.go
+      - linters:
+            - govet
+        path: internal/infra/storage/sqlite/users/userRepo\.go
+        text: 'shadow:'
+      - linters:
+            - revive
+        path: internal/domain/chat/chat_read\.go
+        text: 'exported'
+      - linters:
+            - revive
+        path: internal/infra/ws/router\.go
+        text: 'exported'
+      - linters:
+            - revive
+        path: internal/infra/http/ws/handler\.go
+        text: 'unused-parameter'
     paths:
       - frontend/
 
