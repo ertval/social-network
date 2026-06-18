@@ -1,7 +1,7 @@
 # 🚀 PR: [Ticket ID] — [Brief Title]
 
 > **Ticket** `SX-YY-NN` · **Sprint** `N` · **Branch** `[owner]/<type>-<detail>`
-> Resolves [Ticket Details](file://docs/sprints/sprint-[N].md#SX-YY-NN)
+> Resolves [Ticket Details](docs/sprints/sprint-[N].md#SX-YY-NN)
 
 ---
 

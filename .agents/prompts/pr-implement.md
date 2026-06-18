@@ -29,6 +29,7 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Context**: Reads `.agents/scratch/research.md` and repository guidelines.
 * **Instructions**:
   - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
+  - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
   - Plan the target branch name using the pattern: `<username>/<type>-<detail>`.
   - Design structs, interfaces, and public API changes.
   - Apply domain-driven vertical slice constraints:

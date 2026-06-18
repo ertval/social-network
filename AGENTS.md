@@ -94,6 +94,7 @@ All branches must follow the format `<username>/<type>-<detail>`.
 
 - **username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
 - **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login.
+- **Username Verification**: After resolving, confirm the username is in the known devs set (`epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`). If not, flag error — branch will fail PR validation.
 - **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
 - **detail**: kebab-case description of the change. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, but is not required.
 

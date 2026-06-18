@@ -45,6 +45,7 @@ graph TD
 *Goal: Design the solution and construct an execution checklist. Do not write implementation code.*
 1. **Determine Branch Name**:
    - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
+   - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
    - Choose a branch name matching the convention: `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `geoikonomou/fix-sqlite-busy-timeout`).
 2. **Define DDD Strategy**:
    - **Entity Design**: Define the domain structures and database schema updates. Identify if database migration scripts (`db/migrations/00000X_*.sql`) are required.
