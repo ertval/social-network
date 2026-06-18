@@ -100,7 +100,7 @@ Every PR must pass the following **Definition of Done (DoD)** checklist:
 ## 6. Branching & Commits
 - **Trunk-Based Development**: Feature branches must live <= 3 days. Squash merge into `main` with a single conventional commit.
 - **Branch Naming**: `<username>/<type>-<detail>` (e.g. `epapamic/feat-user-slice`).
-- **Username**: Gitea username from `origin` remote — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`.
+- **Username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
 - **Type**: `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`.
 - **Detail**: kebab-case. Ticket ID (e.g. `S3-fix-`) may prefix type but is not required.
 - **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`). Allowed scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`.
