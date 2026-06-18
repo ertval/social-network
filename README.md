@@ -262,7 +262,7 @@ bun run test            # Vitest unit & component tests
 
 ---
 
-## 🤖 Agent-Boosted Development (Agentic Workflows)
+## 🤖 Agentic Workflows
 
 This repository includes specialized configurations and tools designed to optimize the workflow of agentic AI coding assistants (like `Antigravity` and `Opencode`). Developers using agentic assistants can leverage these files for enhanced context management, token savings, and codebase navigation:
 
@@ -276,6 +276,47 @@ This repository includes specialized configurations and tools designed to optimi
     *   [AGENTS.md](AGENTS.md): Main code guidelines, including simplicity-first principles and progressive document reading orders.
     *   [Conventions (.agents/rules/conventions.md)](.agents/rules/conventions.md): Code boundaries and architectural rules.
     *   [Karpathy Guidelines (.agents/rules/karpathy-guidelines.md)](.agents/rules/karpathy-guidelines.md): Red-Green-Refactor, TDD, and codebase change minimization guides.
+
+---
+
+### ⚙️ Critical Skills Installation & Dependency Management
+
+**Agent Skills** for coding assistants (caveman, graphify, diagnose, review, tdd, etc.) are pre-installed under `.agents/skills/` and registered in `skills-lock.json`. Skills auto-activate when the agent detects a matching task. No manual install needed for existing skills.
+
+To install new skills from a remote source (e.g. `mattpocock/skills`):
+```bash
+# Opencode
+opencode skill install <source>/<skill-name>
+
+# Or sync all locked skills from skills-lock.json
+opencode skill sync
+```
+
+To update all skills to their latest version:
+```bash
+opencode skill upgrade
+```
+
+**Development Dependencies** — two runtimes, two package managers:
+
+| Layer | Command | What it installs |
+| :--- | :--- | :--- |
+| **Backend (Go)** | `make tools` | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1) |
+| **Backend (Go modules)** | `go mod tidy` | Go library dependencies from `go.mod` |
+| **Frontend (Bun/Next.js)** | `bun install` | npm packages from `frontend/package.json` |
+| **Docker** | `docker compose build` | Container images for backend + frontend |
+
+To update Go dependencies:
+```bash
+go get -u ./...        # update all deps
+go mod tidy            # clean up
+```
+
+To update frontend dependencies:
+```bash
+cd frontend
+bun update             # update all packages per semver ranges
+```
 
 ---
 
