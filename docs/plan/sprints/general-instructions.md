@@ -120,14 +120,14 @@ Every PR must pass:
 
 | ID | Bug | Current Location | BE Assignee |
 |----|-----|------------------|-------------|
-| B1.1 | Migration delimiter `":"` → `";"` | `infra/storage/sqlite/init.go` | BE-A |
-| B1.2 | SQLite DSN missing WAL/busy timeout | `init.go`, `.env` | BE-A |
-| B1.3 | OAuth `Scan()` with `ctx` arg | `infra/storage/sqlite/oauth/oauthRepo.go` | BE-B |
-| B1.4 | WebSocket CheckOrigin returns true | `infra/http/ws/handler.go` | BE-B |
-| B1.5 | SQL injection in ORDER BY | `sqlite/topics/topicRepo.go`, `sqlite/categories/categoryRepo.go` | BE-A |
-| B1.6 | Prepared stmt uses `db.Exec` | `sqlite/users/userRepo.go` | BE-B |
-| B1.7 | WS goroutine panic recovery | `infra/ws/client.go` | BE-B |
-| B1.8 | RateLimiter ticker leak (core GCRA, not HTTP wrapper) | `infra/middleware/ratelimiter/rateLimiter.go` | BE-B |
+| B1.1 | Migration delimiter `":"` → `";"` | `internal/infra/storage/sqlite/init.go` | BE-A |
+| B1.2 | SQLite DSN missing WAL/busy timeout | `internal/infra/storage/sqlite/init.go`, `.env` | BE-A |
+| B1.3 | OAuth `Scan()` with `ctx` arg | `internal/infra/storage/sqlite/oauth/oauthRepo.go` | BE-B |
+| B1.4 | WebSocket CheckOrigin returns true | `internal/infra/http/ws/handler.go` | BE-B |
+| B1.5 | SQL injection in ORDER BY | `internal/infra/storage/sqlite/topics/topicRepo.go`, `internal/infra/storage/sqlite/categories/categoryRepo.go` | BE-A |
+| B1.6 | Prepared stmt uses `db.Exec` | `internal/infra/storage/sqlite/users/userRepo.go` | BE-B |
+| B1.7 | WS goroutine panic recovery | `internal/infra/ws/client.go` | BE-B |
+| B1.8 | RateLimiter ticker leak (core GCRA, not HTTP wrapper) | `internal/infra/middleware/ratelimiter/rateLimiter.go` | BE-B |
 
 **Process:**
 1. Write reproducer test (failing) for each bug
