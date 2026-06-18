@@ -1,4 +1,4 @@
-# Sprint 0: Foundation (Week 1–2)
+# Sprint 0: Foundation (Week 1)
 
 **Outcome:** Setup project tooling, backend scaffold, frontend Next.js base, docker development environment, and fix critical bugs. All team members can run a clean build and development setup.
 

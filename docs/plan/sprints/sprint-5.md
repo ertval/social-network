@@ -1,4 +1,4 @@
-# Sprint 5: Chat & OAuth (Week 11–12)
+# Sprint 5: Chat & OAuth (Week 6)
 
 **Outcome:** 1-on-1 private messaging featuring follow check constraints, emojis, and third-party login delegations (GitHub/Google OAuth) work end-to-end.
 

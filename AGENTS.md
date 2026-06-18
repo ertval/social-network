@@ -78,6 +78,37 @@ Examples:
 - `arnald/fix-sqlite-busy-timeout`
 - `ekaramet/chore-update-deps`
 
+## 7. Progressive Disclosure — Doc Reading Order
+
+`architecture.md` and `sds.md` describe the **target** vertical-slice state, not the current codebase (which is layered hex). Read in this order to avoid confusion:
+
+```
+Layer 0 — Endgame
+  docs/plan/architecture/target-architecture-with-phases.md
+  → Full migration plan, target state, design decisions D1-D6
+
+Layer 1 — Process
+  docs/plan/sprints/general-instructions.md
+  → TDD, strangler fig, branch strategy, verification gates
+
+Layer 2 — Current Codebase (explore actual dirs)
+  internal/   → see domain/app/infra layers (current reality)
+  db/migrations/  → flat schema.sql + indexes.sql (no numbered migrations yet)
+  cmd/            → server + client entry points
+  frontend/        → vanilla SPA, not Next.js
+
+Layer 3 — Target Architecture Details
+  docs/plan/architecture/architecture.md   → vertical slice layout
+  docs/plan/architecture/sds.md            → data model, interfaces, platform
+
+Layer 4 — Sprint Scope
+  docs/plan/sprints/ticket-tracker.md  → all tickets at glance
+  docs/plan/sprints/sprint-N.md        → specific sprint
+
+Layer 5 — Verification
+  docs/requirements/audit.md  → acceptance criteria
+```
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

@@ -1,4 +1,4 @@
-# Sprint 4: Group & Event Features (Week 9–10)
+# Sprint 4: Group & Event Features (Week 5)
 
 **Outcome:** Groups with membership, group feed, group chat via WebSocket, and the event RSVP voting system work end-to-end.
 

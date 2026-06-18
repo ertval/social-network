@@ -1,4 +1,4 @@
-# Sprint 2: User & Topic Features (Week 5–6)
+# Sprint 2: User & Topic Features (Week 3)
 
 **Outcome:** User account features (register, login, profile, privacy toggle) and Topic features (posts with public/almost_private/private visibility, post creation, voting) work end-to-end. Both frontend and backend implementations are completed.
 

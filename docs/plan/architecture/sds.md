@@ -1,5 +1,7 @@
 # Software Design Specification (SDS)
 
+> **Target architecture.** The current codebase uses a layered structure under `internal/domain/`, `internal/app/`, `internal/infra/`. This document describes the vertical-slice target state after all refactoring phases. See [target-architecture-with-phases.md](target-architecture-with-phases.md) for the migration plan.
+
 This Software Design Specification (SDS) defines the technical architecture, data model, component communication patterns, and detailed interface structures for the Social Network application.
 
 ---

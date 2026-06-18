@@ -1,5 +1,7 @@
 # High-Level Architecture & Code Organization
 
+> **Target architecture.** The current codebase uses a layered structure under `internal/domain/`, `internal/app/`, `internal/infra/`. This document describes the vertical-slice target state after all refactoring phases. See [target-architecture-with-phases.md](target-architecture-with-phases.md) for the migration plan.
+
 This document provides a concise, high-level overview of the architectural patterns, code organization, and structural boundaries governing the Social Network application.
 
 ---

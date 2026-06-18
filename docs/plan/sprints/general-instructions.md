@@ -10,8 +10,8 @@
 | Field | Value |
 |-------|-------|
 | Team | 4 devs (**BE-A**, **BE-B**, **FE-A**, **FE-B**) |
-| Sprint length | 1 weeks |
-| Total duration | ~8 weeks (7 sprints) |
+| Sprint length | 1 week |
+| Total duration | ~7 weeks (7 sprints) |
 | Methodology | TDD (Red → Green → Refactor), Strangler Fig, Trunk-Based Development |
 | Branch naming | `username/type-detail` (e.g. `ekaramet/feat-user-slice`) |
 | Ticket format | **ID** — component, priority, dependency, assignee, story points, acceptance criteria |

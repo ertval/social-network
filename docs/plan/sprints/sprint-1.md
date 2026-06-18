@@ -1,4 +1,4 @@
-# Sprint 1: Platform & Core Infrastructure (Week 3–4)
+# Sprint 1: Platform & Core Infrastructure (Week 2)
 
 **Outcome:** All platform abstractions (Database factory, Event bus, Cache, migration engine) and cross-cutting core layers (Sessions, Real-time WebSockets, auth middleware, and HTTP servers) are fully built and verified using TDD. The frontend has complete auth screens and api/mock wrappers.
 

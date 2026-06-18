@@ -1,4 +1,4 @@
-# Sprint 6: Integration, Cleanup & Polish (Week 13–14)
+# Sprint 6: Integration, Cleanup & Polish (Week 7)
 
 **Outcome:** All legacy code structures are removed. Slices are fully integrated in `bootstrap.go`. Full automated test coverage verifies the codebase, including a specific automated test suite executing all requirements mapped from `audit.md`. Production Docker structures are deployed and verified.
 

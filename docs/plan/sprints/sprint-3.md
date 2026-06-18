@@ -1,4 +1,4 @@
-# Sprint 3: Follow, Comment & Notification (Week 7–8)
+# Sprint 3: Follow, Comment & Notification (Week 4)
 
 **Outcome:** Social relationships (follow requests, accepts, lists), commenting capability with media validation, and the event-driven notification dispatch pipeline work end-to-end.
 
