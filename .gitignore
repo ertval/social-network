@@ -27,9 +27,8 @@ go.work.sum
 # env file
 *.env
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# Editor/IDE (personal overrides)
+.idea/
 
 # Sqlite Database
 *.db
@@ -45,11 +44,29 @@ dist/
 build/
 coverage/
 
-#AI agents
-.agents/
+# User uploaded content (handled via Docker volume in production)
+frontend/static/images/uploads/
+
+#AI agents (project-level skills tracked; personal overrides not in repo)
 .audit/
 tmp/
 .agentignore
 
-# Agent skills lock file
+# Agent scratch / working files
+.agents/scratch/
+
+# Agent auto-generated lock files
+.agents/skills-lock.json
 skills-lock.json
+
+# OpenCode auto-generated deps
+.opencode/node_modules/
+.opencode/package.json
+.opencode/package-lock.json
+.opencode/bun.lock
+
+# graphify knowledge graph (http://github.com/safishamsi/graphify)
+graphify-out/
+
+# Archived/completed docs
+docs/zdone/
