@@ -46,7 +46,7 @@ graph TD
 1. **Determine Branch Name**:
    - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
    - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
-   - Choose a branch name matching the convention: `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `geoikonomou/fix-sqlite-busy-timeout`).
+   - Choose a branch name matching the convention: `<username>/<ticket/issue-ID>-<detail>` (e.g., `ekaramet/S1-BE-01-db-factory` or `smichail/42-oauth-scan-fix`).
 2. **Define DDD Strategy**:
    - **Entity Design**: Define the domain structures and database schema updates. Identify if database migration scripts (`db/migrations/00000X_*.sql`) are required.
    - **Interface Separation (D2/D3)**: Determine if the features require sync interfaces or Event Bus pub/sub updates for cross-slice behavior. Ensure cross-slice references use ID-only fields.

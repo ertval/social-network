@@ -90,18 +90,18 @@ graph TD
 
 ## 7. Git Branch Naming
 
-All branches must follow the format `<username>/<type>-<detail>`.
+All branches must follow the format `<username>/<ticket/issue-ID>-<detail>`.
 
 - **username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
 - **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login.
 - **Username Verification**: After resolving, confirm the username is in the known devs set (`epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`). If not, flag error — branch will fail PR validation.
-- **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
-- **detail**: kebab-case description of the change. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, but is not required.
+- **ticket/issue-ID**: The ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or the GitHub/Gitea issue number (e.g. `42`). This field is **required** — it maps the branch to its work item for traceability.
+- **detail**: kebab-case description of the change (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
 
 Examples:
-- `ekaramet/feat-arch-proposal`
-- `dkotsi/fix-sqlite-busy-timeout`
-- `geoikonomou/chore-update-deps`
+- `ekaramet/S1-BE-05-db-factory`
+- `dkotsi/S3-FE-14-follow-button`
+- `smichail/42-oauth-scan-fix`
 
 ## graphify
 

@@ -99,12 +99,12 @@ Every PR must pass the following **Definition of Done (DoD)** checklist:
 
 ## 6. Branching & Commits
 - **Trunk-Based Development**: Feature branches must live <= 3 days. Squash merge into `main` with a single conventional commit.
-- **Branch Naming**: `<username>/<type>-<detail>` (e.g. `epapamic/feat-user-slice`).
+- **Branch Naming**: `<username>/<ticket/issue-ID>-<detail>` (e.g. `epapamic/S1-BE-05-db-factory`).
 - **Username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
 - **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login, which maps to the dev's Gitea account (not the repo owner, not the system username).
 - **Username Verification**: After resolving, verify the username matches one of the known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If it does not match any, flag an error — the branch will be rejected by PR validation.
-- **Type**: `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`.
-- **Detail**: kebab-case. Ticket ID (e.g. `S3-fix-`) may prefix type but is not required.
+- **ticket/issue-ID**: The ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or the GitHub/Gitea issue number (e.g. `42`). **Required** — maps the branch to its work item.
+- **detail**: kebab-case description (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
 - **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`). Allowed scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`.
   - *Note*: `comment` is an allowed scope. `vote` is absorbed into `topic/` — not a separate scope.
 - **PR Description Template**: Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` when preparing a pull request and fill in the details.

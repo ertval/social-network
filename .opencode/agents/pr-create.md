@@ -35,7 +35,7 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ## Your job (4 phases):
 
 ### Phase 1: Branch & Commit Integrity
-- Verify branch name matches `<username>/<type>-<detail>` convention.
+- Verify branch name matches `<username>/<ticket/issue-ID>-<detail>` convention.
 - Verify commits follow Conventional Commits format.
 - Ensure branch is rebased on main (no merge commits from main).
 
