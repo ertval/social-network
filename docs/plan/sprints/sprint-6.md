@@ -64,6 +64,45 @@
 
 ---
 
+## FE-A (Frontend A) Tickets
+
+### S6-FE-02: Responsive Design Check
+* **Priority:** P1
+* **Assignee:** FE-A
+* **Story Points:** 3
+* **Description:** Audit layouts across different viewports.
+* **Detailed Steps:**
+  1. Inspect responsiveness across mobile, tablet, and desktop views.
+* **Verification:** Visually confirm correct scaling.
+
+---
+
+## FE-B (Frontend B) Tickets
+
+### S6-FE-03: Components Error Boundaries & Loading States
+* **Priority:** P1
+* **Assignee:** FE-B
+* **Story Points:** 3
+* **Description:** Build fallback components and loading skeletons for async cards.
+* **Detailed Steps:**
+  1. Integrate React Error Boundaries. Render card loading skeletons.
+* **Verification:** Ensure page does not crash when backend APIs return server errors.
+
+---
+
+## Joint FE-A & FE-B Tickets
+
+### S6-FE-06: Production Build Validation
+* **Priority:** P1
+* **Assignee:** FE-A + FE-B
+* **Story Points:** 5
+* **Description:** Build production bundle and execute full smoke tests.
+* **Detailed Steps:**
+  1. Run `bun run build`. Verify bundle compiles.
+* **Verification:** Production bundle builds successfully.
+
+---
+
 ## SD-QA (System Design/QA) Tickets
 
 ### S6-BE-05: Full Integration Test Suite
@@ -209,7 +248,7 @@
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S6-BE-03 (old code must be gone before env var rename)
-* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars. **Must run after S6-BE-01..03** — old code references old env var names.
+* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars. **Must run after S6-BE-03** — old code references old env var names.
 * **Detailed Steps:**
    1. Update `internal/config/config.go` to load from env vars: `DATABASE_DRIVER`, `DATABASE_DSN`, `SESSION_SECRET`, `PORT`, `CORS_ORIGIN`, `REDIS_URL` (optional), `RABBITMQ_URL` (optional).
    2. Remove legacy env var names (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT`).
@@ -227,42 +266,3 @@
 * **Detailed Steps:**
   1. Script that brings up docker containers, checks that `docker ps` returns active states, and runs curl queries.
 * **Verification:** Automated verification script passes.
-
----
-
-## FE-A (Frontend A) Tickets
-
-### S6-FE-02: Responsive Design Check
-* **Priority:** P1
-* **Assignee:** FE-A
-* **Story Points:** 3
-* **Description:** Audit layouts across different viewports.
-* **Detailed Steps:**
-  1. Inspect responsiveness across mobile, tablet, and desktop views.
-* **Verification:** Visually confirm correct scaling.
-
----
-
-## FE-B (Frontend B) Tickets
-
-### S6-FE-03: Components Error Boundaries & Loading States
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Description:** Build fallback components and loading skeletons for async cards.
-* **Detailed Steps:**
-  1. Integrate React Error Boundaries. Render card loading skeletons.
-* **Verification:** Ensure page does not crash when backend APIs return server errors.
-
----
-
-## Joint FE-A & FE-B Tickets
-
-### S6-FE-06: Production Build Validation
-* **Priority:** P1
-* **Assignee:** FE-A + FE-B
-* **Story Points:** 5
-* **Description:** Build production bundle and execute full smoke tests.
-* **Detailed Steps:**
-  1. Run `bun run build`. Verify bundle compiles.
-* **Verification:** Production bundle builds successfully.

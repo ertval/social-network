@@ -501,6 +501,7 @@
   "499": "Community 499",
   "500": "getallcategories_handler, getallcategories_getallcategorieshandler, getallcategories_getallcategorieshandler",
   "501": "httpclient_client, httpclient_client_postwithurlencodedpara, httpclient_client_post",
+  "502": "Community 502",
   "503": "cmd_client_config_config_go_config_confi, config_client, config_httptimeouts",
   "504": "path_path_newresolver, path_resolver, path_path",
   "505": "config_oauthconfig, githuboauthconfig, googleoauthconfig",
@@ -510,10 +511,15 @@
   "509": "Community 509",
   "510": "Community 510",
   "511": "Community 511",
+  "512": "Community 512",
+  "513": "Community 513",
   "514": "Community 514",
   "515": "Community 515",
+  "516": "Community 516",
+  "517": "Community 517",
   "518": "Community 518",
   "519": "Community 519",
   "520": "Community 520",
+  "521": "Community 521",
   "524": "Community 524"
 }

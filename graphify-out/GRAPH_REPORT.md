@@ -1,16 +1,16 @@
 # Graph Report - social-network  (2026-06-18)
 
 ## Corpus Check
-- 510 files · ~321,383 words
+- 510 files · ~321,363 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4700 nodes · 5820 edges · 523 communities (404 shown, 119 thin omitted)
+- 4711 nodes · 5831 edges · 525 communities (405 shown, 120 thin omitted)
 - Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 330 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `53d661d3`
+- Built from commit: `977d33bb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -501,6 +501,8 @@
 - [[_COMMUNITY_Community 519|Community 519]]
 - [[_COMMUNITY_Community 520|Community 520]]
 - [[_COMMUNITY_Community 521|Community 521]]
+- [[_COMMUNITY_Community 522|Community 522]]
+- [[_COMMUNITY_Community 523|Community 523]]
 - [[_COMMUNITY_Community 524|Community 524]]
 
 ## God Nodes (most connected - your core abstractions)
@@ -530,15 +532,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (523 total, 119 thin omitted)
+## Communities (525 total, 120 thin omitted)
 
 ### Community 0 - "internal_config_config_go_config_config, config_serverconfig, internal_config_config_go_duration"
 Cohesion: 0.11
 Nodes (20): DatabaseConfig, GitHubOAuthConfig, GoogleOAuthConfig, HandlerTimeoutsConfig, OAuthConfig, RateLimitConfig, ServerConfig, SessionManagerConfig (+12 more)
 
 ### Community 1 - "js_chat, js_chat_render, js_navbar"
-Cohesion: 0.12
-Nodes (42): ApiError, fetchChatUsers(), initializeChat(), chatState, cleanupChat(), closeChatModal(), closeChatWindow(), getTimeAgo() (+34 more)
+Cohesion: 0.14
+Nodes (41): fetchChatUsers(), initializeChat(), chatState, cleanupChat(), closeChatModal(), closeChatWindow(), getTimeAgo(), clearAllPendingHistoryLoads() (+33 more)
 
 ### Community 2 - "queries_userloginemailtestcase, queries_userloginemail_test_runuserlogin, queries_userloginemail_test"
 Cohesion: 0.16
@@ -565,8 +567,8 @@ Cohesion: 0.13
 Nodes (15): AUDIT-001: Follow/Follower System Completely Absent, AUDIT-003: Post Privacy Scopes Not Implemented, AUDIT-004: ORDER BY String Concatenation Without Validation, AUDIT-005: Groups/Events Completely Absent, AUDIT-006: Profile Privacy Toggle Not Implemented, AUDIT-007: Registration Uses `Age` Instead of Date of Birth, AUDIT-008: Follow-Based Chat Authorization Not Implemented, AUDIT-009: Notification Triggers for 4 Required Types Missing (+7 more)
 
 ### Community 8 - "server_clientserver_handleemaillogin, server_clientserver_handleusernamelogin, templates_templates_rendertemplate"
-Cohesion: 0.29
-Nodes (9): Context, LoggedInUser, Request, ResponseWriter, ClientServer, BackendLoginRequest, BackendLoginResponse, LoginFormErrors (+1 more)
+Cohesion: 0.30
+Nodes (8): Context, LoggedInUser, Request, ResponseWriter, ClientServer, BackendLoginRequest, BackendLoginResponse, LoginFormErrors
 
 ### Community 9 - "validator_validator_validatestruct, validator_validationcases, validator"
 Cohesion: 0.09
@@ -585,8 +587,8 @@ Cohesion: 0.05
 Nodes (36): 1. Consolidated Review & Critique, 1. Storage Core Abstraction, 2. Infrastructure Code Update, 2. Proposed Architecture: Unified Registry Pattern, 3. Database Driver Implementations, 3. Migration Integration, 4. Code Quality & Repo Optimizations, 4. Error Mapping Strategy (+28 more)
 
 ### Community 13 - "helpers_json_response_respondwitherror, helpers_json_response_respondwithjson, getalltopics_handler_getalltopics"
-Cohesion: 0.08
-Nodes (23): Info, RespondWithError(), RespondWithJSON(), ResponseWrapper, Info, Request, ResponseWriter, Request (+15 more)
+Cohesion: 0.09
+Nodes (21): Info, RespondWithError(), RespondWithJSON(), ResponseWrapper, Info, Request, ResponseWriter, Request (+13 more)
 
 ### Community 14 - "js_helpers_escapehtml, pages_topic, pages_topic_rendertopicpage"
 Cohesion: 0.11
@@ -633,8 +635,8 @@ Cohesion: 0.09
 Nodes (26): After following another user successfully try to unfollow him., Are you able to change between private profile and public profile?, Are you able to follow the public user without the need of sending a following request?, Are you able to see a followed user private profile?, Are you able to see a followed user public profile?, Are you able to see a non-followed user public profile?, Are you able to send a following request to the private user?, Are you prevented from seeing a non-followed user private profile? (+18 more)
 
 ### Community 26 - "templates_templates_notfoundhandler, server_clientserver_deletecommentpost, server_clientserver_createcommentpost"
-Cohesion: 0.33
-Nodes (6): Request, ResponseWriter, Request, ResponseWriter, ClientServer, NotFoundHandler()
+Cohesion: 0.22
+Nodes (10): Request, ResponseWriter, Request, ResponseWriter, ClientServer, Request, ResponseWriter, ClientServer (+2 more)
 
 ### Community 27 - "commands_createtopic_newcreatetopichandl, commands_createtopictestcase, commands_createtopic_test_runcreatetopic"
 Cohesion: 0.19
@@ -697,8 +699,8 @@ Cohesion: 0.11
 Nodes (18): Allowed Packages, App, Authentication, Backend, Chat, docker, Followers, Framework (+10 more)
 
 ### Community 42 - "middleware_getclientip_getipfromcontext, helpers_setipheaders_setipheaders, server_clientserver_activitypage"
-Cohesion: 0.19
-Nodes (12): Request, Request, ResponseWriter, ClientServer, Request, ResponseWriter, ClientServer, Request (+4 more)
+Cohesion: 0.26
+Nodes (9): Request, Request, ResponseWriter, ClientServer, Request, ResponseWriter, ClientServer, SetIPHeaders() (+1 more)
 
 ### Community 43 - "js_router, js_router_handleroute, js_auth"
 Cohesion: 0.20
@@ -721,8 +723,8 @@ Cohesion: 0.24
 Nodes (8): Context, DB, Topic, NullString, Repo, NewRepo(), parseCategoryData(), Tx
 
 ### Community 48 - "helpers_decoderesp_decodebackendresponse, server_clientserver_homepage, server_clientserver_topicpage"
-Cohesion: 0.09
-Nodes (19): Response, T, Category, LoggedInUser, Pagination, Request, ResponseWriter, ClientServer (+11 more)
+Cohesion: 0.08
+Nodes (22): Response, T, Request, ResponseWriter, ClientServer, Category, LoggedInUser, Pagination (+14 more)
 
 ### Community 49 - "ws_hub, internal_infra_ws_hub_go_client, ws_hub_broadcastisonlinestatus"
 Cohesion: 0.22
@@ -789,8 +791,8 @@ Cohesion: 0.21
 Nodes (12): Services, NewHTTPServer(), NewInfraProviders(), App, DB, ServerConfig, DB, Repository (+4 more)
 
 ### Community 65 - "logger_level_string, logger_logger, oauth_repo"
-Cohesion: 0.17
-Nodes (11): Context, DB, Provider, User, Level, Logger, New(), Mutex (+3 more)
+Cohesion: 0.19
+Nodes (10): Client, NewClient(), Context, DB, Provider, User, Context, NewOAuthRepository() (+2 more)
 
 ### Community 66 - "commands_openstreamhandler, commands_openstream_newopenstreamhandler, commands_openstream"
 Cohesion: 0.31
@@ -869,8 +871,8 @@ Cohesion: 0.29
 Nodes (8): Category, Context, Repository, Topic, NewGetAllTopicsHandler(), GetAllTopicsRequest, GetAllTopicsRequestHandler, GetAllTopicsResponse
 
 ### Community 85 - "server_clientserver_createtopicpage, notifications_repo, server_clientserver_createtopicpost"
-Cohesion: 0.20
-Nodes (8): Request, ResponseWriter, ClientServer, Context, DB, Notification, NewRepo(), Repo
+Cohesion: 0.31
+Nodes (5): Context, DB, Notification, NewRepo(), Repo
 
 ### Community 86 - "votes_repo, votes_repo_getcounts, votes_votesrepo_newrepo"
 Cohesion: 0.31
@@ -1049,8 +1051,8 @@ Cohesion: 0.05
 Nodes (36): BE-A (Backend A) Tickets, BE-B (Backend B) Tickets, FE-A (Frontend A) Tickets, FE-B (Frontend B) Tickets, S4-BE-01: Group: Entities & Repository Interface, S4-BE-02: Group: SQLite Store, S4-BE-03: Group: Create Group Command, S4-BE-04: Group: Invite Member Command (+28 more)
 
 ### Community 130 - "server_backenderror, server_clientserver_newrequestwithcookie, server_clientserver_logout"
-Cohesion: 0.22
-Nodes (8): Context, Request, ResponseWriter, ClientServer, Context, Request, Response, backendError
+Cohesion: 0.52
+Nodes (4): Context, Request, ResponseWriter, ClientServer
 
 ### Community 131 - "Community 131"
 Cohesion: 0.39
@@ -1105,8 +1107,8 @@ Cohesion: 0.48
 Nodes (6): NewHandler(), Handler, ResponseModel, Logger, ServerConfig, Services
 
 ### Community 144 - "getchatusers_handler, getchatusers_getchatusershandler_newhand, getchatusers_getchatusershandler"
-Cohesion: 0.27
-Nodes (8): ChatUser, NewHandler(), Handler, GetChatUsersHandler, Logger, Request, ResponseWriter, Time
+Cohesion: 0.43
+Nodes (6): ChatUser, NewHandler(), Handler, GetChatUsersHandler, Logger, Time
 
 ### Community 145 - "getme_handler_getme, getme_handler, internal_infra_http_user_getme_handler_g"
 Cohesion: 0.38
@@ -1121,8 +1123,8 @@ Cohesion: 0.38
 Nodes (5): NewHandler(), Handler, GetUnreadCountHandler, Request, ResponseWriter
 
 ### Community 148 - "getvotecounts_handler, getvotecounts_getvotecountshandler_newha, getvotecounts_getvotecountshandler"
-Cohesion: 0.48
-Nodes (6): NewHandler(), Handler, Response, Logger, ServerConfig, Services
+Cohesion: 0.29
+Nodes (8): NewHandler(), Handler, Response, Logger, Request, ResponseWriter, ServerConfig, Services
 
 ### Community 149 - "http_server_initwsrouter, handlers_pinghandler, handlers_ping_newpinghandler"
 Cohesion: 0.33
@@ -1269,8 +1271,8 @@ Cohesion: 0.60
 Nodes (4): Category, isValidHexColor(), NormalizeColor(), PrepareCategories()
 
 ### Community 186 - "logout_handler, logout_handler_logout, logout_logouthandler_newhandler"
-Cohesion: 0.70
-Nodes (4): Logger, Manager, Handler, NewHandler()
+Cohesion: 0.36
+Nodes (6): Logger, Manager, Request, ResponseWriter, Handler, NewHandler()
 
 ### Community 187 - "uuid_uuid_test, internal_pkg_uuid_uuid_test_go_t, uuid_uuid_test_testnewuuidsuccess"
 Cohesion: 0.60
@@ -1353,8 +1355,8 @@ Cohesion: 1.00
 Nodes (3): OAuth, Provider, StateManager
 
 ### Community 264 - "sprints_general_instructions_social_netw, sprints_general_instructions_appendix_a_, sprints_general_instructions_refactoring"
-Cohesion: 0.15
-Nodes (12): Boundary check, Debugging & Quality Assurance Plan, Meta, Q1: Bug Fix First (Phase 1), Q2: Verification Gates (per sprint), R1: Strangler Fig Pattern, R2: TDD Workflow (Red → Green → Refactor), R3: Database Migration Discipline (+4 more)
+Cohesion: 0.08
+Nodes (23): A1: Testing Pyramid, A2: Commit Convention, A3: Feature Toggle Pattern, A4: Observability (Add in Sprint 1 if time), A5: Risk Mitigation, A6: Definition of Done, Appendix A: Best Practices Summary, Appendix B: Dependency Map (Visual) (+15 more)
 
 ### Community 265 - "workflows_go_code_audit_oc_phase_1_deter, workflows_go_code_audit_oc, workflows_go_code_audit_oc_phase_3_adver"
 Cohesion: 0.18
@@ -1981,8 +1983,8 @@ Cohesion: 0.20
 Nodes (9): 🤖 HumanLayer QRSPI Implementation Prompts & Personas, 💬 Stage 1: Questions Agent, 🔬 Stage 2: Research Agent, 🎨 Stage 3: Design / Strategy Agent, ⚙️ Stage 4: Structure Agent, 📝 Stage 5: Plan Agent, 🌿 Stage 6: Worktree Agent, 💻 Stage 7: Implementation Agent (+1 more)
 
 ### Community 517 - "Community 517"
-Cohesion: 0.36
-Nodes (4): Client, NewClient(), Context, Reader
+Cohesion: 0.31
+Nodes (5): Level, Logger, New(), Mutex, Writer
 
 ### Community 518 - "Community 518"
 Cohesion: 0.50
@@ -2000,14 +2002,18 @@ Nodes (3): Do, Don't, Guidelines
 Cohesion: 0.43
 Nodes (5): Request, ResponseWriter, ClientServer, getQueryIntOr(), getQueryStringOr()
 
+### Community 522 - "Community 522"
+Cohesion: 0.38
+Nodes (4): Context, Request, Response, backendError
+
 ### Community 524 - "Community 524"
 Cohesion: 0.33
 Nodes (5): 🛠️ Execution Phases, Phase 1: Deterministic Grounding & Tool Gates, Phase 2: Cognitive Subagent Review, Phase 3: Adversarial Validation (Judge Pass), Phase 4: Synthesis & Output Report
 
 ## Knowledge Gaps
-- **2314 isolated node(s):** `block-dangerous-git.sh script`, `$schema`, `plugin`, `HTTPTimeouts`, `Duration` (+2309 more)
+- **2324 isolated node(s):** `block-dangerous-git.sh script`, `$schema`, `plugin`, `HTTPTimeouts`, `Duration` (+2319 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **119 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **120 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -2025,4 +2031,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 28 inferred relationships involving `RespondWithJSON()` (e.g. with `.CastVote()` and `.CreateCategory()`) actually correct?**
   _`RespondWithJSON()` has 28 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Caveman compress scripts.  This package provides tools to compress natural langu`, `Heuristic denylist for files that must never be shipped to a third-party API.`, `Strip outer ```markdown ... ``` fence when it wraps the entire output.` to the rest of the system?**
-  _2332 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _2342 weakly-connected nodes found - possible documentation gaps or missing edges._

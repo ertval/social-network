@@ -204,56 +204,6 @@
 
 > **Prerequisite:** S1-BE-09 (OAuth package move to `pkg/oauth/`) must be completed before S5-BE-14/15 (OAuth client implementations). The client files at `pkg/oauth/github/client.go` and `pkg/oauth/google/client.go` assume the Sprint 1 move from `internal/pkg/oAuth/` to `pkg/oauth/`. If Sprint 1 was skipped, extend S5-BE-14/15 to include the move.
 
-## SD-QA (System Design/QA) Tickets
-
-### S5-BE-08: Chat Slice: Contract Tests
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S5-BE-07
-* **Description:** Verify chat vertical slice compatibility with old domain.
-* **Detailed Steps:**
-  1. Create `internal/chat/store/sqlite_migration_test.go`.
-* **Verification:** Assert equality of returned structures.
-
----
-
-### S5-BE-16: OAuth Slice: Contract Tests
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S5-BE-13
-* **Description:** Ensure OAuth vertical slice compatibility with old domain.
-* **Detailed Steps:**
-  1. Create `internal/oauth/store/sqlite_migration_test.go`.
-* **Verification:** Assert equality of returned structures.
-
----
-
-### S5-FE-06: E2E: Messaging Real-Time Delivery Journey
-* **Priority:** P0
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Dependencies:** S5-FE-02
-* **Description:** Full E2E Playwright test validating messaging loops.
-* **Detailed Steps:**
-  1. User A follows User B -> A messages B -> B receives in real-time.
-* **Verification:** Runs successfully in CI.
-
----
-
-### S5-FE-07: E2E: GitHub OAuth Sign In
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Dependencies:** S5-FE-04
-* **Description:** E2E Playwright testing OAuth mock flows.
-* **Detailed Steps:**
-  1. Launch Playwright browser -> Click GitHub login -> redirect callback success -> logged in.
-* **Verification:** Test validates successfully.
-
----
-
 ## FE-A (Frontend A) Tickets
 
 ### S5-FE-01: Chat Feed View
@@ -316,3 +266,53 @@
 * **Detailed Steps:**
   1. Add login option. Click routes to `/api/auth/oauth/google/init`.
 * **Verification:** Test clicking routes to correct URL.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S5-BE-08: Chat Slice: Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S5-BE-07
+* **Description:** Verify chat vertical slice compatibility with old domain.
+* **Detailed Steps:**
+  1. Create `internal/chat/store/sqlite_migration_test.go`.
+* **Verification:** Assert equality of returned structures.
+
+---
+
+### S5-BE-16: OAuth Slice: Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S5-BE-13
+* **Description:** Ensure OAuth vertical slice compatibility with old domain.
+* **Detailed Steps:**
+  1. Create `internal/oauth/store/sqlite_migration_test.go`.
+* **Verification:** Assert equality of returned structures.
+
+---
+
+### S5-FE-06: E2E: Messaging Real-Time Delivery Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S5-FE-02
+* **Description:** Full E2E Playwright test validating messaging loops.
+* **Detailed Steps:**
+  1. User A follows User B -> A messages B -> B receives in real-time.
+* **Verification:** Runs successfully in CI.
+
+---
+
+### S5-FE-07: E2E: GitHub OAuth Sign In
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S5-FE-04
+* **Description:** E2E Playwright testing OAuth mock flows.
+* **Detailed Steps:**
+  1. Launch Playwright browser -> Click GitHub login -> redirect callback success -> logged in.
+* **Verification:** Test validates successfully.

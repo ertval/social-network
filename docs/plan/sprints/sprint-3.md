@@ -323,55 +323,6 @@
 
 ---
 
-## SD-QA (System Design/QA) Tickets
-
-### S3-BE-12: Follow: Event Publishing Verification
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S3-BE-03..06
-* **Description:** Verify follow events are published onto the event bus correctly.
-* **Detailed Steps:**
-  1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.
-  2. Trigger commands and assert listeners receive expected structures.
-* **Verification:** Tests pass without event drops.
-
----
-
-### S3-BE-18: Comment Slice: Contract Tests
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S3-BE-17
-* **Description:** Ensure comments vertical slice compatibility with old domain.
-* **Detailed Steps:**
-  1. Create `internal/comment/store/sqlite_migration_test.go`.
-* **Verification:** Assert matching outputs.
-
----
-
-### S3-FE-07: E2E: Relationships Notifications Flow
-* **Priority:** P0
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Description:** E2E testing of relationship workflows.
-* **Detailed Steps:**
-  1. User A follows User B (private) -> B receives notification -> B accepts -> relationship established.
-* **Verification:** Running Playwright test passes.
-
----
-
-### S3-FE-08: E2E: Posts Comments Notification Flow
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Description:** E2E testing of commenting actions.
-* **Detailed Steps:**
-  1. User A creates post -> User B comments -> verify comments listing updating.
-* **Verification:** Running Playwright test passes.
-
----
-
 ## FE-A (Frontend A) Tickets
 
 ### S3-FE-01: Follow Button with Popup
@@ -445,3 +396,52 @@
    3. On notification panel open, fetch `GET /api/notifications` for the full list.
 * **Note:** Architecture decision: SSE for notifications, WS for chat only. No notification-specific WS channel. Chat WS piggyback deferred to Sprint 5.
 * **Verification:** Start server, create a notification via another user, confirm badge count updates within polling interval.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S3-BE-12: Follow: Event Publishing Verification
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S3-BE-03..06
+* **Description:** Verify follow events are published onto the event bus correctly.
+* **Detailed Steps:**
+  1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.
+  2. Trigger commands and assert listeners receive expected structures.
+* **Verification:** Tests pass without event drops.
+
+---
+
+### S3-BE-18: Comment Slice: Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S3-BE-17
+* **Description:** Ensure comments vertical slice compatibility with old domain.
+* **Detailed Steps:**
+  1. Create `internal/comment/store/sqlite_migration_test.go`.
+* **Verification:** Assert matching outputs.
+
+---
+
+### S3-FE-07: E2E: Relationships Notifications Flow
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** E2E testing of relationship workflows.
+* **Detailed Steps:**
+  1. User A follows User B (private) -> B receives notification -> B accepts -> relationship established.
+* **Verification:** Running Playwright test passes.
+
+---
+
+### S3-FE-08: E2E: Posts Comments Notification Flow
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Description:** E2E testing of commenting actions.
+* **Detailed Steps:**
+  1. User A creates post -> User B comments -> verify comments listing updating.
+* **Verification:** Running Playwright test passes.

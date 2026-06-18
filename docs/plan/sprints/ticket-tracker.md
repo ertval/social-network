@@ -23,17 +23,17 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S0-BE-02:** Makefile + CI Pipeline
 - [ ] **S0-BE-05:** Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 
-### SD-QA (System Design/QA)
-- [ ] **S0-BE-03:** golangci-lint Config
-- [ ] **S0-DEV-01:** Docker Compose Development Environment
-- [ ] **S0-DEV-02:** Pre-commit Hooks
-- [ ] **S0-DEV-03:** Dev Environment Docs
-
 ### FE-A (Frontend A)
 - [ ] **S0-FE-01:** Next.js Scaffold + Tooling
 
 ### FE-B (Frontend B)
 - [ ] **S0-FE-02:** shadcn/ui Components + Layout
+
+### SD-QA (System Design/QA)
+- [ ] **S0-BE-03:** golangci-lint Config
+- [ ] **S0-DEV-01:** Docker Compose Development Environment
+- [ ] **S0-DEV-02:** Pre-commit Hooks
+- [ ] **S0-DEV-03:** Dev Environment Docs
 
 ---
 
@@ -52,16 +52,16 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S1-BE-08:** Core: HTTP Server Bootstrap
 - [ ] **S1-BE-09:** Shared: Refactor OAuth Packages
 
-### SD-QA (System Design/QA)
-- [ ] **S1-BE-11:** Platform: Database Seeding (Gap Fix)
-- [ ] **S1-FE-04:** API Mocking Service
-
 ### FE-A (Frontend A)
 - [ ] **S1-FE-01:** Auth Pages (Login & Registration UI)
 - [ ] **S1-FE-02:** API Client Wrapper
 
 ### FE-B (Frontend B)
 - [ ] **S1-FE-03:** Nav Layout Shell
+
+### SD-QA (System Design/QA)
+- [ ] **S1-BE-11:** Platform: Database Seeding (Gap Fix)
+- [ ] **S1-FE-04:** API Mocking Service
 
 ---
 
@@ -93,11 +93,6 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S2-BE-20:** Topic: Get Votes Query
 - [ ] **S2-BE-21:** Topic: HTTP Transport Routing
 
-### SD-QA (System Design/QA)
-- [ ] **S2-BE-12:** User Slice: Migration Verification Contract Tests
-- [ ] **S2-BE-22:** Topic Slice: Migration Verification Contract Tests
-- [ ] **S2-FE-08:** E2E: User Signup to Feed Journey
-
 ### FE-A (Frontend A)
 - [ ] **S2-FE-01:** Registration Form
 - [ ] **S2-FE-02:** Login Page
@@ -108,6 +103,11 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S2-FE-05:** Home Feed Page
 - [ ] **S2-FE-06:** Post Creation Form
 - [ ] **S2-FE-07:** Post Card Component
+
+### SD-QA (System Design/QA)
+- [ ] **S2-BE-12:** User Slice: Migration Verification Contract Tests
+- [ ] **S2-BE-22:** Topic Slice: Migration Verification Contract Tests
+- [ ] **S2-FE-08:** E2E: User Signup to Feed Journey
 
 ---
 
@@ -142,12 +142,6 @@ For step-by-step ticket instructions, see individual sprint files:
 ### Joint BE-A & BE-B
 - [ ] **S3-BE-JOINT:** Wire Follow, Comment & Notification bootstrap routes
 
-### SD-QA (System Design/QA)
-- [ ] **S3-BE-12:** Follow: Event Publishing Verification
-- [ ] **S3-BE-18:** Comment Slice: Contract Tests
-- [ ] **S3-FE-07:** E2E: Relationships Notifications Flow
-- [ ] **S3-FE-08:** E2E: Posts Comments Notification Flow
-
 ### FE-A (Frontend A)
 - [ ] **S3-FE-01:** Follow Button with Popup
 - [ ] **S3-FE-02:** Followers List Pages
@@ -157,6 +151,12 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S3-FE-04:** Comment Section Components
 - [ ] **S3-FE-05:** Notifications Panel
 - [ ] **S3-FE-06:** Notifications Live Stream
+
+### SD-QA (System Design/QA)
+- [ ] **S3-BE-12:** Follow: Event Publishing Verification
+- [ ] **S3-BE-18:** Comment Slice: Contract Tests
+- [ ] **S3-FE-07:** E2E: Relationships Notifications Flow
+- [ ] **S3-FE-08:** E2E: Posts Comments Notification Flow
 
 ---
 
@@ -189,9 +189,6 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S4-BE-20:** Event: List Group Events Query
 - [ ] **S4-BE-21:** Event: HTTP Transport Routing
 
-### SD-QA (System Design/QA)
-- [ ] **S4-FE-08:** E2E: Complete Groups Workspace Journey
-
 ### FE-A (Frontend A)
 - [ ] **S4-FE-01:** Groups Directory Page
 - [ ] **S4-FE-02:** Group Profile Page
@@ -202,6 +199,9 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S4-FE-05:** Event Creation Dialog
 - [ ] **S4-FE-06:** Events List Component
 - [ ] **S4-FE-07:** RSVP Switch Actions
+
+### SD-QA (System Design/QA)
+- [ ] **S4-FE-08:** E2E: Complete Groups Workspace Journey
 
 ---
 
@@ -227,12 +227,6 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S5-BE-14:** OAuth Client: GitHub Implementation
 - [ ] **S5-BE-15:** OAuth Client: Google Implementation
 
-### SD-QA (System Design/QA)
-- [ ] **S5-BE-08:** Chat Slice: Contract Tests
-- [ ] **S5-BE-16:** OAuth Slice: Contract Tests
-- [ ] **S5-FE-06:** E2E: Messaging Real-Time Delivery Journey
-- [ ] **S5-FE-07:** E2E: GitHub OAuth Sign In
-
 ### FE-A (Frontend A)
 - [ ] **S5-FE-01:** Chat Feed View
 - [ ] **S5-FE-02:** Realtime Live Sockets Hook
@@ -241,6 +235,12 @@ For step-by-step ticket instructions, see individual sprint files:
 ### FE-B (Frontend B)
 - [ ] **S5-FE-04:** GitHub OAuth Button Integration
 - [ ] **S5-FE-05:** Google OAuth Button Integration
+
+### SD-QA (System Design/QA)
+- [ ] **S5-BE-08:** Chat Slice: Contract Tests
+- [ ] **S5-BE-16:** OAuth Slice: Contract Tests
+- [ ] **S5-FE-06:** E2E: Messaging Real-Time Delivery Journey
+- [ ] **S5-FE-07:** E2E: GitHub OAuth Sign In
 
 ---
 
@@ -254,6 +254,15 @@ For step-by-step ticket instructions, see individual sprint files:
 
 ### Joint BE-A & BE-B
 - [ ] **S6-BE-04:** Bootstrap Wiring
+
+### FE-A (Frontend A)
+- [ ] **S6-FE-02:** Responsive Design Check
+
+### FE-B (Frontend B)
+- [ ] **S6-FE-03:** Components Error Boundaries & Loading States
+
+### Joint FE-A & FE-B
+- [ ] **S6-FE-06:** Production Build Validation
 
 ### SD-QA (System Design/QA)
 - [ ] **S6-BE-05:** Full Integration Test Suite
@@ -269,12 +278,3 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S6-FE-04:** Accessibility (a11y) Audit
 - [ ] **S6-FE-05:** Frontend Performance Audits
 - [ ] **S6-FE-07:** E2E Audit.md Playwright Suite (Gap Fix)
-
-### FE-A (Frontend A)
-- [ ] **S6-FE-02:** Responsive Design Check
-
-### FE-B (Frontend B)
-- [ ] **S6-FE-03:** Components Error Boundaries & Loading States
-
-### Joint FE-A & FE-B
-- [ ] **S6-FE-06:** Production Build Validation

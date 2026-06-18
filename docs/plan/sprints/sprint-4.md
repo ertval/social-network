@@ -298,19 +298,6 @@
 
 ---
 
-## SD-QA (System Design/QA) Tickets
-
-### S4-FE-08: E2E: Complete Groups Workspace Journey
-* **Priority:** P0
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Description:** Playwright testing group cycles.
-* **Detailed Steps:**
-  1. Script: Create Group -> Join members -> Post message -> Create Event -> Vote RSVP.
-* **Verification:** Execution completes successfully in CI.
-
----
-
 ## FE-A (Frontend A) Tickets
 
 ### S4-FE-01: Groups Directory Page
@@ -389,3 +376,16 @@
 * **Detailed Steps:**
   1. Click going/not going button updates choice immediately via websocket/REST call.
 * **Verification:** Unit tests verifying update tallies visual checks.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S4-FE-08: E2E: Complete Groups Workspace Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** Playwright testing group cycles.
+* **Detailed Steps:**
+  1. Script: Create Group -> Join members -> Post message -> Create Event -> Vote RSVP.
+* **Verification:** Execution completes successfully in CI.

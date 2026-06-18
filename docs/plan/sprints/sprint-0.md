@@ -77,6 +77,42 @@
 
 ---
 
+## FE-A (Frontend A) Tickets
+
+### S0-FE-01: Next.js Scaffold + Tooling
+* **Priority:** P0 (Blocks everything)
+* **Assignee:** FE-A
+* **Story Points:** 5
+* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
+* **Detailed Steps:**
+  1. Create a `frontend/` subdirectory in the project root.
+  2. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
+  3. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json` to run `npx @biomejs/biome check src/`.
+  4. Install `shadcn/ui` tooling and Tailwind custom presets.
+  5. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
+* **Verification:** Run `bun run lint`, `bun run format`, `bun run build`, and `bun run test` to verify everything is green.
+
+---
+
+## FE-B (Frontend B) Tickets
+
+### S0-FE-02: shadcn/ui Components + Layout
+* **Priority:** P1
+* **Assignee:** FE-B
+* **Story Points:** 3
+* **Dependencies:** S0-FE-01
+* **Description:** Set up core UI shell structure and shadcn primitives.
+* **Detailed Steps:**
+  1. Add shadcn components: Button, Input, Card, Dialog, DropdownMenu, Avatar, Badge, Switch, Toast, Tooltip.
+  2. Create a global layout file `src/app/layout.tsx` containing:
+     - Navigation sidebar (responsive)
+     - Header area (user profile dropdown, theme switcher, notification icon placeholder)
+     - Main content container (glassmorphic styling, responsive layout)
+  3. Create routing page files for `/login`, `/register`, `/feed`, and `/profile/[id]`.
+* **Verification:** Start the dev server (`bun run dev`) and visually check that the layout and components render correctly on port 3000.
+
+---
+
 ## SD-QA (System Design/QA) Tickets
 
 ### S0-BE-03: golangci-lint Config
@@ -141,39 +177,3 @@
      - Docker compose command sequences
      - Branch naming conventions and pull request rules
 * **Verification:** A fresh developer should be able to set up their machine by following `DEVELOPMENT.md` alone.
-
----
-
-## FE-A (Frontend A) Tickets
-
-### S0-FE-01: Next.js Scaffold + Tooling
-* **Priority:** P0 (Blocks everything)
-* **Assignee:** FE-A
-* **Story Points:** 5
-* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
-* **Detailed Steps:**
-  1. Create a `frontend/` subdirectory in the project root.
-  2. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
-  3. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json` to run `npx @biomejs/biome check src/`.
-  4. Install `shadcn/ui` tooling and Tailwind custom presets.
-  5. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
-* **Verification:** Run `bun run lint`, `bun run format`, `bun run build`, and `bun run test` to verify everything is green.
-
----
-
-## FE-B (Frontend B) Tickets
-
-### S0-FE-02: shadcn/ui Components + Layout
-* **Priority:** P1
-* **Assignee:** FE-B
-* **Story Points:** 3
-* **Dependencies:** S0-FE-01
-* **Description:** Set up core UI shell structure and shadcn primitives.
-* **Detailed Steps:**
-  1. Add shadcn components: Button, Input, Card, Dialog, DropdownMenu, Avatar, Badge, Switch, Toast, Tooltip.
-  2. Create a global layout file `src/app/layout.tsx` containing:
-     - Navigation sidebar (responsive)
-     - Header area (user profile dropdown, theme switcher, notification icon placeholder)
-     - Main content container (glassmorphic styling, responsive layout)
-  3. Create routing page files for `/login`, `/register`, `/feed`, and `/profile/[id]`.
-* **Verification:** Start the dev server (`bun run dev`) and visually check that the layout and components render correctly on port 3000.

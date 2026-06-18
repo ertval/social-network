@@ -296,46 +296,6 @@
 
 ---
 
-## SD-QA (System Design/QA) Tickets
-
-### S2-BE-12: User Slice: Migration Verification Contract Tests
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-11 (new slice for verification)
-* **Description:** Per Strangler Fig (Step 1 then Step 3), first write contract tests against the OLD repo, then verify the NEW slice passes the same tests.
-* **Detailed Steps:**
-   1. **(Step 1)** Create `internal/user/store/sqlite_migration_test.go`. Write tests against the old repository (`internal/infra/storage/sqlite/...` queries) to capture current behavior.
-   2. **(Step 2)** New slice is built (S2-BE-02).
-   3. **(Step 3)** Run same contract tests against the new `internal/user/store/sqlite.go` — assert identical data mapping.
-* **Verification:** Contract tests pass with 100% data compatibility against old repo first, then new slice.
-
----
-
-### S2-BE-22: Topic Slice: Migration Verification Contract Tests
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-21 (new slice for verification)
-* **Description:** Per Strangler Fig (Step 1 then Step 3), write contract tests against OLD repo first, then verify NEW slice passes the same tests.
-* **Detailed Steps:**
-   1. **(Step 1)** Create `internal/topic/store/sqlite_migration_test.go`. Write tests against old topic repository.
-   2. **(Step 3)** Run same tests against new vertical slice store.
-* **Verification:** Assert equality of returned structures. Old-then-new ordering verified.
-
----
-
-### S2-FE-08: E2E: User Signup to Feed Journey
-* **Priority:** P0
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Description:** Core integration Playwright test validating registration, login, and posting to feed.
-* **Detailed Steps:**
-  1. Playwright scripts: Signup user -> Log in -> Write Post -> Inspect Feed for new post.
-* **Verification:** Script executes successfully in headless CI runner.
-
----
-
 ## FE-A (Frontend A) Tickets
 
 ### S2-FE-01: Registration Form
@@ -420,3 +380,43 @@
 * **Detailed Steps:**
   1. Render header (author name, timestamp), Content, Image if present, and vote counts buttons.
 * **Verification:** Test component renders correctly with varying input datasets.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S2-BE-12: User Slice: Migration Verification Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-11 (new slice for verification)
+* **Description:** Per Strangler Fig (Step 1 then Step 3), first write contract tests against the OLD repo, then verify the NEW slice passes the same tests.
+* **Detailed Steps:**
+   1. **(Step 1)** Create `internal/user/store/sqlite_migration_test.go`. Write tests against the old repository (`internal/infra/storage/sqlite/...` queries) to capture current behavior.
+   2. **(Step 2)** New slice is built (S2-BE-02).
+   3. **(Step 3)** Run same contract tests against the new `internal/user/store/sqlite.go` — assert identical data mapping.
+* **Verification:** Contract tests pass with 100% data compatibility against old repo first, then new slice.
+
+---
+
+### S2-BE-22: Topic Slice: Migration Verification Contract Tests
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S0-BE-01 (old repo exists), S2-BE-21 (new slice for verification)
+* **Description:** Per Strangler Fig (Step 1 then Step 3), write contract tests against OLD repo first, then verify NEW slice passes the same tests.
+* **Detailed Steps:**
+   1. **(Step 1)** Create `internal/topic/store/sqlite_migration_test.go`. Write tests against old topic repository.
+   2. **(Step 3)** Run same tests against new vertical slice store.
+* **Verification:** Assert equality of returned structures. Old-then-new ordering verified.
+
+---
+
+### S2-FE-08: E2E: User Signup to Feed Journey
+* **Priority:** P0
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Description:** Core integration Playwright test validating registration, login, and posting to feed.
+* **Detailed Steps:**
+  1. Playwright scripts: Signup user -> Log in -> Write Post -> Inspect Feed for new post.
+* **Verification:** Script executes successfully in headless CI runner.

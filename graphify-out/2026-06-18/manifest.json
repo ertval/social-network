@@ -2753,5 +2753,15 @@
     "mtime": 1781738821.618935,
     "ast_hash": "1be2893cc78f8c4b62e5879ae15e0ad0",
     "semantic_hash": ""
+  },
+  ".agents/prompts/pr-implement-qrspi.md": {
+    "mtime": 1781738982.1756608,
+    "ast_hash": "15bbdd5da2c4fbe8e59c664603d4a8fa",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/pr-implement-qrspi.md": {
+    "mtime": 1781738976.8903816,
+    "ast_hash": "bf67409eda0448dde884a06eb5631c41",
+    "semantic_hash": ""
   }
 }

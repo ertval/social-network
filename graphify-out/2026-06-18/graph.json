@@ -1264,7 +1264,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "cmd_client_config_config_go_config_config",
-      "community": 0,
+      "community": 39,
       "norm_label": "config.go"
     },
     {
@@ -1274,7 +1274,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "config_client",
-      "community": 0,
+      "community": 39,
       "norm_label": "client"
     },
     {
@@ -1284,7 +1284,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "httptimeouts",
-      "community": 0,
+      "community": 39,
       "norm_label": "httptimeouts"
     },
     {
@@ -1294,7 +1294,7 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "config_httptimeouts",
-      "community": 0,
+      "community": 39,
       "norm_label": "httptimeouts"
     },
     {
@@ -1304,7 +1304,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "cmd_client_config_config_go_duration",
-      "community": 0,
+      "community": 39,
       "norm_label": "duration"
     },
     {
@@ -1314,7 +1314,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "config_config_loadclientconfig",
-      "community": 0,
+      "community": 39,
       "norm_label": "loadclientconfig()"
     },
     {
@@ -1914,7 +1914,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "client_main",
-      "community": 0,
+      "community": 108,
       "norm_label": "main.go"
     },
     {
@@ -1924,7 +1924,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "client_main_main",
-      "community": 0,
+      "community": 108,
       "norm_label": "main()"
     },
     {
@@ -2154,7 +2154,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_server_clientserver",
-      "community": 26,
+      "community": 42,
       "norm_label": "clientserver"
     },
     {
@@ -2164,7 +2164,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "server_clientserver_activitypage",
-      "community": 26,
+      "community": 42,
       "norm_label": ".activitypage()"
     },
     {
@@ -2174,7 +2174,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_responsewriter",
-      "community": 26,
+      "community": 42,
       "norm_label": "responsewriter"
     },
     {
@@ -2184,7 +2184,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "cmd_client_server_activity_handler_go_request",
-      "community": 26,
+      "community": 42,
       "norm_label": "request"
     },
     {
@@ -2474,7 +2474,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_categories_handler",
-      "community": 48,
+      "community": 521,
       "norm_label": "categories_handler.go"
     },
     {
@@ -2484,7 +2484,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "cmd_client_server_categories_handler_go_server_clientserver",
-      "community": 48,
+      "community": 521,
       "norm_label": "clientserver"
     },
     {
@@ -2494,7 +2494,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "server_clientserver_categoriespage",
-      "community": 48,
+      "community": 521,
       "norm_label": ".categoriespage()"
     },
     {
@@ -2504,7 +2504,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "cmd_client_server_categories_handler_go_responsewriter",
-      "community": 48,
+      "community": 521,
       "norm_label": "responsewriter"
     },
     {
@@ -2514,7 +2514,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "cmd_client_server_categories_handler_go_request",
-      "community": 48,
+      "community": 521,
       "norm_label": "request"
     },
     {
@@ -2524,7 +2524,7 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "server_categories_handler_getqueryintor",
-      "community": 48,
+      "community": 521,
       "norm_label": "getqueryintor()"
     },
     {
@@ -2534,7 +2534,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "server_categories_handler_getquerystringor",
-      "community": 48,
+      "community": 521,
       "norm_label": "getquerystringor()"
     },
     {
@@ -3294,7 +3294,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "server_server",
-      "community": 0,
+      "community": 108,
       "norm_label": "server.go"
     },
     {
@@ -3304,7 +3304,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_server_clientserver",
-      "community": 0,
+      "community": 108,
       "norm_label": "clientserver"
     },
     {
@@ -3314,7 +3314,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_client",
-      "community": 0,
+      "community": 108,
       "norm_label": "client"
     },
     {
@@ -3324,7 +3324,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_servemux",
-      "community": 0,
+      "community": 108,
       "norm_label": "servemux"
     },
     {
@@ -3334,7 +3334,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "backendurls",
-      "community": 0,
+      "community": 108,
       "norm_label": "backendurls"
     },
     {
@@ -3344,7 +3344,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "server_server_getsecuretlsconfig",
-      "community": 0,
+      "community": 108,
       "norm_label": "getsecuretlsconfig()"
     },
     {
@@ -3354,7 +3354,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "config",
-      "community": 0,
+      "community": 108,
       "norm_label": "config"
     },
     {
@@ -3364,7 +3364,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "server_server_newclientserver",
-      "community": 0,
+      "community": 108,
       "norm_label": "newclientserver()"
     },
     {
@@ -3374,7 +3374,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "server_clientserver_setuproutes",
-      "community": 0,
+      "community": 108,
       "norm_label": ".setuproutes()"
     },
     {
@@ -3384,7 +3384,7 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "server_clientserver_listenandserve",
-      "community": 0,
+      "community": 108,
       "norm_label": ".listenandserve()"
     },
     {
@@ -3394,7 +3394,7 @@
       "source_location": "L242",
       "_origin": "ast",
       "id": "server_server_applymiddleware",
-      "community": 0,
+      "community": 108,
       "norm_label": "applymiddleware()"
     },
     {
@@ -3404,7 +3404,7 @@
       "source_location": "L242",
       "_origin": "ast",
       "id": "cmd_client_server_server_go_handlerfunc",
-      "community": 0,
+      "community": 108,
       "norm_label": "handlerfunc"
     },
     {
@@ -3514,7 +3514,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_server_clientserver",
-      "community": 42,
+      "community": 85,
       "norm_label": "clientserver"
     },
     {
@@ -3524,7 +3524,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "server_clientserver_createtopicpage",
-      "community": 42,
+      "community": 85,
       "norm_label": ".createtopicpage()"
     },
     {
@@ -3534,7 +3534,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_responsewriter",
-      "community": 42,
+      "community": 85,
       "norm_label": "responsewriter"
     },
     {
@@ -3544,7 +3544,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "cmd_client_server_topic_crud_handlers_go_request",
-      "community": 42,
+      "community": 85,
       "norm_label": "request"
     },
     {
@@ -3554,7 +3554,7 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "server_clientserver_createtopicpost",
-      "community": 42,
+      "community": 85,
       "norm_label": ".createtopicpost()"
     },
     {
@@ -3564,7 +3564,7 @@
       "source_location": "L255",
       "_origin": "ast",
       "id": "server_clientserver_updatetopicpost",
-      "community": 42,
+      "community": 85,
       "norm_label": ".updatetopicpost()"
     },
     {
@@ -3574,7 +3574,7 @@
       "source_location": "L412",
       "_origin": "ast",
       "id": "server_clientserver_deletetopicpost",
-      "community": 42,
+      "community": 85,
       "norm_label": ".deletetopicpost()"
     },
     {
@@ -4044,7 +4044,7 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "js_api_fetchcurrentuser",
-      "community": 43,
+      "community": 16,
       "norm_label": "fetchcurrentuser()"
     },
     {
@@ -5174,7 +5174,7 @@
       "source_location": "L456",
       "_origin": "ast",
       "id": "js_navbar_closenotificationstream",
-      "community": 1,
+      "community": 34,
       "norm_label": "closenotificationstream()"
     },
     {
@@ -5564,7 +5564,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "pages_logout",
-      "community": 1,
+      "community": 34,
       "norm_label": "logout.js"
     },
     {
@@ -5574,7 +5574,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "pages_logout_renderlogoutpage",
-      "community": 1,
+      "community": 34,
       "norm_label": "renderlogoutpage()"
     },
     {
@@ -5584,7 +5584,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "pages_logout_buildhtml",
-      "community": 1,
+      "community": 34,
       "norm_label": "buildhtml()"
     },
     {
@@ -8744,7 +8744,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "commands_createtopic_test",
-      "community": 27,
+      "community": 513,
       "norm_label": "createtopic_test.go"
     },
     {
@@ -8754,7 +8754,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "commands_createtopic_test_testcreatetopichandler_handle",
-      "community": 27,
+      "community": 513,
       "norm_label": "testcreatetopichandler_handle()"
     },
     {
@@ -8764,7 +8764,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "internal_app_topics_commands_createtopic_test_go_t",
-      "community": 27,
+      "community": 513,
       "norm_label": "t"
     },
     {
@@ -8774,7 +8774,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "commands_createtopictestcase",
-      "community": 27,
+      "community": 513,
       "norm_label": "createtopictestcase"
     },
     {
@@ -8784,7 +8784,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "createtopicrequest",
-      "community": 27,
+      "community": 513,
       "norm_label": "createtopicrequest"
     },
     {
@@ -8794,7 +8794,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "internal_app_topics_commands_createtopic_test_go_mockrepository",
-      "community": 27,
+      "community": 513,
       "norm_label": "mockrepository"
     },
     {
@@ -8804,7 +8804,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "internal_app_topics_commands_createtopic_test_go_topic",
-      "community": 27,
+      "community": 513,
       "norm_label": "topic"
     },
     {
@@ -8814,7 +8814,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "commands_createtopic_test_newcreatetopictestcases",
-      "community": 27,
+      "community": 513,
       "norm_label": "newcreatetopictestcases()"
     },
     {
@@ -8824,7 +8824,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "commands_createtopic_test_runcreatetopictest",
-      "community": 27,
+      "community": 513,
       "norm_label": "runcreatetopictest()"
     },
     {
@@ -8834,7 +8834,7 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "commands_createtopic_test_testnewtopichandler",
-      "community": 27,
+      "community": 513,
       "norm_label": "testnewtopichandler()"
     },
     {
@@ -9814,7 +9814,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "queries_userloginemail",
-      "community": 39,
+      "community": 2,
       "norm_label": "userloginemail.go"
     },
     {
@@ -9824,7 +9824,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "queries_userloginemailrequest",
-      "community": 39,
+      "community": 2,
       "norm_label": "userloginemailrequest"
     },
     {
@@ -9834,7 +9834,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "queries_userloginemailrequesthandler",
-      "community": 39,
+      "community": 2,
       "norm_label": "userloginemailrequesthandler"
     },
     {
@@ -9844,7 +9844,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "internal_app_user_queries_userloginemail_go_repository",
-      "community": 39,
+      "community": 2,
       "norm_label": "repository"
     },
     {
@@ -9854,7 +9854,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "internal_app_user_queries_userloginemail_go_provider",
-      "community": 39,
+      "community": 2,
       "norm_label": "provider"
     },
     {
@@ -9864,7 +9864,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "queries_userloginemail_newuserloginemailhandler",
-      "community": 39,
+      "community": 2,
       "norm_label": "newuserloginemailhandler()"
     },
     {
@@ -9874,7 +9874,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "queries_userloginemailrequesthandler_handle",
-      "community": 39,
+      "community": 2,
       "norm_label": ".handle()"
     },
     {
@@ -9884,7 +9884,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "internal_app_user_queries_userloginemail_go_context",
-      "community": 39,
+      "community": 2,
       "norm_label": "context"
     },
     {
@@ -9894,7 +9894,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "internal_app_user_queries_userloginemail_go_user",
-      "community": 39,
+      "community": 2,
       "norm_label": "user"
     },
     {
@@ -10944,7 +10944,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "config_config_loadconfig",
-      "community": 0,
+      "community": 39,
       "norm_label": "loadconfig()"
     },
     {
@@ -12274,7 +12274,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "getchatusers_handler_getchatusers",
-      "community": 13,
+      "community": 144,
       "norm_label": ".getchatusers()"
     },
     {
@@ -12284,7 +12284,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "internal_infra_http_chat_getchatusers_getchatusershandler_go_responsewriter",
-      "community": 13,
+      "community": 144,
       "norm_label": "responsewriter"
     },
     {
@@ -12294,7 +12294,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "internal_infra_http_chat_getchatusers_getchatusershandler_go_request",
-      "community": 13,
+      "community": 144,
       "norm_label": "request"
     },
     {
@@ -14614,7 +14614,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "logout_handler_logout",
-      "community": 186,
+      "community": 13,
       "norm_label": ".logout()"
     },
     {
@@ -14624,7 +14624,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "internal_infra_http_user_logout_logouthandler_go_responsewriter",
-      "community": 186,
+      "community": 13,
       "norm_label": "responsewriter"
     },
     {
@@ -14634,7 +14634,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "internal_infra_http_user_logout_logouthandler_go_request",
-      "community": 186,
+      "community": 13,
       "norm_label": "request"
     },
     {
@@ -15174,7 +15174,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "logger_logger",
-      "community": 108,
+      "community": 65,
       "norm_label": "logger"
     },
     {
@@ -15184,7 +15184,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "logger_level",
-      "community": 108,
+      "community": 65,
       "norm_label": "level"
     },
     {
@@ -15204,7 +15204,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "writer",
-      "community": 108,
+      "community": 65,
       "norm_label": "writer"
     },
     {
@@ -15214,7 +15214,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "mutex",
-      "community": 108,
+      "community": 65,
       "norm_label": "mutex"
     },
     {
@@ -15224,7 +15224,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "logger_logger_new",
-      "community": 108,
+      "community": 65,
       "norm_label": "new()"
     },
     {
@@ -15234,7 +15234,7 @@
       "source_location": "L55",
       "_origin": "ast",
       "id": "logger_logger_printinfo",
-      "community": 108,
+      "community": 65,
       "norm_label": ".printinfo()"
     },
     {
@@ -15244,7 +15244,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "logger_logger_printerror",
-      "community": 108,
+      "community": 65,
       "norm_label": ".printerror()"
     },
     {
@@ -15254,7 +15254,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "logger_logger_printfatal",
-      "community": 108,
+      "community": 65,
       "norm_label": ".printfatal()"
     },
     {
@@ -15264,7 +15264,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "logger_logger_write",
-      "community": 108,
+      "community": 65,
       "norm_label": ".write()"
     },
     {
@@ -15274,7 +15274,7 @@
       "source_location": "L81",
       "_origin": "ast",
       "id": "logger_logger_print",
-      "community": 108,
+      "community": 65,
       "norm_label": ".print()"
     },
     {
@@ -15824,7 +15824,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "notifications_notifier_newnotifier",
-      "community": 166,
+      "community": 38,
       "norm_label": "newnotifier()"
     },
     {
@@ -16834,7 +16834,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "sqlite_init",
-      "community": 0,
+      "community": 502,
       "norm_label": "init.go"
     },
     {
@@ -16844,7 +16844,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "sqlite_init_initializedb",
-      "community": 0,
+      "community": 502,
       "norm_label": "initializedb()"
     },
     {
@@ -16854,7 +16854,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "internal_infra_storage_sqlite_init_go_serverconfig",
-      "community": 0,
+      "community": 502,
       "norm_label": "serverconfig"
     },
     {
@@ -16864,7 +16864,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "internal_infra_storage_sqlite_init_go_db",
-      "community": 0,
+      "community": 502,
       "norm_label": "db"
     },
     {
@@ -16874,7 +16874,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "sqlite_init_opendb",
-      "community": 0,
+      "community": 502,
       "norm_label": "opendb()"
     },
     {
@@ -16884,7 +16884,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "sqlite_init_migratedb",
-      "community": 0,
+      "community": 502,
       "norm_label": "migratedb()"
     },
     {
@@ -16894,7 +16894,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "sqlite_init_execsqlfile",
-      "community": 0,
+      "community": 502,
       "norm_label": "execsqlfile()"
     },
     {
@@ -16904,7 +16904,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "sqlite_init_seeddb",
-      "community": 0,
+      "community": 502,
       "norm_label": "seeddb()"
     },
     {
@@ -16954,7 +16954,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "notifications_repo_create",
-      "community": 42,
+      "community": 85,
       "norm_label": ".create()"
     },
     {
@@ -18224,7 +18224,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "ws_hub_newhub",
-      "community": 49,
+      "community": 38,
       "norm_label": "newhub()"
     },
     {
@@ -18854,7 +18854,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "helpers_configuration",
-      "community": 0,
+      "community": 39,
       "norm_label": "configuration.go"
     },
     {
@@ -18864,7 +18864,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "helpers_configuration_parseenv",
-      "community": 0,
+      "community": 39,
       "norm_label": "parseenv()"
     },
     {
@@ -18884,7 +18884,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "helpers_configuration_parselist",
-      "community": 0,
+      "community": 39,
       "norm_label": "parselist()"
     },
     {
@@ -18894,7 +18894,7 @@
       "source_location": "L56",
       "_origin": "ast",
       "id": "helpers_configuration_getenv",
-      "community": 0,
+      "community": 39,
       "norm_label": "getenv()"
     },
     {
@@ -18904,7 +18904,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "helpers_configuration_getenvduration",
-      "community": 0,
+      "community": 39,
       "norm_label": "getenvduration()"
     },
     {
@@ -18914,7 +18914,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "internal_pkg_helpers_configuration_go_duration",
-      "community": 0,
+      "community": 39,
       "norm_label": "duration"
     },
     {
@@ -18924,7 +18924,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "helpers_configuration_getenvbool",
-      "community": 0,
+      "community": 39,
       "norm_label": "getenvbool()"
     },
     {
@@ -18934,7 +18934,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "helpers_configuration_getenvint",
-      "community": 0,
+      "community": 39,
       "norm_label": "getenvint()"
     },
     {
@@ -19364,7 +19364,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "httpclient_httpclient",
-      "community": 65,
+      "community": 517,
       "norm_label": "httpclient.go"
     },
     {
@@ -19374,7 +19374,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "httpclient_client",
-      "community": 65,
+      "community": 517,
       "norm_label": "client"
     },
     {
@@ -19384,7 +19384,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "httpclient_httpclient_newclient",
-      "community": 65,
+      "community": 517,
       "norm_label": "newclient()"
     },
     {
@@ -19394,7 +19394,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "httpclient_client_post",
-      "community": 65,
+      "community": 517,
       "norm_label": ".post()"
     },
     {
@@ -19404,7 +19404,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "internal_pkg_oauth_httpclient_httpclient_go_context",
-      "community": 65,
+      "community": 517,
       "norm_label": "context"
     },
     {
@@ -19414,7 +19414,7 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "httpclient_client_get",
-      "community": 65,
+      "community": 517,
       "norm_label": ".get()"
     },
     {
@@ -19424,7 +19424,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "httpclient_client_postwithurlencodedparams",
-      "community": 65,
+      "community": 517,
       "norm_label": ".postwithurlencodedparams()"
     },
     {
@@ -19434,7 +19434,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "reader",
-      "community": 65,
+      "community": 517,
       "norm_label": "reader"
     },
     {
@@ -19584,7 +19584,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "path_path",
-      "community": 0,
+      "community": 502,
       "norm_label": "path.go"
     },
     {
@@ -19594,7 +19594,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "path_resolver",
-      "community": 0,
+      "community": 502,
       "norm_label": "resolver"
     },
     {
@@ -19604,7 +19604,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "path_path_newresolver",
-      "community": 0,
+      "community": 502,
       "norm_label": "newresolver()"
     },
     {
@@ -19614,7 +19614,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "path_resolver_getpath",
-      "community": 0,
+      "community": 502,
       "norm_label": ".getpath()"
     },
     {
@@ -20906,6 +20906,106 @@
       "id": "prompts_audit_system",
       "community": 497,
       "norm_label": "audit-system.md"
+    },
+    {
+      "label": "pr-implement-qrspi.md",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi",
+      "community": 516,
+      "norm_label": "pr-implement-qrspi.md"
+    },
+    {
+      "label": "\ud83e\udd16 HumanLayer QRSPI Implementation Prompts & Personas",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "community": 516,
+      "norm_label": "\ud83e\udd16 humanlayer qrspi implementation prompts & personas"
+    },
+    {
+      "label": "\ud83d\udcac Stage 1: Questions Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_1_questions_agent",
+      "community": 516,
+      "norm_label": "\ud83d\udcac stage 1: questions agent"
+    },
+    {
+      "label": "\ud83d\udd2c Stage 2: Research Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_2_research_agent",
+      "community": 516,
+      "norm_label": "\ud83d\udd2c stage 2: research agent"
+    },
+    {
+      "label": "\ud83c\udfa8 Stage 3: Design / Strategy Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_3_design_strategy_agent",
+      "community": 516,
+      "norm_label": "\ud83c\udfa8 stage 3: design / strategy agent"
+    },
+    {
+      "label": "\u2699\ufe0f Stage 4: Structure Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L40",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_4_structure_agent",
+      "community": 516,
+      "norm_label": "\u2699\ufe0f stage 4: structure agent"
+    },
+    {
+      "label": "\ud83d\udcdd Stage 5: Plan Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_5_plan_agent",
+      "community": 516,
+      "norm_label": "\ud83d\udcdd stage 5: plan agent"
+    },
+    {
+      "label": "\ud83c\udf3f Stage 6: Worktree Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_6_worktree_agent",
+      "community": 516,
+      "norm_label": "\ud83c\udf3f stage 6: worktree agent"
+    },
+    {
+      "label": "\ud83d\udcbb Stage 7: Implementation Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_7_implementation_agent",
+      "community": 516,
+      "norm_label": "\ud83d\udcbb stage 7: implementation agent"
+    },
+    {
+      "label": "\ud83c\udfc1 Stage 8: PR / Validation Agent",
+      "file_type": "document",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L88",
+      "_origin": "ast",
+      "id": "prompts_pr_implement_qrspi_stage_8_pr_validation_agent",
+      "community": 516,
+      "norm_label": "\ud83c\udfc1 stage 8: pr / validation agent"
     },
     {
       "label": "pr-implement.md",
@@ -35886,6 +35986,116 @@
       "id": "workflows_pr_create_paste_short_successful_test_summary_here",
       "community": 319,
       "norm_label": "paste short, successful test summary here"
+    },
+    {
+      "label": "pr-implement-qrspi.md",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi",
+      "community": 512,
+      "norm_label": "pr-implement-qrspi.md"
+    },
+    {
+      "label": "\ud83e\udded Workflow Structure (HumanLayer QRSPI)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_workflow_structure_humanlayer_qrspi",
+      "community": 512,
+      "norm_label": "\ud83e\udded workflow structure (humanlayer qrspi)"
+    },
+    {
+      "label": "\ud83d\udee0\ufe0f Execution Phases",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_execution_phases",
+      "community": 512,
+      "norm_label": "\ud83d\udee0\ufe0f execution phases"
+    },
+    {
+      "label": "Stage 1: Questions (Alignment Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_1_questions_alignment_subagent",
+      "community": 512,
+      "norm_label": "stage 1: questions (alignment subagent)"
+    },
+    {
+      "label": "Stage 2: Research (Fact-Gathering Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_2_research_fact_gathering_subagent",
+      "community": 512,
+      "norm_label": "stage 2: research (fact-gathering subagent)"
+    },
+    {
+      "label": "Stage 3: Design / Strategy (Tradeoffs & Architecture Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_3_design_strategy_tradeoffs_architecture_subagent",
+      "community": 512,
+      "norm_label": "stage 3: design / strategy (tradeoffs & architecture subagent)"
+    },
+    {
+      "label": "Stage 4: Structure (Constraints Enforcement Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L63",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_4_structure_constraints_enforcement_subagent",
+      "community": 512,
+      "norm_label": "stage 4: structure (constraints enforcement subagent)"
+    },
+    {
+      "label": "Stage 5: Plan (Execution Plan Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L72",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_5_plan_execution_plan_subagent",
+      "community": 512,
+      "norm_label": "stage 5: plan (execution plan subagent)"
+    },
+    {
+      "label": "Stage 6: Worktree / Branch (Environment Setup Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L81",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_6_worktree_branch_environment_setup_subagent",
+      "community": 512,
+      "norm_label": "stage 6: worktree / branch (environment setup subagent)"
+    },
+    {
+      "label": "Stage 7: Implement (TDD Implementation Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L91",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_7_implement_tdd_implementation_subagent",
+      "community": 512,
+      "norm_label": "stage 7: implement (tdd implementation subagent)"
+    },
+    {
+      "label": "Stage 8: PR / Validation (Validator Subagent)",
+      "file_type": "document",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L103",
+      "_origin": "ast",
+      "id": "workflows_pr_implement_qrspi_stage_8_pr_validation_validator_subagent",
+      "community": 512,
+      "norm_label": "stage 8: pr / validation (validator subagent)"
     },
     {
       "label": "pr-implement.md",
@@ -82447,12 +82657,102 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi",
+      "target": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_1_questions_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_2_research_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_3_design_strategy_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_4_structure_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_5_plan_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_6_worktree_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_7_implementation_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/prompts/pr-implement-qrspi.md",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "prompts_pr_implement_qrspi_humanlayer_qrspi_implementation_prompts_personas",
+      "target": "prompts_pr_implement_qrspi_stage_8_pr_validation_agent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement",
-      "target": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas"
     },
     {
       "relation": "contains",
@@ -82460,9 +82760,9 @@
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas",
-      "target": "prompts_pr_implement_subagent_1_research_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_subagent_1_research_agent"
     },
     {
       "relation": "contains",
@@ -82470,9 +82770,9 @@
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas",
-      "target": "prompts_pr_implement_subagent_2_planning_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_subagent_2_planning_agent"
     },
     {
       "relation": "contains",
@@ -82480,9 +82780,9 @@
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas",
-      "target": "prompts_pr_implement_subagent_3_tdd_implementation_agent",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_subagent_3_tdd_implementation_agent"
     },
     {
       "relation": "contains",
@@ -82490,9 +82790,9 @@
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_humanlayer_rpi_ticket_implementation_prompts_personas",
-      "target": "prompts_pr_implement_subagent_4_quality_gate_validator",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_subagent_4_quality_gate_validator"
     },
     {
       "relation": "contains",
@@ -82500,9 +82800,9 @@
       "source_file": ".agents/prompts/pr-implement.md",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "prompts_pr_implement_subagent_1_research_agent",
-      "target": "prompts_pr_implement_research_checklists",
-      "confidence_score": 1.0
+      "target": "prompts_pr_implement_research_checklists"
     },
     {
       "relation": "contains",
@@ -95620,9 +95920,9 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create",
-      "target": "workflows_pr_create_execution_phases",
-      "confidence_score": 1.0
+      "target": "workflows_pr_create_execution_phases"
     },
     {
       "relation": "contains",
@@ -95630,9 +95930,9 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L103",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create",
-      "target": "workflows_pr_create_paste_short_successful_test_summary_here",
-      "confidence_score": 1.0
+      "target": "workflows_pr_create_paste_short_successful_test_summary_here"
     },
     {
       "relation": "contains",
@@ -95640,9 +95940,9 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create",
-      "target": "workflows_pr_create_phase_2_verification_against_sprint_rules_conventions",
-      "confidence_score": 1.0
+      "target": "workflows_pr_create_phase_2_verification_against_sprint_rules_conventions"
     },
     {
       "relation": "contains",
@@ -95650,9 +95950,9 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L60",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create",
-      "target": "workflows_pr_create_phase_3_draft_the_pr_message",
-      "confidence_score": 1.0
+      "target": "workflows_pr_create_phase_3_draft_the_pr_message"
     },
     {
       "relation": "contains",
@@ -95660,9 +95960,9 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create_execution_phases",
-      "target": "workflows_pr_create_phase_1_branch_and_commit_integrity_verification",
-      "confidence_score": 1.0
+      "target": "workflows_pr_create_phase_1_branch_and_commit_integrity_verification"
     },
     {
       "relation": "contains",
@@ -95670,8 +95970,108 @@
       "source_file": ".agents/workflows/pr-create.md",
       "source_location": "L69",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_create_phase_3_draft_the_pr_message",
-      "target": "workflows_pr_create_pr_description_template",
+      "target": "workflows_pr_create_pr_description_template"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi",
+      "target": "workflows_pr_implement_qrspi_execution_phases",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi",
+      "target": "workflows_pr_implement_qrspi_workflow_structure_humanlayer_qrspi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_1_questions_alignment_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_2_research_fact_gathering_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_3_design_strategy_tradeoffs_architecture_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_4_structure_constraints_enforcement_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_5_plan_execution_plan_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_6_worktree_branch_environment_setup_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_7_implement_tdd_implementation_subagent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".agents/workflows/pr-implement-qrspi.md",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "workflows_pr_implement_qrspi_execution_phases",
+      "target": "workflows_pr_implement_qrspi_stage_8_pr_validation_validator_subagent",
       "confidence_score": 1.0
     },
     {
@@ -95680,9 +96080,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement",
-      "target": "workflows_pr_implement_execution_phases",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_execution_phases"
     },
     {
       "relation": "contains",
@@ -95690,9 +96090,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement",
-      "target": "workflows_pr_implement_workflow_structure_humanlayer_rpi",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_workflow_structure_humanlayer_rpi"
     },
     {
       "relation": "contains",
@@ -95700,9 +96100,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_execution_phases",
-      "target": "workflows_pr_implement_phase_1_research_fact_gathering_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_phase_1_research_fact_gathering_subagent"
     },
     {
       "relation": "contains",
@@ -95710,9 +96110,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L44",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_execution_phases",
-      "target": "workflows_pr_implement_phase_2_plan_architectural_strategy_planning_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_phase_2_plan_architectural_strategy_planning_subagent"
     },
     {
       "relation": "contains",
@@ -95720,9 +96120,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_execution_phases",
-      "target": "workflows_pr_implement_phase_3_implement_tdd_implementation_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_phase_3_implement_tdd_implementation_subagent"
     },
     {
       "relation": "contains",
@@ -95730,9 +96130,9 @@
       "source_file": ".agents/workflows/pr-implement.md",
       "source_location": "L77",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "workflows_pr_implement_execution_phases",
-      "target": "workflows_pr_implement_phase_4_validate_quality_gate_validator_subagent",
-      "confidence_score": 1.0
+      "target": "workflows_pr_implement_phase_4_validate_quality_gate_validator_subagent"
     },
     {
       "relation": "contains",

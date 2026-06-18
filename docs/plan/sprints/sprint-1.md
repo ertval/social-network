@@ -165,40 +165,6 @@
 
 ---
 
-## SD-QA (System Design/QA) Tickets
-
-### S1-BE-11: Platform: Database Seeding (Gap Fix)
-* **Priority:** P2
-* **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S1-BE-04
-* **Description:** Implement database seed migrations to inject realistic test data into the database when running in development mode.
-* **Detailed Steps:**
-  1. Create migration file `db/migrations/000007_seed_data.up.sql` containing seed SQL statements. Include at least:
-     - 4 test users with secure hashed passwords (using known testing hashes).
-     - 5 posts with various privacy scopes (public, almost private, private).
-     - 2 groups with membership details.
-     - Basic follow relationships.
-  2. Create migration file `db/migrations/000007_seed_data.down.sql` to clean up the seeded data.
-  3. Update `migrations.go` to optionally apply the seed migration only when a development environment flag (e.g. `ENV=development` or a flag in configs) is active.
-* **Verification:** Run `make db-reset` under development config and verify using `sqlite3` CLI that seed users and posts are inserted.
-
----
-
-### S1-FE-04: API Mocking Service
-* **Priority:** P1
-* **Assignee:** SD-QA
-* **Story Points:** 3
-* **Dependencies:** S1-FE-02
-* **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions.
-* **Detailed Steps:**
-  1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.
-  2. Implement mock route handlers mimicking backend response JSON payloads for login, registration, and logout commands.
-  3. Conditionalize browser boot to initialize MSW when running in mock environments.
-* **Verification:** Mock login actions in playwright tests and confirm route redirects are working.
-
----
-
 ## FE-A (Frontend A) Tickets
 
 ### S1-FE-01: Auth Pages (Login & Registration UI)
@@ -239,3 +205,37 @@
   2. Build theme system provider (supporting Dark/Light HSL toggling).
   3. Implement responsive drawer menu for mobile breakpoints.
 * **Verification:** Check visual rendering across mobile, tablet, and desktop breakpoints.
+
+---
+
+## SD-QA (System Design/QA) Tickets
+
+### S1-BE-11: Platform: Database Seeding (Gap Fix)
+* **Priority:** P2
+* **Assignee:** SD-QA
+* **Story Points:** 2
+* **Dependencies:** S1-BE-04
+* **Description:** Implement database seed migrations to inject realistic test data into the database when running in development mode.
+* **Detailed Steps:**
+  1. Create migration file `db/migrations/000007_seed_data.up.sql` containing seed SQL statements. Include at least:
+     - 4 test users with secure hashed passwords (using known testing hashes).
+     - 5 posts with various privacy scopes (public, almost private, private).
+     - 2 groups with membership details.
+     - Basic follow relationships.
+  2. Create migration file `db/migrations/000007_seed_data.down.sql` to clean up the seeded data.
+  3. Update `migrations.go` to optionally apply the seed migration only when a development environment flag (e.g. `ENV=development` or a flag in configs) is active.
+* **Verification:** Run `make db-reset` under development config and verify using `sqlite3` CLI that seed users and posts are inserted.
+
+---
+
+### S1-FE-04: API Mocking Service
+* **Priority:** P1
+* **Assignee:** SD-QA
+* **Story Points:** 3
+* **Dependencies:** S1-FE-02
+* **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions.
+* **Detailed Steps:**
+  1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.
+  2. Implement mock route handlers mimicking backend response JSON payloads for login, registration, and logout commands.
+  3. Conditionalize browser boot to initialize MSW when running in mock environments.
+* **Verification:** Mock login actions in playwright tests and confirm route redirects are working.
