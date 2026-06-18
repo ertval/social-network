@@ -2,17 +2,17 @@
 
 **Outcome:** Groups with membership, group feed, group chat via WebSocket, and the event RSVP voting system work end-to-end.
 
-> **Missing migration DDL:** Architecture specifies `000005_groups.up.sql` and `000006_events.up.sql`. S1-BE-04 created `000005` and `000006` stubs (empty or minimal). S4-BE-02 and S4-BE-17 must extend these files with actual Group and Event table DDL — or create replacement migration files if stubs were not created. If S1-BE-04 was skipped, create `000005` and `000006` migration pairs as part of S4-BE-02 and S4-BE-17.
+> **Missing migration DDL:** Architecture specifies `000005_groups.up.sql` and `000006_events.up.sql`. S1-BE006 created `000005` and `000006` stubs (empty or minimal). S4-BE061 and S4-BE076 must extend these files with actual Group and Event table DDL — or create replacement migration files if stubs were not created. If S1-BE006 was skipped, create `000005` and `000006` migration pairs as part of S4-BE061 and S4-BE076.
 >
-> **GroupPost entity:** Architecture lists GroupPost (GroupID, AuthorID, Content, ImagePath, CreatedAt) as a named entity distinct from Topic posts. Explicitly defined in S4-BE-01. Group feed (S4-BE-12) queries GroupPost, not Topic.
+> **GroupPost entity:** Architecture lists GroupPost (GroupID, AuthorID, Content, ImagePath, CreatedAt) as a named entity distinct from Topic posts. Explicitly defined in S4-BE060. Group feed (S4-BE071) queries GroupPost, not Topic.
 
 ---
 
-### S4-BE-JOINT: Wire Group & Event bootstrap routes
+### S4-BE059: Wire Group & Event bootstrap routes
 * **Priority:** P0
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
-* **Dependencies:** S4-BE-14, S4-BE-15, S4-BE-21
+* **Dependencies:** S4-BE073, S4-BE074, S4-BE080
 * **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import group and event transport packages.
@@ -24,7 +24,7 @@
 
 ## BE-A (Backend A) Tickets
 
-### S4-BE-01: Group: Entities & Repository Interface
+### S4-BE060: Group: Entities & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
@@ -36,11 +36,11 @@
 
 ---
 
-### S4-BE-02: Group: SQLite Store
+### S4-BE061: Group: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-01, S4-BE-22
+* **Dependencies:** S4-BE060, S4-SD016
 * **Description:** Implement SQLite storage mapping group structure.
 * **Detailed Steps:**
    1. Create `internal/group/store/sqlite.go`. Implement queries checking group membership: `IsMember(ctx context.Context, groupID, userID string) (bool, error)`.
@@ -48,11 +48,11 @@
 
 ---
 
-### S4-BE-03: Group: Create Group Command
+### S4-BE062: Group: Create Group Command
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Create group record and automatically set the creator as the group owner.
 * **Detailed Steps:**
   1. Create `internal/group/commands/create_group.go`.
@@ -61,26 +61,26 @@
 
 ---
 
-### S4-BE-04: Group: Invite Member Command
+### S4-BE063: Group: Invite Member Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Invite follower to group, firing event notifications. Architecture requires invite-gating: only users who follow the inviter can be invited.
 * **Detailed Steps:**
    1. Create `internal/group/commands/invite_member.go`. Ensure requester is group member.
-   2. Define a local `FollowChecker` interface (same pattern as S2-BE-08, S2-BE-17): `AreConnected(ctx context.Context, a, b string) (bool, error)`.
+   2. Define a local `FollowChecker` interface (same pattern as S2-BE022, S2-BE030): `AreConnected(ctx context.Context, a, b string) (bool, error)`.
    3. Before inserting invitation, verify that invitee follows the inviter. Reject with 403 if not connected.
    4. Insert invitation, publish `group.invited` event.
 * **Verification:** Unit tests verifying: successful invite when follower, rejected invite when not connected, event outputs.
 
 ---
 
-### S4-BE-05: Group: Respond Invite Command
+### S4-BE064: Group: Respond Invite Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-04
+* **Dependencies:** S4-BE063
 * **Description:** Accept/decline group invitations.
 * **Detailed Steps:**
   1. Create `internal/group/commands/respond_invite.go`. If accepted -> insert user to member table.
@@ -88,11 +88,11 @@
 
 ---
 
-### S4-BE-06: Group: Request Join Command
+### S4-BE065: Group: Request Join Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Submit request to join group, notifying owner.
 * **Detailed Steps:**
   1. Create `internal/group/commands/request_join.go`. Insert record, publish `group.join_requested` event.
@@ -100,11 +100,11 @@
 
 ---
 
-### S4-BE-07: Group: Respond Join Command
+### S4-BE066: Group: Respond Join Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-06
+* **Dependencies:** S4-BE065
 * **Description:** Allow group creator/owner to approve join requests.
 * **Detailed Steps:**
   1. Create `internal/group/commands/respond_join.go`. Enforce that only the group creator can approve. If accepted -> add user to member list.
@@ -112,11 +112,11 @@
 
 ---
 
-### S4-BE-08: Group: Create Post Command
+### S4-BE067: Group: Create Post Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Create post inside a group.
 * **Detailed Steps:**
   1. Create `internal/group/commands/create_group_post.go`. Enforce group membership checks.
@@ -124,11 +124,11 @@
 
 ---
 
-### S4-BE-09: Group: Send Group Message Command
+### S4-BE068: Group: Send Group Message Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Post a message in the group chat, dispatching to WebSocket connections.
 * **Detailed Steps:**
   1. Create `internal/group/commands/send_group_message.go`. Validate membership. Route message through WS coordinator.
@@ -136,11 +136,11 @@
 
 ---
 
-### S4-BE-10: Group: List Groups Query
+### S4-BE069: Group: List Groups Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Retrieve listing of all existing groups for browsing.
 * **Detailed Steps:**
   1. Create `internal/group/queries/list_groups.go`.
@@ -148,11 +148,11 @@
 
 ---
 
-### S4-BE-11: Group: Get Group Detail Query
+### S4-BE070: Group: Get Group Detail Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Get specific group profile info.
 * **Detailed Steps:**
   1. Create `internal/group/queries/get_group.go`.
@@ -160,11 +160,11 @@
 
 ---
 
-### S4-BE-12: Group: Get Group Feed Query
+### S4-BE071: Group: Get Group Feed Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Retrieve post list inside group. Enforce membership check.
 * **Detailed Steps:**
   1. Create `internal/group/queries/get_group_feed.go`.
@@ -172,11 +172,11 @@
 
 ---
 
-### S4-BE-13: Group: Get Group Chat History Query
+### S4-BE072: Group: Get Group Chat History Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S4-BE-01
+* **Dependencies:** S4-BE060
 * **Description:** Get group message history log.
 * **Detailed Steps:**
   1. Create `internal/group/queries/get_group_chat.go`.
@@ -184,34 +184,34 @@
 
 ---
 
-### S4-BE-14: Group: HTTP Transport Routing
+### S4-BE073: Group: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-03..13
+* **Dependencies:** S4-BE062..S4-BE072
 * **Description:** Bind HTTP routes. Every command and query must have at least one route.
 * **Detailed Steps:**
    1. Create `internal/group/transport/http.go`.
    2. Route:
-      - `POST /api/groups` — create_group (S4-BE-03)
-      - `GET /api/groups` — list_groups (S4-BE-10)
-      - `GET /api/groups/:id` — get_group (S4-BE-11)
-      - `GET /api/groups/:id/feed` — get_group_feed (S4-BE-12)
-      - `GET /api/groups/:id/chat` — get_group_chat (S4-BE-13)
-      - `POST /api/groups/:id/invite` — invite_member (S4-BE-04)
-      - `POST /api/groups/:id/invite/respond` — respond_invite (S4-BE-05)
-      - `POST /api/groups/:id/join` — request_join (S4-BE-06)
-      - `POST /api/groups/:id/join/respond` — respond_join (S4-BE-07)
-      - `POST /api/groups/:id/posts` — create_group_post (S4-BE-08)
+      - `POST /api/groups` — create_group (S4-BE062)
+      - `GET /api/groups` — list_groups (S4-BE069)
+      - `GET /api/groups/:id` — get_group (S4-BE070)
+      - `GET /api/groups/:id/feed` — get_group_feed (S4-BE071)
+      - `GET /api/groups/:id/chat` — get_group_chat (S4-BE072)
+      - `POST /api/groups/:id/invite` — invite_member (S4-BE063)
+      - `POST /api/groups/:id/invite/respond` — respond_invite (S4-BE064)
+      - `POST /api/groups/:id/join` — request_join (S4-BE065)
+      - `POST /api/groups/:id/join/respond` — respond_join (S4-BE066)
+      - `POST /api/groups/:id/posts` — create_group_post (S4-BE067)
 * **Verification:** Mock requests integration tests. Every command handler has a corresponding route.
 
 ---
 
-### S4-BE-15: Group: WS Transport Routing
+### S4-BE074: Group: WS Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S4-BE-14
+* **Dependencies:** S4-BE073
 * **Description:** Route real-time WS chat events.
 * **Detailed Steps:**
   1. Create `internal/group/transport/ws.go`. Connect to core WebSocket.
@@ -221,7 +221,7 @@
 
 ## BE-B (Backend B) Tickets
 
-### S4-BE-16: Event: Entities & Repository Interface
+### S4-BE075: Event: Entities & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
@@ -232,11 +232,11 @@
 
 ---
 
-### S4-BE-17: Event: SQLite Store
+### S4-BE076: Event: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S4-BE-16, S4-BE-22
+* **Dependencies:** S4-BE075, S4-SD016
 * **Description:** Store query mappings for events.
 * **Detailed Steps:**
    1. Create `internal/event/store/sqlite.go`.
@@ -244,11 +244,11 @@
 
 ---
 
-### S4-BE-18: Event: Create Event Command
+### S4-BE077: Event: Create Event Command
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S4-BE-16
+* **Dependencies:** S4-BE075
 * **Description:** Create event in group, executing group membership constraints, and publishing to notifications.
 * **Detailed Steps:**
   1. Create `internal/event/commands/create_event.go`.
@@ -259,11 +259,11 @@
 
 ---
 
-### S4-BE-19: Event: RSVP Command
+### S4-BE078: Event: RSVP Command
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S4-BE-16
+* **Dependencies:** S4-BE075
 * **Description:** Record RSVP choices (going/not going).
 * **Detailed Steps:**
   1. Create `internal/event/commands/rsvp.go`. Upsert choices.
@@ -271,11 +271,11 @@
 
 ---
 
-### S4-BE-20: Event: List Group Events Query
+### S4-BE079: Event: List Group Events Query
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S4-BE-16
+* **Dependencies:** S4-BE075
 * **Description:** List events under a group with aggregated vote tallies.
 * **Detailed Steps:**
   1. Create `internal/event/queries/list_group_events.go`.
@@ -283,11 +283,11 @@
 
 ---
 
-### S4-BE-21: Event: HTTP Transport Routing
+### S4-BE080: Event: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S4-BE-18..20
+* **Dependencies:** S4-BE077..S4-BE079
 * **Description:** Bind HTTP handlers.
 * **Detailed Steps:**
   1. Create `internal/event/transport/http.go`.
@@ -298,7 +298,7 @@
 
 ## FE-A (Frontend A) Tickets
 
-### S4-FE-01: Groups Directory Page
+### S4-FE019: Groups Directory Page
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -309,7 +309,7 @@
 
 ---
 
-### S4-FE-02: Group Profile Page
+### S4-FE020: Group Profile Page
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -320,7 +320,7 @@
 
 ---
 
-### S4-FE-03: Group Posts Feed
+### S4-FE021: Group Posts Feed
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -331,7 +331,7 @@
 
 ---
 
-### S4-FE-04: Group Chat Workspace
+### S4-FE022: Group Chat Workspace
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -344,7 +344,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S4-FE-05: Event Creation Dialog
+### S4-FE023: Event Creation Dialog
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 5
@@ -355,7 +355,7 @@
 
 ---
 
-### S4-FE-06: Events List Component
+### S4-FE024: Events List Component
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -366,7 +366,7 @@
 
 ---
 
-### S4-FE-07: RSVP Switch Actions
+### S4-FE025: RSVP Switch Actions
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 2
@@ -379,7 +379,7 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S4-FE-08: E2E: Complete Groups Workspace Journey
+### S4-SD017: E2E: Complete Groups Workspace Journey
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -390,11 +390,11 @@
 
 ---
 
-### S4-BE-22: Platform: Group & Event Migrations (000005 & 000006)
+### S4-SD016: Platform: Group & Event Migrations (000005 & 000006)
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S1-BE-04
+* **Dependencies:** S1-BE006
 * **Description:** Create the database migration files for the Group and Event vertical slices (Phases 2.4 / 4).
 * **Detailed Steps:**
   1. Create `db/migrations/000005_groups.up.sql` to create tables: `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_posts`, `group_chat_messages`.

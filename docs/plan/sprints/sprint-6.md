@@ -2,11 +2,11 @@
 
 **Outcome:** All legacy code structures are removed. Slices are fully integrated in `bootstrap.go`. Full automated test coverage verifies the codebase, including a specific automated test suite executing all requirements mapped from `audit.md`. Production Docker structures are deployed and verified.
 
-> **Dependency chain warning:** Sprint 6 assumes Phase 5 migrations (Sprints 2, 3, 5) are fully complete. Cleanup tickets S6-BE-01..03 delete old layers (`domain/`, `app/`, `infra/`) — if migrations are incomplete, `bootstrap.go` still imports old packages and the build breaks. Do not start Sprint 6 until all vertical slices exist and compile independently.
+> **Dependency chain warning:** Sprint 6 assumes Phase 5 migrations (Sprints 2, 3, 5) are fully complete. Cleanup tickets S6-BE097..S6-BE099 delete old layers (`domain/`, `app/`, `infra/`) — if migrations are incomplete, `bootstrap.go` still imports old packages and the build breaks. Do not start Sprint 6 until all vertical slices exist and compile independently.
 >
-> **S6-DEV-04 ordering:** S6-DEV-04 (12-factor env var config) changes env var names used by old code (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT` → `DATABASE_DRIVER`, `DATABASE_DSN`, etc.). Must run AFTER S6-BE-01..03 (old code deleted) or old code breaks. Re-order: S6-DEV-04 depends on S6-BE-03.
+> **S6-SD029 ordering:** S6-SD029 (12-factor env var config) changes env var names used by old code (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT` → `DATABASE_DRIVER`, `DATABASE_DSN`, etc.). Must run AFTER S6-BE097..S6-BE099 (old code deleted) or old code breaks. Re-order: S6-SD029 depends on S6-BE099.
 >
-> **cmd/client/ cleanup:** Current Dockerfile builds both `cmd/server` and `cmd/client`. New 2-service design only needs `cmd/server`. S6-DEV-01 rewrites Dockerfile — include removal of `cmd/client/` binary build step. No separate cleanup ticket needed — fold into S6-DEV-01.
+> **cmd/client/ cleanup:** Current Dockerfile builds both `cmd/server` and `cmd/client`. New 2-service design only needs `cmd/server`. S6-SD026 rewrites Dockerfile — include removal of `cmd/client/` binary build step. No separate cleanup ticket needed — fold into S6-SD026.
 >
 > **Sprint-level verification gate:** After every sprint, run: `go vet ./... && go build ./... && go test -race -coverprofile=coverage.out ./... && golangci-lint run`. This is required before marking the sprint complete (see general-instructions.md Q2).
 
@@ -14,7 +14,7 @@
 
 ## BE-A (Backend A) Tickets
 
-### S6-BE-01: Clean Legacy Slices: Domain
+### S6-BE097: Clean Legacy Slices: Domain
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
@@ -25,7 +25,7 @@
 
 ---
 
-### S6-BE-02: Clean Legacy Slices: App
+### S6-BE098: Clean Legacy Slices: App
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
@@ -38,7 +38,7 @@
 
 ## BE-B (Backend B) Tickets
 
-### S6-BE-03: Clean Legacy Slices: Infra
+### S6-BE099: Clean Legacy Slices: Infra
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
@@ -51,11 +51,11 @@
 
 ## Joint BE-A & BE-B Tickets
 
-### S6-BE-04: Bootstrap Wiring
+### S6-BE100: Bootstrap Wiring
 * **Priority:** P0
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 5
-* **Dependencies:** S6-BE-01..03
+* **Dependencies:** S6-BE097..S6-BE099
 * **Description:** Complete final wiring of all 10 vertical slices inside the bootstrap module. Due to bootstrap complexity, this is done in incremental wiring steps.
 * **Detailed Steps:**
   1. **Phase 1: Platform & Core:** Instantiate DB connection factory, EventBus, Cache, session manager, and the WS hub in `internal/bootstrap/bootstrap.go`.
@@ -70,7 +70,7 @@
 
 ## FE-A (Frontend A) Tickets
 
-### S6-FE-02: Responsive Design Check
+### S6-FE031: Responsive Design Check
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -83,7 +83,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S6-FE-03: Components Error Boundaries & Loading States
+### S6-FE032: Components Error Boundaries & Loading States
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -96,7 +96,7 @@
 
 ## Joint FE-A & FE-B Tickets
 
-### S6-FE-06: Production Build Validation
+### S6-FE033: Production Build Validation
 * **Priority:** P1
 * **Assignee:** FE-A + FE-B
 * **Story Points:** 5
@@ -109,11 +109,11 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S6-BE-05: Full Integration Test Suite
+### S6-SD022: Full Integration Test Suite
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 5
-* **Dependencies:** S6-BE-04
+* **Dependencies:** S6-BE100
 * **Description:** Write global integration tests targeting workflows spanning across multiple slices.
 * **Detailed Steps:**
   1. Implement tests where user instances are registered, follow relationships are created, chat messages are sent, and event notifications are received.
@@ -121,7 +121,7 @@
 
 ---
 
-### S6-BE-06: Performance Benchmarks
+### S6-SD023: Performance Benchmarks
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -132,7 +132,7 @@
 
 ---
 
-### S6-BE-07: Vertical Slice Boundary Checks
+### S6-SD024: Vertical Slice Boundary Checks
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 2
@@ -143,11 +143,11 @@
 
 ---
 
-### S6-BE-08: Audit.md Automation Test Suite (Gap Fix)
+### S6-SD025: Audit.md Automation Test Suite (Gap Fix)
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 4
-* **Dependencies:** S6-BE-05
+* **Dependencies:** S6-SD022
 * **Description:** Implement a specific automated verification script/runner that executes scenarios mapping directly to the questions checklist in `docs/requirements/audit.md`.
 * **Detailed Steps:**
   1. Create a specialized integration suite under `internal/bootstrap/audit_compliance_test.go`.
@@ -161,7 +161,7 @@
 
 ---
 
-### S6-FE-01: Full E2E Test Suite
+### S6-SD031: Full E2E Test Suite
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 8
@@ -172,7 +172,7 @@
 
 ---
 
-### S6-FE-04: Accessibility (a11y) Audit
+### S6-SD032: Accessibility (a11y) Audit
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -183,7 +183,7 @@
 
 ---
 
-### S6-FE-05: Frontend Performance Audits
+### S6-SD033: Frontend Performance Audits
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -194,11 +194,11 @@
 
 ---
 
-### S6-FE-07: E2E Audit.md Playwright Suite (Gap Fix)
+### S6-SD034: E2E Audit.md Playwright Suite (Gap Fix)
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 4
-* **Dependencies:** S6-FE-01
+* **Dependencies:** S6-SD031
 * **Description:** Implement Playwright browser E2E test scripts specifically mapping to the frontend verification steps listed in `docs/requirements/audit.md`.
 * **Detailed Steps:**
   1. Create E2E test file `tests/audit-compliance.spec.ts`.
@@ -211,7 +211,7 @@
 
 ---
 
-### S6-DEV-01: Production Docker Setup
+### S6-SD026: Production Docker Setup
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 5
@@ -225,7 +225,7 @@
 
 ---
 
-### S6-DEV-02: Health Check Endpoints
+### S6-SD027: Health Check Endpoints
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 1
@@ -236,7 +236,7 @@
 
 ---
 
-### S6-DEV-03: Graceful Server Shutdowns
+### S6-SD028: Graceful Server Shutdowns
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
@@ -247,25 +247,25 @@
 
 ---
 
-### S6-DEV-04: Twelve-Factor Configurations Mappings
+### S6-SD029: Twelve-Factor Configurations Mappings
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S6-BE-03 (old code must be gone before env var rename)
-* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars. **Must run after S6-BE-03** — old code references old env var names.
+* **Dependencies:** S6-BE099 (old code must be gone before env var rename)
+* **Description:** Restructure config parameters loading strictly from environment variables, aligned with architecture spec env vars. **Must run after S6-BE099** — old code references old env var names.
 * **Detailed Steps:**
    1. Update `internal/config/config.go` to load from env vars: `DATABASE_DRIVER`, `DATABASE_DSN`, `SESSION_SECRET`, `PORT`, `CORS_ORIGIN`, `REDIS_URL` (optional), `RABBITMQ_URL` (optional).
    2. Remove legacy env var names (`SERVER_HOST`, `CLIENT_HOST`, `SERVER_PORT`).
-   3. Update `docker-compose.yml` to pass new env var names (see S6-DEV-01).
+   3. Update `docker-compose.yml` to pass new env var names (see S6-SD026).
 * **Verification:** Configuration loads parameters correctly from env vars. Old env names produce errors.
 
 ---
 
-### S6-DEV-05: Docker Smoke Verification Script
+### S6-SD030: Docker Smoke Verification Script
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S6-DEV-01
+* **Dependencies:** S6-SD026
 * **Description:** Automate startup checks verifying container statuses.
 * **Detailed Steps:**
   1. Script that brings up docker containers, checks that `docker ps` returns active states, and runs curl queries.

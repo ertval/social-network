@@ -4,19 +4,19 @@
 
 > **Migration note:** New slices use `/api/` prefix. Old code uses `/api/v1/`. During Strangler Fig migration, both must coexist. Register new routes alongside old ones — old code stays active until Sprint 6 cleanup. Feature-flag the new routes behind a config toggle if needed. Old notification types (reply, mention, like, dislike) are replaced entirely by new types (follow_request, follow_accept, group_invite, group_join_request, event_created). Existing notification data with old types is kept for history but not migrated to new types.
 >
-> **Notification schema breaking changes (FE):** Old schema had `Title`, `Message`, `RelatedType` with SSE streaming (`markAllAsRead`, `openStream`, direct `createNotification`). New schema has `Type`, `SenderID`, `ResourceID` with per-ID `mark_read` and eventbus `consume_events` — no SSE. FE must poll or use WS for real-time delivery (see S3-FE-06). Old notification rows with `Title/Message/RelatedType` are kept as-is; new notifications use the new schema. A one-time migration script (S3-BE-25) converts old rows to new schema.
+> **Notification schema breaking changes (FE):** Old schema had `Title`, `Message`, `RelatedType` with SSE streaming (`markAllAsRead`, `openStream`, direct `createNotification`). New schema has `Type`, `SenderID`, `ResourceID` with per-ID `mark_read` and eventbus `consume_events` — no SSE. FE must poll or use WS for real-time delivery (see S3-FE018). Old notification rows with `Title/Message/RelatedType` are kept as-is; new notifications use the new schema. A one-time migration script (S3-BE058) converts old rows to new schema.
 >
-> **WebSocket vs polling resolution (S3-FE-06):** SSE for notifications, WS for chat only. Notifications panel polls `GET /api/notifications/unread-count` with a configurable interval (default 15s). S3-BE-24 provides the polling endpoint. No notification-specific WS channel — piggybacking on chat WS is deferred to Sprint 5.
+> **WebSocket vs polling resolution (S3-FE018):** SSE for notifications, WS for chat only. Notifications panel polls `GET /api/notifications/unread-count` with a configurable interval (default 15s). S3-BE057 provides the polling endpoint. No notification-specific WS channel — piggybacking on chat WS is deferred to Sprint 5.
 >
-> **Old notification data migration:** S3-BE-25 migrates old rows (Title, Message, RelatedType) to new schema (Type, SenderID, ResourceID). See that ticket.
+> **Old notification data migration:** S3-BE058 migrates old rows (Title, Message, RelatedType) to new schema (Type, SenderID, ResourceID). See that ticket.
 
 ---
 
-### S3-BE-JOINT: Wire Follow, Comment & Notification bootstrap routes
+### S3-BE035: Wire Follow, Comment & Notification bootstrap routes
 * **Priority:** P0
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
-* **Dependencies:** S3-BE-11, S3-BE-17, S3-BE-24
+* **Dependencies:** S3-BE046, S3-BE051, S3-BE057
 * **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import follow, comment, and notification transport packages.
@@ -28,7 +28,7 @@
 
 ## BE-A (Backend A) Tickets
 
-### S3-BE-01: Follow: Entities & Repository Interface
+### S3-BE036: Follow: Entities & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
@@ -41,11 +41,11 @@
 
 ---
 
-### S3-BE-02: Follow: SQLite Store
+### S3-BE037: Follow: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Implement storage operations for relationships in SQLite.
 * **Detailed Steps:**
   1. Create `internal/follow/store/sqlite.go`.
@@ -54,11 +54,11 @@
 
 ---
 
-### S3-BE-03: Follow: Follow User Command
+### S3-BE038: Follow: Follow User Command
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Initiate relationship link. Perform auto-follow for public profiles, and follow request creation for private ones.
 * **Detailed Steps:**
   1. Create `internal/follow/commands/follow_user.go`.
@@ -69,11 +69,11 @@
 
 ---
 
-### S3-BE-04: Follow: Unfollow User Command
+### S3-BE039: Follow: Unfollow User Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Remove relationship links.
 * **Detailed Steps:**
   1. Create `internal/follow/commands/unfollow_user.go`. Delete relationship records.
@@ -81,11 +81,11 @@
 
 ---
 
-### S3-BE-05: Follow: Accept Request Command
+### S3-BE040: Follow: Accept Request Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-03
+* **Dependencies:** S3-BE038
 * **Description:** Approve pending follow requests.
 * **Detailed Steps:**
   1. Create `internal/follow/commands/accept_request.go`.
@@ -94,11 +94,11 @@
 
 ---
 
-### S3-BE-06: Follow: Decline Request Command
+### S3-BE041: Follow: Decline Request Command
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 1
-* **Dependencies:** S3-BE-03
+* **Dependencies:** S3-BE038
 * **Description:** Decline pending follow requests.
 * **Detailed Steps:**
   1. Create `internal/follow/commands/decline_request.go`. Set request status to declined or delete record.
@@ -106,11 +106,11 @@
 
 ---
 
-### S3-BE-07: Follow: Get Followers Query
+### S3-BE042: Follow: Get Followers Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Retrieve follower listing.
 * **Detailed Steps:**
   1. Create `internal/follow/queries/get_followers.go`.
@@ -118,11 +118,11 @@
 
 ---
 
-### S3-BE-08: Follow: Get Following Query
+### S3-BE043: Follow: Get Following Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Retrieve users followed listing.
 * **Detailed Steps:**
   1. Create `internal/follow/queries/get_following.go`.
@@ -130,11 +130,11 @@
 
 ---
 
-### S3-BE-09: Follow: Get Pending Requests Query
+### S3-BE044: Follow: Get Pending Requests Query
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Retrieve pending incoming follow requests.
 * **Detailed Steps:**
   1. Create `internal/follow/queries/get_pending_requests.go`.
@@ -142,11 +142,11 @@
 
 ---
 
-### S3-BE-10: Follow: Are Connected Query
+### S3-BE045: Follow: Are Connected Query
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Dependencies:** S3-BE-01
+* **Dependencies:** S3-BE036
 * **Description:** Implement helper query check for cross-slice connection testing.
 * **Detailed Steps:**
   1. Create `internal/follow/queries/are_connected.go`.
@@ -155,11 +155,11 @@
 
 ---
 
-### S3-BE-11: Follow: HTTP Transport Routing
+### S3-BE046: Follow: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S3-BE-03..10
+* **Dependencies:** S3-BE038..S3-BE045
 * **Description:** Bind follow actions to HTTP paths.
 * **Detailed Steps:**
   1. Create `internal/follow/transport/http.go`.
@@ -170,7 +170,7 @@
 
 ## BE-B (Backend B) Tickets
 
-### S3-BE-13: Comment: Entity & Repository Interface
+### S3-BE047: Comment: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 1
@@ -182,11 +182,11 @@
 
 ---
 
-### S3-BE-14: Comment: SQLite Store
+### S3-BE048: Comment: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-13
+* **Dependencies:** S3-BE047
 * **Description:** Implement SQLite CRUD queries for comments.
 * **Detailed Steps:**
   1. Create `internal/comment/store/sqlite.go`.
@@ -194,11 +194,11 @@
 
 ---
 
-### S3-BE-15: Comment: Create Comment Command
+### S3-BE049: Comment: Create Comment Command
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S3-BE-13
+* **Dependencies:** S3-BE047
 * **Description:** Write-use-case for creating comment with image attachments.
 * **Detailed Steps:**
   1. Create `internal/comment/commands/create_comment.go`.
@@ -208,11 +208,11 @@
 
 ---
 
-### S3-BE-16: Comment: Get Comments Query
+### S3-BE050: Comment: Get Comments Query
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-13
+* **Dependencies:** S3-BE047
 * **Description:** Retrieve list of comments for a specific post.
 * **Detailed Steps:**
   1. Create `internal/comment/queries/get_comments.go`.
@@ -220,11 +220,11 @@
 
 ---
 
-### S3-BE-17: Comment: HTTP Transport Routing
+### S3-BE051: Comment: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-15, S3-BE-16
+* **Dependencies:** S3-BE049, S3-BE050
 * **Description:** Bind HTTP handlers.
 * **Detailed Steps:**
   1. Create `internal/comment/transport/http.go`.
@@ -233,7 +233,7 @@
 
 ---
 
-### S3-BE-19: Notification: Entity & Repository Interface
+### S3-BE052: Notification: Entity & Repository Interface
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
@@ -246,11 +246,11 @@
 
 ---
 
-### S3-BE-20: Notification: SQLite Store
+### S3-BE053: Notification: SQLite Store
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-19
+* **Dependencies:** S3-BE052
 * **Description:** Implement notification write/update SQLite actions.
 * **Detailed Steps:**
   1. Create `internal/notification/store/sqlite.go`.
@@ -258,11 +258,11 @@
 
 ---
 
-### S3-BE-21: Notification: Event Bus Consumer
+### S3-BE054: Notification: Event Bus Consumer
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 5
-* **Dependencies:** S3-BE-19
+* **Dependencies:** S3-BE052
 * **Description:** Event subscriber handler mapping events to database notifications.
 * **Detailed Steps:**
   1. Create `internal/notification/commands/consume_events.go`.
@@ -273,11 +273,11 @@
 
 ---
 
-### S3-BE-22: Notification: Mark Read Command
+### S3-BE055: Notification: Mark Read Command
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 1
-* **Dependencies:** S3-BE-19
+* **Dependencies:** S3-BE052
 * **Description:** Update notifications state to read.
 * **Detailed Steps:**
   1. Create `internal/notification/commands/mark_read.go`.
@@ -285,11 +285,11 @@
 
 ---
 
-### S3-BE-23: Notification: List Notifications Query
+### S3-BE056: Notification: List Notifications Query
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-19
+* **Dependencies:** S3-BE052
 * **Description:** Retrieve notification feed for active user.
 * **Detailed Steps:**
   1. Create `internal/notification/queries/list_notifications.go`.
@@ -297,11 +297,11 @@
 
 ---
 
-### S3-BE-24: Notification: HTTP Transport Routing
+### S3-BE057: Notification: HTTP Transport Routing
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S3-BE-21..23
+* **Dependencies:** S3-BE054..S3-BE056
 * **Description:** Bind HTTP routes. Add unread count endpoint for frontend badge display.
 * **Detailed Steps:**
    1. Create `internal/notification/transport/http.go`.
@@ -310,11 +310,11 @@
 
 ---
 
-### S3-BE-25: Notification: Old Schema→New Schema Migration
+### S3-BE058: Notification: Old Schema→New Schema Migration
 * **Priority:** P1
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S3-BE-19
+* **Dependencies:** S3-BE052
 * **Description:** One-time data migration converting old notification rows to the new schema.
 * **Detailed Steps:**
    1. Create `db/migrations/000008_migrate_notifications.up.sql`. Map old rows: `Title` → stored as metadata, `Message` → stored as metadata, `RelatedType` → mapped to new `Type` enum where possible (reply→comment, mention→follow, like/dislike→dropped). Rows with unmappable types get `Type = "legacy"`.
@@ -326,7 +326,7 @@
 
 ## FE-A (Frontend A) Tickets
 
-### S3-FE-01: Follow Button with Popup
+### S3-FE013: Follow Button with Popup
 * **Priority:** P0
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -339,7 +339,7 @@
 
 ---
 
-### S3-FE-02: Followers List Pages
+### S3-FE014: Followers List Pages
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -350,7 +350,7 @@
 
 ---
 
-### S3-FE-03: Follow Request Notifications
+### S3-FE015: Follow Request Notifications
 * **Priority:** P1
 * **Assignee:** FE-A
 * **Story Points:** 3
@@ -363,7 +363,7 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S3-FE-04: Comment Section Components
+### S3-FE016: Comment Section Components
 * **Priority:** P0
 * **Assignee:** FE-B
 * **Story Points:** 5
@@ -375,7 +375,7 @@
 
 ---
 
-### S3-FE-05: Notifications Panel
+### S3-FE017: Notifications Panel
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -386,7 +386,7 @@
 
 ---
 
-### S3-FE-06: Notifications Live Stream
+### S3-FE018: Notifications Live Stream
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
@@ -402,11 +402,11 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S3-BE-12: Follow: Event Publishing Verification
+### S3-SD011: Follow: Event Publishing Verification
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S3-BE-03..06
+* **Dependencies:** S3-BE038..S3-BE041
 * **Description:** Verify follow events are published onto the event bus correctly.
 * **Detailed Steps:**
   1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.
@@ -415,11 +415,11 @@
 
 ---
 
-### S3-BE-18: Comment Slice: Contract Tests
+### S3-SD012: Comment Slice: Contract Tests
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S3-BE-17
+* **Dependencies:** S3-BE051
 * **Description:** Ensure comments vertical slice compatibility with old domain.
 * **Detailed Steps:**
   1. Create `internal/comment/store/sqlite_migration_test.go`.
@@ -427,7 +427,7 @@
 
 ---
 
-### S3-FE-07: E2E: Relationships Notifications Flow
+### S3-SD014: E2E: Relationships Notifications Flow
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 3
@@ -438,7 +438,7 @@
 
 ---
 
-### S3-FE-08: E2E: Posts Comments Notification Flow
+### S3-SD015: E2E: Posts Comments Notification Flow
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
@@ -449,11 +449,11 @@
 
 ---
 
-### S3-BE-26: Platform: Follow System Migrations (000004)
+### S3-SD013: Platform: Follow System Migrations (000004)
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S1-BE-04
+* **Dependencies:** S1-BE006
 * **Description:** Create the database migration files for the Follow vertical slice (Phases 2.4 / 5).
 * **Detailed Steps:**
   1. Create `db/migrations/000004_follow_system.up.sql` to create `follows` and `follow_requests` tables.

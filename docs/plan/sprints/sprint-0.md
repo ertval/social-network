@@ -8,7 +8,7 @@
 
 ## BE-A (Backend A) Tickets
 
-### S0-BE-01: Go Project Scaffold
+### S0-BE001: Go Project Scaffold
 * **Priority:** P0 (Blocks everything)
 * **Assignee:** BE-A
 * **Story Points:** 3
@@ -26,11 +26,11 @@
 
 ---
 
-### S0-BE-04: Bug Fixes (B1.1, B1.2, B1.5)
+### S0-BE002: Bug Fixes (B1.1, B1.2, B1.5)
 * **Priority:** P0
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S0-BE-01
+* **Dependencies:** S0-BE001
 * **Description:** Fix migration path delimiter, SQLiteWAL/timeout settings, and SQL injections.
 * **Detailed Steps:**
   1. **B1.1 (Migration Delimiter):** In `internal/infra/storage/sqlite/init.go`, change the SQL parsing delimiter from `":"` to `";"` so multi-statement SQL runs correctly.
@@ -42,11 +42,11 @@
 
 ## BE-B (Backend B) Tickets
 
-### S0-BE-02: Makefile + CI Pipeline
+### S0-BE003: Makefile + CI Pipeline
 * **Priority:** P0 (Blocks everything)
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S0-BE-01
+* **Dependencies:** S0-BE001
 * **Description:** Create a robust `Makefile` that handles project setup, linting, formatting, tests, and cleanups.
 * **Detailed Steps:**
   1. Add standard commands:
@@ -64,11 +64,11 @@
 
 ---
 
-### S0-BE-05: Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
+### S0-BE004: Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 * **Priority:** P0
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S0-BE-01
+* **Dependencies:** S0-BE001
 * **Description:** Fix OAuth Scanner, WebSocket origin policy, Prepared statements, WS panics, and RateLimiter leaks.
 * **Detailed Steps:**
   1. **B1.3 (OAuth Scan):** In `internal/infra/storage/sqlite/oauth/oauthRepo.go`, adjust `Scan()` arguments to exclude `ctx` since the driver does not take context directly inside `Scan()`.
@@ -82,7 +82,7 @@
 
 ## FE-A (Frontend A) Tickets
 
-### S0-FE-01: Next.js Scaffold + Tooling
+### S0-FE001: Next.js Scaffold + Tooling
 * **Priority:** P0 (Blocks everything)
 * **Assignee:** FE-A
 * **Story Points:** 5
@@ -99,11 +99,11 @@
 
 ## FE-B (Frontend B) Tickets
 
-### S0-FE-02: shadcn/ui Components + Layout
+### S0-FE002: shadcn/ui Components + Layout
 * **Priority:** P1
 * **Assignee:** FE-B
 * **Story Points:** 3
-* **Dependencies:** S0-FE-01
+* **Dependencies:** S0-FE001
 * **Description:** Set up core UI shell structure and shadcn primitives.
 * **Detailed Steps:**
   1. Add shadcn components: Button, Input, Card, Dialog, DropdownMenu, Avatar, Badge, Switch, Toast, Tooltip.
@@ -118,11 +118,11 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S0-BE-03: golangci-lint Config
+### S0-SD001: golangci-lint Config
 * **Priority:** P0
 * **Assignee:** SD-QA
 * **Story Points:** 1
-* **Dependencies:** S0-BE-02
+* **Dependencies:** S0-BE003
 * **Description:** Configure `.golangci.yml` at the project root to enforce code cleanliness and strict slice boundaries.
 * **Detailed Steps:**
   1. Enable linters: `gofumpt`, `goimports`, `gci`, `staticcheck`, `errcheck`, `govet`, `revive`.
@@ -132,11 +132,11 @@
 
 ---
 
-### S0-DEV-01: Docker Compose Development Environment
+### S0-SD002: Docker Compose Development Environment
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 3
-* **Dependencies:** S0-BE-01, S0-FE-01
+* **Dependencies:** S0-BE001, S0-FE001
 * **Description:** Set up local docker compose environments for both development (hot reload) and production.
 * **Detailed Steps:**
   1. Create a `Dockerfile` for the Go backend (multi-stage build: builder -> final minimal alpine image).
@@ -149,11 +149,11 @@
 
 ---
 
-### S0-DEV-02: Pre-commit Hooks
+### S0-SD003: Pre-commit Hooks
 * **Priority:** P1
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S0-BE-01
+* **Dependencies:** S0-BE001
 * **Description:** Establish quality git hooks using Husky/lefthook to prevent bad code from committing or pushing.
 * **Detailed Steps:**
   1. Setup pre-commit hooks that run checks only on staged files:
@@ -166,7 +166,7 @@
 
 ---
 
-### S0-DEV-03: Dev Environment Docs
+### S0-SD004: Dev Environment Docs
 * **Priority:** P2
 * **Assignee:** SD-QA
 * **Story Points:** 2
