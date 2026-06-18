@@ -18,6 +18,107 @@
 
 ---
 
+## Linear Progressive Disclosure Navigation Chain
+
+This project enforces a progressive reading workflow for developers and agentic assistants alike to maintain context and avoid cognitive overload:
+
+```mermaid
+graph TD
+    A["1. Project Rules & Guidelines <br> (AGENTS.md, conventions.md)"] --> B["2. Implementation Methodology <br> (general-instructions.md)"]
+    B --> C["3. Architectural Boundaries <br> (architecture.md)"]
+    B --> D["4. Technical Specifications <br> (sds.md)"]
+    D --> E["5. Transition Roadmap <br> (target-architecture-with-phases.md)"]
+    E --> F["6. Ticket Board Tracker <br> (ticket-tracker.md)"]
+    F --> G["7. Sprints Backlog <br> (sprint-0.md -> sprint-6.md)"]
+```
+
+- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](file://AGENTS.md) and [.agents/rules/conventions.md](file://.agents/rules/conventions.md).
+- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/plan/sprints/general-instructions.md](file://docs/plan/sprints/general-instructions.md).
+- **Stage 3: Architecture Definition**: Read [docs/plan/architecture/architecture.md](file://docs/plan/architecture/architecture.md).
+- **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md).
+- **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md).
+- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
+
+---
+
+## Developer Onboarding & Contribution Workflow
+
+### Onboarding Guide
+
+1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/plan/sprints/ticket-tracker.md`. Verify dependencies.
+2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `ekaramet/feat-user-slice`).
+3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
+4. **PR Guidelines**: Squash merge, run all validation gates (`make ci` for BE, Bun commands for FE), and draft description using the PR template.
+
+### PR Description Template
+
+Include the following template in the `.git/PR_DESCRIPTION.md` file when preparing a pull request:
+
+```markdown
+# 🚀 Pull Request: [Ticket ID] — [Brief Title]
+
+## 📋 Ticket Metadata
+| Field | Value |
+|---|---|
+| **Ticket ID** | `[Ticket ID]` |
+| **Assignee** | `[Name]` |
+| **Sprint** | Sprint `[N]` |
+| **Branch** | `[branch-name]` |
+
+> [!NOTE]
+> Resolves ticket: [Ticket Details](file://docs/plan/sprints/sprint-[N].md#[Ticket-Anchor])
+
+## 🔍 Overview & Rationale
+*Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*
+
+## 🛠️ Proposed Changes
+### [Component / Slice Name]
+- **[NEW / MODIFY / DELETE]** `[path/to/file.go](file://path/to/file.go)`
+  - *Detailed bullet points of specific additions or changes.*
+
+### DB Migrations (if applicable)
+- Added sequential migrations:
+  - `[00000X_migration.up.sql](file://db/migrations/00000X_migration.up.sql)`
+  - `[00000X_migration.down.sql](file://db/migrations/00000X_migration.down.sql)`
+
+## 📋 Audit Checklist Coverage
+*Verify which audit checklist requirements from general-instructions.md / sn-code-audit.md are covered by this pull request.*
+| Requirement / Feature ID | Status | Component / Page | Description |
+|---|---|---|---|
+| `/register` (G1) | [Covered / N/A] | `RegisterForm` | 8 fields inputs & avatar support |
+| `/login` | | `LoginForm` | Username/email + password, OAuth links |
+| `/profile/[id]` (G2/G10) | | `ProfileCard` / `PrivacyToggle` | Full info display, privacy switch dialog |
+| `FollowButton` (G6/G10) | | `FollowButton` / `UnfollowConfirmDialog` | Follow, request, unfollow confirmation |
+| `/post/new` (G4/G5) | | `PostForm` / `VisibilitySelector` | Image/GIF attachments, 3 privacy levels |
+| `/groups` (G7) | | `GroupDirectory` | Browse and discovery |
+| `/groups/[id]` (G7) | | `JoinRequestButton` | Join requests and invite acceptance |
+| `/groups/[id]/events` (G7) | | `EventForm` / `RSVPOptions` | Event creation & Going/Not going options |
+| `/groups/[id]/chat` (G6) | | `GroupChatWindow` | Real-time workspace chat room |
+| `/chat/[userId]` (G6/G8) | | `ChatWindow` | Unicode emoji, follow-gate validation |
+| `NotificationBell` (G3) | | `NotificationBell` | Global notifications panel distinct from chat |
+
+## ✅ Verification & Testing Results
+*Provide evidence that the implementation works and satisfies the verification criteria.*
+
+### Automated Test Output
+\`\`\`bash
+# Paste short, successful test summary here (e.g. go test, vitest)
+\`\`\`
+
+### Manual Smoke Tests
+- [ ] Checked scenario `[e.g. A1 / B2]` from `general-instructions.md` → Result: `[Passed]`
+
+## 🏁 Definition of Done (DoD) Checklist
+- [x] Code conforms to D5 boundary rules (no cross-slice transport/store imports).
+- [x] Concurrency and SQLite WAL, busy timeout, and pooling rules followed.
+- [x] Unit/integration tests written and verified passing (Vitest for FE, Go test for BE).
+- [x] Type checking passes (`tsc --noEmit` / `go vet`).
+- [x] Format & Lint gates pass cleanly (`make ci` for BE, Biome for FE).
+- [x] Branch named correctly and commits follow conventional naming.
+```
+
+---
+
 ## Refactoring Strategy & TDD Methodology
 
 ### R1: Strangler Fig Pattern
@@ -173,107 +274,6 @@ Define the directory mapping:
   tsc --noEmit
   bun run test
   ```
-
----
-
-## Developer Onboarding & Contribution Workflow
-
-### Onboarding Guide
-
-1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/plan/sprints/ticket-tracker.md`. Verify dependencies.
-2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `arnald/feat-user-slice`).
-3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
-4. **PR Guidelines**: Squash merge, run all validation gates (`make ci` for BE, Bun commands for FE), and draft description using the PR template.
-
-### PR Description Template
-
-Include the following template in the `.git/PR_DESCRIPTION.md` file when preparing a pull request:
-
-```markdown
-# 🚀 Pull Request: [Ticket ID] — [Brief Title]
-
-## 📋 Ticket Metadata
-| Field | Value |
-|---|---|
-| **Ticket ID** | `[Ticket ID]` |
-| **Assignee** | `[Name]` |
-| **Sprint** | Sprint `[N]` |
-| **Branch** | `[branch-name]` |
-
-> [!NOTE]
-> Resolves ticket: [Ticket Details](file://docs/plan/sprints/sprint-[N].md#[Ticket-Anchor])
-
-## 🔍 Overview & Rationale
-*Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*
-
-## 🛠️ Proposed Changes
-### [Component / Slice Name]
-- **[NEW / MODIFY / DELETE]** `[path/to/file.go](file://path/to/file.go)`
-  - *Detailed bullet points of specific additions or changes.*
-
-### DB Migrations (if applicable)
-- Added sequential migrations:
-  - `[00000X_migration.up.sql](file://db/migrations/00000X_migration.up.sql)`
-  - `[00000X_migration.down.sql](file://db/migrations/00000X_migration.down.sql)`
-
-## 📋 Audit Checklist Coverage
-*Verify which audit checklist requirements from general-instructions.md / sn-code-audit.md are covered by this pull request.*
-| Requirement / Feature ID | Status | Component / Page | Description |
-|---|---|---|---|
-| `/register` (G1) | [Covered / N/A] | `RegisterForm` | 8 fields inputs & avatar support |
-| `/login` | | `LoginForm` | Username/email + password, OAuth links |
-| `/profile/[id]` (G2/G10) | | `ProfileCard` / `PrivacyToggle` | Full info display, privacy switch dialog |
-| `FollowButton` (G6/G10) | | `FollowButton` / `UnfollowConfirmDialog` | Follow, request, unfollow confirmation |
-| `/post/new` (G4/G5) | | `PostForm` / `VisibilitySelector` | Image/GIF attachments, 3 privacy levels |
-| `/groups` (G7) | | `GroupDirectory` | Browse and discovery |
-| `/groups/[id]` (G7) | | `JoinRequestButton` | Join requests and invite acceptance |
-| `/groups/[id]/events` (G7) | | `EventForm` / `RSVPOptions` | Event creation & Going/Not going options |
-| `/groups/[id]/chat` (G6) | | `GroupChatWindow` | Real-time workspace chat room |
-| `/chat/[userId]` (G6/G8) | | `ChatWindow` | Unicode emoji, follow-gate validation |
-| `NotificationBell` (G3) | | `NotificationBell` | Global notifications panel distinct from chat |
-
-## ✅ Verification & Testing Results
-*Provide evidence that the implementation works and satisfies the verification criteria.*
-
-### Automated Test Output
-\`\`\`bash
-# Paste short, successful test summary here (e.g. go test, vitest)
-\`\`\`
-
-### Manual Smoke Tests
-- [ ] Checked scenario `[e.g. A1 / B2]` from `general-instructions.md` → Result: `[Passed]`
-
-## 🏁 Definition of Done (DoD) Checklist
-- [x] Code conforms to D5 boundary rules (no cross-slice transport/store imports).
-- [x] Concurrency and SQLite WAL, busy timeout, and pooling rules followed.
-- [x] Unit/integration tests written and verified passing (Vitest for FE, Go test for BE).
-- [x] Type checking passes (`tsc --noEmit` / `go vet`).
-- [x] Format & Lint gates pass cleanly (`make ci` for BE, Biome for FE).
-- [x] Branch named correctly and commits follow conventional naming.
-```
-
----
-
-## Linear Progressive Disclosure Navigation Chain
-
-This project enforces a progressive reading workflow for developers and agentic assistants alike to maintain context and avoid cognitive overload:
-
-```mermaid
-graph TD
-    A["1. Project Rules & Guidelines <br> (AGENTS.md, conventions.md)"] --> B["2. Implementation Methodology <br> (general-instructions.md)"]
-    B --> C["3. Architectural Boundaries <br> (architecture.md)"]
-    B --> D["4. Technical Specifications <br> (sds.md)"]
-    D --> E["5. Transition Roadmap <br> (target-architecture-with-phases.md)"]
-    E --> F["6. Ticket Board Tracker <br> (ticket-tracker.md)"]
-    F --> G["7. Sprints Backlog <br> (sprint-0.md -> sprint-6.md)"]
-```
-
-- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](file://AGENTS.md) and [.agents/rules/conventions.md](file://.agents/rules/conventions.md).
-- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/plan/sprints/general-instructions.md](file://docs/plan/sprints/general-instructions.md).
-- **Stage 3: Architecture Definition**: Read [docs/plan/architecture/architecture.md](file://docs/plan/architecture/architecture.md).
-- **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md).
-- **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md).
-- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
 
 ---
 
