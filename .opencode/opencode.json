@@ -1,6 +1,127 @@
 {
-  "$schema": "https://opencode.ai/config.json",
-  "plugin": [
-    ".opencode/plugins/graphify.js"
-  ]
+    "$schema": "https://opencode.ai/config.json",
+    "plugin": [
+      ".opencode/plugins/graphify.js"
+    ],
+    "agent": {
+        "pr-create": {
+            "name": "pr-create",
+            "color": "primary",
+            "description": "Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.",
+            "mode": "subagent",
+            "model": "opencode/deepseek-v4-flash-free",
+            "temperature": 0.0,
+            "prompt": "{file:.opencode/agents/pr-create.md}",
+            "permission": {
+                "read": "allow",
+                "glob": "allow",
+                "grep": "allow",
+                "lsp": "allow",
+                "edit": "allow",
+                "bash": {
+                    "*": "ask",
+                    "git*": "allow",
+                    "make*": "allow",
+                    "bun*": "allow",
+                    "tsc *": "allow",
+                    "curl*": "allow",
+                    "python3*": "allow",
+                    "rm .git/PR_DESCRIPTION.md": "allow"
+                },
+                "task": "allow"
+            }
+        },
+        "pr-fix": {
+            "name": "pr-fix",
+            "color": "primary",
+            "description": "Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.",
+            "mode": "subagent",
+            "model": "opencode/deepseek-v4-flash-free",
+            "temperature": 0.0,
+            "prompt": "{file:.opencode/agents/pr-fix.md}",
+            "permission": {
+                "read": "allow",
+                "glob": "allow",
+                "grep": "allow",
+                "lsp": "allow",
+                "edit": "allow",
+                "bash": {
+                    "*": "ask",
+                    "git*": "allow",
+                    "make*": "allow",
+                    "bun*": "allow",
+                    "tsc *": "allow",
+                    "rm .git/PR_DESCRIPTION.md": "allow"
+                },
+                "task": "allow"
+            }
+        },
+        "pr-implement": {
+            "name": "pr-implement",
+            "color": "primary",
+            "description": "Implements a sprint ticket using the HumanLayer RPI framework (Research -> Plan -> Implement -> Validate). Creates the feature branch, writes code with TDD, and runs validation gates.",
+            "mode": "subagent",
+            "model": "opencode/deepseek-v4-flash-free",
+            "temperature": 0.1,
+            "prompt": "{file:.opencode/agents/pr-implement.md}",
+            "permission": {
+                "read": "allow",
+                "glob": "allow",
+                "grep": "allow",
+                "lsp": "allow",
+                "edit": "allow",
+                "bash": {
+                    "*": "ask",
+                    "git*": "allow",
+                    "make*": "allow",
+                    "bun*": "allow",
+                    "tsc *": "allow",
+                    "rm .git/PR_DESCRIPTION.md": "allow"
+                },
+                "task": "allow"
+            }
+        },
+        "pr-review": {
+            "name": "pr-review",
+            "color": "primary",
+            "description": "Performs a 4-phase automated PR review: deterministic gates, specialized subagent analysis, adversarial validation, and report synthesis. Saves the report to docs/reviews/PR_REVIEW_REPORT.md.",
+            "mode": "subagent",
+            "model": "opencode/deepseek-v4-flash-free",
+            "temperature": 0.0,
+            "prompt": "{file:.opencode/agents/pr-review.md}",
+            "permission": {
+                "read": "allow",
+                "glob": "allow",
+                "grep": "allow",
+                "lsp": "allow",
+                "edit": "deny",
+                "bash": {
+                    "git*": "allow",
+                    "make*": "allow",
+                    "bun*": "allow",
+                    "tsc *": "allow",
+                    "rm .git/PR_DESCRIPTION.md": "allow"
+                },
+                "task": "allow"
+            }
+        },
+        "ticket-to-pr": {
+            "name": "ticket-to-pr",
+            "color": "primary",
+            "description": "End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.",
+            "mode": "primary",
+            "model": "opencode/deepseek-v4-flash-free",
+            "temperature": 0.1,
+            "prompt": "{file:.opencode/agents/ticket-to-pr.md}",
+            "permission": {
+                "read": "allow",
+                "glob": "allow",
+                "grep": "allow",
+                "lsp": "allow",
+                "edit": "deny",
+                "bash": "deny",
+                "task": "allow"
+            }
+        }
+    }
 }

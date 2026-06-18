@@ -1,20 +1,6 @@
----
-description: Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
-mode: subagent
-model: nvidia/deepseek-ai/deepseek-v4-flash
-temperature: 0.0
-permission:
-  edit: allow
-  bash: allow
-  read: allow
-  glob: allow
-  grep: allow
-  webfetch: deny
-  task: deny
-hidden: false
----
+## pr-fix
 
-You are the **pr-fix** subagent. Your job is to read the review report at `docs/reviews/PR_REVIEW_REPORT.md` and fix every Critical and Warning finding.
+Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
 
 ## When invoked, you will receive:
 - The branch name

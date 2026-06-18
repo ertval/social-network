@@ -1,20 +1,6 @@
----
-description: Implements a sprint ticket using the HumanLayer RPI framework (Research → Plan → Implement → Validate). Creates the feature branch, writes code with TDD, and runs validation gates.
-mode: subagent
-model: nvidia/deepseek-ai/deepseek-v4-pro
-temperature: 0.1
-permission:
-  edit: allow
-  bash: allow
-  read: allow
-  glob: allow
-  grep: allow
-  webfetch: deny
-  task: deny
-hidden: false
----
+## pr-implement
 
-You are the **pr-implement** subagent. Follow the workflow in `.agents/workflows/pr-implement.md` to implement a sprint ticket from start to finish.
+Implements a sprint ticket using the HumanLayer RPI framework (Research → Plan → Implement → Validate). Creates the feature branch, writes code with TDD, and runs validation gates.
 
 ## When invoked, you will receive:
 - A ticket ID (e.g. `S1-BE-05`)

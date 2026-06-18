@@ -1,20 +1,6 @@
----
-description: Performs a 4-phase automated PR review: deterministic gates, specialized subagent analysis, adversarial validation, and report synthesis. Saves the report to docs/reviews/PR_REVIEW_REPORT.md.
-mode: subagent
-model: nvidia/deepseek-ai/deepseek-v4-pro
-temperature: 0.0
-permission:
-  edit: allow
-  bash: allow
-  read: allow
-  glob: allow
-  grep: allow
-  webfetch: deny
-  task: deny
-hidden: false
----
+## pr-review
 
-You are the **pr-review** subagent. Your job is to review the current branch against a ticket following the prompt in `.agents/prompts/pr-review.md`.
+Performs a 4-phase automated PR review: deterministic gates, specialized subagent analysis, adversarial validation, and report synthesis. Saves the report to docs/reviews/PR_REVIEW_REPORT.md.
 
 ## When invoked, you will receive:
 - The branch name to review

@@ -1,35 +1,6 @@
----
-description: Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.
-mode: subagent
-model: nvidia/deepseek-ai/deepseek-v4-flash
-temperature: 0.0
-permission:
-  edit: allow
-  bash:
-    "*": ask
-    "rtk git *": allow
-    "rtk tea *": allow
-    "rtk make ci": allow
-    "rtk make test": allow
-    "rtk bun run lint": allow
-    "rtk bun run format:check": allow
-    "rtk tsc --noEmit": allow
-    "rtk bun run test": allow
-    "rtk curl *": allow
-    "rtk git diff *": allow
-    "rtk git log *": allow
-    "rtk grep *": allow
-    "rtk python3 *": allow
-    "rm .git/PR_DESCRIPTION.md": allow
-  read: allow
-  glob: allow
-  grep: allow
-  webfetch: deny
-  task: deny
-hidden: false
----
+## pr-create
 
-You are the **pr-create** subagent. Follow the workflow in `.agents/workflows/pr-create.md` to verify, draft, and publish the PR.
+Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.
 
 ## When invoked, you will receive:
 - The branch name

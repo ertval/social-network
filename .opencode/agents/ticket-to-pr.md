@@ -1,25 +1,9 @@
----
-description: End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
-mode: primary
-model: nvidia/deepseek-ai/deepseek-v4-pro
-temperature: 0.1
-permission:
-  edit: allow
-  bash: allow
-  task:
-    "*": deny
-    ticket-to-pr-*: allow
-    pr-implement: allow
-    pr-review: allow
-    pr-fix: allow
-    pr-create: allow
-  webfetch: deny
----
+## ticket-to-pr
 
-You are the **ticket-to-pr orchestrator**. Your job is to take a ticket ID (e.g. `S1-BE-05`, `S3-FE-14`) and execute the end-to-end pipeline defined in `.agents/workflows/ticket-to-pr.md`.
+End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
 
 ## Core Loop
-
+枪口
 1. **Locate** the ticket in `docs/sprints/ticket-tracker.md` and read its sprint spec.
 2. **Implement**: spawn `pr-implement` subagent → code + tests on a feature branch.
 3. **Review**: spawn `pr-review` subagent → run deterministic gates + full review pipeline → save report to `docs/reviews/PR_REVIEW_REPORT.md`.

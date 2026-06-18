@@ -1,0 +1,594 @@
+{
+  "name": "ticket-to-pr",
+  "mode": "primary",
+  "permission": [
+    {
+      "permission": "*",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "doom_loop",
+      "action": "ask",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "*",
+      "action": "ask"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/tmp/opencode/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman-help/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman-commit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/cavecrew/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman-review/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/no-mistakes/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman-stats/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/gitea-tea/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.claude/skills/caveman-compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman-help/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman-commit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/karpathy-guidelines/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman-review/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/cavecrew/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/no-mistakes/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/gitea-tea/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/graphify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman-stats/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.agents/skills/caveman-compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman-help/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/design-an-interface/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/pr-triage/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/next-upgrade/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/issue-triage/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/write-a-skill/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/improve-codebase-architecture/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/next-cache-components/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman-commit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/edit-article/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman-review/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/tdd/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/diagnose/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/to-prd/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/scaffold-exercises/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/karpathy-guidelines/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/triage/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/grill-me/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/to-issues/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/zoom-out/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/request-refactor-plan/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/git-guardrails-claude-code/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/rtk-tdd/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/design-patterns/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/rtk-triage/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/no-mistakes/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/cavecrew/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/writing-shape/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/review/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/teach/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/prototype/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/shadcn/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/writing-fragments/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman-stats/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/next-best-practices/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/migrate-to-shoehorn/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/handoff/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/gitea-tea/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/tdd-rust/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/ubiquitous-language/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/qa/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/obsidian-vault/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/setup-pre-commit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/frontend-design/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/caveman-compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/vercel-react-best-practices/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/graphify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/grill-with-docs/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/code-simplifier/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/setup-matt-pocock-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/code/zone-modules/social-network/.agents/skills/writing-beats/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman-help/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/find-skills/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/no-mistakes/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman-commit/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/cavecrew/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/gitea-tea/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/graphify/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/karpathy-guidelines/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman-compress/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman-review/*",
+      "action": "allow"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.config/opencode/skills/caveman-stats/*",
+      "action": "allow"
+    },
+    {
+      "permission": "question",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_enter",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "plan_exit",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "read",
+      "pattern": "*",
+      "action": "allow"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.*",
+      "action": "ask"
+    },
+    {
+      "permission": "read",
+      "pattern": "*.env.example",
+      "action": "allow"
+    },
+    {
+      "permission": "edit",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "bash",
+      "action": "allow",
+      "pattern": "*"
+    },
+    {
+      "permission": "task",
+      "pattern": "*",
+      "action": "deny"
+    },
+    {
+      "permission": "task",
+      "pattern": "ticket-to-pr-*",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "pr-implement",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "pr-review",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "pr-fix",
+      "action": "allow"
+    },
+    {
+      "permission": "task",
+      "pattern": "pr-create",
+      "action": "allow"
+    },
+    {
+      "permission": "webfetch",
+      "action": "deny",
+      "pattern": "*"
+    },
+    {
+      "permission": "external_directory",
+      "pattern": "/home/ertval/.local/share/opencode/tool-output/*",
+      "action": "allow"
+    }
+  ],
+  "options": {},
+  "native": false,
+  "model": {
+    "providerID": "nvidia",
+    "modelID": "deepseek-ai/deepseek-v4-pro"
+  },
+  "prompt": "You are the **ticket-to-pr orchestrator**. Your job is to take a ticket ID (e.g. `S1-BE-05`, `S3-FE-14`) and execute the end-to-end pipeline defined in `.agents/workflows/ticket-to-pr.md`.\n\n## Core Loop\n\n1. **Locate** the ticket in `docs/sprints/ticket-tracker.md` and read its sprint spec.\n2. **Implement**: spawn `pr-implement` subagent → code + tests on a feature branch.\n3. **Review**: spawn `pr-review` subagent → run deterministic gates + full review pipeline → save report to `docs/reviews/PR_REVIEW_REPORT.md`.\n4. **Fix loop**: if review is `🔴 CHANGES REQUESTED`, spawn `pr-fix` subagent → re-run review. Repeat up to 3 times.\n5. **Create PR**: on `🟢 APPROVED` or `🟡 PASS WITH RECOMMENDATIONS`, spawn `pr-create` subagent → push branch + open PR via `tea`.\n\n## Rules\n\n- Run subagents **sequentially** (do not spawn in parallel). Each phase depends on the previous phase's output.\n- Each subagent gets the full workflow file path and the ticket ID in its prompt.\n- On review failure, read `docs/reviews/PR_REVIEW_REPORT.md` to confirm severity before deciding to loop.\n- After 3 review failures, stop and present unresolved findings to the user.\n- Do not skip phases. Do not combine subagent responsibilities.",
+  "description": "End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.",
+  "temperature": 0.1,
+  "tools": {
+    "invalid": true,
+    "question": false,
+    "bash": true,
+    "read": true,
+    "glob": true,
+    "grep": true,
+    "edit": true,
+    "write": true,
+    "task": true,
+    "webfetch": false,
+    "todowrite": true,
+    "skill": true
+  }
+}
