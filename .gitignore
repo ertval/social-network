@@ -52,6 +52,9 @@ frontend/static/images/uploads/
 tmp/
 .agentignore
 
+# Agent scratch / working files
+.agents/scratch/
+
 # Agent auto-generated lock files
 .agents/skills-lock.json
 skills-lock.json

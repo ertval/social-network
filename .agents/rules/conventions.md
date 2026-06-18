@@ -31,17 +31,22 @@ Guidelines for project technologies, refactoring patterns, and Go development be
   - `store/sqlite.go`: imports own feature root + `platform/database` (DB interface), MUST NOT import `transport/` or `commands/` or `queries/`.
   - `bootstrap/bootstrap.go`: composition root — imports everything, wires concrete implementations.
 - **KISS Principle**: Minimum code to solve the problem. Do not write speculative code, single-use abstractions, or unused flexibility.
+- **D6 Dependency Graph**: Import tree must remain strictly acyclic. `notification` is pure event subscriber — never imported by other features. Chain: `user → follow/topic → comment/vote → group → event → chat → notification`.
 
 ## 3. TDD & Idiomatic Go
 - **Red-Green-Refactor**: Always write a failing test before writing implementation code.
 - **Contract Tests** (migration verification): Write tests against OLD API first, verify NEW slice produces identical results. Delete contract tests after old code is removed.
 - **Test Isolation**: Store tests must run against real, isolated SQLite database instances (in-memory).
 - **Go Test Style**: Use table-driven tests and subtests (`t.Run()`). Run `go test -race ./...`.
+- **Test Naming**: `Test<Handler>_<Scenario>` (e.g. `TestRegisterHandler_ValidInput`). Contract tests: `Test<Feature>Store_Migrated_SameAsOld_<Method>`.
 - **Surgical Changes**: Only modify lines required for the task. Remove any unused variables, functions, or imports created by your changes.
 
 ## 4. Database Migrations
 - **Schema Changes**: Sequential files (`000001_name.up.sql` / `000001_name.down.sql`).
 - **Safety**: Never drop a column in the same migration where it is replaced. Add, populate, then drop in a separate subsequent migration.
+- **Delimiter**: Split migrations by `";"` (never `":"`).
+- **Rollback**: Run `go run cmd/migrate/main.go down N`.
+- **Test**: For each migration: apply up → verify schema → apply down → verify clean.
 
 ## 5. Code Review Checklist (R5)
 
@@ -54,5 +59,8 @@ Every PR must pass:
 - [ ] No dead code: remove unused imports/variables/functions from your changes
 
 ## 6. Branching & Commits
-- **Branch Naming**: `<username>/<type>-<detail>` (e.g. `arnald/feat-user-slice`). Branches must live <= 3 days.
-- **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`).
+- **Branch Naming**: `<username>/<type>-<detail>` (e.g. `dkotsi/feat-user-slice`). Branches must live <= 3 days.
+- **Username**: Gitea username from `origin` remote — known devs: `ekaramet`, `dkotsi`, `epapamic`, `nwntaspap`, `smichail`.
+- **Type**: `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`.
+- **Detail**: kebab-case. Ticket ID (e.g. `S3-fix-`) may prefix type but is not required.
+- **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`). Allowed scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`.

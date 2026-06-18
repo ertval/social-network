@@ -14,7 +14,7 @@ Before creating the PR, verify that local branch naming and commit history adher
 
 1. **Verify Current Branch Name**:
    - Run: `rtk git branch --show-current`
-   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `arnald/fix-sqlite-busy-timeout`).
+   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `dkotsi/fix-sqlite-busy-timeout`).
    - If the branch does not match this convention, report the discrepancy immediately.
 
 2. **Check Commit Messages**:
@@ -146,13 +146,14 @@ Once the PR message is written and saved to `.git/PR_DESCRIPTION.md`, execute th
    - Run: `rtk git push -u origin <branch-name>`
 
 3. **Create the Pull Request**:
-   - Run the non-interactive Gitea CLI command to publish the PR:
+   - Run the non-interactive Gitea CLI command to publish the PR with all devs as reviewers:
      ```bash
      rtk tea pulls create \
        --title "[Ticket ID]: [Brief Title]" \
        --description "$(cat .git/PR_DESCRIPTION.md)" \
        --base main \
        --head [branch-name] \
+        --reviewer ekaramet,dkotsi,epapamic,nwntaspap,smichail \
        --output simple
      ```
    - Print the generated PR URL and details to the user.

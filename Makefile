@@ -49,12 +49,18 @@ GOLANGCI_LINT_VERSION = v2.2.1
 STATICCHECK_VERSION = latest
 GOIMPORTS_VERSION = latest
 BENCHSTAT_VERSION = latest
+GOVULNCHECK_VERSION = latest
+
+setup: tools
+
+dev: docker-dev
 
 tools:
 	@echo "==> Installing tools..."
 	go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 
 # Benchmarking tools (local use only)
 bench-tools:
@@ -94,7 +100,12 @@ golangci-lint:
 	@echo "==> Running golangci-lint..."
 	golangci-lint run --timeout=5m
 
-lint: staticcheck golangci-lint
+# Run govulncheck
+vulncheck:
+	@echo "==> Running govulncheck..."
+	govulncheck ./...
+
+lint: staticcheck golangci-lint vulncheck
 
 ## -- Testing -- ##
 # Run tests with coverage
@@ -194,8 +205,10 @@ docker-db: ## Access SQLite database inside Docker container
 # Show help
 help:
 	@echo "\033[1mCI Commands:\033[0m"
+	@echo "  \033[36msetup\033[0m           Install development tools (alias to tools)"
+	@echo "  \033[36mdev\033[0m             Start development environment (alias to docker-dev)"
 	@echo "  \033[36mci\033[0m              Run full CI pipeline (format, lint, test)"
-	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint)"
+	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint, govulncheck)"
 	@echo "  \033[36mci-mod\033[0m          Verify Go modules"
 	@echo "  \033[36mformat\033[0m          Format Go code"
 	@echo "  \033[36mcheck-format\033[0m    Verify code formatting"
@@ -227,6 +240,6 @@ help:
 	@echo "  \033[36mbench-clean\033[0m     Clean profiling files"
 	@echo "\n\033[3mNote: Benchmark commands require 'make bench-tools' and Graphviz for flame graphs\033[0m"
 
-.PHONY: env tools bench-tools ci-mod format check-format staticcheck golangci-lint lint test test-short ci-bench ci clean \
+.PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench ci clean \
         bench-compare bench-profile bench-flame bench-clean db-clean help \
         docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build

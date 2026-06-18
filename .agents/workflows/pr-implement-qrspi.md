@@ -82,7 +82,7 @@ graph TD
 
 ### Stage 6: Worktree / Branch (Environment Setup Subagent)
 *Goal: Provision the development branch and prepare the workspace.*
-1. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `arnald/feat-s1-be-01-db-factory`).
+1. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `dkotsi/feat-s1-be-01-db-factory`).
 2. Checkout the branch:
    - For Antigravity: `rtk git checkout -b <branch-name>`
    - For OpenCode: `git checkout -b <branch-name>`

@@ -324,8 +324,10 @@ bun update             # update all packages per semver ranges
 
 ### 🚀 Developer Branch Strategy
 All branches must match the naming schema: `<username>/<type>-<detail>`
+*   *Username*: Gitea username from `origin` remote — known devs: `ekaramet`, `dkotsi`, `epapamic`, `nwntaspap`, `smichail`
 *   *Types*: `feat`, `fix`, `refactor`, `docs`, `chore`
-*   *Examples*: `arnald/feat-user-slice`, `ekaramet/fix-sqlite-busy-timeout`
+*   *Detail*: kebab-case description. Optional ticket ID prefix (e.g. `S3-fix-`) before type.
+*   *Examples*: `dkotsi/feat-user-slice`, `smichail/fix-sqlite-busy-timeout`
 *   Branches must live **$\le$ 3 days** (Trunk-Based Development).
 
 ### 📝 Commit Message Convention
