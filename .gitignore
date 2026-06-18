@@ -67,3 +67,6 @@ skills-lock.json
 
 # graphify knowledge graph (http://github.com/safishamsi/graphify)
 graphify-out/
+
+# Archived/completed docs
+docs/zdone/
