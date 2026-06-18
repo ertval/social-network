@@ -3,18 +3,20 @@ package updatetopic
 import (
 	"context"
 	"errors"
+	"mime/multipart"
+	"net/http"
+	"path/filepath"
 	"social-network/internal/app"
-	topicCommands "social-network/internal/app/topics/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
-	"github.com/google/uuid"
-	"mime/multipart"
-	"net/http"
-	"path/filepath"
 	"strconv"
+
+	topicCommands "social-network/internal/app/topics/commands"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -77,7 +79,8 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(maxUploadSize)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
@@ -93,7 +96,8 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 	case errors.Is(err, http.ErrMissingFile):
 	case err != nil:
 		h.Logger.PrintError(err, nil)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Error Processing uploaded file",
 		)
@@ -125,13 +129,15 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 		Content:      topicToUpdate.Content,
 		ImagePath:    topicToUpdate.ImagePath,
 		OldImagePath: topicToUpdate.OldImagePath,
-		ImageFile: topicCommands.TopicImage{File: &topicToUpdate.ImageFile.Content,
+		ImageFile: topicCommands.TopicImage{
+			File:   &topicToUpdate.ImageFile.Content,
 			Header: topicToUpdate.ImageFile.Header,
 		},
 		User: user,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to create topic",
 		)

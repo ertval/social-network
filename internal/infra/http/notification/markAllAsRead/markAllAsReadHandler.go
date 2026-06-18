@@ -2,9 +2,9 @@ package markallasread
 
 import (
 	"net/http"
+	"social-network/internal/infra/middleware"
 
 	notificationcommands "social-network/internal/app/notifications/commands"
-	"social-network/internal/infra/middleware"
 )
 
 type Handler struct {

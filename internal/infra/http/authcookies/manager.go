@@ -2,10 +2,9 @@ package authcookies
 
 import (
 	"net/http"
-	"time"
-
 	"social-network/internal/config"
 	"social-network/internal/domain/session"
+	"time"
 )
 
 type Manager struct {

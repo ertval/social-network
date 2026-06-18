@@ -1,12 +1,13 @@
 package getchatusers
 
 import (
-	chatqueries "social-network/internal/app/chat/queries"
+	"net/http"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
-	"net/http"
 	"time"
+
+	chatqueries "social-network/internal/app/chat/queries"
 )
 
 type Handler struct {

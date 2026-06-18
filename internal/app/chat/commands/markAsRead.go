@@ -2,7 +2,6 @@ package chatcommands
 
 import (
 	"context"
-
 	"social-network/internal/domain/chat"
 )
 

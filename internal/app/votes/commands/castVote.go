@@ -3,13 +3,12 @@ package votecommands
 import (
 	"context"
 	"fmt"
-	"strconv"
-
 	"social-network/internal/app/notifications"
 	"social-network/internal/domain/comment"
 	"social-network/internal/domain/notification"
 	"social-network/internal/domain/topic"
 	"social-network/internal/domain/vote"
+	"strconv"
 )
 
 type CastVoteRequest struct {
@@ -46,7 +45,7 @@ func (h *castVoteRequestHandler) Handle(ctx context.Context, req CastVoteRequest
 	if err != nil {
 		return err
 	}
-	//notification send, if failed, fails silently, we could fix that
+	// notification send, if failed, fails silently, we could fix that
 	h.sendVoteNotification(ctx, req)
 
 	return nil

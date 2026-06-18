@@ -2,14 +2,15 @@ package createcomment
 
 import (
 	"context"
-	commentCommands "social-network/internal/app/comments/commands"
+	"net/http"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
-	"net/http"
 	"strconv"
+
+	commentCommands "social-network/internal/app/comments/commands"
 )
 
 type RequestModel struct {
@@ -57,7 +58,8 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	commentAny, err := helpers.ParseBodyRequest(r, &commentToCreate)
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
@@ -88,7 +90,8 @@ func (h *Handler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		User:    user,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to create comment",
 		)

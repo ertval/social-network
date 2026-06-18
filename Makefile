@@ -1,3 +1,7 @@
+# Ensure GOPATH/bin is in PATH so installed tools are available
+GOBIN := $(shell go env GOPATH)/bin
+export PATH := $(GOBIN):$(PATH)
+
 MODULE := $(shell go list -m)
 GO_PACKAGES := $(shell go list ./...)
 GO_FOLDERS := $(shell find . -type d -not -path '*/\.*' -not -path './vendor*')
@@ -50,6 +54,7 @@ STATICCHECK_VERSION = latest
 GOIMPORTS_VERSION = latest
 BENCHSTAT_VERSION = latest
 GOVULNCHECK_VERSION = latest
+GOFUMPT_VERSION = latest
 
 setup: tools
 
@@ -61,6 +66,7 @@ tools:
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
 
 # Benchmarking tools (local use only)
 bench-tools:
@@ -81,11 +87,10 @@ ci-mod:
 # Format Go code
 format:
 	@echo "==> Formatting code..."
-	goimports -w .
-	gofmt -s -w .
+	golangci-lint run --fix --timeout=5m
 
 # Verify formatting
-check-format: 
+check-format: format
 	@echo "==> Checking code formatting..."
 	git diff --exit-code || \
 		(echo "Error: Files are not formatted. Run 'make format' and commit changes."; exit 1)
@@ -119,11 +124,16 @@ test-short:
 	go test -short ./...
 
 # Backend CI pipeline
-be-ci: ci-mod format check-format lint test 
+be-ci: ci-mod check-format lint test 
 
 # Frontend CI pipeline
 fe-ci:
-	cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Running frontend CI..."; \
+		cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
+	else \
+		echo "==> Skipping frontend CI: frontend not scaffolded yet."; \
+	fi
 
 # Full CI pipeline (backend + frontend)
 ci: be-ci fe-ci
@@ -165,6 +175,41 @@ bench-clean:
 db-clean:
 	@echo "==> Cleaning database..."
 	rm -rf db/data
+
+# Reset database
+db-reset: db-clean
+	@mkdir -p db/data
+
+# Seed database with test data
+seed: db-reset
+	@echo "==> Seeding database..."
+	sqlite3 db/data/forum.db < db/migrations/schema.sql
+	sqlite3 db/data/forum.db < db/migrations/indexes.sql
+	sqlite3 db/data/forum.db < db/seeds/dev_data.sql
+
+# Local run and development commands
+run-backend:
+	@echo "==> Running backend..."
+	go run cmd/server/main.go
+
+run-frontend:
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Running frontend (Next.js)..."; \
+		cd frontend && bun run dev; \
+	else \
+		echo "==> Running frontend (Legacy Client Server)..."; \
+		go run cmd/client/main.go; \
+	fi
+
+run-all:
+	@echo "==> Running backend and frontend concurrently..."
+	@go run cmd/server/main.go & BACKEND_PID=$$!; \
+	if [ -f frontend/package.json ]; then \
+		(cd frontend && bun run dev); \
+	else \
+		go run cmd/client/main.go; \
+	fi; \
+	kill $$BACKEND_PID 2>/dev/null || true
 
 # Docker commands
 docker-build:  ## Build Docker image
@@ -216,7 +261,7 @@ help:
 	@echo "  \033[36mdev\033[0m             Start development environment (alias to docker-dev)"
 	@echo "  \033[36mci\033[0m              Run full CI pipeline (BE + FE)"
 	@echo "  \033[36mbe-ci\033[0m           Run backend CI pipeline (format, lint, test)"
-	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint, govulncheck)"
+	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint, govulncheck, gofumpt)"
 	@echo "  \033[36mci-mod\033[0m          Verify Go modules"
 	@echo "  \033[36mformat\033[0m          Format Go code"
 	@echo "  \033[36mcheck-format\033[0m    Verify code formatting"
@@ -227,7 +272,14 @@ help:
 	@echo "  \033[36mtest-short\033[0m      Run quick tests"
 	@echo "  \033[36mclean\033[0m           Clean artifacts"
 	@echo "  \033[36mdb-clean\033[0m        Remove database"
+	@echo "  \033[36mdb-reset\033[0m        Wipe local database files"
+	@echo "  \033[36mseed\033[0m            Seed database with test data"
 	
+	@echo "\n\033[1mDevelopment / Running (Local):\033[0m"
+	@echo "  \033[36mrun-backend\033[0m     Run backend application"
+	@echo "  \033[36mrun-frontend\033[0m    Run frontend application (Next.js or Legacy)"
+	@echo "  \033[36mrun-all\033[0m         Run both backend and frontend concurrently"
+
 	@echo "\n\033[1mDocker Commands:\033[0m"
 	@echo "  \033[36mdocker-build\033[0m      Build Docker image"
 	@echo "  \033[36mdocker-up\033[0m         Start services"
@@ -249,5 +301,5 @@ help:
 	@echo "\n\033[3mNote: Benchmark commands require 'make bench-tools' and Graphviz for flame graphs\033[0m"
 
 .PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench be-ci fe-ci ci clean \
-        bench-compare bench-profile bench-flame bench-clean db-clean help \
+        bench-compare bench-profile bench-flame bench-clean db-clean db-reset seed run-backend run-frontend run-all help \
         docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build

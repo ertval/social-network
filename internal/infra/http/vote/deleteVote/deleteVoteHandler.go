@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-
 	"social-network/internal/app"
-	votecommands "social-network/internal/app/votes/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
+
+	votecommands "social-network/internal/app/votes/commands"
 )
 
 type request struct {

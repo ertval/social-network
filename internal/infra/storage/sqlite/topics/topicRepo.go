@@ -5,12 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/topic"
 	"strconv"
 	"strings"
 	"time"
-
-	"social-network/internal/domain/comment"
-	"social-network/internal/domain/topic"
 )
 
 type Repo struct {
@@ -104,6 +103,7 @@ func (r Repo) GetImagePathFromTopicID(ctx context.Context, topicID int, userID s
 	}
 	return imagepath.String, nil
 }
+
 func (r Repo) UpdateTopic(ctx context.Context, topic *topic.Topic) error {
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {
@@ -135,7 +135,8 @@ func (r Repo) UpdateTopic(ctx context.Context, topic *topic.Topic) error {
 	}
 	defer updateStmt.Close()
 
-	result, err := updateStmt.ExecContext(ctx,
+	result, err := updateStmt.ExecContext(
+		ctx,
 		topic.Title,
 		topic.Content,
 		topic.ImagePath,

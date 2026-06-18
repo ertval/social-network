@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"social-network/internal/infra/middleware"
 	"time"
 
 	notificationcommands "social-network/internal/app/notifications/commands"
-	"social-network/internal/infra/middleware"
 )
 
 const tickerTime = 10
@@ -40,7 +40,8 @@ func (h *Handler) StreamNotifications(w http.ResponseWriter, r *http.Request) {
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		http.Error(w,
+		http.Error(
+			w,
 			"Streaming unsupported",
 			http.StatusInternalServerError,
 		)

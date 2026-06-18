@@ -3,13 +3,14 @@ package castvote
 import (
 	"context"
 	"encoding/json"
-	votecommands "social-network/internal/app/votes/commands"
+	"net/http"
 	"social-network/internal/config"
 	"social-network/internal/domain/vote"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
-	"net/http"
+
+	votecommands "social-network/internal/app/votes/commands"
 )
 
 type RequestModel struct {
@@ -99,7 +100,8 @@ func (h *Handler) CastVote(w http.ResponseWriter, r *http.Request) {
 		Message: "Vote cast successfully",
 	}
 
-	helpers.RespondWithJSON(w,
+	helpers.RespondWithJSON(
+		w,
 		http.StatusOK,
 		nil,
 		Response,

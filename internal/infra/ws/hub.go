@@ -2,8 +2,8 @@ package ws
 
 import (
 	"encoding/json"
-	"social-network/internal/domain/chat"
 	"log"
+	"social-network/internal/domain/chat"
 	"sync"
 )
 
@@ -11,7 +11,7 @@ import (
 // One Hub runs for the lifetime of the server.
 type Hub struct {
 	mu            sync.RWMutex
-	clients       map[string]map[*Client]bool //userID --> set of connections.
+	clients       map[string]map[*Client]bool // userID --> set of connections.
 	chatObservers map[string]map[*Client]bool
 }
 
@@ -132,14 +132,14 @@ func (h *Hub) GetObserversForChat(chatID, ownUserID string) (observers []*Client
 // for this a copry of the recipients is made and then sends to every recepient
 func (h *Hub) Send(toUserID string, msg []byte) {
 	h.mu.RLock()
-	//these are the recepients
+	// these are the recepients
 	clients := make([]*Client, 0)
 	for client := range h.clients[toUserID] {
 		clients = append(clients, client)
 	}
 	h.mu.RUnlock()
 
-	//sending to every recepient
+	// sending to every recepient
 	for _, client := range clients {
 		client.send <- msg
 	}
@@ -159,6 +159,7 @@ func (h *Hub) BroadCast(msg []byte) {
 		client.send <- msg
 	}
 }
+
 func (h *Hub) BroadCastIsOnlineStatus(userID string, isOnline bool) {
 	outPayload, _ := json.Marshal(IsOnlineStatusPayload{
 		UserID:   userID,

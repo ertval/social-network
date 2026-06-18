@@ -3,8 +3,6 @@ package bootstrap
 import (
 	"database/sql"
 	"os"
-	"time"
-
 	"social-network/internal/app"
 	"social-network/internal/app/topics"
 	"social-network/internal/config"
@@ -13,13 +11,16 @@ import (
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/infra/realtime/notifications"
-	localstorage "social-network/internal/infra/storage/local"
 	"social-network/internal/infra/storage/sessionstore"
 	"social-network/internal/infra/storage/sqlite"
 	"social-network/internal/infra/ws"
-	oauth "social-network/internal/pkg/oAuth"
 	"social-network/internal/pkg/oAuth/githubclient"
 	"social-network/internal/pkg/oAuth/googleclient"
+	"time"
+
+	localstorage "social-network/internal/infra/storage/local"
+
+	oauth "social-network/internal/pkg/oAuth"
 )
 
 const stateManagerDefaultLimit = 10

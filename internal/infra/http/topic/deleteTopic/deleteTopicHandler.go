@@ -3,14 +3,14 @@ package deletetopic
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/app"
-	topicCommands "social-network/internal/app/topics/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	topicCommands "social-network/internal/app/topics/commands"
 )
 
 type ResponseModel struct {
@@ -82,7 +82,8 @@ func (h *Handler) DeleteTopic(w http.ResponseWriter, r *http.Request) {
 		User:    user,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to delete topic",
 		)

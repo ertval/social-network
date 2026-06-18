@@ -4,9 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
-
 	"social-network/internal/domain/activity"
+	"time"
 )
 
 type Repo struct {

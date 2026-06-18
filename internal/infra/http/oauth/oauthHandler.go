@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	oauthservice "social-network/internal/app/oauth"
 	"social-network/internal/config"
 	"social-network/internal/domain/oauth"
 	"social-network/internal/domain/session"
@@ -15,6 +13,9 @@ import (
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
+
+	oauthservice "social-network/internal/app/oauth"
+
 	oauthpkg "social-network/internal/pkg/oAuth"
 )
 
@@ -72,6 +73,7 @@ func (h *OAuthHandler) Link(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, authURL, http.StatusTemporaryRedirect)
 }
+
 func (h *OAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var stateData oauthpkg.StateData
 	stateData.Flow = "login"
@@ -207,7 +209,8 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 				"user_id":  user.ID,
 				"username": user.Nickname,
 				"provider": h.provider.Name(),
-			})
+			},
+		)
 	case "link":
 		err := h.loginService.Link(
 			ctx,
@@ -264,11 +267,11 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 			map[string]string{
 				"user_id":  stateData.UserID,
 				"provider": h.provider.Name(),
-			})
+			},
+		)
 	default:
 		params.Add("error", "flowNotRecognised")
 		frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
 		http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
 	}
-
 }

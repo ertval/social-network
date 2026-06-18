@@ -2,7 +2,6 @@ package sqlite
 
 import (
 	"database/sql"
-
 	"social-network/internal/domain/activity"
 	"social-network/internal/domain/category"
 	"social-network/internal/domain/chat"
@@ -12,15 +11,17 @@ import (
 	"social-network/internal/domain/topic"
 	"social-network/internal/domain/user"
 	"social-network/internal/domain/vote"
-	activities "social-network/internal/infra/storage/sqlite/activity"
 	"social-network/internal/infra/storage/sqlite/categories"
 	"social-network/internal/infra/storage/sqlite/chats"
 	"social-network/internal/infra/storage/sqlite/comments"
 	"social-network/internal/infra/storage/sqlite/notifications"
-	oauthrepo "social-network/internal/infra/storage/sqlite/oauth"
 	"social-network/internal/infra/storage/sqlite/topics"
 	"social-network/internal/infra/storage/sqlite/users"
 	"social-network/internal/infra/storage/sqlite/votes"
+
+	activities "social-network/internal/infra/storage/sqlite/activity"
+
+	oauthrepo "social-network/internal/infra/storage/sqlite/oauth"
 )
 
 type Repositories struct {

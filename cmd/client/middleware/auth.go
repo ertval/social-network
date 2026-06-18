@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-
 	"social-network/cmd/client/domain"
 	"social-network/cmd/client/helpers"
 )

@@ -3,14 +3,14 @@ package getvotecounts
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	"social-network/internal/app"
-	votequeries "social-network/internal/app/votes/queries"
 	"social-network/internal/config"
 	"social-network/internal/domain/vote"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
+	"strconv"
+
+	votequeries "social-network/internal/app/votes/queries"
 )
 
 type Response struct {

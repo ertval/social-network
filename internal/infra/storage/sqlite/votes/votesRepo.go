@@ -4,9 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
-
 	"social-network/internal/domain/vote"
+	"strings"
 )
 
 type Repo struct {

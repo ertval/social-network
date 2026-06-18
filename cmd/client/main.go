@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-
 	"social-network/cmd/client/config"
 	"social-network/cmd/client/server"
 )

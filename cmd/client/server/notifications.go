@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
 	"social-network/cmd/client/domain"
 	"social-network/cmd/client/helpers"
 	"social-network/cmd/client/middleware"

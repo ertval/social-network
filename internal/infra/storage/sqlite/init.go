@@ -8,13 +8,12 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"social-network/internal/config"
+	"social-network/internal/pkg/path"
 	"strings"
 
 	// Need to import sqlite driver.
 	_ "github.com/mattn/go-sqlite3"
-
-	"social-network/internal/config"
-	"social-network/internal/pkg/path"
 )
 
 const (

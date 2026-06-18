@@ -32,6 +32,28 @@ linters:
     - wsl
     - wsl_v5
     - ireturn
+    - tagliatelle
+    - mnd
+    - revive
+    - prealloc
+    - err113
+    - noinlineerr
+    - errchkjson
+    - godot
+    - goconst
+    - gocritic
+    - forbidigo
+    - gochecknoglobals
+    - funcorder
+    - dupword
+    - exhaustive
+    - maintidx
+    - errcheck
+    - gosec
+    - misspell
+    - predeclared
+    - govet
+    - staticcheck
 
   settings:
     govet:
@@ -89,7 +111,6 @@ linters:
 
 formatters:
   enable:
-    - gci
     - gofmt
     - gofumpt
     - goimports

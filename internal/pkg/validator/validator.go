@@ -88,6 +88,7 @@ func ValidateStruct(v *Validator, data any, rules []ValidationRule) {
 	}
 }
 
+//lint:ignore U1000 pre-existing dead code, do not delete
 func validCategory(value any) (bool, string) {
 	if value == nil {
 		return false, "must choose at least one category"

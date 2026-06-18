@@ -21,9 +21,9 @@ var (
 )
 
 type LocalStorage struct {
-	//we will maybe need the base path as a dependency
-	//and the const above would be passed here as dependencies from the config
-	//but ill leave it for later
+	// we will maybe need the base path as a dependency
+	// and the const above would be passed here as dependencies from the config
+	// but ill leave it for later
 }
 
 func NewLocalStorage() *LocalStorage {

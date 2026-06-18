@@ -2,12 +2,11 @@ package middleware
 
 import (
 	"net/http"
+	"social-network/internal/infra/middleware/ratelimiter"
+	"social-network/internal/pkg/helpers"
 	"strconv"
 	"strings"
 	"time"
-
-	"social-network/internal/infra/middleware/ratelimiter"
-	"social-network/internal/pkg/helpers"
 )
 
 type rateLimitMiddleware struct {

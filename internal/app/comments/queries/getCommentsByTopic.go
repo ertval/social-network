@@ -2,7 +2,6 @@ package commentqueries
 
 import (
 	"context"
-
 	"social-network/internal/domain/comment"
 )
 

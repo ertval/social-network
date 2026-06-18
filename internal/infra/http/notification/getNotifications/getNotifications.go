@@ -3,10 +3,10 @@ package getnotifications
 import (
 	"encoding/json"
 	"net/http"
+	"social-network/internal/infra/middleware"
 	"strconv"
 
-	"social-network/internal/app/notifications/queries"
-	"social-network/internal/infra/middleware"
+	notificationqueries "social-network/internal/app/notifications/queries"
 )
 
 type Handler struct {

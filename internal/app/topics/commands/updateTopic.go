@@ -2,10 +2,10 @@ package topiccommands
 
 import (
 	"context"
+	"io"
 	"social-network/internal/app/topics"
 	"social-network/internal/domain/topic"
 	"social-network/internal/domain/user"
-	"io"
 	"strings"
 )
 

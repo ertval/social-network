@@ -3,14 +3,14 @@ package getcategorybyid
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	"social-network/internal/app"
-	categoryqueries "social-network/internal/app/categories/queries"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+	"strconv"
+
+	categoryqueries "social-network/internal/app/categories/queries"
 )
 
 type ResponseModel struct {
@@ -77,7 +77,8 @@ func (h *Handler) GetCategoryByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	helpers.RespondWithJSON(w,
+	helpers.RespondWithJSON(
+		w,
 		http.StatusOK,
 		nil,
 		ResponseModel{

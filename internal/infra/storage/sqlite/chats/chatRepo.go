@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
-
 	"social-network/internal/domain/chat"
 	"social-network/internal/pkg/uuid"
+	"time"
 )
 
 type Repo struct {
@@ -87,7 +86,6 @@ func (r *Repo) GetOrCreateChat(ctx context.Context, userID1, userID2 string) (*c
 	}
 
 	return &c, nil
-
 }
 
 func (r *Repo) GetChat(ctx context.Context, chatID string) (*chat.Chat, error) {
@@ -293,7 +291,6 @@ func (r *Repo) GetMessagesForChat(ctx context.Context, chatID string, limit int)
 		ORDER BY created_at DESC
 		LIMIT ?
 		`, chatID, limit)
-
 	if err != nil {
 		return nil, err
 	}
@@ -443,5 +440,4 @@ func (r *Repo) GetAllUnreadCounts(ctx context.Context, userID string) (map[strin
 	}
 
 	return counts, nil
-
 }

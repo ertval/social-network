@@ -8,14 +8,13 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
-	"strings"
-	"text/template"
-	"unicode"
-
 	"social-network/cmd/client/domain"
 	"social-network/cmd/client/helpers"
 	"social-network/cmd/client/helpers/templates"
 	"social-network/cmd/client/middleware"
+	"strings"
+	"text/template"
+	"unicode"
 )
 
 type categoriesRequest struct {

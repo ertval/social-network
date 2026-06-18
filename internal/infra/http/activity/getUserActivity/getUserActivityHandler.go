@@ -3,14 +3,14 @@ package getuseractivity
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/app"
-	activityQueries "social-network/internal/app/activities/queries"
 	"social-network/internal/config"
 	"social-network/internal/domain/activity"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
+
+	activityQueries "social-network/internal/app/activities/queries"
 )
 
 type ResponseModel struct {

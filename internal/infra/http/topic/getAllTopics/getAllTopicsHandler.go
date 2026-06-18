@@ -3,10 +3,7 @@ package getalltopics
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	"social-network/internal/app"
-	topicQueries "social-network/internal/app/topics/queries"
 	"social-network/internal/config"
 	"social-network/internal/domain/category"
 	"social-network/internal/domain/topic"
@@ -14,6 +11,9 @@ import (
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+	"strconv"
+
+	topicQueries "social-network/internal/app/topics/queries"
 )
 
 type ResponseModel struct {
@@ -78,7 +78,8 @@ func (h *Handler) GetAllTopics(w http.ResponseWriter, r *http.Request) {
 
 	if !val.Valid() {
 		h.Logger.PrintError(logger.ErrValidationFailed, val.Errors)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			val.ToStringErrors(),
 		)

@@ -5,15 +5,21 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strings"
-	"time"
-
 	"social-network/internal/app"
 	"social-network/internal/bootstrap"
 	"social-network/internal/config"
 	"social-network/internal/domain/session"
-	getuseractivity "social-network/internal/infra/http/activity/getUserActivity"
 	"social-network/internal/infra/http/authcookies"
+	"social-network/internal/infra/http/health"
+	"social-network/internal/infra/http/user/logout"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/infra/ws"
+	"strings"
+	"time"
+
+	getuseractivity "social-network/internal/infra/http/activity/getUserActivity"
+
 	createcategory "social-network/internal/infra/http/category/createCategory"
 	deletecategory "social-network/internal/infra/http/category/deleteCategory"
 	getallcategories "social-network/internal/infra/http/category/getAllCategories"
@@ -26,7 +32,7 @@ import (
 	getcomment "social-network/internal/infra/http/comment/getComment"
 	getcommentsbytopic "social-network/internal/infra/http/comment/getCommentsByTopic"
 	updatecomment "social-network/internal/infra/http/comment/updateComment"
-	"social-network/internal/infra/http/health"
+
 	getnotifications "social-network/internal/infra/http/notification/getNotifications"
 	getunreadcount "social-network/internal/infra/http/notification/getUnreadCount"
 	markallasread "social-network/internal/infra/http/notification/markAllAsRead"
@@ -40,15 +46,13 @@ import (
 	updatetopic "social-network/internal/infra/http/topic/updateTopic"
 	getme "social-network/internal/infra/http/user/getMe"
 	userLogin "social-network/internal/infra/http/user/login"
-	"social-network/internal/infra/http/user/logout"
+
 	userRegister "social-network/internal/infra/http/user/register"
 	castvote "social-network/internal/infra/http/vote/castVote"
 	deletevote "social-network/internal/infra/http/vote/deleteVote"
 	getCounts "social-network/internal/infra/http/vote/getVoteCounts"
 	wshttp "social-network/internal/infra/http/ws"
-	"social-network/internal/infra/logger"
-	"social-network/internal/infra/middleware"
-	"social-network/internal/infra/ws"
+
 	wshandlers "social-network/internal/infra/ws/handlers"
 	oauth "social-network/internal/pkg/oAuth"
 )
@@ -70,9 +74,10 @@ type Server struct {
 	cookieManager  *authcookies.Manager
 	oauth          *oauth.OAuth
 	middleware     *middleware.Middleware
-	db             *sql.DB
-	logger         logger.Logger
-	hub            *ws.Hub
+	//lint:ignore U1000 pre-existing dead code, do not delete
+	db     *sql.DB
+	logger logger.Logger
+	hub    *ws.Hub
 }
 
 func NewServer(cfg *config.ServerConfig, app *bootstrap.App) *Server {
@@ -100,7 +105,6 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 }
 
 func (server *Server) initWSRouter() {
-
 	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
 
 	pingWShandler := wshandlers.NewPingHandler()
@@ -122,6 +126,7 @@ func (server *Server) initWSRouter() {
 		chatTypingHandler,
 	)
 }
+
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(
@@ -134,13 +139,16 @@ func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc("/", spaHandler("frontend/static/index.html"))
 
 	// User routes
-	server.router.HandleFunc(apiContext+"/login/email",
+	server.router.HandleFunc(
+		apiContext+"/login/email",
 		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginEmail,
 	)
-	server.router.HandleFunc(apiContext+"/login/username",
+	server.router.HandleFunc(
+		apiContext+"/login/username",
 		userLogin.NewHandler(server.config, server.appServices, server.sessionManager, server.logger, server.cookieManager).UserLoginUsername,
 	)
-	server.router.HandleFunc(apiContext+"/register",
+	server.router.HandleFunc(
+		apiContext+"/register",
 		userRegister.NewHandler(server.config, server.appServices, server.sessionManager, server.logger).UserRegister,
 	)
 	server.router.HandleFunc(apiContext+"/logout",
@@ -155,7 +163,8 @@ func (server *Server) AddHTTPRoutes() {
 			server.middleware.Authorization.Required,
 		))
 	// OAuth routes
-	server.router.HandleFunc(apiContext+"/auth/github/login",
+	server.router.HandleFunc(
+		apiContext+"/auth/github/login",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GithubProvider,
 			server.config,
@@ -179,7 +188,8 @@ func (server *Server) AddHTTPRoutes() {
 			).Link,
 			server.middleware.Authorization.Required,
 		))
-	server.router.HandleFunc(apiContext+"/auth/github/callback",
+	server.router.HandleFunc(
+		apiContext+"/auth/github/callback",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GithubProvider,
 			server.config,
@@ -190,7 +200,8 @@ func (server *Server) AddHTTPRoutes() {
 			server.cookieManager,
 		).Callback,
 	)
-	server.router.HandleFunc(apiContext+"/auth/google/login",
+	server.router.HandleFunc(
+		apiContext+"/auth/google/login",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GoogleProvider,
 			server.config,
@@ -214,7 +225,8 @@ func (server *Server) AddHTTPRoutes() {
 			).Link,
 			server.middleware.Authorization.Required,
 		))
-	server.router.HandleFunc(apiContext+"/auth/google/callback",
+	server.router.HandleFunc(
+		apiContext+"/auth/google/callback",
 		oauthlogin.NewOAuthHandler(
 			server.oauth.GoogleProvider,
 			server.config,
@@ -227,31 +239,36 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Topic routes
-	server.router.HandleFunc(apiContext+"/topics/create",
+	server.router.HandleFunc(
+		apiContext+"/topics/create",
 		middlewareChain(
 			createtopic.NewHandler(server.appServices, server.config, server.logger).CreateTopic,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/topics/update",
+	server.router.HandleFunc(
+		apiContext+"/topics/update",
 		middlewareChain(
 			updatetopic.NewHandler(server.appServices, server.config, server.logger).UpdateTopic,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/topics/delete",
+	server.router.HandleFunc(
+		apiContext+"/topics/delete",
 		middlewareChain(
 			deletetopic.NewHandler(server.appServices, server.config, server.logger).DeleteTopic,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/topic",
+	server.router.HandleFunc(
+		apiContext+"/topic",
 		middlewareChain(
 			gettopic.NewHandler(server.appServices, server.config, server.logger).GetTopic,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/topics/all",
+	server.router.HandleFunc(
+		apiContext+"/topics/all",
 		middlewareChain(
 			getalltopics.NewHandler(server.appServices, server.config, server.logger).GetAllTopics,
 			server.middleware.Authorization.Required,
@@ -259,76 +276,89 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Comment routes
-	server.router.HandleFunc(apiContext+"/comments/create",
+	server.router.HandleFunc(
+		apiContext+"/comments/create",
 		middlewareChain(
 			createcomment.NewHandler(server.appServices.Commands.CreateComment, server.config, server.logger).CreateComment,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/comments/update",
+	server.router.HandleFunc(
+		apiContext+"/comments/update",
 		middlewareChain(
 			updatecomment.NewHandler(server.appServices, server.config, server.logger).UpdateComment,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/comments/delete",
+	server.router.HandleFunc(
+		apiContext+"/comments/delete",
 		middlewareChain(
 			deletecomment.NewHandler(server.appServices, server.config, server.logger).DeleteComment,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/comments/get",
+	server.router.HandleFunc(
+		apiContext+"/comments/get",
 		getcomment.NewHandler(server.appServices, server.config, server.logger).GetComment,
 	)
-	server.router.HandleFunc(apiContext+"/comments/topic",
+	server.router.HandleFunc(
+		apiContext+"/comments/topic",
 		getcommentsbytopic.NewHandler(server.appServices, server.config, server.logger).GetCommentsByTopic,
 	)
 
 	// Category routes
-	server.router.HandleFunc(apiContext+"/category/create",
+	server.router.HandleFunc(
+		apiContext+"/category/create",
 		middlewareChain(
 			createcategory.NewHandler(server.appServices, server.config, server.logger).CreateCategory,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/category/delete",
+	server.router.HandleFunc(
+		apiContext+"/category/delete",
 		middlewareChain(
 			deletecategory.NewHandler(server.appServices, server.config, server.logger).DeleteCategory,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/category/update",
+	server.router.HandleFunc(
+		apiContext+"/category/update",
 		middlewareChain(
 			updatecategory.NewHandler(server.appServices, server.config, server.logger).UpdateCategory,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/category",
+	server.router.HandleFunc(
+		apiContext+"/category",
 		middlewareChain(
 			getcategorybyid.NewHandler(server.appServices, server.config, server.logger).GetCategoryByID,
 			server.middleware.Authorization.Required,
 		),
 	)
-	server.router.HandleFunc(apiContext+"/categories/all",
+	server.router.HandleFunc(
+		apiContext+"/categories/all",
 		getallcategories.NewHandler(server.appServices, server.config, server.logger).GetAllCategories,
 	)
 
 	// Vote routes
-	server.router.HandleFunc(apiContext+"/vote/cast",
+	server.router.HandleFunc(
+		apiContext+"/vote/cast",
 		middlewareChain(
 			castvote.NewHandler(server.appServices.Commands.CastVote, server.config, server.logger).CastVote,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/vote/delete",
+	server.router.HandleFunc(
+		apiContext+"/vote/delete",
 		middlewareChain(
 			deletevote.NewHandler(server.appServices, server.config, server.logger).DeleteVote,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/vote/counts",
+	server.router.HandleFunc(
+		apiContext+"/vote/counts",
 		middlewareChain(
 			getCounts.NewHandler(server.appServices, server.config, server.logger).GetCounts,
 			server.middleware.Authorization.Required,
@@ -336,7 +366,8 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// Activity routes
-	server.router.HandleFunc(apiContext+"/user/activity",
+	server.router.HandleFunc(
+		apiContext+"/user/activity",
 		middlewareChain(
 			getuseractivity.NewHandler(server.appServices, server.config, server.logger).GetUserActivity,
 			server.middleware.Authorization.Required,
@@ -345,35 +376,40 @@ func (server *Server) AddHTTPRoutes() {
 
 	// Notifications routes
 
-	server.router.HandleFunc(apiContext+"/notifications/stream", // get
+	server.router.HandleFunc(
+		apiContext+"/notifications/stream", // get
 		middlewareChain(
 			streamnotification.NewHandler(server.appServices.Commands.OpenStream).StreamNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/notifications/unread-count", // get
+	server.router.HandleFunc(
+		apiContext+"/notifications/unread-count", // get
 		middlewareChain(
 			getunreadcount.NewHandler(server.appServices.Queries.GetUnreadCount).GetUnread,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/notifications", // get
+	server.router.HandleFunc(
+		apiContext+"/notifications", // get
 		middlewareChain(
 			getnotifications.NewHandler(server.appServices.Queries.GetNotifications).GetNotifications,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/notifications/mark-read", // post
+	server.router.HandleFunc(
+		apiContext+"/notifications/mark-read", // post
 		middlewareChain(
 			markasread.NewHandler(server.appServices.Commands.MarkAsRead).MarkAsRead,
 			server.middleware.Authorization.Required,
 		),
 	)
 
-	server.router.HandleFunc(apiContext+"/notifications/mark-all-read", // post
+	server.router.HandleFunc(
+		apiContext+"/notifications/mark-all-read", // post
 		middlewareChain(
 			markallasread.NewHandler(server.appServices.Commands.MarkAllAsRead).MarkAllAsRead,
 			server.middleware.Authorization.Required,
@@ -381,7 +417,8 @@ func (server *Server) AddHTTPRoutes() {
 	)
 
 	// WebSocket route — chat and presence
-	server.router.HandleFunc(apiContext+"/ws",
+	server.router.HandleFunc(
+		apiContext+"/ws",
 		middlewareChain(
 			wshttp.NewHandler(server.hub, server.wsRouter, server.logger).UpgradeConnection,
 			server.middleware.Authorization.Required,

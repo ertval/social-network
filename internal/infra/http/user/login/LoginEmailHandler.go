@@ -3,11 +3,11 @@ package userlogin
 import (
 	"context"
 	"net/http"
-
-	userQueries "social-network/internal/app/user/queries"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	userQueries "social-network/internal/app/user/queries"
 )
 
 type LoginUserEmailRequestModel struct {
@@ -62,7 +62,8 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		Password: userToLogin.Password,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			err.Error(),
 		)
@@ -90,7 +91,7 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		Username: user.Nickname,
 		// AccessToken:  newSession.AccessToken,
 		// RefreshToken: newSession.RefreshToken,
-		//not sure if we need them anymore in the response
+		// not sure if we need them anymore in the response
 	}
 
 	h.CookieManager.SetCookies(w, newSession)

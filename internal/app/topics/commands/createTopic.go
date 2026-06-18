@@ -2,11 +2,11 @@ package topiccommands
 
 import (
 	"context"
+	"io"
+	"mime/multipart"
 	"social-network/internal/app/topics"
 	"social-network/internal/domain/topic"
 	"social-network/internal/domain/user"
-	"io"
-	"mime/multipart"
 )
 
 const (
