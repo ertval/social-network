@@ -8,6 +8,7 @@ description: Coding conventions for Go/SQLite/Next.js social network. Loaded by 
 
 Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) for detailed workflows.
 
+<!-- @section:rules-core — D1-D6, security, TDD (needed by all agents) -->
 ## 1. Stack
 
 - **Go 1.24**, stdlib preferred, `slog` logging, `kin-openapi` validation.
@@ -72,7 +73,9 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - WebSocket: validate origin in `CheckOrigin` (never unconditional `true`). Timeouts: `writeWait=10s`, `pongWait=60s`, `pingPeriod=54s`, max msg 512KB.
 - Session cookies: `HttpOnly`, `Secure`, `SameSite=Lax`.
 - **Session isolation**: different browsers/profiles must maintain independent sessions. Non-logged-in browsers = guest.
+<!-- @section:rules-core:end -->
 
+<!-- @section:rules-fe — Frontend standards (needed by FE agents) -->
 ## 7. Frontend
 
 - **Structure**: `src/app/`, `src/components/ui/`, `src/components/features/`, `src/lib/`, `src/styles/`.
@@ -84,7 +87,9 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Real-time notifications via SSE (`GET /api/notifications/stream`) with 15s polling fallback.
 - **Chat gate**: non-followed users cannot chat. Show: _"At least one user must follow the other to initiate a chat."_
 - Pre-commit: `gofumpt`/`goimports` (BE), `biome format`/`biome lint` (FE). Pre-push: `go vet` (BE), `tsc --noEmit` (FE).
+<!-- @section:rules-fe:end -->
 
+<!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
 ## 8. CI & Verification
 
 - **`make be-ci`**: `ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`.
@@ -103,7 +108,9 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   ```
 - **Performance gate**: `make ci-bench` each PR. Fail if regression > 10%.
 - Smoke test scenarios A1–D3: see `docs/sprints/general-instructions.md`.
+<!-- @section:rules-ci:end -->
 
+<!-- @section:rules-git — Branch naming, commits, PRs (needed by publish) -->
 ## 9. Git & PRs
 
 - **Trunk-based**: feature branches ≤ 3 days. Squash merge into `main`.
@@ -119,7 +126,9 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
     - `smichail/42-oauth-scan-fix`
 - **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
+<!-- @section:rules-git:end -->
 
+<!-- @section:rules-dod — Definition of Done checklist (needed by review agents) -->
 ## 10. Definition of Done
 
 - [ ] D5 boundary rules pass (no cross-slice transport/store imports).
@@ -133,6 +142,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - [ ] No dead code from your changes (unused imports/vars/functions removed).
 - [ ] PR description template filled.
 - [ ] Squash merged to `main`.
+<!-- @section:rules-dod:end -->
 
 ## 11. Infrastructure
 

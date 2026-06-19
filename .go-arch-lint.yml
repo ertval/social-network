@@ -1,0 +1,40 @@
+version: 3
+workdir: internal
+
+components:
+  # Feature slices
+  user_slice:         { in: user/** }
+  follow_slice:       { in: follow/** }
+  topic_slice:        { in: topic/** }
+  comment_slice:      { in: comment/** }
+  group_slice:        { in: group/** }
+  event_slice:        { in: event/** }
+  chat_slice:         { in: chat/** }
+  notification_slice: { in: notification/** }
+  oauth_slice:        { in: oauth/** }
+
+  # Cross-cutting
+  core:      { in: core/** }
+  platform:  { in: platform/** }
+  pkg:       { in: pkg/** }
+  bootstrap: { in: bootstrap/** }
+  config:    { in: config/** }
+
+deps:
+  # D6 dependency DAG
+  user_slice:         { mayDependOn: [core, platform, pkg] }
+  follow_slice:       { mayDependOn: [core, platform, pkg] }
+  topic_slice:        { mayDependOn: [core, platform, pkg] }
+  comment_slice:      { mayDependOn: [core, platform, pkg] }
+  group_slice:        { mayDependOn: [core, platform, pkg] }
+  event_slice:        { mayDependOn: [core, platform, pkg] }
+  chat_slice:         { mayDependOn: [core, platform, pkg] }
+  notification_slice: { mayDependOn: [core, platform, pkg] }
+  oauth_slice:        { mayDependOn: [core, platform, pkg] }
+
+  # Shared layers
+  core:      { mayDependOn: [platform, pkg] }
+  platform:  { mayDependOn: [pkg] }
+  pkg:       { mayDependOn: [] }
+  config:    { mayDependOn: [] }
+  bootstrap: { anyVendorDeps: true } # composition root imports everything

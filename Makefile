@@ -270,14 +270,29 @@ build: build-backend build-frontend ## Build both backend and frontend
 
 # ── Deterministic Review Gates ──────────────────────────────────────
 
-REVIEW_GATES_FAST := ci-mod check-format staticcheck
+review-gates: ## Run all deterministic review gate scripts (JSON output)
+	@echo "==> Running review gates..."
+	@bash scripts/gates/run-all.sh
 
-review-gates: $(REVIEW_GATES_FAST) ## Run all deterministic quality gates (fast subset)
+review-gates-fast: ci-mod check-format staticcheck ## Run fast deterministic quality gates
 	@echo "  Docs: docs/review-gates-reference.md"
-	@echo "✅ All review gates passed"
+	@echo "✅ All fast review gates passed"
 
 review-gates-all: review-gates vulncheck ## Run all gates including slower ones (coverage, vulns)
 	@echo "✅ All review gates (incl. slow) passed"
+
+check-arch: ## Run go-arch-lint architectural boundary check
+	@echo "==> Running go-arch-lint..."
+	go-arch-lint check
+
+setup-hooks: ## Install Lefthook git hooks
+	@echo "==> Installing Lefthook hooks..."
+	go install github.com/evilmartians/lefthook/v2@latest
+	lefthook install
+
+setup-arch-lint: ## Install go-arch-lint
+	@echo "==> Installing go-arch-lint..."
+	go install github.com/fe3dback/go-arch-lint@latest
 
 # Show help
 help: ## Show this help message
@@ -289,4 +304,5 @@ help: ## Show this help message
 .PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench be-ci fe-ci ci clean \
         bench-compare bench-profile bench-flame bench-clean db-clean db-reset seed run-backend run-frontend run-all help \
         build-backend build-frontend build \
-        docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build
+        docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build \
+        review-gates review-gates-fast review-gates-all check-arch setup-hooks setup-arch-lint

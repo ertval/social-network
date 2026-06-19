@@ -88,6 +88,32 @@ linters:
               desc: "pkg must not depend on platform"
             - pkg: "social-network/internal/core"
               desc: "pkg must not depend on core"
+        # D5 Vertical Slice Boundary Rules
+        d5_commands_queries:
+          files:
+            - "internal/*/commands/**"
+            - "internal/*/queries/**"
+          deny:
+            - pkg: "social-network/internal/*/transport"
+              desc: "D5: commands/queries must not import transport"
+            - pkg: "social-network/internal/*/store"
+              desc: "D5: commands/queries must not import store"
+        d5_transport:
+          files:
+            - "internal/*/transport/**"
+          deny:
+            - pkg: "social-network/internal/*/store"
+              desc: "D5: transport must not import store"
+        d5_store:
+          files:
+            - "internal/*/store/**"
+          deny:
+            - pkg: "social-network/internal/*/transport"
+              desc: "D5: store must not import transport"
+            - pkg: "social-network/internal/*/commands"
+              desc: "D5: store must not import commands"
+            - pkg: "social-network/internal/*/queries"
+              desc: "D5: store must not import queries"
     revive:
       rules:
         - name: blank-imports

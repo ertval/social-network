@@ -1,0 +1,20 @@
+# lefthook.yml
+pre-commit:
+  parallel: true
+  jobs:
+    - name: go-format
+      glob: "*.go"
+      run: gofumpt -l {staged_files} | xargs -r gofumpt -w && goimports -w -local social-network {staged_files}
+      stage_fixed: true
+    - name: go-vet
+      run: go vet ./...
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: go-test
+      run: go test -short ./...
+    - name: go-build
+      run: go build ./...
+    - name: arch-lint
+      run: go-arch-lint check

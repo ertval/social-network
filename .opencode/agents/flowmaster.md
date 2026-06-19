@@ -1,5 +1,5 @@
 ---
-description: End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
+description: End-to-end QRSPI orchestrator that takes a ticket ID and sequentially spawns subagents to research, plan, implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
 mode: primary
 model: opencode/deepseek-v4-flash-free
 color: primary
@@ -18,21 +18,43 @@ permission:
 
 ## flowmaster
 
-End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
+End-to-end QRSPI orchestrator that takes a ticket ID and sequentially spawns subagents to research, plan, implement, review, fix, and publish the PR.
 
-## Core Loop
+## Core Loop (QRSPI + Review + Fix + Publish)
+
 1. **Locate** the ticket in `docs/sprints/ticket-tracker.md` and read its sprint spec.
-2. **Implement**: spawn `forge` subagent → code + tests on a feature branch.
-3. **Review**: spawn `audit` subagent → run deterministic gates + full review pipeline → must validate all rules in `.agents/rules/conventions.md` → save report to `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md`.
-4. **Fix loop**: if review is `CHANGES REQUESTED` or `PASS WITH RECOMMENDATIONS`, spawn `remedy` subagent to fix every finding automatically, then re-run `audit` and re-evaluate. Repeat up to 3 **review calls** total (max 2 fix cycles). After 3 reviews, if status is `PASS WITH RECOMMENDATIONS` (only Suggestion-level findings remain), treat it as acceptable and proceed to PR creation. If still `CHANGES REQUESTED` after 3 reviews, stop and report to user.
-5. **Create PR**: on `APPROVED` or `PASS WITH RECOMMENDATIONS` after exhausting fix cycles, spawn `publish` subagent → push branch + open PR via `tea`.
+
+### Implementation (QRSPI):
+2. **Research**: Spawn `scout` → receives `RESEARCH.md` (questions, related code, constraints)
+   - If scout returns QUESTIONS > 0, present them to user. Wait for answers.
+3. **Plan**: Spawn `architect` → receives `PLAN.md` (file checklist, TDD sequence, commits)
+   - Present plan to user for review. Wait for approval.
+4. **Implement**: Spawn `forge` → receives FILES_CHANGED, TESTS_ADDED, GATES
+
+### Review loop (max 3 cycles):
+5. **Gates**: Spawn `review-gates` → receives JSON gate results
+   - If gates FAIL → spawn `remedy` → loop to step 5
+6. **Conventions**: Spawn `review-conventions` → receives compliance matrix
+7. **Analysis**: Spawn `review-analysis` → receives findings list
+8. **Synthesize** report into `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md`
+   - If CHANGES REQUESTED → spawn `remedy` → loop to step 5
+   - If PASS WITH RECOMMENDATIONS after 3 cycles → proceed
+
+9. **Publish**: Spawn `publish` → receives PR_URL
 
 ### Fix Loop Logic
 ```
 review_count = 0
 loop:
-  spawn audit → parse structured return
+  spawn review-gates → parse result
+  if GATES == FAIL:
+    spawn remedy → go to loop
+
+  spawn review-conventions → parse result
+  spawn review-analysis → parse result
   review_count++
+
+  synthesize report
 
   if STATUS == APPROVED:
     break → publish
@@ -53,8 +75,12 @@ loop:
 
 ### Subagent Invocation Pattern
 When spawning each subagent, provide exactly these inputs:
-- **forge**: ticket ID, branch name
-- **audit**: branch name, ticket ID
+- **scout**: ticket ID, sprint spec content
+- **architect**: ticket ID, path to RESEARCH.md
+- **forge**: ticket ID, branch name, path to PLAN.md
+- **review-gates**: branch name, ticket ID
+- **review-conventions**: branch name, ticket ID
+- **review-analysis**: branch name, ticket ID
 - **remedy**: branch name, ticket ID
 - **publish**: branch name, ticket ID, review status confirmation
 
