@@ -14,6 +14,7 @@ permission:
   bash:
     "*": ask
     git*: allow
+    tea*: allow
     make*: allow
     bun*: allow
     "tsc *": allow

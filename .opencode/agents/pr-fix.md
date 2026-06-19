@@ -15,6 +15,7 @@ permission:
     "*": ask
     git*: allow
     make*: allow
+    golangci-lint*: allow
     bun*: allow
     "tsc *": allow
     "rm .git/PR_DESCRIPTION.md": allow
