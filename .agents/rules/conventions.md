@@ -108,7 +108,15 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 
 - **Trunk-based**: feature branches ≤ 3 days. Squash merge into `main`.
 - **Branch**: `<username>/<ticket-ID>-<detail>` (e.g. `epapamic/S1-BE-05-db-factory`).
-- **Username**: resolve via `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'`. Must match known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`.
+  - **username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
+  - **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login.
+  - **Username Verification**: After resolving, confirm the username is in the known devs set (`epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`). If not, flag error — branch will fail PR validation.
+  - **ticket/issue-ID**: The ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or the GitHub/Gitea issue number (e.g. `42`). This field is **required** — it maps the branch to its work item for traceability.
+  - **detail**: kebab-case description of the change (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
+  - **Examples**:
+    - `ekaramet/S1-BE-05-db-factory`
+    - `dkotsi/S3-FE-14-follow-button`
+    - `smichail/42-oauth-scan-fix`
 - **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
 
@@ -139,3 +147,32 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - `group.invited`, `group.join_requested`
 - `event.created`
 - Event Bus starts as in-process Go channels. Swappable to RabbitMQ/Kafka via `platform/` adapter (zero broker imports in features).
+
+## 13. Documentation Conventions
+
+- **Use relative paths** in all plans, proposals, and documentation — never absolute/full file paths.
+  - ✅ `internal/user/service.go`, `docs/plan/arch-proposals.md`
+  - ❌ `/home/user/code/social-network/internal/user/service.go`
+- Reference paths from the project root (where `go.mod` lives).
+
+## 14. Progressive Disclosure — Doc Reading Order
+
+`architecture.md` and `sds.md` describe the **target** vertical-slice state, not the current codebase (which is layered hex). Read in this order to avoid confusion:
+
+```mermaid
+graph TD
+    A["1. Project Rules & Guidelines <br> (AGENTS.md, conventions.md)"] --> B["2. Implementation Methodology <br> (general-instructions.md)"]
+    B --> C["3. Architectural Boundaries <br> (architecture.md)"]
+    B --> D["4. Technical Specifications <br> (sds.md)"]
+    D --> E["5. Transition Roadmap <br> (target-architecture-with-phases.md)"]
+    E --> F["6. Ticket Board Tracker <br> (ticket-tracker.md)"]
+    F --> G["7. Sprints Backlog <br> (sprint-0.md -> sprint-6.md)"]
+```
+
+- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](../../AGENTS.md) and [conventions.md](conventions.md).
+- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/sprints/general-instructions.md](../../docs/sprints/general-instructions.md) to understand TDD, Strangler Fig phases, and verification gates.
+- **Stage 3: Architecture Definition**: Read [docs/architecture/architecture.md](../../docs/architecture/architecture.md) for the vertical slice code layout structure.
+- **Stage 4: System Design and DDL Specs**: Read [docs/architecture/sds.md](../../docs/architecture/sds.md) to inspect the data model, interfaces, and platform services.
+- **Stage 5: Execution Roadmaps**: Read [docs/architecture/target-architecture-with-phases.md](../../docs/architecture/target-architecture-with-phases.md) (migration roadmap, target state, design decisions D1-D6) and [docs/sprints/ticket-tracker.md](../../docs/sprints/ticket-tracker.md) (all sprint tickets at a glance).
+- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](../../docs/sprints/sprint-0.md), [sprint-1.md](../../docs/sprints/sprint-1.md), [sprint-2.md](../../docs/sprints/sprint-2.md), [sprint-3.md](../../docs/sprints/sprint-3.md), [sprint-4.md](../../docs/sprints/sprint-4.md), [sprint-5.md](../../docs/sprints/sprint-5.md), and [sprint-6.md](../../docs/sprints/sprint-6.md).
+- **Stage 7: Verification**: Read [docs/requirements/audit.md](../../docs/requirements/audit.md) and [docs/requirements/readme.md](../../docs/requirements/readme.md) for grading acceptance criteria.
