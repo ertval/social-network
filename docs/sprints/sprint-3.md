@@ -32,8 +32,9 @@
 * **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Description:** Define domain entity shapes for follower links and pending follow requests. This is a BRAND NEW feature — the Follow system does NOT exist anywhere in the legacy codebase. There is no `internal/domain/follow/` or `internal/infra/storage/sqlite/follows/` to reference. The entire Follow module must be designed and built from scratch.
+* **Description:** Define domain entity shapes for follower links and pending follow requests. This is a BRAND NEW feature — the Follow system does NOT exist anywhere in the legacy codebase. There is no `internal/domain/follow/` or `internal/infra/storage/sqlite/follows/` to reference. The entire Follow module must be designed and built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/follow.go`. No legacy code to reference — implementation is entirely new.
   2. Define `Follow` (FollowerID, FolloweeID, CreatedAt) and `FollowRequest` (FollowerID, FolloweeID, CreatedAt). **Note:** Remove the redundant `Status` field and use `FollowerID` and `FolloweeID` to align with the database schema which has no `status` column (row presence denotes pending).
   3. Define the `Repository` interface mapping required storage operations.
@@ -47,8 +48,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-35
-* **Description:** Implement storage operations for relationships in SQLite. This is a BRAND NEW feature — no legacy `internal/infra/storage/sqlite/follows/` exists. The SQLite store must be built from scratch.
+* **Description:** Implement storage operations for relationships in SQLite. This is a BRAND NEW feature — no legacy `internal/infra/storage/sqlite/follows/` exists. The SQLite store must be built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/store/sqlite.go`. No legacy store code to reference — implementation is entirely new.
   2. Implement relationship inserts, removals, and lookups using standard SQL queries on `follows` and `follow_requests` tables.
 * **Verification:** Store integration tests using in-memory SQLite connections checking requests creation and link resolutions.
@@ -61,8 +63,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-35
-* **Description:** Initiate relationship link. Perform auto-follow for public profiles, and follow request creation for private ones. This is a BRAND NEW feature — no legacy Follow command logic exists. The follow-user command must be designed and built from scratch.
+* **Description:** Initiate relationship link. Perform auto-follow for public profiles, and follow request creation for private ones. This is a BRAND NEW feature — no legacy Follow command logic exists. The follow-user command must be designed and built from scratch. As a greenfield task, this builds new platform or feature abstractions from scratch that do not exist in the old legacy codebase.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/commands/follow_user.go`. No legacy command code to reference — implementation is entirely new.
   2. Define a local `UserPrivacyChecker` interface to inspect if target profile is private.
   3. If public -> insert direct relationship to `follows` and publish `follow.accepted` event to `platform/eventbus`.
@@ -77,8 +80,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
-* **Description:** Remove relationship links. This is a BRAND NEW feature — no legacy unfollow logic exists. Built from scratch.
+* **Description:** Remove relationship links. This is a BRAND NEW feature — no legacy unfollow logic exists. Built from scratch. As a greenfield task, this builds new platform or feature abstractions from scratch that do not exist in the old legacy codebase.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/commands/unfollow_user.go`. No legacy code to reference — implementation is entirely new. Delete relationship records.
 * **Verification:** Unit tests verifying that unfollow severs connection in database.
 
@@ -90,8 +94,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-37
-* **Description:** Approve pending follow requests. This is a BRAND NEW feature — no legacy accept-request logic exists. Built from scratch.
+* **Description:** Approve pending follow requests. This is a BRAND NEW feature — no legacy accept-request logic exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/commands/accept_request.go`. No legacy code to reference — implementation is entirely new.
   2. Delete follow request row from `follow_requests`, insert direct relationship link to `follows`, and publish `follow.accepted` event.
 * **Verification:** Unit tests verifying acceptance state updates, row removals, and event emissions.
@@ -104,8 +109,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 1
 * **Dependencies:** S3-BE-37
-* **Description:** Decline pending follow requests. This is a BRAND NEW feature — no legacy decline logic exists. Built from scratch.
+* **Description:** Decline pending follow requests. This is a BRAND NEW feature — no legacy decline logic exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/commands/decline_request.go`. No legacy code to reference — implementation is entirely new. Delete request record from `follow_requests`.
 * **Verification:** Unit tests verifying decline actions and row deletion.
 
@@ -117,8 +123,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
-* **Description:** Retrieve follower listing. This is a BRAND NEW feature — no legacy follower query exists. Built from scratch.
+* **Description:** Retrieve follower listing. This is a BRAND NEW feature — no legacy follower query exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/queries/get_followers.go`. No legacy code to reference — implementation is entirely new.
 * **Verification:** Test querying listing for mock user relationships.
 
@@ -130,8 +137,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
-* **Description:** Retrieve users followed listing. This is a BRAND NEW feature — no legacy following query exists. Built from scratch.
+* **Description:** Retrieve users followed listing. This is a BRAND NEW feature — no legacy following query exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/queries/get_following.go`. No legacy code to reference — implementation is entirely new.
 * **Verification:** Test querying correct listing.
 
@@ -143,8 +151,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
-* **Description:** Retrieve pending incoming follow requests. This is a BRAND NEW feature — no legacy pending-requests query exists. Built from scratch.
+* **Description:** Retrieve pending incoming follow requests. This is a BRAND NEW feature — no legacy pending-requests query exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/queries/get_pending_requests.go`. No legacy code to reference — implementation is entirely new.
 * **Verification:** Test retrieves all pending requests for receiver.
 
@@ -156,8 +165,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
-* **Description:** Implement helper query check for cross-slice connection testing. This is a BRAND NEW feature — no legacy connection-check query exists. Built from scratch.
+* **Description:** Implement helper query check for cross-slice connection testing. This is a BRAND NEW feature — no legacy connection-check query exists. Built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/queries/are_connected.go`. No legacy code to reference — implementation is entirely new. Query if users are followed in the database.
 * **Verification:** Tests returning true for connected, false for unconnected profiles.
 
@@ -169,8 +179,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-37..10
-* **Description:** Bind HTTP REST handlers. This is a BRAND NEW feature — no legacy Follow HTTP routes exist. The transport layer must be built from scratch.
+* **Description:** Bind HTTP REST handlers. This is a BRAND NEW feature — no legacy Follow HTTP routes exist. The transport layer must be built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/follow/transport/http.go`. No legacy route code to reference — implementation is entirely new.
   2. Route `POST /api/follow`, `POST /api/unfollow`, `POST /api/follow/accept`, `POST /api/follow/decline`, `GET /api/users/:id/followers`, `GET /api/users/:id/following`, `GET /api/follow/requests`.
 * **Verification:** Mock HTTP handlers test integration.
@@ -184,8 +195,9 @@
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Define domain entity shapes for post comments. This is migrating EXISTING logic from the old layered codebase into the new vertical-slice layout. The old comment entity lives in `internal/domain/comment/`. The new `internal/comment/` module restructures that legacy domain model into the vertical-slice shape.
+* **Description:** Define domain entity shapes for post comments. This is migrating EXISTING logic from the old layered codebase into the new vertical-slice layout. The old comment entity lives in `internal/domain/comment/`. The new `internal/comment/` module restructures that legacy domain model into the vertical-slice shape. This migration extracts comment logic from the legacy layers into `internal/comment/`, utilizing the new vertical slice CQRS pattern.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/comment/comment.go`. This restructures the existing `internal/domain/comment/` entity into the new vertical-slice layout — the old module provides the domain logic being migrated.
   2. Define `Comment` entity: ID (int), TopicID (int), UserID (string) [maps to user_id in DB], Content, ImagePath, and CreatedAt. Use `int` for IDs to match legacy SQLite auto-increment schemas.
   3. Define the `Repository` interface mapping required storage operations.
@@ -199,8 +211,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
-* **Description:** Implement SQLite storage for comment records. This is migrating EXISTING storage logic from the old layered codebase into the new vertical-slice layout. The old storage code lives in `internal/infra/storage/sqlite/comments/`. The new `internal/comment/store/sqlite.go` restructures that legacy store into the vertical-slice shape.
+* **Description:** Implement SQLite storage for comment records. This is migrating EXISTING storage logic from the old layered codebase into the new vertical-slice layout. The old storage code lives in `internal/infra/storage/sqlite/comments/`. The new `internal/comment/store/sqlite.go` restructures that legacy store into the vertical-slice shape. This migration extracts comment logic from the legacy layers into `internal/comment/`, utilizing the new vertical slice CQRS pattern.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/comment/store/sqlite.go`. This restructures the existing `internal/infra/storage/sqlite/comments/` queries into the new vertical-slice layout — the old module provides the storage logic being migrated. Implement queries saving comments and loading comments by TopicID.
 * **Verification:** Store integration tests using in-memory SQLite connections checking writes/reads.
 
@@ -212,8 +225,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
-* **Description:** Create comment record with file attachments and MIME validation. This is migrating EXISTING comment creation logic from the old layered codebase into the new vertical-slice layout. The old app-layer logic lives in `internal/app/posts/` (comment creation). The new `internal/comment/commands/create_comment.go` restructures that legacy command into the vertical-slice shape.
+* **Description:** Create comment record with file attachments and MIME validation. This is migrating EXISTING comment creation logic from the old layered codebase into the new vertical-slice layout. The old app-layer logic lives in `internal/app/posts/` (comment creation). The new `internal/comment/commands/create_comment.go` restructures that legacy command into the vertical-slice shape. This migration extracts comment logic from the legacy layers into `internal/comment/`, utilizing the new vertical slice CQRS pattern.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/comment/commands/create_comment.go`. This restructures the existing `internal/app/posts/` comment creation logic into the new vertical-slice layout — the old module provides the application logic being migrated.
   2. Validate parameters. Enforce magic-byte image checks (JPG, PNG, GIF) on uploaded attachments using `pkg/imgutil`.
 * **Verification:** Unit tests verifying commenting, invalid image format rejection, and database insertions.
@@ -226,8 +240,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S3-BE-46
-* **Description:** Retrieve comment list for a specific post. This is migrating EXISTING query logic from the old layered codebase into the new vertical-slice layout.
+* **Description:** Retrieve comment list for a specific post. This is migrating EXISTING query logic from the old layered codebase into the new vertical-slice layout. This migration extracts comment logic from the legacy layers into `internal/comment/`, utilizing the new vertical slice CQRS pattern.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/comment/queries/get_comments.go`. This restructures existing query logic from the old codebase into the new vertical-slice layout.
 * **Verification:** Test querying correct mapping.
 
@@ -239,8 +254,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-48, S3-BE-49
-* **Description:** Setup HTTP routing handlers for comment endpoints. This is migrating EXISTING HTTP routes from the old layered codebase into the new vertical-slice layout. The old HTTP handler lives in `internal/infra/http/postHandler.go` (comment routes). The new `internal/comment/transport/http.go` restructures those legacy routes into the vertical-slice shape.
+* **Description:** Setup HTTP routing handlers for comment endpoints. This is migrating EXISTING HTTP routes from the old layered codebase into the new vertical-slice layout. The old HTTP handler lives in `internal/infra/http/postHandler.go` (comment routes). The new `internal/comment/transport/http.go` restructures those legacy routes into the vertical-slice shape. This migration extracts comment logic from the legacy layers into `internal/comment/`, utilizing the new vertical slice CQRS pattern.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
    1. Create `internal/comment/transport/http.go`. This restructures the existing `internal/infra/http/postHandler.go` comment routes into the new vertical-slice layout — the old handler provides the route logic being migrated.
    2. Wire up `POST /api/comments`, `GET /api/posts/:id/comments`.
 * **Verification:** HTTP mock integration tests verifying correct endpoint codes.
@@ -252,8 +268,9 @@
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Description:** Define domain model entities mapping notifications.
+* **Description:** Define domain model entities mapping notifications. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/notification/notification.go`.
   2. Define `Notification` (ID, UserID, Type, SourceID, Content, IsRead, CreatedAt) and `Repository` interface.
 * **Verification:** Compile checks.
@@ -266,8 +283,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
-* **Description:** Create SQLite storage queries mapping notifications.
+* **Description:** Create SQLite storage queries mapping notifications. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/notification/store/sqlite.go`.
 * **Verification:** Store integration tests checks.
 
@@ -279,8 +297,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
-* **Description:** Subscribe to Event Bus events and compile user notification alerts.
+* **Description:** Subscribe to Event Bus events and compile user notification alerts. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/notification/commands/consume_events.go`.
   2. Subscribe to: `follow.requested`, `follow.accepted`, `group.invited`, `group.join_requested`, `event.created`.
   3. Create and store a new notification row in SQLite for each incoming event.
@@ -294,8 +313,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Dependencies:** S3-BE-52
-* **Description:** Mark notifications as read.
+* **Description:** Mark notifications as read. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/notification/commands/mark_read.go`. Flip `is_read` boolean field in database.
 * **Verification:** Unit tests asserting that updates succeed.
 
@@ -307,8 +327,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S3-BE-52
-* **Description:** Retrieve notifications history listing.
+* **Description:** Retrieve notifications history listing. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/notification/queries/list_notifications.go`.
 * **Verification:** Test querying listing.
 
@@ -320,8 +341,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-54..23
-* **Description:** Bind HTTP routes. Add unread count endpoint and a real-time SSE stream endpoint.
+* **Description:** Bind HTTP routes. Add unread count endpoint and a real-time SSE stream endpoint. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
    1. Create `internal/notification/transport/http.go`.
    2. Route `GET /api/notifications` (lists all notifications), `GET /api/notifications/unread-count` (returns unread count), `POST /api/notifications/:id/read`.
    3. **Server-Sent Events Stream:** Route `GET /api/notifications/stream`. Establish a persistent HTTP stream chunking notifications in real-time when new eventbus alerts fire.
@@ -335,8 +357,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
-* **Description:** One-time data migration converting old notification rows to the new schema.
+* **Description:** One-time data migration converting old notification rows to the new schema. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
    1. Create `db/migrations/000008_migrate_notifications.up.sql`. Map old rows: `Title` → stored as metadata, `Message` → stored as metadata, `RelatedType` → mapped to new `Type` enum where possible (reply→comment, mention→follow, like/dislike→dropped). Rows with unmappable types get `Type = "legacy"`.
    2. Create `000008_migrate_notifications.down.sql` to reverse.
    3. Old rows keep their IDs; new notifications use the new schema going forward.
@@ -350,8 +373,9 @@
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
-* **Description:** Implement upvoting/downvoting on comments by leveraging the unified votes storage schema. This is migrating EXISTING vote logic from the old layered codebase into the new vertical-slice layout.
+* **Description:** Implement upvoting/downvoting on comments by leveraging the unified votes storage schema. This is migrating EXISTING vote logic from the old layered codebase into the new vertical-slice layout. This migration extracts topic, category, and vote logic from legacy layered domains into the new `internal/topic/` vertical slice, introducing the new visibility enum (public/almost_private/private) without breaking existing routes.
 * **Detailed Steps:**
+    * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
   1. Create `internal/comment/commands/cast_comment_vote.go` (similar logic to post voting: checks duplicate, inserts/updates `comment_id` link in the `votes` table).
   2. Create `internal/comment/queries/get_comment_votes.go` to sum and query voting directions for comment card displays.
   3. Map routing to `POST /api/comments/:id/vote`.
@@ -366,8 +390,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
-* **Description:** Interactive toggle button with popup confirmation before unfollowing a user.
+* **Description:** Interactive toggle button with popup confirmation before unfollowing a user. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. If following -> click triggers Dialog popup confirming "Are you sure you want to unfollow?".
   2. Confirm -> posts to `/api/unfollow`.
   3. If not following -> click posts to `/api/follow`.
@@ -380,8 +405,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
-* **Description:** Build lists of followers and following links on the profile view.
+* **Description:** Build lists of followers and following links on the profile view. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create sub-views showing user cards with action buttons.
 * **Verification:** Assert visual rendering correctness.
 
@@ -392,8 +418,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
-* **Description:** Render inline accept/decline action items for follow requests.
+* **Description:** Render inline accept/decline action items for follow requests. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. List item displaying user name, avatar, and buttons to Accept or Decline.
 * **Verification:** Confirm accept triggers target state.
 
@@ -406,8 +433,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 5
-* **Description:** Build comment listing and text entry component featuring image attachment upload.
+* **Description:** Build comment listing and text entry component featuring image attachment upload. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Fetch comments under target post cards.
   2. Form with file selector allowing JPG/PNG/GIF upload checking.
 * **Verification:** Visual validation and Playwright submission testing.
@@ -419,8 +447,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
-* **Description:** Build UI panel displaying unread count badges in navigation bars.
+* **Description:** Build UI panel displaying unread count badges in navigation bars. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Badge icon displaying count. Clicking drops down notification listing drawer.
 * **Verification:** Verify badge matches response totals.
 
@@ -431,8 +460,9 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
-* **Description:** Implement Server-Sent Events (SSE) notification streaming connection.
+* **Description:** Implement Server-Sent Events (SSE) notification streaming connection. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
    1. Establish connection to `GET /api/notifications/stream` using the browser `EventSource` API.
    2. When events arrive, update the global notification badge state and append notifications to the panel view.
    3. Gracefully fall back to polling `GET /api/notifications/unread-count` on a 15-second interval if the SSE connection drops or fails.
@@ -446,8 +476,9 @@
 * **Assignee:** FE-B
 * **Story Points:** 2
 * **Dependencies:** S3-FE-16
-* **Description:** Implement upvote/downvote action items on comments.
+* **Description:** Implement upvote/downvote action items on comments. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
+    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render buttons on comment card components. Trigger POST calls to `/api/comments/:id/vote` and dynamically update local vote tally state.
 * **Verification:** Verify interactive click increments tally.
 
@@ -488,8 +519,9 @@
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-06
-* **Description:** Create the database migration files for the Follow vertical slice.
+* **Description:** Create the database migration files for the Follow vertical slice. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
+    * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `db/migrations/000004_follow_system.up.sql` to create `follows` and `follow_requests` tables.
   2. Create `db/migrations/000004_follow_system.down.sql` to reverse these changes.
 * **Verification:** Run `make db-reset` or execute the migration runner and verify that this migration applies and rolls back cleanly.
