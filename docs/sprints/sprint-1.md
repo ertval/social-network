@@ -12,9 +12,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 5
 * **Dependencies:** Sprint 0
-* **Description:** Create the pluggable Database connection provider interface and SQLite initializer with specific pooling rules.
+* **Description:** Create the pluggable Database connection provider interface and SQLite initializer with specific pooling rules. This is an entirely NEW module with NO existing implementation in the legacy codebase -- the old `internal/infra/storage/sqlite/` layer uses direct `sql.Open` calls without a factory abstraction or interface. This platform package must be designed and built from scratch.
 * **Detailed Steps:**
-  1. Create `internal/platform/database/database.go` and define the `DB` interface (containing standard methods `QueryContext`, `QueryRowContext`, `ExecContext`).
+  1. Create `internal/platform/database/database.go` and define the `DB` interface (containing standard methods `QueryContext`, `QueryRowContext`, `ExecContext`). There is no old code to reference for this abstraction; the implementation is new.
   2. Implement `newSQLite(dsn string) (DB, error)` in `internal/platform/database/sqlite.go`.
   3. Ensure WAL mode is active: execute `PRAGMA journal_mode=WAL;`.
   4. Ensure busy timeout is set: execute `PRAGMA busy_timeout=5000;`.
@@ -30,7 +30,7 @@
 * **Assignee:** BE-A
 * **Story Points:** 8
 * **Dependencies:** S1-BE-05
-* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. Convert the existing schema (`db/migrations/schema.sql` + `indexes.sql`) into the initial numbered migration file (`000001_initial_schema.up.sql`). Migration files for subsequent features will be created in their respective feature sprints (Sprint 2 for 000002-000003, Sprint 3 for 000004, Sprint 4 for 000005-000006). Seed migration (000009) is handled by S1-SD-05.
+* **Description:** Build the backend SQL migrations runner that applies `.up.sql` and `.down.sql` scripts dynamically. This is an entirely NEW module with NO existing implementation in the legacy codebase -- the old `internal/infra/storage/sqlite/init.go` does direct schema creation but has no migration runner, version tracking, or up/down logic. This platform package must be designed and built from scratch. Convert the existing schema (`db/migrations/schema.sql` + `indexes.sql`) into the initial numbered migration file (`000001_initial_schema.up.sql`). Migration files for subsequent features will be created in their respective feature sprints (Sprint 2 for 000002-000003, Sprint 3 for 000004, Sprint 4 for 000005-000006). Seed migration (000009) is handled by S1-SD-05.
 * **Detailed Steps:**
    1. Implement a migration runner in `internal/platform/database/migrations.go`.
    2. Create a metadata database table named `schema_migrations` to track applied version IDs.
@@ -48,9 +48,9 @@
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S1-BE-05
-* **Description:** Setup backend cookie-based session management.
+* **Description:** Setup backend cookie-based session management. This migrates EXISTING session logic from the old layered codebase into the new vertical-slice layout. The current implementation lives in `internal/domain/session/session.go` (domain model and `SessionManager` interface) and `internal/infra/http/authcookies/manager.go` (cookie handling). The new layout consolidates session structs, the manager interface, and SQLite-backed storage under `internal/core/session/` with a dedicated store sub-package, replacing the old domain/infra split.
 * **Detailed Steps:**
-  1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface.
+  1. Create `internal/core/session/session.go`. Define `Session` structs (Token, UserID, ExpiresAt) and a `SessionManager` interface. Restructure from the old `internal/domain/session/session.go` and `internal/domain/session/sessionManager.go` which contain the current domain model and manager. The existing code has the logic; this ticket moves and restructures it into the new layout.
   2. Implement SQLite-backed session storage in `internal/core/session/store/sqlite.go` matching the migration schema.
   3. Provide creation (`Create`), lookup (`Get`), and invalidation (`Revoke`) methods.
 * **Verification:** Write tests using TDD to assert sessions write to SQLite, lookups find correct IDs, and expired session lookups return errors.

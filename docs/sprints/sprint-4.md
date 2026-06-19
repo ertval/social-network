@@ -12,11 +12,12 @@
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S4-BE-74, S4-BE-75, S4-BE-82
-* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
+* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint. This is bootstrap-level dependency wiring for the new Group and Event vertical slices — connecting their transport packages and event consumers into the existing bootstrap flow.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import group and event transport packages.
   2. Call their route registration functions on the HTTP mux and WS router.
   3. Register event bus consumers for group events.
+  4. Note: This is wiring-only — no business logic; the new slices are plugged into the existing bootstrap infrastructure.
 * **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
 
 ---

@@ -14,9 +14,9 @@
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-25, S2-BE-34
-* **Description:** Register new slice HTTP routes in `bootstrap.go` so endpoints are live immediately after this sprint. Without this ticket, new slices compile but are unreachable.
+* **Description:** Bootstrap wiring ticket. Register new slice HTTP routes in `bootstrap.go` so endpoints are live immediately after this sprint. This is final dependency wiring, not new logic — it makes the previously-built User and Topic slices reachable via HTTP routing after their transport layers are complete.
 * **Detailed Steps:**
-  1. In `internal/bootstrap/bootstrap.go`, import `internal/user/transport` and `internal/topic/transport`.
+  1. In `internal/bootstrap/bootstrap.go`, import `internal/user/transport` and `internal/topic/transport`. This wires the already-built transport layers into the running server — no new handlers or route logic is created here.
   2. Call their route registration functions on the HTTP mux (e.g. `userTransport.RegisterRoutes(mux)`).
   3. Verify with `curl http://localhost:8080/api/register` and `curl http://localhost:8080/api/feed`.
 * **Verification:** `go build ./...` passes, endpoints respond 200/401 (not 404).
@@ -30,7 +30,7 @@
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `internal/domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
+* **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. This is a refactoring/migration ticket: the User entity and repository interface already exist in the old layered codebase at `internal/domain/user/` (entity definitions) and `internal/infra/storage/sqlite/users/` (repository queries). This ticket restructures that existing logic into the new vertical-slice layout under `internal/user/`, replacing the old domain/infra split with a single cohesive slice. The User slice also absorbs old `internal/domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
 * **Detailed Steps:**
    1. Create `internal/user/user.go`. Define the `User` struct (ID, Email, PasswordHash, FirstName, LastName, DateOfBirth, Nickname, AboutMe, AvatarPath, IsPrivate, CreatedAt). **Explicitly drop `Age` field** — replaced by `DateOfBirth` for age calculation at runtime.
    2. **DB Schema Sync:** The Go struct's `Nickname` field must map to the SQLite `username` column, which is retained to prevent breaking legacy code running side-by-side.

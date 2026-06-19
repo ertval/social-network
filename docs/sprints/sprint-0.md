@@ -13,16 +13,16 @@
 * **Type:** Scaffolding/Setup
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Description:** Adjust the existing codebase layout and establish the directory structure according to the vertical-slice target architecture, reusing existing files.
+* **Description:** Set up new project infrastructure from scratch — adjust the existing codebase layout and establish the directory structure according to the vertical-slice target architecture, reusing existing files. This is scaffolding work that creates or restructures project layout, not bug fixing.
 * **Detailed Steps:**
-  1. Initialize the module at the project root: `go mod init social-network` (or reuse the existing one, updating imports as needed).
-  2. Adjust the existing structure to align with target structure:
+  1. Initialize the module at the project root: `go mod init social-network` (or reuse the **existing** `go.mod`, updating imports as needed).
+  2. Adjust the existing structure to align with target structure (these directories are NEW structural additions; existing code under the old layered layout stays in place and is not rewritten — only moved/reorganized):
      - `cmd/server/main.go` (main entry point)
      - `internal/core/` (sessions, middlewares, websocket base)
      - `internal/platform/` (database factory, cache, eventbus)
      - `internal/pkg/` (shared packages like hashing, uuid)
      - `db/migrations/` (SQL migration scripts)
-  3. Ensure the Go version in `go.mod` is set to `1.24`.
+  3. Ensure the Go version in `go.mod` is set to `1.24` (audit the **existing** `go.mod` and update the version if stale).
 * **Verification:** Run `go vet ./...` and `go build ./cmd/server/`. It should compile successfully (even with empty main function).
 
 ---

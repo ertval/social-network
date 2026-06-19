@@ -12,7 +12,7 @@
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S5-BE-89, S5-BE-90, S5-BE-96
-* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint.
+* **Description:** Register new slice routes in `bootstrap.go` so endpoints are live immediately after this sprint. This is bootstrap-level dependency wiring — gluing the newly created chat and OAuth vertical slices into the application's startup path so they become reachable at runtime.
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import chat and oauth transport packages.
   2. Call their route registration functions on the HTTP mux and WS router.
@@ -28,7 +28,7 @@
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
-* **Description:** Establish domain structures mapping messaging records.
+* **Description:** Establish domain structures mapping messaging records. This is a refactoring/migration ticket — the chat domain model already exists in the old layered codebase (`internal/domain/chat/`) and is being restructured into the new vertical-slice layout under `internal/chat/`.
 * **Detailed Steps:**
   1. Create `internal/chat/chat.go`.
   2. Define `PrivateMessage` (ID, ChatID string, SenderID, ReceiverID, Content, CreatedAt) and `Repository` interface. **Note:** Include `ChatID` (string) as required by the websocket payloads and `messages` table schema in `sds.md`.
