@@ -1,4 +1,4 @@
----
+﻿---
 description: Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
@@ -32,10 +32,12 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ## When invoked, you will receive:
 - The branch name
 - The ticket ID (e.g. `S1-BE-05`)
+- Confirmation that the latest `docs/reviews/PR_REVIEW_REPORT.md` status is clean `APPROVED`
 
 ## Your job (4 phases):
 
 ### Phase 1: Branch & Commit Integrity
+- Read `docs/reviews/PR_REVIEW_REPORT.md` first. If the latest status is not `APPROVED`, or if any Critical/Warning/Suggestion/Recommendation finding remains, stop and report that `ticket-to-pr` must run `pr-fix`/`pr-review` again.
 - Verify branch name matches `<username>/<ticket/issue-ID>-<detail>` convention.
 - Verify commits follow Conventional Commits format.
 - Ensure branch is rebased on main (no merge commits from main).

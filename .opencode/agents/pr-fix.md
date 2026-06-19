@@ -1,4 +1,4 @@
----
+﻿---
 description: Reads the PR review report and applies surgical fixes to resolve ALL findings (Critical, Warning, and Suggestions). Re-runs deterministic gates and commits fixes with conventional commit messages.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
@@ -25,7 +25,7 @@ permission:
 
 ## pr-fix
 
-Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
+Reads the PR review report and applies surgical fixes to resolve Critical, Warning, Suggestion, and Recommendation findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
 
 ## When invoked, you will receive:
 - The branch name
@@ -33,8 +33,8 @@ Reads the PR review report and applies surgical fixes to resolve Critical and Wa
 
 ## Your job:
 1. Read `docs/reviews/PR_REVIEW_REPORT.md` thoroughly.
-2. Fix ALL findings: **Critical**, **Warning**, **and Suggestions/Recommendations**. Do not skip any severity level.
-3. Perform **surgical edits only** — do not touch unrelated code, do not refactor, do not clean up pre-existing dead code.
+2. Fix ALL findings: **Critical**, **Warning**, **Suggestion**, and **Recommendation**. Do not skip any severity level. A `PASS WITH RECOMMENDATIONS` report is still actionable and must be cleaned automatically.
+3. Perform **surgical edits only** â€” do not touch unrelated code, do not refactor, do not clean up pre-existing dead code.
 4. After each fix group, run the deterministic gates:
    - Backend: `make ci` or `make test`
    - Frontend (in `frontend/`): `bun run lint && bun run format:check && tsc --noEmit && bun run test`
