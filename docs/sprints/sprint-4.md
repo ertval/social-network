@@ -8,6 +8,7 @@
 
 ### S4-BE-60: Wire Group & Event bootstrap routes
 * **Priority:** P0
+* **Type:** Cleanup/Integration (Bootstrap slice wiring)
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S4-BE-74, S4-BE-75, S4-BE-82
@@ -24,6 +25,7 @@
 
 ### S4-BE-61: Group: Entities & Repository Interface
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Establish domain model entities mapping group lifecycles.
@@ -38,6 +40,7 @@
 
 ### S4-BE-62: Group: SQLite Store
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-61, S4-SD-16
@@ -50,6 +53,7 @@
 
 ### S4-BE-63: Group: Create Group Command
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -63,6 +67,7 @@
 
 ### S4-BE-64: Group: Invite Member Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-61
@@ -78,6 +83,7 @@
 
 ### S4-BE-65: Group: Respond Invite Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-64
@@ -91,6 +97,7 @@
 
 ### S4-BE-66: Group: Request Join Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -103,6 +110,7 @@
 
 ### S4-BE-67: Group: Respond Join Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-66
@@ -116,6 +124,7 @@
 
 ### S4-BE-68: Group: Create Post Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-61
@@ -128,6 +137,7 @@
 
 ### S4-BE-69: Group: Send Group Message Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-61
@@ -140,6 +150,7 @@
 
 ### S4-BE-70: Group: List Groups Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -152,6 +163,7 @@
 
 ### S4-BE-71: Group: Get Group Detail Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -164,6 +176,7 @@
 
 ### S4-BE-72: Group: Get Group Feed Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -176,6 +189,7 @@
 
 ### S4-BE-73: Group: Get Group Chat History Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
@@ -188,6 +202,7 @@
 
 ### S4-BE-74: Group: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-63..13
@@ -211,6 +226,7 @@
 
 ### S4-BE-75: Group: WS Transport Routing
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-74
@@ -223,6 +239,7 @@
 
 ### S4-BE-76: Group: Post Comments (Gap Fix)
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Group system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S4-BE-68
@@ -240,6 +257,7 @@
 
 ### S4-BE-77: Event: Entities & Repository Interface
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Establish domain structures for events and RSVP votes. Use separate `Option` entity per the architecture spec for extensibility (e.g. adding "maybe" later).
@@ -251,6 +269,7 @@
 
 ### S4-BE-78: Event: SQLite Store
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S4-BE-77, S4-SD-16
@@ -263,6 +282,7 @@
 
 ### S4-BE-79: Event: Create Event Command
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S4-BE-77
@@ -278,6 +298,7 @@
 
 ### S4-BE-80: Event: RSVP Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S4-BE-77
@@ -290,6 +311,7 @@
 
 ### S4-BE-81: Event: List Group Events Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S4-BE-77
@@ -302,6 +324,7 @@
 
 ### S4-BE-82: Event: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S4-BE-79..20
@@ -317,6 +340,7 @@
 
 ### S4-FE-20: Groups Directory Page
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Build list view browsing all existing groups.
@@ -328,6 +352,7 @@
 
 ### S4-FE-21: Group Profile Page
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Build view rendering group headers details, owner controls panel, and join toggle buttons.
@@ -340,6 +365,7 @@
 
 ### S4-FE-22: Group Posts Feed
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Render posts list cards inside group profile views.
@@ -352,6 +378,7 @@
 
 ### S4-FE-23: Group Chat Workspace
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Interactive instant message container workspace inside groups profile page.
@@ -365,6 +392,7 @@
 
 ### S4-FE-24: Event Creation Dialog
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Form overlay allowing group members to schedule events.
@@ -376,6 +404,7 @@
 
 ### S4-FE-25: Events List Component
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Render events widgets.
@@ -387,6 +416,7 @@
 
 ### S4-FE-26: RSVP Switch Actions
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 2
 * **Description:** Selection checkboxes on events card showing going/not going toggling.
@@ -398,6 +428,7 @@
 
 ### S4-FE-27: Group: Comment Components (Gap Fix)
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Dependencies:** S4-FE-22
@@ -413,6 +444,7 @@
 
 ### S4-SD-16: Platform: Group & Event Migrations (000005 & 000006)
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - DB Migrations)
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-06
@@ -428,6 +460,7 @@
 
 ### S4-SD-17: E2E: Complete Groups Workspace Journey
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 5
 * **Dependencies:** S4-BE-60

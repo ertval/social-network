@@ -16,6 +16,7 @@
 
 ### S6-BE-100: Clean Legacy Slices: Domain
 * **Priority:** P1
+* **Type:** Cleanup/Integration
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Safe removal of obsolete `internal/domain/` subfolders.
@@ -27,6 +28,7 @@
 
 ### S6-BE-101: Clean Legacy Slices: App
 * **Priority:** P1
+* **Type:** Cleanup/Integration
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Safe removal of obsolete `internal/app/` subfolders.
@@ -40,6 +42,7 @@
 
 ### S6-BE-102: Clean Legacy Slices: Infra
 * **Priority:** P1
+* **Type:** Cleanup/Integration
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Safe removal of obsolete `internal/infra/` HTTP handlers and repositories.
@@ -53,6 +56,7 @@
 
 ### S6-BE-103: Bootstrap Wiring
 * **Priority:** P0
+* **Type:** Cleanup/Integration
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 5
 * **Dependencies:** S6-BE-100..03
@@ -72,6 +76,7 @@
 
 ### S6-FE-33: Responsive Design Check
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Audit layouts across different viewports.
@@ -85,6 +90,7 @@
 
 ### S6-FE-34: Components Error Boundaries & Loading States
 * **Priority:** P1
+* **Type:** Cleanup/Integration (Frontend error boundaries & skeleton states)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Build fallback components and loading skeletons for async cards.
@@ -98,6 +104,7 @@
 
 ### S6-FE-35: Production Build Validation
 * **Priority:** P1
+* **Type:** Testing/Verification (Production build validation)
 * **Assignee:** FE-A + FE-B
 * **Story Points:** 5
 * **Description:** Build production bundle and execute smoke tests.
@@ -111,6 +118,7 @@
 
 ### S6-SD-22: Full Integration Test Suite
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 5
 * **Dependencies:** S6-BE-103
@@ -123,6 +131,7 @@
 
 ### S6-SD-23: Performance Benchmarks
 * **Priority:** P2
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Profile critical pathways (Home feed, logins, messaging).
@@ -134,6 +143,7 @@
 
 ### S6-SD-24: Vertical Slice Boundary Checks
 * **Priority:** P2
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Description:** Automate analysis verifying slice isolation rules (e.g. no direct imports between feature stores/transports).
@@ -145,6 +155,7 @@
 
 ### S6-SD-25: Audit.md Automation Test Suite (Gap Fix)
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 4
 * **Dependencies:** S6-SD-22
@@ -163,6 +174,7 @@
 
 ### S6-SD-31: Full E2E Test Suite
 * **Priority:** P0
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 8
 * **Description:** Implement Playwright automated test scripts checking standard user workflows.
@@ -174,6 +186,7 @@
 
 ### S6-SD-32: Accessibility (a11y) Audit
 * **Priority:** P2
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Check keyboard navigation and screen-reader mappings.
@@ -185,6 +198,7 @@
 
 ### S6-SD-33: Frontend Performance Audits
 * **Priority:** P2
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Audit bundles sizes and check asset loading.
@@ -196,6 +210,7 @@
 
 ### S6-SD-34: E2E Audit.md Playwright Suite (Gap Fix)
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 4
 * **Dependencies:** S6-SD-31
@@ -215,6 +230,7 @@
 
 ### S6-SD-26: Production Docker Setup
 * **Priority:** P1
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 5
 * **Description:** Audit and rewrite the existing Docker setup (`Dockerfile`, `docker-compose.yml`, etc.) from single-service to two-service architecture per Phase 7 of the architecture plan.
@@ -229,6 +245,7 @@
 
 ### S6-SD-27: Health Check Endpoints
 * **Priority:** P2
+* **Type:** Greenfield (New Module/Feature - Health/readiness probes)
 * **Assignee:** SD-QA
 * **Story Points:** 1
 * **Description:** Create probes reporting status.
@@ -240,6 +257,7 @@
 
 ### S6-SD-28: Graceful Server Shutdowns
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Graceful server shutdown handlers)
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Description:** Handle SIGTERM system signals.
@@ -251,6 +269,7 @@
 
 ### S6-SD-29: Twelve-Factor Configurations Mappings
 * **Priority:** P2
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S6-BE-102 (old code must be gone before env var rename)
@@ -265,6 +284,7 @@
 
 ### S6-SD-30: Docker Smoke Verification Script
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S6-SD-26

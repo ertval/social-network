@@ -8,6 +8,7 @@
 
 ### S1-BE-05: Platform: DB Factory
 * **Priority:** P0 (Prerequisite for migrations and features)
+* **Type:** Greenfield (New Module/Feature - Platform Abstraction)
 * **Assignee:** BE-A
 * **Story Points:** 5
 * **Dependencies:** Sprint 0
@@ -25,6 +26,7 @@
 
 ### S1-BE-06: Custom Migration System
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Platform Abstraction)
 * **Assignee:** BE-A
 * **Story Points:** 8
 * **Dependencies:** S1-BE-05
@@ -42,6 +44,7 @@
 
 ### S1-BE-07: Core: Session Management
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S1-BE-05
@@ -56,6 +59,7 @@
 
 ### S1-BE-08: Core: Middlewares
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S1-BE-07, S1-BE-11
@@ -72,6 +76,7 @@
 
 ### S1-BE-09: Shared: Image Type Verification Utility
 * **Priority:** P2
+* **Type:** Greenfield (New Module/Feature - Utility)
 * **Assignee:** BE-A
 * **Story Points:** 1
 * **Description:** Add helper to verify image mime types using Magic Bytes headers.
@@ -86,6 +91,7 @@
 
 ### S1-BE-10: Platform: Event Bus
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Platform Abstraction)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Description:** Create the Event Bus interface and an in-process, channel-based implementation for async cross-slice notifications.
@@ -101,6 +107,7 @@
 
 ### S1-BE-11: Platform: Cache
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Platform Abstraction)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Build the caching system interface and a concurrent-safe memory map implementation.
@@ -114,6 +121,7 @@
 
 ### S1-BE-12: Core: Realtime WebSocket Hub
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 5
 * **Description:** Setup the real-time WebSocket connection manager (Hub + Clients) for messaging and notification pushes.
@@ -129,6 +137,7 @@
 
 ### S1-BE-13: Core: HTTP Server Bootstrap
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S1-BE-12, S1-BE-08
@@ -146,6 +155,7 @@
 
 ### S1-FE-03: Auth Pages (Login & Registration UI)
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI - Next.js)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Implement complete interactive screens for Login and Registration according to strict spec fields.
@@ -159,6 +169,7 @@
 
 ### S1-FE-04: API Client Wrapper
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend Module)
 * **Assignee:** FE-A
 * **Story Points:** 2
 * **Description:** Set up custom fetch API wrapper with automatic session cookies and global error parsing.
@@ -174,6 +185,7 @@
 
 ### S1-FE-05: Nav Layout Shell
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI - Next.js)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Finalize layout navigation, responsive states, and design theme provider.
@@ -189,6 +201,7 @@
 
 ### S1-SD-05: Platform: Database Seeding (Gap Fix)
 * **Priority:** P2
+* **Type:** Greenfield (New Module/Feature - Platform Seeding)
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-06
@@ -207,6 +220,7 @@
 
 ### S1-SD-06: API Mocking Service
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend Module - Testing)
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S1-FE-04

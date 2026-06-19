@@ -12,6 +12,7 @@
 
 ### S3-BE-59: Wire Follow, Comment & Notification bootstrap routes
 * **Priority:** P0
+* **Type:** Cleanup/Integration (Bootstrap slice wiring)
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-45, S3-BE-50, S3-BE-57
@@ -28,6 +29,7 @@
 
 ### S3-BE-35: Follow: Entities & Repository Interface
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Define domain entity shapes for follower links and pending follow requests.
@@ -41,6 +43,7 @@
 
 ### S3-BE-36: Follow: SQLite Store
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-35
@@ -54,6 +57,7 @@
 
 ### S3-BE-37: Follow: Follow User Command
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-35
@@ -69,6 +73,7 @@
 
 ### S3-BE-38: Follow: Unfollow User Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
@@ -81,6 +86,7 @@
 
 ### S3-BE-39: Follow: Accept Request Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-37
@@ -94,6 +100,7 @@
 
 ### S3-BE-40: Follow: Decline Request Command
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 1
 * **Dependencies:** S3-BE-37
@@ -106,6 +113,7 @@
 
 ### S3-BE-41: Follow: Get Followers Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
@@ -118,6 +126,7 @@
 
 ### S3-BE-42: Follow: Get Following Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
@@ -130,6 +139,7 @@
 
 ### S3-BE-43: Follow: Get Pending Requests Query
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
@@ -142,6 +152,7 @@
 
 ### S3-BE-44: Follow: Are Connected Query
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S3-BE-35
@@ -154,6 +165,7 @@
 
 ### S3-BE-45: Follow: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S3-BE-37..10
@@ -169,6 +181,7 @@
 
 ### S3-BE-46: Comment: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Define domain entity shapes for post comments.
@@ -182,6 +195,7 @@
 
 ### S3-BE-47: Comment: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
@@ -194,6 +208,7 @@
 
 ### S3-BE-48: Comment: Create Comment Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
@@ -207,6 +222,7 @@
 
 ### S3-BE-49: Comment: Get Comments Query
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S3-BE-46
@@ -219,6 +235,7 @@
 
 ### S3-BE-50: Comment: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-48, S3-BE-49
@@ -232,6 +249,7 @@
 
 ### S3-BE-52: Notification: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Define domain model entities mapping notifications.
@@ -244,6 +262,7 @@
 
 ### S3-BE-53: Notification: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
@@ -256,6 +275,7 @@
 
 ### S3-BE-54: Notification: Event Bus Consumer
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
@@ -270,6 +290,7 @@
 
 ### S3-BE-55: Notification: Mark Read Command
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Dependencies:** S3-BE-52
@@ -282,6 +303,7 @@
 
 ### S3-BE-56: Notification: List Notifications Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S3-BE-52
@@ -294,6 +316,7 @@
 
 ### S3-BE-57: Notification: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-54..23
@@ -308,6 +331,7 @@
 
 ### S3-BE-58: Notification: Old Schema→New Schema Migration
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-52
@@ -322,6 +346,7 @@
 
 ### S3-BE-51: Comment: Cast Vote Command & Queries (Gap Fix)
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S3-BE-46
@@ -338,6 +363,7 @@
 
 ### S3-FE-13: Follow Button with Popup
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Interactive toggle button with popup confirmation before unfollowing a user.
@@ -351,6 +377,7 @@
 
 ### S3-FE-14: Followers List Pages
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Build lists of followers and following links on the profile view.
@@ -362,6 +389,7 @@
 
 ### S3-FE-15: Follow Request Notifications
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Render inline accept/decline action items for follow requests.
@@ -375,6 +403,7 @@
 
 ### S3-FE-16: Comment Section Components
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 5
 * **Description:** Build comment listing and text entry component featuring image attachment upload.
@@ -387,6 +416,7 @@
 
 ### S3-FE-17: Notifications Panel
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Build UI panel displaying unread count badges in navigation bars.
@@ -398,6 +428,7 @@
 
 ### S3-FE-18: Notifications Live Stream
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Implement Server-Sent Events (SSE) notification streaming connection.
@@ -411,6 +442,7 @@
 
 ### S3-FE-19: Comment Card Vote Buttons (Gap Fix)
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 2
 * **Dependencies:** S3-FE-16
@@ -425,6 +457,7 @@
 
 ### S3-SD-11: Follow: Event Publishing Verification
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S3-BE-37..06
@@ -438,6 +471,7 @@
 
 ### S3-SD-12: Comment Slice: Contract Tests
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S3-BE-50
@@ -450,6 +484,7 @@
 
 ### S3-SD-13: Platform: Follow System Migrations (000004)
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - DB Migrations)
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-06
@@ -463,6 +498,7 @@
 
 ### S3-SD-14: E2E: Relationships Notifications Flow
 * **Priority:** P0
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** E2E testing of relationship workflows.
@@ -474,6 +510,7 @@
 
 ### S3-SD-15: E2E: Posts Comments Notification Flow
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Description:** E2E testing of commenting actions.

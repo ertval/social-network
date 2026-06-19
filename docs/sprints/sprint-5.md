@@ -8,6 +8,7 @@
 
 ### S5-BE-83: Wire Chat & OAuth bootstrap routes
 * **Priority:** P0
+* **Type:** Cleanup/Integration (Bootstrap slice wiring)
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S5-BE-89, S5-BE-90, S5-BE-96
@@ -24,6 +25,7 @@
 
 ### S5-BE-84: Chat: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Establish domain structures mapping messaging records.
@@ -37,6 +39,7 @@
 
 ### S5-BE-85: Chat: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S5-BE-84, S5-BE-91
@@ -49,6 +52,7 @@
 
 ### S5-BE-86: Chat: Send Private Message Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S5-BE-84
@@ -63,6 +67,7 @@
 
 ### S5-BE-87: Chat: Get Chat History Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S5-BE-84
@@ -75,6 +80,7 @@
 
 ### S5-BE-88: Chat: List Conversations Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S5-BE-84
@@ -87,6 +93,7 @@
 
 ### S5-BE-89: Chat: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S5-BE-86..05
@@ -100,6 +107,7 @@
 
 ### S5-BE-90: Chat: WS Transport Routing
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 5
 * **Dependencies:** S5-BE-89
@@ -116,6 +124,7 @@
 
 ### S5-BE-92: OAuth: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Description:** Establish domain structures to validate third-party tokens state hashes.
@@ -127,6 +136,7 @@
 
 ### S5-BE-93: OAuth: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Dependencies:** S5-BE-92
@@ -139,6 +149,7 @@
 
 ### S5-BE-94: OAuth: Initiate Login Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S5-BE-92
@@ -152,6 +163,7 @@
 
 ### S5-BE-95: OAuth: Callback Processor Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S5-BE-92
@@ -168,6 +180,7 @@
 
 ### S5-BE-96: OAuth: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S5-BE-94, S5-BE-95
@@ -180,6 +193,7 @@
 
 ### S5-BE-97: OAuth Client: GitHub Implementation
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S5-BE-99
@@ -193,6 +207,7 @@
 
 ### S5-BE-98: OAuth Client: Google Implementation
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S5-BE-99
@@ -206,6 +221,7 @@
 
 ### S5-BE-99: Shared: Refactor OAuth Packages
 * **Priority:** P0 (Prerequisite for S5-BE-97/15)
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
 * **Dependencies:** Sprint 0
@@ -220,6 +236,7 @@
 
 ### S5-BE-91: Platform: Chat Migrations (Gap Fix)
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S1-BE-06
@@ -235,6 +252,7 @@
 
 ### S5-FE-28: Chat Feed View
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Implement direct messaging workspace `/chat` displaying conversational partner threads list and chats panel view.
@@ -246,6 +264,7 @@
 
 ### S5-FE-29: Realtime Live Sockets Hook
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Dependencies:** S5-FE-28
@@ -261,6 +280,7 @@
 
 ### S5-FE-30: Chat Message Bubble Component
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 2
 * **Dependencies:** S5-FE-28
@@ -275,6 +295,7 @@
 
 ### S5-FE-31: GitHub OAuth Button Integration
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Implement GitHub button mapping clicks to initiation pathways.
@@ -286,6 +307,7 @@
 
 ### S5-FE-32: Google OAuth Button Integration
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Dependencies:** S5-FE-31
@@ -300,6 +322,7 @@
 
 ### S5-SD-18: Chat Slice: Contract Tests
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S5-BE-90
@@ -312,6 +335,7 @@
 
 ### S5-SD-19: OAuth Slice: Contract Tests
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S5-BE-96
@@ -324,6 +348,7 @@
 
 ### S5-SD-20: E2E: Messaging Real-Time Delivery Journey
 * **Priority:** P0
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S5-FE-29
@@ -336,6 +361,7 @@
 
 ### S5-SD-21: E2E: GitHub OAuth Sign In
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S5-FE-31

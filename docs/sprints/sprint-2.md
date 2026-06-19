@@ -10,6 +10,7 @@
 
 ### S2-BE-14: Wire User & Topic bootstrap routes
 * **Priority:** P0
+* **Type:** Cleanup/Integration (Bootstrap slice wiring)
 * **Assignee:** BE-A + BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-25, S2-BE-34
@@ -26,6 +27,7 @@
 
 ### S2-BE-15: User: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Description:** Define the domain entity model for User and the repository interface mapping SQLite operations. Absorbs old `internal/domain/activity/` — user's activity (post counts, follower counts) becomes a query on user data.
@@ -39,6 +41,7 @@
 
 ### S2-BE-16: User: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S2-BE-15
@@ -53,6 +56,7 @@
 
 ### S2-BE-17: User: Register Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S2-BE-15
@@ -67,6 +71,7 @@
 
 ### S2-BE-18: User: Login Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-15
@@ -81,6 +86,7 @@
 
 ### S2-BE-19: User: Logout Command
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 1
 * **Dependencies:** S2-BE-15
@@ -94,6 +100,7 @@
 
 ### S2-BE-20: User: Update Profile Command
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-15
@@ -107,6 +114,7 @@
 
 ### S2-BE-21: User: Toggle Privacy Command
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-15
@@ -120,6 +128,7 @@
 
 ### S2-BE-22: User: Get Profile Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S2-BE-15
@@ -136,6 +145,7 @@
 
 ### S2-BE-23: User: Get Activity Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-15
@@ -150,6 +160,7 @@
 
 ### S2-BE-24: User: List Users Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S2-BE-15
@@ -163,6 +174,7 @@
 
 ### S2-BE-25: User: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S2-BE-17..10
@@ -178,6 +190,7 @@
 
 ### S2-BE-26: Topic: Entity & Repository Interface
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Description:** Define domain entity model for posts/topics, visibility scopes, and votes. Topic absorbs the old `internal/domain/category/` and `internal/domain/vote/` domains. Category entities from the old code are merged directly into Topic as a visibility aspect or replaced by the `Visibility` enum; votes are modeled directly inside the Topic slice.
@@ -193,6 +206,7 @@
 
 ### S2-BE-27: Topic: SQLite Store
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-26
@@ -207,6 +221,7 @@
 
 ### S2-BE-28: Topic: Create Topic Command
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-26
@@ -221,6 +236,7 @@
 
 ### S2-BE-29: Topic: Cast Vote Command
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S2-BE-26
@@ -234,6 +250,7 @@
 
 ### S2-BE-30: Topic: Get Feed Query
 * **Priority:** P0
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 5
 * **Dependencies:** S2-BE-26
@@ -253,6 +270,7 @@
 
 ### S2-BE-31: Topic: Get User Topics Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S2-BE-26
@@ -265,6 +283,7 @@
 
 ### S2-BE-32: Topic: Get Topic Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S2-BE-26
@@ -277,6 +296,7 @@
 
 ### S2-BE-33: Topic: Get Votes Query
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S2-BE-26
@@ -289,6 +309,7 @@
 
 ### S2-BE-34: Topic: HTTP Transport Routing
 * **Priority:** P1
+* **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S2-BE-28..20
@@ -304,6 +325,7 @@
 
 ### S2-FE-06: Registration Form
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Implement registration form details, image file selection, and payload submissions.
@@ -317,6 +339,7 @@
 
 ### S2-FE-07: Login Page
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 3
 * **Description:** Complete login page layout and credentials request mapping.
@@ -328,6 +351,7 @@
 
 ### S2-FE-08: Profile Page
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Implement `/profile/[id]` layout with follower tallies, user activity posts feed, and private lock screens.
@@ -341,6 +365,7 @@
 
 ### S2-FE-09: Privacy Toggle with Confirmation Popup (Bonus)
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 2
 * **Description:** Build privacy toggle switch with confirmation dialog box before updating state.
@@ -355,6 +380,7 @@
 
 ### S2-FE-10: Home Feed Page
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 5
 * **Description:** Build the main feed page with infinite scroll loading or pagination.
@@ -366,6 +392,7 @@
 
 ### S2-FE-11: Post Creation Form
 * **Priority:** P0
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 5
 * **Description:** Build post creation UI container with image file attachment selector and visibility settings.
@@ -378,6 +405,7 @@
 
 ### S2-FE-12: Post Card Component
 * **Priority:** P1
+* **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Description:** Render feed post item.
@@ -391,6 +419,7 @@
 
 ### S2-SD-07: User Slice: Migration Verification Contract Tests
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01 (old repo exists), S2-BE-25 (new slice for verification)
@@ -405,6 +434,7 @@
 
 ### S2-SD-08: Topic Slice: Migration Verification Contract Tests
 * **Priority:** P1
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01 (old repo exists), S2-BE-34 (new slice for verification)
@@ -418,6 +448,7 @@
 
 ### S2-SD-10: E2E: User Signup to Feed Journey
 * **Priority:** P0
+* **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Description:** Core integration Playwright test validating registration, login, and posting to feed.
@@ -429,6 +460,7 @@
 
 ### S2-SD-09: Platform: User & Topic Migrations (000002 & 000003)
 * **Priority:** P0
+* **Type:** Greenfield (New Module/Feature - DB Migrations)
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S1-BE-06
