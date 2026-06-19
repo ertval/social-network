@@ -29,7 +29,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S0-FE-02:** shadcn/ui Components + Layout
 
 ### SD-QA (System Design/QA)
-- [ ] **S0-SD-01:** golangci-lint Config
+- [x] **S0-SD-01:** golangci-lint Config
 - [ ] **S0-SD-02:** Docker Compose Development Environment
 - [ ] **S0-SD-03:** Pre-commit Hooks
 - [x] **S0-SD-04:** Dev Environment Docs
