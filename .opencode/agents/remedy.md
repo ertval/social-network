@@ -30,7 +30,7 @@ permission:
     "*": deny
 ---
 
-## pr-fix
+## remedy
 
 Reads the ticket-scoped PR review report and applies surgical fixes to resolve Critical, Warning, Suggestion, and Recommendation findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
 

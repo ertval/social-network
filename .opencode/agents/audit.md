@@ -33,7 +33,7 @@ permission:
     "*": deny
 ---
 
-## pr-review
+## audit
 
 Performs a 5-phase automated PR review: deterministic gates, conventions compliance, code analysis, adversarial validation, and report synthesis. Saves the report to `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md`.
 
@@ -81,7 +81,7 @@ Analyze the diff (`git diff main..HEAD`) across 5 dimensions:
 Verify each finding's file path and line numbers against actual file content. Filter hallucinations. De-duplicate. Remove false positives.
 
 ### Phase 5: Report
-Write the final report to `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` using the schema from `.agents/prompts/pr-review.md`. Include a dedicated `Conventions Compliance Matrix` that covers every numbered section of `.agents/rules/conventions.md` and the D1-D6 rules explicitly.
+Write the final report to `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` using the schema from `.agents/prompts/audit.md`. Include a dedicated `Conventions Compliance Matrix` that covers every numbered section of `.agents/rules/conventions.md` and the D1-D6 rules explicitly.
 
 ## Output:
 The review report with an overall status: `APPROVED`, `PASS WITH RECOMMENDATIONS`, or `CHANGES REQUESTED`.

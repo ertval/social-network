@@ -1,6 +1,6 @@
 # 🤖 Automated PR Review System Prompt & Instructions
 
-This document defines the instructions and execution logic for the **PR Review Orchestrator Agent** and its specialized **Subagents**. It is designed to perform a thorough, automated, multi-layered code review of pull requests in this repository.
+This document defines the instructions and execution logic for the **PR Audit Orchestrator Agent** and its specialized **Subagents**. It is designed to perform a thorough, automated, multi-layered code review of pull requests in this repository.
 
 ---
 

@@ -11,9 +11,9 @@ description: Take a ticket ID from `docs/sprints/ticket-tracker.md` or a reposit
 ```mermaid
 graph TD
     Input[Input: Ticket ID or Issue Number] --> Locate[Locate Ticket or Fetch Issue from Remote]
-    Locate --> Implement[Subagent: pr-implement]
-    Implement --> Review[Subagent: pr-review]
-    Review -->|Pass| CreatePR[Subagent: pr-create]
+    Locate --> Implement[Subagent: forge]
+    Implement --> Review[Subagent: audit]
+    Review -->|Pass| CreatePR[Subagent: publish]
     Review -->|Fail| Fix[Subagent: fix issues from review]
     Fix --> Review
 ```
@@ -42,11 +42,11 @@ Either:
 
 ---
 
-### Phase 1: Implement (pr-implement subagent)
+### Phase 1: Implement (forge subagent)
 Dispatch a subagent with the command:
 
 ```
-Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TICKET_ID> or issue <ISSUE_ID>.
+Follow the workflow in .agents/workflows/forge.md to implement ticket <TICKET_ID> or issue <ISSUE_ID>.
 ```
 
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
@@ -57,11 +57,11 @@ This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → 
 
 ---
 
-### Phase 2: Review (pr-review subagent)
+### Phase 2: Review (audit subagent)
 Dispatch a subagent with the command:
 
 ```
-Follow the prompt in .agents/prompts/pr-review.md to review the current branch (<branch-name>) against ticket <TICKET_ID> or issue <ISSUE_ID>.
+Follow the prompt in .agents/prompts/audit.md to review the current branch (<branch-name>) against ticket <TICKET_ID> or issue <ISSUE_ID>.
 Verify all checks from .agents/rules/conventions.md (D2-D5 boundaries, SQLite, TDD, security, frontend build gates).
 Run all deterministic gates (make ci). Perform the full 4-phase review pipeline.
 Save the report to docs/reviews/PR_<TICKET_ID_OR_ISSUE_ID>_REVIEW_REPORT.md.
@@ -90,11 +90,11 @@ After the fix subagent completes, **go back to Phase 2** (re-run review).
 
 ---
 
-### Phase 4: Create PR (pr-create subagent)
+### Phase 4: Create PR (publish subagent)
 Dispatch a subagent with the command:
 
 ```
-Follow the workflow in .agents/workflows/pr-create.md to verify, draft, and publish the PR for branch <branch-name> matching ticket <TICKET_ID> or issue <ISSUE_ID>.
+Follow the workflow in .agents/workflows/publish.md to verify, draft, and publish the PR for branch <branch-name> matching ticket <TICKET_ID> or issue <ISSUE_ID>.
 ```
 
 This subagent verifies branch/convention rules, drafts the PR description to `.git/PR_DESCRIPTION.md` (including `Closes #<ISSUE_ID>` if referencing an issue), pushes the branch, and publishes the PR via `tea` CLI with all repo collaborators as reviewers.

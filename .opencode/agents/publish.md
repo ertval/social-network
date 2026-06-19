@@ -32,7 +32,7 @@ permission:
     "*": deny
 ---
 
-## pr-create
+## publish
 
 Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.
 
@@ -44,7 +44,7 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ## Your job (5 phases):
 
 ### Phase 1: Branch & Commit Integrity
-- Read `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` first. If the latest status is not `APPROVED` (or `PASS WITH RECOMMENDATIONS` after exhausted fix cycles), and any Critical/Warning finding remains, stop and report that `ticket-to-pr` must run `pr-fix`/`pr-review` again.
+- Read `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` first. If the latest status is not `APPROVED` (or `PASS WITH RECOMMENDATIONS` after exhausted fix cycles), and any Critical/Warning finding remains, stop and report that `flowmaster` must run `remedy`/`audit` again.
 - Verify branch name matches `<username>/<ticket/issue-ID>-<detail>` convention.
 - Verify commits follow Conventional Commits format with allowed scopes from conventions.md §6.
 - Ensure branch is rebased on main (no merge commits from main).

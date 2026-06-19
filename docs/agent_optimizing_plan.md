@@ -41,7 +41,7 @@ Add section tags as HTML comments at the start of each section group:
 ...
 <!-- @section:rules-ci:end -->
 
-<!-- @section:rules-git — Branch naming, commits, PRs (needed by pr-create) -->
+<!-- @section:rules-git — Branch naming, commits, PRs (needed by publish) -->
 ## 9. Git & PRs
 ...
 <!-- @section:rules-git:end -->
@@ -59,10 +59,10 @@ Add section tags as HTML comments at the start of each section group:
 
 | Agent | Context Files | Sections to Focus | Tokens (~) |
 |-------|--------------|-------------------|-----------|
-| `pr-fix` | `conventions.md` | `rules-core` only | ~1,200 |
-| `pr-review` | `conventions.md` | all sections | ~1,200 |
-| `pr-implement` | `conventions.md`, `AGENTS.md` §1-§4 | `rules-core` + `rules-ci` | ~2,100 |
-| `pr-create` | `conventions.md` | `rules-git` + `rules-dod` | ~1,200 |
+| `remedy` | `conventions.md` | `rules-core` only | ~1,200 |
+| `audit` | `conventions.md` | all sections | ~1,200 |
+| `forge` | `conventions.md`, `AGENTS.md` §1-§4 | `rules-core` + `rules-ci` | ~2,100 |
+| `publish` | `conventions.md` | `rules-git` + `rules-dod` | ~1,200 |
 | `review-gates` | none (runs scripts) | — | 0 |
 | `review-conventions` | `conventions.md` | all sections | ~1,200 |
 | `review-analysis` | `conventions.md` | `rules-core` only | ~1,200 |
@@ -76,7 +76,7 @@ Add section tags as HTML comments at the start of each section group:
 
 #### Concrete Changes to Agent Files
 
-##### [MODIFY] [pr-fix.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/pr-fix.md)
+##### [MODIFY] [remedy.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/remedy.md)
 
 ```diff
  ## Context Files (read before fixing):
@@ -89,7 +89,7 @@ Add section tags as HTML comments at the start of each section group:
 +- `.agents/rules/conventions.md` — focus on `@section:rules-core` (D1-D6, security, TDD)
 ```
 
-##### [MODIFY] [pr-implement.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/pr-implement.md)
+##### [MODIFY] [forge.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/forge.md)
 
 ```diff
  ## Context Files (read during Research phase):
@@ -101,7 +101,7 @@ Add section tags as HTML comments at the start of each section group:
 +- `AGENTS.md` — §1-§4 only (Think, Simplicity, Surgical, Goal-Driven)
 ```
 
-##### [MODIFY] [pr-review.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/pr-review.md)
+##### [MODIFY] [audit.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/audit.md)
 
 ```diff
  ## Context Files (read at the start of every review):
@@ -125,19 +125,19 @@ OpenCode **does** support nested subagent spawning (subagent → subagent), but:
 
 ### Decision: Flat Fan-Out From Orchestrator
 
-Instead of nested spawning (`ticket-to-pr` → `pr-review` → `review-gates`), use a **flat hierarchy** where `ticket-to-pr` orchestrates ALL agents directly:
+Instead of nested spawning (`flowmaster` → `audit` → `review-gates`), use a **flat hierarchy** where `flowmaster` orchestrates ALL agents directly:
 
 ```mermaid
 graph TD
-    TTP["ticket-to-pr (orchestrator, mode: primary)"]
+    TTP["flowmaster (orchestrator, mode: primary)"]
     
     TTP -->|"1"| IR["impl-research (subagent)"]
     TTP -->|"2"| IC["impl-code (subagent)"]
     TTP -->|"3"| RG["review-gates (subagent)"]
     TTP -->|"4"| RC["review-conventions (subagent)"]  
     TTP -->|"5"| RA["review-analysis (subagent)"]
-    TTP -->|"6"| PF["pr-fix (subagent)"]
-    TTP -->|"7"| PC["pr-create (subagent)"]
+    TTP -->|"6"| PF["remedy (subagent)"]
+    TTP -->|"7"| PC["publish (subagent)"]
     
     IR -->|"research.md + plan.md"| TTP
     IC -->|"FILES_CHANGED, TESTS, GATES"| TTP
@@ -152,15 +152,15 @@ graph TD
 
 | Aspect | Before (5 agents, nested for review) | After (7 agents, flat) |
 |--------|--------------------------------------|------------------------|
-| Review context | pr-review loads everything, does 5 phases in one context window | 3 specialized agents, each with fresh context |
+| Review context | audit loads everything, does 5 phases in one context window | 3 specialized agents, each with fresh context |
 | Implement context | Single agent does research + plan + code + validate | Research agent explores freely; code agent starts clean with plan |
 | Orchestrator complexity | Simple loop: implement → review → fix | Slightly more steps, but each step is smaller |
 | Debugging | Hard to tell if review failed at gates, conventions, or analysis | Each subagent returns structured data; failure point is obvious |
-| Token cost | pr-review burns ~50 steps with bloated context | review-gates: ~5 steps (shell only), review-conventions: ~15 steps, review-analysis: ~15 steps |
+| Token cost | audit burns ~50 steps with bloated context | review-gates: ~5 steps (shell only), review-conventions: ~15 steps, review-analysis: ~15 steps |
 
 ### New Agent Files
 
-All existing subagents keep `task: {"*": deny}` — no agent spawns another. Only `ticket-to-pr` has `task: {"*": allow}`.
+All existing subagents keep `task: {"*": deny}` — no agent spawns another. Only `flowmaster` has `task: {"*": allow}`.
 
 #### [NEW] [impl-research.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/impl-research.md)
 
@@ -336,9 +336,9 @@ permission:
 **Context**: `.agents/rules/conventions.md` (rules-core only), diff output, gate results summary
 **Output**: Findings list (severity, file, line, message) with adversarial self-validation
 
-#### [MODIFY] [ticket-to-pr.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/ticket-to-pr.md) — Updated Orchestration
+#### [MODIFY] [flowmaster.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/flowmaster.md) — Updated Orchestration
 
-The new flow in `ticket-to-pr`:
+The new flow in `flowmaster`:
 
 ```
 1. Locate ticket in ticket-tracker.md, read sprint spec.
@@ -347,21 +347,21 @@ The new flow in `ticket-to-pr`:
 
 Review loop (max 3 cycles):
 4. Spawn review-gates → receives JSON gate results
-   - If gates FAIL → spawn pr-fix → loop to step 4
+   - If gates FAIL → spawn remedy → loop to step 4
 5. Spawn review-conventions → receives compliance matrix
 6. Spawn review-analysis → receives findings list
 7. Synthesize report into docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md
-   - If CHANGES REQUESTED → spawn pr-fix → loop to step 4
+   - If CHANGES REQUESTED → spawn remedy → loop to step 4
    - If PASS WITH RECOMMENDATIONS after 3 cycles → proceed
 
-8. Spawn pr-create → receives PR_URL
+8. Spawn publish → receives PR_URL
 ```
 
-#### [DELETE] [pr-implement.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/pr-implement.md)
+#### [DELETE] [forge.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/forge.md)
 
 Replaced by `impl-research.md` + `impl-code.md`.
 
-#### [DELETE] [pr-review.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/pr-review.md)
+#### [DELETE] [audit.md](file:///home/ertval/code/zone-modules/social-network/.opencode/agents/audit.md)
 
 Replaced by `review-gates.md` + `review-conventions.md` + `review-analysis.md`.
 
@@ -660,7 +660,7 @@ The `review-gates` subagent runs:
 make ci && make review-gates
 ```
 
-It captures the JSON output and returns it as a structured result. The orchestrator (`ticket-to-pr`) passes the gate results to `review-conventions` and `review-analysis` so they skip re-checking what gates already covered.
+It captures the JSON output and returns it as a structured result. The orchestrator (`flowmaster`) passes the gate results to `review-conventions` and `review-analysis` so they skip re-checking what gates already covered.
 
 ### What the LLM Still Does (Cannot Be Automated)
 
@@ -693,9 +693,9 @@ It captures the JSON output and returns it as a structured result. The orchestra
 | File | Change |
 |------|--------|
 | `.agents/rules/conventions.md` | Add section tags |
-| `.opencode/agents/pr-fix.md` | Slim context list |
-| `.opencode/agents/ticket-to-pr.md` | New 7-agent flat orchestration flow |
-| `.opencode/agents/pr-create.md` | Slim context list (minor) |
+| `.opencode/agents/remedy.md` | Slim context list |
+| `.opencode/agents/flowmaster.md` | New 7-agent flat orchestration flow |
+| `.opencode/agents/publish.md` | Slim context list (minor) |
 | `.golangci.yml` | Add D5/D6 depguard rules |
 | `Makefile` | Add `review-gates` target |
 
@@ -703,8 +703,8 @@ It captures the JSON output and returns it as a structured result. The orchestra
 
 | File | Replaced By |
 |------|------------|
-| `.opencode/agents/pr-implement.md` | `impl-research.md` + `impl-code.md` |
-| `.opencode/agents/pr-review.md` | `review-gates.md` + `review-conventions.md` + `review-analysis.md` |
+| `.opencode/agents/forge.md` | `impl-research.md` + `impl-code.md` |
+| `.opencode/agents/audit.md` | `review-gates.md` + `review-conventions.md` + `review-analysis.md` |
 
 ---
 
@@ -712,7 +712,7 @@ It captures the JSON output and returns it as a structured result. The orchestra
 
 ### Part 1 Verification
 - Edit agent `.md` files to reference fewer context files
-- Run `ticket-to-pr` on a test ticket — verify no regression in review quality
+- Run `flowmaster` on a test ticket — verify no regression in review quality
 - Compare token usage before/after (check opencode step counts)
 
 ### Part 3 Verification
@@ -724,7 +724,7 @@ It captures the JSON output and returns it as a structured result. The orchestra
 
 ### Part 2 Verification
 - Create new agent `.md` files
-- Update `ticket-to-pr.md` orchestration logic
+- Update `flowmaster.md` orchestration logic
 - Dry-run full pipeline on a test ticket
 - Verify each subagent returns structured data
 - Verify report synthesis combines all inputs correctly

@@ -1,6 +1,6 @@
 # 🤖 HumanLayer RPI Ticket Implementation Prompts & Personas
 
-This document defines the roles, system instructions, and quality gates for the subagents executing the `pr-implement` workflow. To maximize reliability, each phase is handled by a specialized subagent persona working on a scoped context.
+This document defines the roles, system instructions, and quality gates for the subagents executing the `forge` workflow. To maximize reliability, each phase is handled by a specialized subagent persona working on a scoped context.
 
 ---
 

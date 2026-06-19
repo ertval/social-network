@@ -7,7 +7,7 @@
 ## All Changes
 
 ### 1. Convert agents to standalone markdown frontmatter format
-**Files**: `.opencode/agents/pr-create.md`, `pr-fix.md`, `pr-implement.md`, `pr-review.md`, `ticket-to-pr.md`
+**Files**: `.opencode/agents/publish.md`, `remedy.md`, `forge.md`, `audit.md`, `flowmaster.md`
 
 Each `.md` file now has YAML frontmatter with full config. Filename = agent name (opencode auto-discovers).
 
@@ -20,32 +20,32 @@ Config moved from `opencode.json` into frontmatter:
 - `"plugin"` key also removed — plugin auto-discovered from `.opencode/plugins/`
 
 ### 3. Subagents now deny spawning subagents
-**Scope**: all 4 subagents (`pr-create`, `pr-fix`, `pr-implement`, `pr-review`)
+**Scope**: all 4 subagents (`publish`, `remedy`, `forge`, `audit`)
 ```yaml
 task:
   "*": deny
 ```
-Prevents infinite recursion. Only `ticket-to-pr` (primary orchestrator) has `task: {"*": allow}`.
+Prevents infinite recursion. Only `flowmaster` (primary orchestrator) has `task: {"*": allow}`.
 
 ### 4. Distinct colors per agent type
 | Agent | Color | Role |
 |---|---|---|
-| `pr-create` | `primary` | Push & PR creation |
-| `pr-fix` | `warning` | Bugfix loop |
-| `pr-implement` | `success` | Implementation |
-| `pr-review` | `accent` | Code review |
-| `ticket-to-pr` | `primary` | Orchestrator |
+| `publish` | `primary` | Push & PR creation |
+| `remedy` | `warning` | Bugfix loop |
+| `forge` | `success` | Implementation |
+| `audit` | `accent` | Code review |
+| `flowmaster` | `primary` | Orchestrator |
 
 ### 5. Added step limits (cost guardrails)
 | Agent | Steps |
 |---|---|
-| `pr-create` | 30 |
-| `pr-fix` | 25 |
-| `pr-implement` | 50 |
-| `pr-review` | 40 |
-| `ticket-to-pr` | 60 |
+| `publish` | 30 |
+| `remedy` | 25 |
+| `forge` | 50 |
+| `audit` | 40 |
+| `flowmaster` | 60 |
 
-### 6. `pr-review` edit permission — granular allow for report file
+### 6. `audit` edit permission — granular allow for report file
 ```yaml
 edit:
   "*": deny
@@ -53,17 +53,17 @@ edit:
 ```
 Agent needs `edit` to write the review report but should not modify code.
 
-### 7. `pr-review` bash — added catch-all `"*": "ask"`
+### 7. `audit` bash — added catch-all `"*": "ask"`
 Missing `"*": "ask"` meant unknown bash commands had undefined permission. Added as first rule.
 
-### 8. Removed stray Chinese characters in `ticket-to-pr.md`
+### 8. Removed stray Chinese characters in `flowmaster.md`
 Line 6 had `枪口` ("muzzle") — removed.
 
 ### 9. Graphify plugin — session reset for reminder
 **File**: `.opencode/plugins/graphify.js`
 - `reminded` flag now resets on `"session.created"` event, so each new session gets the graph hint.
 
-### 10. `pr-implement.md` — removed stale "HumanLayer RPI" reference
+### 10. `forge.md` — removed stale "HumanLayer RPI" reference
 Description now says "RPI framework" consistently; "HumanLayer" prefix dropped.
 
 ## Verification
@@ -75,11 +75,11 @@ Description now says "RPI framework" consistently; "HumanLayer" prefix dropped.
 ## Files Modified
 ```
 .opencode/opencode.json              — trimmed to just $schema (agents now .md)
-.opencode/agents/pr-create.md        — standalone frontmatter agent
-.opencode/agents/pr-fix.md           — standalone frontmatter agent
-.opencode/agents/pr-implement.md     — standalone frontmatter agent, removed HumanLayer ref
-.opencode/agents/pr-review.md        — standalone frontmatter agent, fine-grained edit perm
-.opencode/agents/ticket-to-pr.md     — standalone frontmatter agent, removed stray chars
+.opencode/agents/publish.md        — standalone frontmatter agent
+.opencode/agents/remedy.md           — standalone frontmatter agent
+.opencode/agents/forge.md     — standalone frontmatter agent, removed HumanLayer ref
+.opencode/agents/audit.md        — standalone frontmatter agent, fine-grained edit perm
+.opencode/agents/flowmaster.md     — standalone frontmatter agent, removed stray chars
 .opencode/plugins/graphify.js        — session.created resets reminded flag
 .opencode/PLAN.md                    — this file
 ```

@@ -33,7 +33,7 @@ permission:
     "*": deny
 ---
 
-## pr-implement
+## forge
 
 Implements a sprint ticket using the RPI framework (Research → Plan → Implement → Validate). Creates the feature branch, writes code with TDD, and runs validation gates.
 

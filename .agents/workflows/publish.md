@@ -1,5 +1,5 @@
 ---
-name: pr-create
+name: publish
 description: Pull Request verification and creation workflow (utilizing token-saving rtk command prefixes).
 ---
 

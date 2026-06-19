@@ -1,5 +1,5 @@
 ---
-name: pr-implement
+name: forge
 description: Ticket implementation workflow using the HumanLayer RPI (Research, Plan, Implement) framework.
 ---
 
