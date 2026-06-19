@@ -268,6 +268,17 @@ build-frontend: ## Build frontend application
 
 build: build-backend build-frontend ## Build both backend and frontend
 
+# ── Deterministic Review Gates ──────────────────────────────────────
+
+REVIEW_GATES_FAST := ci-mod check-format staticcheck
+
+review-gates: $(REVIEW_GATES_FAST) ## Run all deterministic quality gates (fast subset)
+	@echo "  Docs: docs/review-gates-reference.md"
+	@echo "✅ All review gates passed"
+
+review-gates-all: review-gates vulncheck ## Run all gates including slower ones (coverage, vulns)
+	@echo "✅ All review gates (incl. slow) passed"
+
 # Show help
 help: ## Show this help message
 	@echo "Usage: make [target]"
