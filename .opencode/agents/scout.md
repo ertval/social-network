@@ -4,7 +4,7 @@ mode: subagent
 hidden: true
 model: opencode/deepseek-v4-flash-free
 color: info
-steps: 20
+steps: 24
 temperature: 0.1
 permission:
   read: allow
@@ -67,10 +67,19 @@ QRSPI Questions+Research phase. You investigate the ticket and codebase, then pr
 
 5. Do NOT generate any code. Do NOT create branches. Do NOT modify source files.
 
+## Self-check before returning:
+- [ ] `.agents/scratch/RESEARCH.md` exists and contains all required sections (Questions, Existing Code, Cross-Slice Dependencies, Migration Notes, Key Constraints).
+- [ ] No section is empty — every heading has at least one entry or "None identified."
+- [ ] `QUESTIONS` count matches the actual number of bullet points under the Questions section.
+- [ ] `RELATED_FILES` count matches the actual number of files listed under Existing Code.
+- [ ] `CROSS_SLICE_DEPS` lists only feature slice names, not individual functions or files.
+- [ ] No code generation performed — no source files modified, no branch created.
+
 ## Return Format:
 ```
 RESEARCH: .agents/scratch/RESEARCH.md
 QUESTIONS: <count of ambiguities found>
 RELATED_FILES: <count of existing files identified>
 CROSS_SLICE_DEPS: <list of feature slices touched>
+SELF_CHECK: <PASS|FAIL>
 ```

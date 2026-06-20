@@ -4,7 +4,7 @@ mode: subagent
 hidden: true
 model: opencode/deepseek-v4-flash-free
 color: primary
-steps: 30
+steps: 36
 temperature: 0
 permission:
   read: allow
@@ -100,10 +100,18 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 - Commit: `git add docs/sprints/ticket-tracker.md && git commit -m "chore(tracker): mark <TICKET_ID> as completed"`
 - Push the tracker update: `git push`
 
+## Self-check before returning:
+- [ ] `.git/PR_DESCRIPTION.md` has been cleaned up (file removed).
+- [ ] PR was successfully created — `tea pulls list` shows the PR number.
+- [ ] All requested reviewers were added — verify with `tea pulls show <PR_NUMBER>`.
+- [ ] Ticket marked completed in `docs/sprints/ticket-tracker.md` — `[x]` present for the target ticket.
+- [ ] Tracker commit was pushed — `git log origin/main..HEAD` shows the `chore(tracker)` commit.
+
 ## Return Format (structured):
 ```
 PR_URL: <url>
 PR_NUMBER: <number>
 TICKET: <ticket_id> marked as completed
 REVIEWERS: <comma-separated list>
+SELF_CHECK: <PASS|FAIL>
 ```

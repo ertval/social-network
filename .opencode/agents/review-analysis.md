@@ -4,7 +4,7 @@ mode: subagent
 hidden: true
 model: opencode/deepseek-v4-flash-free
 color: accent
-steps: 25
+steps: 30
 temperature: 0
 permission:
   read: allow
