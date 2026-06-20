@@ -40,7 +40,7 @@ Reads the ticket-scoped PR review report and applies surgical fixes to resolve C
 
 ## Context Files (read before fixing):
 Before applying any fix, read and understand the project rules so fixes are architecturally correct:
-- `.agents/rules/conventions.md` — boundary rules D1-D6, security §7, TDD §3, database §4
+- `.agents/rules/conventions.md` — boundary rules D1-D6, security §6, TDD §4, database §5
 - `AGENTS.md` — surgical changes principle, doc reading order, simplicity first
 - `docs/sprints/general-instructions.md` — TDD workflow R2, Strangler Fig R1, verification gates Q2
 - `docs/architecture/target-architecture-with-phases.md` — D5 boundary table, target directory tree

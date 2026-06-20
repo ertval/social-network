@@ -2,7 +2,7 @@
 
 **Outcome:** Social relationships (follow requests, accepts, lists), commenting capability with media validation, and the event-driven notification dispatch pipeline work end-to-end.
 
-> **Migration note:** New slices use `/api/` prefix. Old code uses `/api/v1/`. During Strangler Fig migration, both must coexist. Register new routes alongside old ones — old code stays active until Sprint 6 cleanup. Feature-flag the new routes behind a config toggle if needed. Old notification types (reply, mention, like, dislike) are replaced entirely by new types (follow_request, follow_accept, group_invite, group_join_request, event_created). Existing notification data with old types is kept for history but not migrated to new types.
+> **Migration note:** New slices use `/api/` prefix. Old code uses `/api/v1/`. During Strangler Fig migration, both must coexist. Register new routes alongside old ones — old code stays active until Sprint 6 cleanup. Feature-flag the new routes behind a config toggle if needed. Old notification types (reply, mention, like, dislike) are replaced entirely by new types (follow.requested, follow.accepted, group.invited, group.join_requested, event.created). Existing notification data with old types is kept for history but not migrated to new types.
 >
 > **Live notifications via Server-Sent Events (SSE):** To ensure a live and premium user experience, real-time notifications are delivered using Server-Sent Events (SSE) via `GET /api/notifications/stream` (implemented in S3-BE-57). The frontend (S3-FE-18) establishes an `EventSource` connection to this stream to render live alerts without manual polling, falling back to 15s interval polling only if SSE is unsupported or disconnected.
 >
@@ -178,7 +178,7 @@
 * **Type:** Greenfield (New Module/Feature - Follow system)
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Dependencies:** S3-BE-37..10
+* **Dependencies:** S3-BE-37..44
 * **Description:** Bind HTTP REST handlers. This is a BRAND NEW feature — no legacy Follow HTTP routes exist. The transport layer must be built from scratch. As a greenfield backend feature, this implements the brand-new follow system (public auto-follow, private request/accept flows) under `internal/follow/`. This did not exist in the legacy codebase and relies heavily on publishing to the event bus.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
@@ -340,7 +340,7 @@
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Dependencies:** S3-BE-54..23
+* **Dependencies:** S3-BE-54..56
 * **Description:** Bind HTTP routes. Add unread count endpoint and a real-time SSE stream endpoint. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
@@ -360,8 +360,8 @@
 * **Description:** One-time data migration converting old notification rows to the new schema. This migration restructures notifications into `internal/notification/`. It transforms the slice into a pure event consumer that subscribes to the asynchronous event bus instead of being synchronously invoked by other features.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
-   1. Create `db/migrations/000008_migrate_notifications.up.sql`. Map old rows: `Title` → stored as metadata, `Message` → stored as metadata, `RelatedType` → mapped to new `Type` enum where possible (reply→comment, mention→follow, like/dislike→dropped). Rows with unmappable types get `Type = "legacy"`.
-   2. Create `000008_migrate_notifications.down.sql` to reverse.
+   1. Create `db/migrations/000005_migrate_notifications.up.sql`. Map old rows: `Title` → stored as metadata, `Message` → stored as metadata, `RelatedType` → mapped to new `Type` enum where possible (reply→comment, mention→follow, like/dislike→dropped). Rows with unmappable types get `Type = "legacy"`.
+   2. Create `000005_migrate_notifications.down.sql` to reverse.
    3. Old rows keep their IDs; new notifications use the new schema going forward.
 * **Verification:** Run migration up/down. Verify old rows are converted without data loss.
 
@@ -491,7 +491,7 @@
 * **Type:** Testing/Verification
 * **Assignee:** SD-QA
 * **Story Points:** 2
-* **Dependencies:** S3-BE-37..06
+* **Dependencies:** S3-BE-37..40
 * **Description:** Verify follow events are published onto the event bus correctly.
 * **Detailed Steps:**
   1. Write tests subscribing mock event listeners to `follow.requested` and `follow.accepted` topics.

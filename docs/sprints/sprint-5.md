@@ -16,7 +16,7 @@
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import chat and oauth transport packages.
   2. Call their route registration functions on the HTTP mux and WS router.
-  3. Wire OAuth provider clients (github, google) per S5-BE-97/15.
+  3. Wire OAuth provider clients (github, google) per S5-BE-97/98.
 * **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
 
 ---
@@ -234,7 +234,7 @@
 ---
 
 ### S5-BE-99: Shared: Refactor OAuth Packages
-* **Priority:** P0 (Prerequisite for S5-BE-97/15)
+* **Priority:** P0 (Prerequisite for S5-BE-97/98)
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
@@ -242,7 +242,7 @@
 * **Description:** Move and restructure OAuth packages to `pkg/oauth/` per the target architecture, doing the rename in Sprint 5 to prevent breaking the old bootstrap compilation earlier. This migration refactors OAuth logic into `pkg/oauth/` and the new vertical slice structure for seamless third-party authentication.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
-   1. Move `internal/pkg/oAuth/` to `pkg/oauth/` (repo root, per target architecture — not `internal/pkg/oauth/`).
+   1. Move `internal/pkg/` to `pkg/` (repo root, per target architecture — not `internal/pkg/`), which includes moving hashing, uuid, validator, helpers, and imgutil packages to root `pkg/` and renaming `oAuth/` to `oauth/`.
    2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/client.go`.
    3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
 * **Verification:** Ensure old auth compilation paths are updated (using alias imports if necessary) and all projects compile. `go build ./...` passes.
@@ -258,8 +258,8 @@
 * **Description:** Create the database migration files for the Chat vertical slice to transition legacy chats storage to the architecture's standard schemas. This migration moves chat domain and WebSocket handlers from `internal/infra/ws/handlers/` into the `internal/chat/` slice, integrating the new `FollowChecker` interface for cross-slice authorization.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
-  1. Create `db/migrations/000010_migrate_chats.up.sql` to create `chats` and `messages` tables (with clean columns and UUID message IDs) and migrate existing data from the legacy `direct_chats` and `chat_messages` tables.
-  2. Create `db/migrations/000010_migrate_chats.down.sql` to reverse this migration.
+  1. Create `db/migrations/000008_migrate_chats.up.sql` to create `chats` and `messages` tables (with clean columns and UUID message IDs) and migrate existing data from the legacy `direct_chats` and `chat_messages` tables.
+  2. Create `db/migrations/000008_migrate_chats.down.sql` to reverse this migration.
 * **Verification:** Run up/down migration tests and verify message logs and active conversation entries are preserved.
 
 ---

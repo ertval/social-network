@@ -284,13 +284,14 @@ session        → user
 follow         → user, eventbus
 topic          → user
 comment        → user, topic
-vote           → user, topic, comment, eventbus
 group          → user, eventbus
 event          → group, eventbus
 chat           → user, FollowChecker (interface, not follow import)
 notification   → user (subscribes to eventbus, no feature imports)
 oauth          → user
 ```
+
+Vote logic is absorbed into `topic/` and `comment/` — there is no standalone `vote` slice.
 
 `notification` is never imported by other features. It subscribes to events at boot time. This prevents circular dependencies and keeps notification as a pure side-effect consumer.
 
@@ -518,10 +519,12 @@ Create numbered migration scripts:
 - `000003_topic_privacy.up.sql` — Add `visibility` to topics; create `topic_allowed_users`
 - `000003_topic_privacy.down.sql` — Reverse
 - `000004_follow_system.up.sql` — Create `follows`, `follow_requests`
-- `000005_groups.up.sql` — Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`
-- `000006_events.up.sql` — Create `events`, `event_rsvps`
-- `000007_seed_data.up.sql` — Optional seed demo data (users, posts, groups, follows) — bonus feature
-- `000007_seed_data.down.sql` — Remove seed data
+- `000005_migrate_notifications.up.sql` — Convert old notifications data to new schema
+- `000006_groups.up.sql` — Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`
+- `000007_events.up.sql` — Create `events`, `event_rsvps`
+- `000008_migrate_chats.up.sql` — Create `chats`, `messages` and migrate legacy chats
+- `000009_seed_data.up.sql` — Optional seed demo data (users, posts, groups, follows) — bonus feature
+- `000009_seed_data.down.sql` — Remove seed data
 
 **Verify**: Run migrations on fresh DB. `go vet ./...`.
 
@@ -746,8 +749,9 @@ services:
     ports: ["8080:8080"]
     volumes: ["./data:/app/data"]  # SQLite persistence
     environment:
-      DATABASE_DRIVER: sqlite
-      DATABASE_DSN: /app/data/social.db?_journal_mode=WAL&_busy_timeout=5000
+      DB_DRIVER: sqlite3
+      DB_PATH: /app/data/forum.db
+      DB_PRAGMA: "_foreign_keys=on&_journal_mode=WAL"
 
   frontend:
     build: ./frontend

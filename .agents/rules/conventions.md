@@ -9,12 +9,19 @@ description: Coding conventions for Go/SQLite/Next.js social network. Loaded by 
 Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) for detailed workflows.
 
 <!-- @section:rules-core — D1-D6, security, TDD (needed by all agents) -->
+## 0. Naming Conventions
+
+- **Go struct fields**: use `username` in domain structs.
+- **DB columns / API JSON**: use `username` — matches SDS schema.
+- The entity field maps to the DB column;
+- **Command/Query handlers (target)**: commands use `*Handler` suffix (e.g. `FollowUserHandler`), queries use `*Resolver` suffix (e.g. `GetFollowersResolver`). See SDS §2 for target state. Legacy code may use `*Handler` for both.
+
 ## 1. Stack
 
 - **Go 1.24**, stdlib preferred, `slog` logging, `kin-openapi` validation.
 - **Module path**: `social-network`. **Entry point**: `cmd/server/main.go`.
 - **SQLite**: WAL mode, busy timeout, `db.SetMaxOpenConns(1)`. Tests use in-memory instances.
-- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, Biome. Vitest + React Testing Library + Playwright.
+- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, Biome. Vitest (planned) + React Testing Library + Playwright (planned).
 - **Ports**: BE `:8080`, FE `:3000`.
 
 ## 2. Vertical Slices & Boundaries
@@ -51,7 +58,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Table-driven tests with `t.Run()`. Run `go test -race ./...`.
 - **Test naming**: `Test<Handler>_<Scenario>`. Contract: `Test<Feature>Store_Migrated_SameAsOld_<Method>`.
 - **Test files**: `commands/<use_case>_test.go`, `store/sqlite_migration_test.go` for contract tests.
-- **Testing pyramid**: ~300+ unit, ~50 integration, ~20 E2E (Playwright).
+- **Testing pyramid**: ~300+ unit, ~50 integration, ~20 E2E (Playwright, planned).
 - **OpenAPI 3.0**: spec per feature in `docs/api/<feature>.yaml`. BE validates via `kin-openapi`. FE mocks via `msw`.
 - **Goroutine recovery**: all WS read/write loops and client goroutines must `defer recover()`.
 - **RateLimiter**: any `time.Ticker` must have `stop chan struct{}` to prevent leaks.
@@ -61,7 +68,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Sequential: `000001_name.up.sql` / `000001_name.down.sql`.
 - Never drop column in same migration as replacement. Add → populate → drop in next migration.
 - Delimiter: `";"` (never `":"`).
-- Rollback: `go run cmd/migrate/main.go down N`.
+- Rollback: revert last migration manually (no dedicated rollback script yet).
 - Test each migration: up → verify → down → verify clean.
 
 ## 6. Security
@@ -115,7 +122,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   ```
   grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'infra/'
   ```
-- **Go verification gates** (`internal/gates/`):
+- **Go verification gates** (`cmd/gates/main.go`):
   | Gate | Check | Tool/Fallback |
   |------|-------|---------------|
   | Stack | Go version ≥ 1.24, module path | go version / go.mod |
@@ -126,8 +133,8 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   | Migrations | migration naming, delimiter | glob / grep |
   | Security | SQL concat, WS CheckOrigin, bcrypt cost | gosec / custom AST |
   | Branch | branch naming convention | regex |
-  | Coverage | test coverage >90% | git worktree + go test |
-  | ScopeDrift | unplanned file changes | git diff |
+  | coverage-delta | test coverage >90% | git worktree + go test |
+  | scope-drift | unplanned file changes | git diff |
   - Flags: `--all`, `--gate=<name>`. JSON output.
 - **Performance gate**: `make ci-bench` each PR. Fail if regression > 10%.
 - Smoke test scenarios A1–D3: see `docs/sprints/general-instructions.md`.
@@ -147,7 +154,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
     - `ekaramet/S1-BE-05-db-factory`
     - `dkotsi/S3-FE-14-follow-button`
     - `smichail/42-oauth-scan-fix`
-- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/`.)
+- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/` and `comment/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
 <!-- @section:rules-git:end -->
 

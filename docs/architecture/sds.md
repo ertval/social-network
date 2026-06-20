@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS topic_allowed_users (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Comments table supporting image/GIF attachments (image_url)
+-- 000001_initial_schema.up.sql (comments: image_url for image/GIF attachments)
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     topic_id INTEGER NOT NULL,
@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS comments (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- 000001_initial_schema.up.sql (votes)
 CREATE TABLE IF NOT EXISTS votes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
@@ -113,7 +114,7 @@ CREATE TABLE IF NOT EXISTS follow_requests (
     FOREIGN KEY(followee_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 000005_groups.up.sql
+-- 000006_groups.up.sql
 CREATE TABLE IF NOT EXISTS groups (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
@@ -186,7 +187,7 @@ CREATE TABLE IF NOT EXISTS group_post_comments (
     FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 000006_events.up.sql
+-- 000007_events.up.sql
 CREATE TABLE IF NOT EXISTS events (
     id TEXT PRIMARY KEY,
     group_id TEXT NOT NULL,
@@ -215,7 +216,7 @@ CREATE TABLE IF NOT EXISTS event_rsvps (
     FOREIGN KEY(option_id) REFERENCES event_options(id) ON DELETE CASCADE
 );
 
--- Additional Infrastructure tables (chat, notifications, oauth)
+-- 000001_initial_schema.up.sql (infrastructure: chats, messages, notifications, oauth_states)
 CREATE TABLE IF NOT EXISTS chats (
     id TEXT PRIMARY KEY,
     user_one_id TEXT NOT NULL,
@@ -257,9 +258,25 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 000007_seed_data.up.sql (optional bonus feature)
--- Inserts demo users, sample posts, groups, and follow relationships for testing.
 ```
+
+### 1.3 Migration Numbering (Consolidated)
+
+| Migration | File | Description |
+|-----------|------|-------------|
+| 000001 | `initial_schema` | Baseline: users, sessions, topics, comments, votes, chats, messages, notifications, oauth_states, schema_migrations |
+| 000002 | `user_profile_fields` | Add date_of_birth, about_me, is_private; drop age |
+| 000003 | `topic_privacy` | Add visibility, image_url to topics; create topic_allowed_users |
+| 000004 | `follow_system` | Create follows, follow_requests |
+| 000005 | `migrate_notifications` | Convert old notification rows to new schema |
+| 000006 | `groups` | Create groups, group_members, group_invitations, group_join_requests, group_chat_messages, group_posts, group_post_comments |
+| 000007 | `events` | Create events, event_options, event_rsvps |
+| 000008 | `migrate_chats` | Create chats, messages; migrate legacy chat data |
+| 000009 | `seed_data` | Optional: demo users, posts, groups, follows |
+
+**Gap note:** Actual `db/migrations/` currently contains only `schema.sql` and `indexes.sql`. Numbered migration files (000001–000009) are not yet created. Sprint 5 (S5-BE-91) creates 000008. See `target-architecture-with-phases.md` for the full migration plan.
+
+**Note on SDS SQL comments above:** The inline migration-number comments in the SQL schema (e.g. `-- 000005_groups.up.sql`) are approximate references. The canonical numbering is this table.
 
 ---
 
@@ -535,7 +552,7 @@ type Cache interface {
 Real-time interactions are controlled by a WebSocket Hub located in `internal/core/realtime/`.
 
 ### 4.1 Connection Flow
-1. **Authentication Handshake**: Next.js client initiates a WebSocket connection request. The gateway verifies the browser's auth token cookie *during the initial HTTP Upgrade request*. Unauthenticated sockets are rejected with a `401 Unauthorized` status (no anonymous sockets permitted).
+1. **Authentication Handshake**: Next.js client initiates a WebSocket connection request. The gateway (via `internal/core/realtime/`) delegates token verification to `internal/core/session/` to validate the browser's auth token cookie *during the initial HTTP Upgrade request*. Unauthenticated sockets are rejected with a `401 Unauthorized` status (no anonymous sockets permitted).
 2. **Origin Verification**: The `CheckOrigin` configuration on WebSocket Upgrader **must not** return `true` unconditionally. It must check the request header against configured allowed CORS origins (e.g., matching the server's `.env` origins) to mitigate Cross-Site WebSocket Hijacking.
 3. **Panic Recovery**: Spawning user-driven read/write pumps introduces panic risk. All client loops must catch internal failures:
    ```go
@@ -719,7 +736,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Execution command: `golangci-lint run`
 - **Native compiler warnings**: `go vet ./...` runs in pre-commit hooks to identify compiler errors, variable shadowing, lock copying issues, and malformed logging calls.
 - **CVE Scan**: `govulncheck ./...` is run during CI and local builds to verify that third-party modules contain no known vulnerabilities.
-- **Architecture verification**: Deterministic Go gates in `internal/gates/` enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
+- **Architecture verification**: Deterministic Go gates in `cmd/gates/main.go` enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
 - **Pre-commit hooks**: Lefthook auto-formats staged files (gofumpt/goimports for BE, biome for FE) on commit. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `biome lint`, `vitest`. Install: `make setup-hooks`.
 
 #### 7.1.2 Automated Testing

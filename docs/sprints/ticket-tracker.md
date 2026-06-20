@@ -8,7 +8,7 @@ For step-by-step ticket instructions, see individual sprint files:
 * [Sprint 2: User & Topic Features](sprint-2.md)
 * [Sprint 3: Follow, Comment & Notification](sprint-3.md)
 * [Sprint 4: Group & Event Features](sprint-4.md)
-* [Sprint 5: Chat & OAuth](sprint-5.md) 
+* [Sprint 5: Chat & OAuth](sprint-5.md)
 * [Sprint 6: Integration, Cleanup & Polish](sprint-6.md)
 
 ---
@@ -58,7 +58,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S1-FE-05:** Nav Layout Shell
 
 ### SD-QA (System Design/QA)
-- [ ] **S1-SD-05:** Platform: Database Seeding (Gap Fix)
+- [ ] **S1-SD-05:** Platform: Database Seeding (000009) (Gap Fix)
 - [ ] **S1-SD-06:** API Mocking Service
 
 ---
@@ -156,7 +156,7 @@ For step-by-step ticket instructions, see individual sprint files:
 ### SD-QA (System Design/QA)
 - [ ] **S3-SD-11:** Follow: Event Publishing Verification
 - [ ] **S3-SD-12:** Comment Slice: Contract Tests
-- [ ] **S3-SD-13:** Platform: Follow System Migrations (000004)
+- [ ] **S3-SD-13:** Platform: Follow System & Notifications Migrations (000004 & 000005)
 - [ ] **S3-SD-14:** E2E: Relationships Notifications Flow
 - [ ] **S3-SD-15:** E2E: Posts Comments Notification Flow
 
@@ -205,7 +205,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S4-FE-27:** Group: Comment Components (Gap Fix) **P1**
 
 ### SD-QA (System Design/QA)
-- [ ] **S4-SD-16:** Platform: Group & Event Migrations (000005 & 000006)
+- [ ] **S4-SD-16:** Platform: Group & Event Migrations (000006 & 000007)
 - [ ] **S4-SD-17:** E2E: Complete Groups Workspace Journey
 
 ---
@@ -222,7 +222,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S5-BE-88:** Chat: List Conversations Query
 - [ ] **S5-BE-89:** Chat: HTTP Transport Routing
 - [ ] **S5-BE-90:** Chat: WS Transport Routing
-- [ ] **S5-BE-91:** Platform: Chat Migrations (Gap Fix) **P0**
+- [ ] **S5-BE-91:** Platform: Chat Migrations (000008) (Gap Fix) **P0**
 
 ### BE-B (Backend B)
 - [ ] **S5-BE-92:** OAuth: Entity & Repository Interface

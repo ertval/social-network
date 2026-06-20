@@ -24,7 +24,7 @@ The project is structured around self-contained vertical slices inside `internal
 │   └── server/
 │       └── main.go         # Application entry point & service bootstrap configuration
 ├── db/
-│   └── migrations/         # Numbered database up/down migration SQL scripts (includes optional seed data via 000007_seed_data)
+│   └── migrations/         # Numbered database up/down migration SQL scripts (includes optional seed data via 000009_seed_data)
 ├── internal/
 │   # ─── Feature Slices (Vertical Slices with CQRS) ───
 │   ├── user/               # User profiles, auth, privacy toggle, activity tracking
@@ -53,7 +53,7 @@ The project is structured around self-contained vertical slices inside `internal
 │   # ─── Bootstrap & Config ───
 │   ├── bootstrap/          # Composition root (wiring slices and platform services)
 │   ├── config/             # Config loaders
-│   └── pkg/                # Reusable helper packages (bcrypt, uuid, validator, imgutil, oauth)
+│   └── pkg/                # Reusable helper packages (bcrypt, uuid, validator, helpers, oauth, imgutil)
 ```
 
 ---
@@ -116,13 +116,14 @@ session        → user
 follow         → user, eventbus
 topic          → user
 comment        → user, topic
-vote           → user, topic, comment, eventbus
 group          → user, eventbus
 event          → group, eventbus
 chat           → user, FollowChecker (interface, not follow import)
 notification   → user (subscribes to eventbus, no feature imports)
 oauth          → user
 ```
+
+Vote logic is absorbed into `topic/` and `comment/` — there is no standalone `vote` slice.
 
 `notification` is never imported by other features. It subscribes to events at boot time, preventing circular dependencies.
 
@@ -131,9 +132,9 @@ oauth          → user
 ## 6. Technology Stack & Runtime Infrastructure
 
 ### Backend (Go)
-- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and busy timeout (`_busy_timeout=5000`) configured to prevent locking. Portability for PostgreSQL is built-in. Seed data migration (`000007_seed_data`) available as a bonus feature.
+- **Database Engine**: Handled via `platform/database.DB`. Defaults to SQLite with Write-Ahead Logging (`WAL`) enabled and busy timeout (`_busy_timeout=5000`) configured to prevent locking. Portability for PostgreSQL is built-in. Seed data migration (`000009_seed_data`) available as a bonus feature.
 - **WebSocket Protocol**: Built-in HTTP upgrade routing to `internal/core/realtime/` with token verification on handshake. Chat messages support Unicode/emoji via standard UTF-8 JSON encoding.
-- **Asynchronous Processing**: Non-blocking channel-based event bus for localized operations. Portability for RabbitMQ is built-in.
+- **Asynchronous Processing**: In-process channel-based Event Bus for localized operations. Portability for RabbitMQ is built-in.
 
 ### Frontend (Next.js)
 - **Architecture**: Next.js App Router providing server and client-side rendering.
@@ -141,6 +142,7 @@ oauth          → user
 - **Styling**: **Tailwind CSS** coupled with Vanilla CSS overrides for the design system (glassmorphism, dark/light themes, customized HSL color palettes, and interactive transitions).
 - **Communication**: REST APIs for basic CRUD operations, WebSocket channels for real-time chat (emoji support via UTF-8), and SSE or WebSockets for live notifications.
 - **UI Conventions**: Destructive operations (unfollow, privacy toggle, decline requests) use `shadcn/ui` Dialog overlays for confirmation. Notifications are displayed in a dedicated panel (bell icon, unread count), visually distinct from the Chat panel.
+- **Full spec**: See [SDS §6](sds.md#6-frontend-specifications-nextjs-tailwind-css--shadcnui) for detailed frontend specifications.
 
 ### Docker
 - **Two containers**: Backend (Go, port 8080) and Frontend (Next.js, port 3000), orchestrated via `docker-compose.yml`.
@@ -175,9 +177,9 @@ Quick-reference for all tools used across the software development lifecycle.
 | Runtime | Bun | `package.json` (scripts) |
 | Package manager | Bun | `bun.lock` |
 | Linting + formatting | Biome | `biome.json` |
-| Type checking | `tsc --noEmit` | `package.json` (planned) |
-| Unit/component tests | Vitest | (planned) |
-| E2E tests | Playwright | (planned) |
+| Type checking | `tsc --noEmit` | `package.json` |
+| Unit/component tests | Vitest (planned) | `vitest.config.ts` |
+| E2E tests | Playwright (planned) | `playwright.config.ts` |
 
 ### Infrastructure & CI
 
@@ -209,7 +211,7 @@ bun run lint → bun run format:check → tsc --noEmit → bun run test
 
 ### Verification Gates (`make review-gates`)
 
-Go-based deterministic gates under `internal/gates/` enforce architectural and convention rules:
+Go-based deterministic gates under `cmd/gates/main.go` enforce architectural and convention rules:
 
 | Gate | Tool/Fallback | What It Checks |
 |------|---------------|----------------|
@@ -234,3 +236,9 @@ Configured in `lefthook.yml`:
 - **Pre-push** (parallel): `go vet`, `go test -short`, `go build`, `go-arch-lint check` (backend); `tsc --noEmit`, `biome lint`, `vitest` (frontend).
 
 Install: `make setup-hooks`. Bypass: `--no-verify`.
+
+---
+
+## 8. Requirements Verification
+
+The project's requirements checklist is maintained in [`docs/requirements/audit.md`](../requirements/audit.md). All architectural decisions and feature implementations must satisfy the conditions defined there. Sprint 6 automation tickets (S6-SD-25, S6-SD-34) implement test suites mapped directly to audit.md questions. See also the [progressive disclosure chain](../sprints/general-instructions.md#linear-progressive-disclosure-navigation-chain) (Stage 7).

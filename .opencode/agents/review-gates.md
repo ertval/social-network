@@ -39,7 +39,6 @@ Deterministic gate runner. Executes the gate scripts and reports JSON results. N
 ## Your job:
 1. Run `make review-gates` and capture the JSON output.
 2. If any gate fails, report the full failure details.
-3. Run `make ci` as an additional comprehensive check.
 
 ## Constraints:
 - Do NOT apply fixes. Report only.

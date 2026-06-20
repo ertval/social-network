@@ -31,9 +31,10 @@ End-to-end QRSPI orchestrator that takes a ticket ID and sequentially spawns sub
    - Present plan to user for review. Wait for approval.
 4. **Implement**: Spawn `forge` → receives FILES_CHANGED, TESTS_ADDED, GATES
 
-### Review loop (max 3 cycles):
+### Review loop (max 3 review cycles, max 3 gate-only retries):
 5. **Gates**: Spawn `review-gates` → receives JSON gate results
-   - If gates FAIL → spawn `remedy` → loop to step 5
+   - If gates FAIL → spawn `remedy` → loop to step 5 (gate-only retry, does not increment review_count)
+   - If gate-only retries >= 3 → stop, report stuck gates to user
 6. **Conventions**: Spawn `review-conventions` → receives compliance matrix
 7. **Analysis**: Spawn `review-analysis` → receives findings list
 8. **Synthesize** report into `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md`
@@ -42,17 +43,29 @@ End-to-end QRSPI orchestrator that takes a ticket ID and sequentially spawns sub
 
 9. **Publish**: Spawn `publish` → receives PR_URL
 
+### Status Definitions
+- **APPROVED**: Synthesized report has 0 Critical + 0 Warning findings. Only Suggestions/Recommendations may remain. → publish
+- **PASS_WITH_RECOMMENDATIONS**: 0 Critical + 0 Warning findings after ≥3 cycles. Non-blocking suggestions remain. → publish
+- **CHANGES_REQUESTED**: ≥1 Critical or Warning finding exists. → remedy loop
+- **FAIL**: Gates subprocess returned non-zero exit. → remedy loop
+- **PASS**: All subprocesses clean, no findings. → proceed to next review phase
+
 ### Fix Loop Logic
 ```
 review_count = 0
+gate_retry_count = 0
 loop:
   spawn review-gates → parse result
   if GATES == FAIL:
+    gate_retry_count++
+    if gate_retry_count >= 3:
+      stop → report stuck gates to user
     spawn remedy → go to loop
 
   spawn review-conventions → parse result
   spawn review-analysis → parse result
   review_count++
+  gate_retry_count = 0  # reset on successful gate pass
 
   synthesize report
 

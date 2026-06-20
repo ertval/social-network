@@ -86,7 +86,7 @@
 * **Description:** Add helper to verify image mime types using Magic Bytes headers. As a greenfield task, this builds new platform or feature abstractions from scratch that do not exist in the old legacy codebase.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
-  1. Create `internal/pkg/imgutil/detect.go`.
+  1. Create `pkg/imgutil/detect.go`.
   2. Write a helper function that inspects the first 512 bytes of a file reader using `http.DetectContentType` to enforce only `image/jpeg`, `image/png`, and `image/gif` are accepted.
 * **Verification:** Unit tests asserting that valid image files (JPG, PNG, GIF) return true, and PDFs or executables are rejected.
 
@@ -99,7 +99,7 @@
 * **Type:** Greenfield (New Module/Feature - Platform Abstraction)
 * **Assignee:** BE-B
 * **Story Points:** 3
-* **Description:** Create the Event Bus interface and an in-process, channel-based implementation for async cross-slice notifications. As a greenfield backend feature, this implements the new event system for groups (creation, RSVP with multiple options) under `internal/event/`, publishing `event.created` to the event bus.
+* **Description:** Create the Event Bus interface and an in-process, channel-based implementation for async cross-slice notifications. As a greenfield platform package, this implements the central messaging bus under `internal/platform/eventbus/` to support async decoupled communication between vertical slices.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/platform/eventbus/eventbus.go`. Define the `EventBus` interface:

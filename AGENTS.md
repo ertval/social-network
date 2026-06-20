@@ -57,3 +57,7 @@ For multi-step tasks, state a brief plan:
 ```
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+## 5. Bug Protocol
+
+**If you find a bug, first write a test that reproduces it, then fix the bug and verify the test passes.**

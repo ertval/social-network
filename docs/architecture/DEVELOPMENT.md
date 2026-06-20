@@ -21,7 +21,7 @@ Before starting, ensure you have the following tools installed on your local mac
 
 | Tool | Recommended Version | Purpose | Installation Guide |
 |---|---|---|---|
-| **Go** | `1.24` (or `1.24.4`+) | Backend service and tools execution | [Go Installation](https://go.dev/doc/install) |
+| **Go** | `≥ 1.24` | Backend service and tools execution | [Go Installation](https://go.dev/doc/install) |
 | **Bun** | `1.1`+ | Frontend package manager & runtime | [Bun Installation](https://bun.sh) |
 | **Docker** | Latest | Containerization for local services | [Docker Desktop](https://www.docker.com/products/docker-desktop/) |
 | **openssl** | Latest | Local HTTPS certificate generation | Pre-installed on most Unix systems |
@@ -150,12 +150,28 @@ make ci
 Runs backend + frontend checks (ci-mod → check-format → lint → test).
 
 ### Go Verification Gates
-Deterministic architecture/security/convention gates:
+
+Deterministic Go-based gates under `internal/gates/` enforce architectural and convention rules:
+
 ```bash
 make review-gates
 # Or directly: go run cmd/gates/main.go --all
 ```
-Individual gates: `--gate=boundaries`, `--gate=dag`, `--gate=security`, `--gate=branch`, `--gate=coverage`, `--gate=scopedrift`. Output is JSON.
+
+| Gate | Tool/Fallback | What It Checks |
+|------|---------------|----------------|
+| Stack | go version / go.mod | Go ≥ 1.24, module path `social-network` |
+| Layout | os.Stat | Target directory structure exists |
+| Boundaries | golangci-lint depguard / AST | D5 — forbidden cross-slice imports |
+| DAG | go-arch-lint / DFS | D6 — dependency graph acyclicity |
+| TDD | os.Stat | Test files exist per command/query |
+| Migrations | glob / grep | Migration naming (`NNNNNN_name.up.sql`), delimiter (`";"`) |
+| Security | gosec / custom AST | SQL concat, WebSocket CheckOrigin, bcrypt cost |
+| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` |
+| Coverage | git worktree + go test | Test coverage threshold (>90%) |
+| ScopeDrift | git diff | Unplanned file changes |
+
+Output is JSON with exit codes (0 = pass). Run individual gates: `--gate=<name>`.
 
 ### Pre-commit & Pre-push Hooks (Lefthook)
 Install hooks:
@@ -199,7 +215,7 @@ Branches must be named in the following format:
 ```
 <username>/<ticket/issue-ID>-<detail>
 ```
-* **username**: Gitea username (check `origin` remote) — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
+* **username**: Your own Gitea username — resolve via `tea whoami` or `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'`. Known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
 * **ticket/issue-ID**: Ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or GitHub/Gitea issue number (e.g. `42`). **Required** — maps branch to work item.
 * **detail**: kebab-case description (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
 
@@ -211,13 +227,13 @@ Branches must be named in the following format:
 ### Pull Request & Commit Strategy
 1. **Trunk-Based Development**: Keep feature branches short-lived (≤ 3 days).
 2. **Squash Merge**: All branches are squashed into `main` as a single commit.
-3. **Conventional Commits**: The squashed commit must follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
+3. **Conventional Commits with Ticket ID**: The squashed commit must follow the [Conventional Commits](https://www.conventionalcommits.org/) format with ticket ID:
    ```
-   <type>(<scope>): <description>
+   <type>(<scope>)[<ID>]: <description>
    ```
    *Examples:*
-   - `feat(user): add register command with age validation`
-   - `fix(core): recover from WebSocket goroutine panic`
+   - `feat(user)[S2-BE-17]: add register command with age validation`
+   - `fix(core)[42]: recover from WebSocket goroutine panic`
    - `docs(dev): add onboarding setup instructions`
 4. **PR Description**: Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` and fill in the details (source: [general-instructions.md](../sprints/general-instructions.md)).
 
@@ -233,8 +249,9 @@ Implement every command, query, and store method using the **Red-Green-Refactor*
 
 ### Strangler Fig Pattern
 For migrating legacy endpoints, follow the Strangler Fig approach:
-1. Write contract tests against the legacy API.
-2. Build the new slice package in `internal/<slice>/` alongside the legacy code.
-3. Verify that the new slice passes identical contract tests.
-4. Swap the routing in the composition root (`bootstrap/bootstrap.go`).
-5. After a confidence window, delete the old legacy files.
+1. Write contract tests against the old API (verify current behavior).
+2. Build the new slice alongside old code (no routing changes).
+3. Verify contract tests pass on the new slice (identical behavior).
+4. Swap routing in `bootstrap.go` (one-line change).
+5. Monitor via tests + manual smoke (confidence window).
+6. Delete old directories (`domain/`, `app/`, `infra/`).
