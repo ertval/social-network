@@ -55,6 +55,8 @@ frontend/static/images/uploads/
 .audit/
 tmp/
 .agentignore
+.agents/scratch/
+
 
 # Agent scratch / working files
 .agents/scratch/
