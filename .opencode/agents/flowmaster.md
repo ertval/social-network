@@ -110,3 +110,18 @@ Parse each subagent's structured return format to extract status, counts, and su
 - Before invoking `publish`, confirm the latest review report has no Critical or Warning findings.
 - Do not skip phases. Do not combine subagent responsibilities.
 - Keep your own context lean: do not read subagent scratch files or full diffs. Rely on structured returns.
+
+## Self-check before returning:
+- [ ] All subagents were invoked in the correct sequential order.
+- [ ] `review_count` and `gate_retry_count` were correctly parsed from subagent returns.
+- [ ] Loop termination conditions were respected (3 strikes, gate-only retries ≤ 3).
+- [ ] Before publish: review report was confirmed to have no Critical/Warning findings.
+- [ ] No phases were skipped, and no subagent responsibilities were combined.
+
+## Return Format:
+```
+STATUS: <SUCCESS|FAIL>
+SELF_CHECK: <PASS|FAIL>
+SUMMARY: <2-4 sentences>
+```
+

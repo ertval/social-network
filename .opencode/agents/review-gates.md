@@ -45,9 +45,17 @@ Deterministic gate runner. Executes the gate scripts and reports JSON results. N
 - Do NOT apply fixes. Report only.
 - Do NOT write code or modify source files.
 
+## Self-check before returning:
+- [ ] `make review-gates` was run and the output was captured.
+- [ ] JSON output is valid JSON.
+- [ ] `FAILED_GATES` list matches actual failures in JSON.
+- [ ] No LLM reasoning applied (pure script execution constraint respected).
+
 ## Return Format:
 ```
 GATES: <PASS|FAIL>
 FAILED_GATES: <comma-separated list of failed gate names, or "none">
 DETAILS: <JSON output from make review-gates>
+SELF_CHECK: <PASS|FAIL>
 ```
+
