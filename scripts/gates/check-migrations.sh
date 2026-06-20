@@ -20,7 +20,7 @@ for up_file in "$MIGRATION_DIR"/*.up.sql; do
 done
 
 # Check delimiter (should be ";" not ":")
-BAD_DELIMITERS=$(grep -rn '^\s*:' "$MIGRATION_DIR"/*.sql 2>/dev/null | head -5 || true)
+BAD_DELIMITERS=$(grep -rnE "^[^/-].*:\s*$" "$MIGRATION_DIR"/*.sql 2>/dev/null | head -5 || true)
 if [ -n "$BAD_DELIMITERS" ]; then
   ERRORS="$ERRORS\nBad delimiter (use ';' not ':'):\n$BAD_DELIMITERS"
 fi

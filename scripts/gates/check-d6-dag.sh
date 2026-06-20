@@ -2,7 +2,7 @@
 # Gate #4: D6 dependency DAG acyclicity check via go list
 set -euo pipefail
 
-FEATURES=$(ls -d internal/*/ 2>/dev/null | xargs -I{} basename {} | grep -v -E '^(core|platform|pkg|config|bootstrap|domain|infra|app)$')
+FEATURES=$(ls -d internal/*/ 2>/dev/null | xargs -I{} basename {} | grep -v -E '^(core|platform|pkg|config|bootstrap|domain|infra|app)$' || true)
 ERRORS=""
 
 for feature in $FEATURES; do

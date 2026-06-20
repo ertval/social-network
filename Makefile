@@ -272,7 +272,7 @@ build: build-backend build-frontend ## Build both backend and frontend
 
 review-gates: ## Run all deterministic review gate scripts (JSON output)
 	@echo "==> Running review gates..."
-	@bash scripts/gates/run-all.sh
+	@go run cmd/gates/main.go --all
 
 review-gates-fast: ci-mod check-format staticcheck ## Run fast deterministic quality gates
 	@echo "  Docs: docs/review-gates-reference.md"

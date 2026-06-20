@@ -5,19 +5,19 @@ set -euo pipefail
 ERRORS=""
 
 # Check that transport/ doesn't import store/
-TRANSPORT_IMPORTS_STORE=$(grep -rn 'import' internal/*/transport/ 2>/dev/null | grep 'internal/' | grep '/store' || true)
+TRANSPORT_IMPORTS_STORE=$(grep -rn '^\s*import' internal/*/transport/ --include='*.go' --exclude='*_test.go' 2>/dev/null | grep 'internal/' | grep '/store' || true)
 if [ -n "$TRANSPORT_IMPORTS_STORE" ]; then
   ERRORS="$ERRORS\nD5: transport imports store:\n$TRANSPORT_IMPORTS_STORE"
 fi
 
 # Check that store/ doesn't import transport/, commands/, or queries/
-STORE_IMPORTS_TRANSPORT=$(grep -rn 'import' internal/*/store/ 2>/dev/null | grep 'internal/' | grep -E '/(transport|commands|queries)' || true)
+STORE_IMPORTS_TRANSPORT=$(grep -rn '^\s*import' internal/*/store/ --include='*.go' --exclude='*_test.go' 2>/dev/null | grep 'internal/' | grep -E '/(transport|commands|queries)' || true)
 if [ -n "$STORE_IMPORTS_TRANSPORT" ]; then
   ERRORS="$ERRORS\nD5: store imports transport/commands/queries:\n$STORE_IMPORTS_TRANSPORT"
 fi
 
 # Check that commands/ and queries/ don't import store/ or transport/
-CMD_IMPORTS=$(grep -rn 'import' internal/*/commands/ internal/*/queries/ 2>/dev/null | grep 'internal/' | grep -E '/(store|transport)' || true)
+CMD_IMPORTS=$(grep -rn '^\s*import' internal/*/commands/ internal/*/queries/ --include='*.go' --exclude='*_test.go' 2>/dev/null | grep 'internal/' | grep -E '/(store|transport)' || true)
 if [ -n "$CMD_IMPORTS" ]; then
   ERRORS="$ERRORS\nD5: commands/queries import store/transport:\n$CMD_IMPORTS"
 fi

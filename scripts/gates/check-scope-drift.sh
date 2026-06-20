@@ -10,13 +10,19 @@ if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "HEAD" ]; then
   exit 0
 fi
 
+# Resolve base branch dynamically
+BASE="main"
+if ! git merge-base main HEAD &>/dev/null; then
+  BASE="origin/main"
+fi
+
 # Show changed files for human review (advisory — cannot auto-detect ticket scope)
-CHANGED=$(git diff main..HEAD --stat 2>/dev/null || true)
+CHANGED=$(git diff "$BASE"..HEAD --stat 2>/dev/null || true)
 if [ -z "$CHANGED" ]; then
-  echo "PASS: No changes from main"
+  echo "PASS: No changes from $BASE"
   exit 0
 fi
 
-FILE_COUNT=$(git diff main..HEAD --name-only 2>/dev/null | wc -l)
+FILE_COUNT=$(git diff "$BASE"..HEAD --name-only 2>/dev/null | wc -l)
 echo "PASS: $FILE_COUNT files changed (review for scope drift)"
 echo "$CHANGED"

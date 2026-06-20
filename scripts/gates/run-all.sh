@@ -19,7 +19,10 @@ run_gate() {
 
   output=$(bash "$script" 2>&1) && status="PASS" || status="FAIL"
   # Escape JSON special chars in output
-  output=$(echo "$output" | head -5 | tr '\n' ' ' | sed 's/"/\\"/g')
+  # Temporarily disable pipefail to avoid SIGPIPE (exit code 141) when truncating
+  set +o pipefail
+  output=$(echo "$output" | head -n 5 | tr '\n' ' ' | sed 's/"/\\"/g')
+  set -o pipefail
 
   if [ "$status" = "FAIL" ]; then
     OVERALL="FAIL"

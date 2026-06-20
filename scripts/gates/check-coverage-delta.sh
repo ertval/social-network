@@ -2,10 +2,28 @@
 # Gate #13: Test coverage regression check
 set -euo pipefail
 
-MAIN_COV=$(git stash -q 2>/dev/null; git checkout main -q 2>/dev/null && \
-  go test -coverprofile=/tmp/main.cov ./... 2>/dev/null && \
-  go tool cover -func=/tmp/main.cov | tail -1 | awk '{print $3}' | tr -d '%'; \
-  git checkout - -q 2>/dev/null; git stash pop -q 2>/dev/null)
+STASHED=false
+if [ -n "$(git status --porcelain)" ]; then
+  git stash -q
+  STASHED=true
+fi
+
+BASE_BRANCH="main"
+if ! git merge-base main HEAD &>/dev/null; then
+  BASE_BRANCH="origin/main"
+fi
+
+MAIN_COV=""
+if git checkout "$BASE_BRANCH" -q 2>/dev/null; then
+  if go test -coverprofile=/tmp/main.cov ./... 2>/dev/null; then
+    MAIN_COV=$(go tool cover -func=/tmp/main.cov | tail -n 1 | awk '{print $3}' | tr -d '%')
+  fi
+  git checkout - -q
+fi
+
+if [ "$STASHED" = true ]; then
+  git stash pop -q 2>/dev/null || true
+fi
 
 BRANCH_COV=$(go test -coverprofile=/tmp/branch.cov ./... 2>/dev/null && \
   go tool cover -func=/tmp/branch.cov | tail -1 | awk '{print $3}' | tr -d '%')
