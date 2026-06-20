@@ -20,8 +20,8 @@ type RegisterUserReguestModel struct {
 	Email     string `json:"email"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
-	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
+	Age       int    `json:"age"`
 }
 
 type RegisterUserResponse struct {

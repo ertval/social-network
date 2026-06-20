@@ -3,14 +3,14 @@ package createcomment
 import (
 	"context"
 	"net/http"
+	"strconv"
+
+	commentCommands "social-network/internal/app/comments/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
-	"strconv"
-
-	commentCommands "social-network/internal/app/comments/commands"
 )
 
 type RequestModel struct {

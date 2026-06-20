@@ -2,9 +2,9 @@
 
 > [!IMPORTANT]
 > **Superseded.** This document was an early exploration. The final design is captured in:
-> - [arch_optimized_v2.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/arch_optimized_v2.md) — full plan with D1 layout, directory tree, and phased execution
-> - [architecture.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/architecture.md) — high-level architecture
-> - [sds.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/sds.md) — detailed software design specification
+> - [arch_optimized_v2.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/arch_optimized_v2.md) — full plan with D1 layout, directory tree, and phased execution
+> - [architecture.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/architecture.md) — high-level architecture
+> - [sds.md](file:///home/ertval/code/zone-modules/social-network/docs/architecture/sds.md) — detailed software design specification
 >
 > Key difference from this doc: the final design uses `commands/` and `queries/` **subfolders** (one file per use case) while keeping `store/sqlite.go` as a single shared file per feature. This doc proposed flat per-use-case store files which was rejected as unnecessary granularity.
 

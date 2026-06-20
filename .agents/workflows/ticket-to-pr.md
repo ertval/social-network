@@ -1,8 +1,9 @@
 ---
-description: Take a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
+name: ticket-to-pr
+description: End-to-end orchestrator: ticket → implement → review → fix (loop) → create PR.
 ---
 
-
+Take a ticket ID from `docs/sprints/ticket-tracker.md` or a repository issue number, dispatches sequential subagents to implement, review, fix, and publish the PR. Failed reviews re-trigger a fix+review loop until gates pass.
 
 ---
 
@@ -52,7 +53,6 @@ Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TI
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
 
 **Must verify against [conventions.md](../rules/conventions.md):** D2–D5 boundary rules, TDD requirement, SQLite rules, branching/commit format, security best practices, frontend build gates (Biome lint/format, `tsc --noEmit`, Vitest).
-
 **Exit gate:** Implementation complete, branch checked out, code committed.
 
 ---

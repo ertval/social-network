@@ -191,7 +191,8 @@ func (r *Repo) GetChatsForUser(ctx context.Context, userID string) ([]*chat.Chat
 		chats = append(chats, &c)
 	}
 
-	if err := rows.Err(); err != nil {
+	err = rows.Err()
+	if err != nil {
 		return nil, err
 	}
 

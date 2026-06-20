@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+
+	votecommands "social-network/internal/app/votes/commands"
 	"social-network/internal/config"
 	"social-network/internal/domain/vote"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
-
-	votecommands "social-network/internal/app/votes/commands"
 )
 
 type RequestModel struct {

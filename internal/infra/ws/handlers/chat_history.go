@@ -24,7 +24,8 @@ func NewChatHistoryHandler(getChatHistoryHandler chatqueries.GetChatHistoryHandl
 
 func (h *ChatHistoryHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.HistoryPayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}
