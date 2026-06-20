@@ -89,7 +89,7 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Persona**: Adversarial QA Engineer & PR Creator.
 * **Goal**: Audit the completed implementation and publish the PR via Gitea CLI.
 * **Instructions**:
-  - Run verification gates: lints, formats, and backend/frontend test suites (`make ci` / `npm run lint`).
+  - Run verification gates: `make ci` (covers BE: mod verify + format + lint + test, FE: Biome lint + format:check + tsc + Vitest).
   - Enforce all boundary checks and clean up any dead code.
   - Write a beautiful markdown PR description message.
   - CLI execution:

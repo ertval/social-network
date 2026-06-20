@@ -105,5 +105,9 @@ Once the PR message is written and saved to `.git/PR_DESCRIPTION.md`, execute th
      PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
      rtk tea pulls edit --add-reviewers "$COLLABORATORS" "$PR_NUMBER"
      ```
-   - Print the generated PR URL and details to the user.
-   - Clean up the temporary description file: `rm .git/PR_DESCRIPTION.md`.
+    - Print the generated PR URL and details to the user.
+    - Clean up the temporary description file: `rm .git/PR_DESCRIPTION.md`.
+
+4. **Update Ticket Tracker**:
+    - Mark the ticket as completed in `docs/sprints/ticket-tracker.md` by changing `- [ ]` to `- [x]` for the target ticket ID.
+    - Commit the change: `git add docs/sprints/ticket-tracker.md && git commit -m "chore(tracker): mark <TICKET_ID> as completed"`.

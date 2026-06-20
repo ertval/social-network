@@ -59,6 +59,9 @@ func (h *updateTopicRequestHandler) UpdateWithImage(ctx context.Context, req Upd
 	topic.ImagePath = uploadDir + req.ImagePath
 
 	filecontent, err := io.ReadAll(*req.ImageFile.File)
+	if err != nil {
+		return nil, err
+	}
 	if req.OldImagePath != "" {
 		h.fileStorage.Delete(ctx, strings.TrimPrefix(req.OldImagePath, uploadDir))
 	}

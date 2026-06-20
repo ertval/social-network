@@ -92,7 +92,7 @@ graph TD
 
 All branches must follow the format `<username>/<type>-<detail>`.
 
-- **username**: Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Check `origin` remote in `git remote -v` for authoritative list.
+- **username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
 - **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
 - **detail**: kebab-case description of the change. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, but is not required.
 
