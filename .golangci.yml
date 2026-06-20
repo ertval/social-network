@@ -47,7 +47,6 @@ linters:
     - dupword
     - exhaustive
     - maintidx
-    - gosec
     - misspell
     - predeclared
 

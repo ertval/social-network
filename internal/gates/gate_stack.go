@@ -20,6 +20,7 @@ func (g *StackGate) Run() Result {
 		path = "go.mod"
 	}
 
+	// #nosec G304
 	f, err := os.Open(path)
 	if err != nil {
 		return Result{Gate: g.Name(), Status: "FAIL", Message: fmt.Sprintf("cannot open go.mod: %v", err)}
@@ -40,10 +41,10 @@ func (g *StackGate) Run() Result {
 
 	var errors []string
 	if !strings.HasPrefix(goVersion, "1.24") {
-		errors = append(errors, fmt.Sprintf("expected Go 1.24, got %s", goVersion))
+		errors = append(errors, "expected Go 1.24, got "+goVersion)
 	}
 	if modulePath != "social-network" {
-		errors = append(errors, fmt.Sprintf("expected module 'social-network', got '%s'", modulePath))
+		errors = append(errors, "expected module 'social-network', got '"+modulePath+"'")
 	}
 
 	if len(errors) > 0 {

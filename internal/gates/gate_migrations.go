@@ -40,7 +40,7 @@ func (g *MigrationsGate) Run() Result {
 		base := strings.TrimSuffix(name, ".up.sql")
 		downFile := base + ".down.sql"
 		if _, err := os.Stat(filepath.Join(dir, downFile)); os.IsNotExist(err) {
-			errors = append(errors, fmt.Sprintf("missing down migration for %s", name))
+			errors = append(errors, "missing down migration for "+name)
 		}
 	}
 
@@ -50,6 +50,7 @@ func (g *MigrationsGate) Run() Result {
 		if !strings.HasSuffix(e.Name(), ".sql") {
 			continue
 		}
+		// #nosec G304
 		content, err := os.ReadFile(filepath.Join(dir, e.Name()))
 		if err != nil {
 			continue

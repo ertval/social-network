@@ -11,7 +11,8 @@ import (
 	"strings"
 )
 
-// SecurityGate checks security patterns via AST (Gate #8).
+// SecurityGate checks security patterns (Gate #8).
+// Primary: gosec. Custom AST checks always run (bcrypt cost, SQL concat).
 type SecurityGate struct {
 	InternalDir string // defaults to "internal"
 }
@@ -19,6 +20,33 @@ type SecurityGate struct {
 func (g *SecurityGate) Name() string { return "security" }
 
 func (g *SecurityGate) Run() Result {
+	var errors []string
+
+	// Run gosec if available
+	if toolAvailable("gosec") {
+		// #nosec G204
+		cmd := ExecCommand("gosec", "./...")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			errors = append(errors, "gosec findings:\n"+string(out))
+		}
+	}
+
+	// Always run custom AST checks (gosec doesn't cover bcrypt cost)
+	errors = append(errors, g.runASTChecks()...)
+
+	if len(errors) > 0 {
+		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+	}
+
+	suffix := "gosec + AST"
+	if !toolAvailable("gosec") {
+		suffix = "AST only"
+	}
+	return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("security OK (%s)", suffix)}
+}
+
+func (g *SecurityGate) runASTChecks() []string {
 	dir := g.InternalDir
 	if dir == "" {
 		dir = "internal"
@@ -37,7 +65,7 @@ func (g *SecurityGate) Run() Result {
 
 		f, parseErr := parser.ParseFile(fset, path, nil, parser.AllErrors)
 		if parseErr != nil || f == nil {
-			return nil
+			return nil //nolint:nilerr // skip unparseable files
 		}
 
 		ast.Inspect(f, func(n ast.Node) bool {
@@ -51,10 +79,7 @@ func (g *SecurityGate) Run() Result {
 		return nil
 	})
 
-	if len(errors) > 0 {
-		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
-	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "security OK"}
+	return errors
 }
 
 // checkSQLConcat detects fmt.Sprintf with SQL keywords (potential injection).

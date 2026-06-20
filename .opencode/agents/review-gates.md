@@ -1,5 +1,5 @@
 ---
-description: "Deterministic gate runner. Executes scripts/gates/run-all.sh and reports JSON results. No LLM reasoning — pure script execution."
+description: "Deterministic gate runner. Executes go run cmd/gates/main.go --all and reports JSON results. No LLM reasoning — pure script execution."
 mode: subagent
 model: opencode/deepseek-v4-flash-free
 color: accent
@@ -15,7 +15,7 @@ permission:
     "docs/reviews/*": allow
   bash:
     "*": deny
-    "bash scripts/gates/*": allow
+    "go run cmd/gates/*": allow
     make*: allow
     "go test": allow
     "go vet": allow
@@ -37,7 +37,7 @@ Deterministic gate runner. Executes the gate scripts and reports JSON results. N
 - The ticket ID
 
 ## Your job:
-1. Run `bash scripts/gates/run-all.sh` and capture the JSON output.
+1. Run `go run cmd/gates/main.go --all` and capture the JSON output.
 2. If any gate fails, report the full failure details.
 3. Run `make ci` as an additional comprehensive check.
 
@@ -49,5 +49,5 @@ Deterministic gate runner. Executes the gate scripts and reports JSON results. N
 ```
 GATES: <PASS|FAIL>
 FAILED_GATES: <comma-separated list of failed gate names, or "none">
-DETAILS: <JSON output from run-all.sh>
+DETAILS: <JSON output from cmd/gates/main.go>
 ```

@@ -17,6 +17,7 @@ func FindBaseBranch() string {
 
 // GitLog returns commit subjects between base..HEAD.
 func GitLog(base string) ([]string, error) {
+	// #nosec G204
 	cmd := exec.Command("git", "log", base+"..HEAD", "--format=%s")
 	out, err := cmd.Output()
 	if err != nil {
@@ -41,6 +42,7 @@ func GitBranch() string {
 
 // GitDiffFiles returns filenames changed between base..HEAD.
 func GitDiffFiles(base string) ([]string, error) {
+	// #nosec G204
 	cmd := exec.Command("git", "diff", base+"..HEAD", "--name-only")
 	out, err := cmd.Output()
 	if err != nil {

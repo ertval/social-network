@@ -4,7 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os/exec"
 )
+
+// ExecCommand is the function used to create exec.Cmd instances.
+// Override in tests to mock subprocess calls.
+var ExecCommand = exec.Command
+
+// toolAvailable checks if a binary is in PATH.
+func toolAvailable(name string) bool {
+	_, err := exec.LookPath(name)
+	return err == nil
+}
 
 // Gate is the interface every check must implement.
 type Gate interface {
@@ -15,7 +26,7 @@ type Gate interface {
 // Result is the outcome of a single gate check.
 type Result struct {
 	Gate    string `json:"gate"`
-	Status  string `json:"status"`  // PASS, FAIL, SKIP
+	Status  string `json:"status"` // PASS, FAIL, SKIP
 	Message string `json:"message"`
 }
 

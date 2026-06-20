@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-// BoundariesGate validates D5 import boundary rules via AST (Gate #3).
+// BoundariesGate validates D5 import boundary rules (Gate #3).
+// Primary: golangci-lint with depguard. Fallback: AST scan.
 type BoundariesGate struct {
 	InternalDir string // defaults to "internal"
 }
@@ -17,6 +18,22 @@ type BoundariesGate struct {
 func (g *BoundariesGate) Name() string { return "d5-boundaries" }
 
 func (g *BoundariesGate) Run() Result {
+	// Try golangci-lint first (depguard rules in .golangci.yml)
+	if toolAvailable("golangci-lint") {
+		cmd := ExecCommand("golangci-lint", "run", "--enable-only=depguard", "--timeout=5m")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			// Non-zero exit = violations found
+			return Result{Gate: g.Name(), Status: "FAIL", Message: "depguard violations:\n" + string(out)}
+		}
+		return Result{Gate: g.Name(), Status: "PASS", Message: "D5 boundaries OK (golangci-lint depguard)"}
+	}
+
+	// Fallback: AST-based check
+	return g.runAST()
+}
+
+func (g *BoundariesGate) runAST() Result {
 	dir := g.InternalDir
 	if dir == "" {
 		dir = "internal"
@@ -27,36 +44,38 @@ func (g *BoundariesGate) Run() Result {
 		return Result{Gate: g.Name(), Status: "SKIP", Message: fmt.Sprintf("cannot read %s: %v", dir, err)}
 	}
 
+	// Get working directory for path trimming
+	wd, _ := os.Getwd()
+
 	var errors []string
 
 	for _, e := range entries {
 		if !e.IsDir() || skipDirs[e.Name()] {
 			continue
 		}
-		feature := e.Name()
-		featureDir := filepath.Join(dir, feature)
+		featureDir := filepath.Join(dir, e.Name())
 
 		// Rule: transport/ must not import store/
-		errors = append(errors, checkImports(featureDir, "transport", []string{"/store"})...)
+		errors = append(errors, checkImports(featureDir, "transport", []string{"/store"}, wd)...)
 
 		// Rule: store/ must not import transport/, commands/, queries/
-		errors = append(errors, checkImports(featureDir, "store", []string{"/transport", "/commands", "/queries"})...)
+		errors = append(errors, checkImports(featureDir, "store", []string{"/transport", "/commands", "/queries"}, wd)...)
 
 		// Rule: commands/ must not import store/ or transport/
-		errors = append(errors, checkImports(featureDir, "commands", []string{"/store", "/transport"})...)
+		errors = append(errors, checkImports(featureDir, "commands", []string{"/store", "/transport"}, wd)...)
 
 		// Rule: queries/ must not import store/ or transport/
-		errors = append(errors, checkImports(featureDir, "queries", []string{"/store", "/transport"})...)
+		errors = append(errors, checkImports(featureDir, "queries", []string{"/store", "/transport"}, wd)...)
 	}
 
 	if len(errors) > 0 {
 		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "D5 boundaries OK"}
+	return Result{Gate: g.Name(), Status: "PASS", Message: "D5 boundaries OK (AST fallback)"}
 }
 
 // checkImports parses Go files in a subdirectory and checks for forbidden import path fragments.
-func checkImports(featureDir, subDir string, forbidden []string) []string {
+func checkImports(featureDir, subDir string, forbidden []string, wd string) []string {
 	dir := filepath.Join(featureDir, subDir)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		return nil
@@ -66,8 +85,11 @@ func checkImports(featureDir, subDir string, forbidden []string) []string {
 	fset := token.NewFileSet()
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil || info.IsDir() {
+		if err != nil {
 			return err
+		}
+		if info.IsDir() {
+			return nil
 		}
 		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
 			return nil
@@ -75,7 +97,7 @@ func checkImports(featureDir, subDir string, forbidden []string) []string {
 
 		f, parseErr := parser.ParseFile(fset, path, nil, parser.ImportsOnly)
 		if parseErr != nil {
-			return nil // skip unparseable files
+			return nil //nolint:nilerr // skip unparseable files
 		}
 
 		for _, imp := range f.Imports {
@@ -86,14 +108,18 @@ func checkImports(featureDir, subDir string, forbidden []string) []string {
 			for _, frag := range forbidden {
 				if strings.Contains(importPath, frag) {
 					pos := fset.Position(imp.Pos())
-					violations = append(violations, fmt.Sprintf("D5: %s:%d imports %s", pos.Filename, pos.Line, importPath))
+					relPath := pos.Filename
+					if wd != "" {
+						relPath = strings.TrimPrefix(relPath, wd+"/")
+					}
+					violations = append(violations, fmt.Sprintf("D5: %s:%d imports %s", relPath, pos.Line, importPath))
 				}
 			}
 		}
 		return nil
 	})
 	if err != nil {
-		// Silently skip walk errors
+		violations = append(violations, fmt.Sprintf("walk error in %s: %v", dir, err))
 	}
 
 	return violations

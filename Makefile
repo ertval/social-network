@@ -55,6 +55,8 @@ GOIMPORTS_VERSION = latest
 BENCHSTAT_VERSION = latest
 GOVULNCHECK_VERSION = latest
 GOFUMPT_VERSION = latest
+GOSEC_VERSION = latest
+GOARCHLINT_VERSION = latest
 
 setup: tools ## Install development tools and dependencies
 
@@ -67,6 +69,8 @@ tools: ## Install Go development tools (gofumpt, goimports, etc.)
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
 	go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
+	go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
+	go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
 
 bench-tools: ## Install benchmarking tools (benchstat)
 	@echo "==> Installing benchmark tools..."

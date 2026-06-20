@@ -19,7 +19,7 @@ func (g *ScopeDriftGate) Run() Result {
 	base := FindBaseBranch()
 	files, err := GitDiffFiles(base)
 	if err != nil || len(files) == 0 {
-		return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("no changes from %s", base)}
+		return Result{Gate: g.Name(), Status: "PASS", Message: "no changes from " + base}
 	}
 
 	// Advisory: always PASS, but report file count
@@ -28,11 +28,4 @@ func (g *ScopeDriftGate) Run() Result {
 		Status:  "PASS",
 		Message: fmt.Sprintf("%d files changed (review for scope drift): %s", len(files), strings.Join(files[:min(len(files), 5)], ", ")),
 	}
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

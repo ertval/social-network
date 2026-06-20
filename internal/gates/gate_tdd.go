@@ -68,7 +68,7 @@ func checkTestCoverage(dir string) []string {
 	}
 
 	if hasGoFiles && !hasTestFiles {
-		return []string{fmt.Sprintf("%s: has Go files but no test files", dir)}
+		return []string{dir + ": has Go files but no test files"}
 	}
 	return nil
 }

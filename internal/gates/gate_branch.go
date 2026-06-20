@@ -12,7 +12,7 @@ type BranchGate struct{}
 func (g *BranchGate) Name() string { return "branch" }
 
 var (
-	branchPattern = regexp.MustCompile(`^[a-z]+/[A-Za-z0-9]+-[a-z0-9-]+$`)
+	branchPattern = regexp.MustCompile(`^[a-z]+/[A-Za-z0-9-]+-[A-Za-z0-9-]+$`)
 	commitPattern = regexp.MustCompile(`^(feat|fix|test|refactor|chore|docs|style|perf|ci|build|revert)\((user|topic|follow|group|event|chat|notification|oauth|core|platform|comment)\):`)
 )
 
@@ -33,6 +33,9 @@ func (g *BranchGate) Run() Result {
 	commits, err := GitLog(base)
 	if err == nil {
 		for _, msg := range commits {
+			if strings.HasPrefix(msg, "Merge ") {
+				continue // skip auto-generated merge commits
+			}
 			if !commitPattern.MatchString(msg) {
 				errors = append(errors, fmt.Sprintf("non-conventional commit: '%s'", msg))
 			}

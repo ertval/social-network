@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 )
 
 // DAGGate validates D6 dependency DAG acyclicity (Gate #4).
+// Primary: go-arch-lint. Fallback: go list + DFS cycle detection.
 type DAGGate struct {
 	InternalDir string // defaults to "internal"
 }
@@ -16,6 +16,26 @@ type DAGGate struct {
 func (g *DAGGate) Name() string { return "d6-dag" }
 
 func (g *DAGGate) Run() Result {
+	// Try go-arch-lint first
+	if toolAvailable("go-arch-lint") {
+		cmd := ExecCommand("go-arch-lint", "check")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return Result{Gate: g.Name(), Status: "FAIL", Message: "go-arch-lint violations:\n" + string(out)}
+		}
+		// Still check notification imports (go-arch-lint doesn't enforce this)
+		if notifErrs := g.checkNotificationImports(); len(notifErrs) > 0 {
+			return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(notifErrs, "; ")}
+		}
+		return Result{Gate: g.Name(), Status: "PASS", Message: "D6 DAG acyclic (go-arch-lint)"}
+	}
+
+	// Fallback: go list + DFS
+	return g.runFallback()
+}
+
+//nolint:gocognit
+func (g *DAGGate) runFallback() Result {
 	dir := g.InternalDir
 	if dir == "" {
 		dir = "internal"
@@ -26,7 +46,6 @@ func (g *DAGGate) Run() Result {
 		return Result{Gate: g.Name(), Status: "SKIP", Message: fmt.Sprintf("cannot read %s: %v", dir, err)}
 	}
 
-	// Collect feature names
 	var features []string
 	for _, e := range entries {
 		if e.IsDir() && !skipDirs[e.Name()] {
@@ -38,8 +57,6 @@ func (g *DAGGate) Run() Result {
 		return Result{Gate: g.Name(), Status: "PASS", Message: "no feature slices yet (pre-migration)"}
 	}
 
-	var errors []string
-
 	// Build dependency graph
 	deps := make(map[string][]string)
 	for _, feature := range features {
@@ -50,33 +67,92 @@ func (g *DAGGate) Run() Result {
 		deps[feature] = featureDeps
 	}
 
-	// Check for cycles
-	for _, feature := range features {
-		for _, dep := range deps[feature] {
-			for _, revDep := range deps[dep] {
-				if revDep == feature {
-					errors = append(errors, fmt.Sprintf("CIRCULAR: %s ↔ %s", feature, dep))
+	// DFS cycle detection
+	var errors []string
+	const (
+		white = 0 // unvisited
+		gray  = 1 // in current path
+		black = 2 // fully processed
+	)
+	color := make(map[string]int)
+	parent := make(map[string]string)
+
+	var dfs func(node string) []string
+	dfs = func(node string) []string {
+		color[node] = gray
+		for _, dep := range deps[node] {
+			switch color[dep] {
+			case gray:
+				// Back edge → cycle. Build path.
+				path := []string{dep, node}
+				cur := node
+				for cur != dep {
+					cur = parent[cur]
+					if cur == "" {
+						break
+					}
+					path = append(path, cur)
 				}
+				// Reverse for readability
+				for i, j := 0, len(path)-1; i < j; i, j = i+1, j-1 {
+					path[i], path[j] = path[j], path[i]
+				}
+				return []string{"CIRCULAR: " + strings.Join(path, " → ")}
+			case white:
+				parent[dep] = node
+				if errs := dfs(dep); len(errs) > 0 {
+					return errs
+				}
+			}
+		}
+		color[node] = black
+		return nil
+	}
+
+	for _, feature := range features {
+		if color[feature] == white {
+			if errs := dfs(feature); len(errs) > 0 {
+				errors = append(errors, errs...)
 			}
 		}
 	}
 
-	// Check notification is never imported (except by bootstrap)
-	for _, feature := range features {
-		if feature == "notification" {
-			continue
-		}
-		for _, dep := range deps[feature] {
-			if dep == "notification" {
-				errors = append(errors, fmt.Sprintf("D6: %s imports notification (forbidden)", feature))
-			}
-		}
-	}
+	// Check notification imports
+	errors = append(errors, g.checkNotificationImports()...)
 
 	if len(errors) > 0 {
 		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "D6 DAG acyclic"}
+	return Result{Gate: g.Name(), Status: "PASS", Message: "D6 DAG acyclic (fallback)"}
+}
+
+func (g *DAGGate) checkNotificationImports() []string {
+	dir := g.InternalDir
+	if dir == "" {
+		dir = "internal"
+	}
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+
+	var errors []string
+	for _, e := range entries {
+		if !e.IsDir() || skipDirs[e.Name()] || e.Name() == "notification" {
+			continue
+		}
+		featureDeps, err := getFeatureDeps(e.Name())
+		if err != nil {
+			continue
+		}
+		for _, dep := range featureDeps {
+			if dep == "notification" {
+				errors = append(errors, fmt.Sprintf("D6: %s imports notification (forbidden)", e.Name()))
+			}
+		}
+	}
+	return errors
 }
 
 type goListPkg struct {
@@ -85,7 +161,7 @@ type goListPkg struct {
 
 // getFeatureDeps returns other feature slices that this feature imports.
 func getFeatureDeps(feature string) ([]string, error) {
-	cmd := exec.Command("go", "list", "-json", "social-network/internal/"+feature+"/...")
+	cmd := ExecCommand("go", "list", "-json", "social-network/internal/"+feature+"/...")
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
@@ -112,5 +188,6 @@ func getFeatureDeps(feature string) ([]string, error) {
 			deps = append(deps, dep)
 		}
 	}
+	//nolint:nilerr
 	return deps, nil
 }
