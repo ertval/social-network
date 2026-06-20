@@ -8,15 +8,16 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/google/uuid"
-
 	"social-network/internal/app"
-	topicCommands "social-network/internal/app/topics/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	"github.com/google/uuid"
+
+	topicCommands "social-network/internal/app/topics/commands"
 )
 
 const (
