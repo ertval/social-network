@@ -47,11 +47,11 @@ sh scripts/makecerts.sh
 > The generated certificates will be stored under `certs/` as defined in your `.env` file (by default `certs/localhost+2.pem` and `certs/localhost+2-key.pem`).
 
 ### 3. Install Development Tools
-Install backend linter, formatter, vulnerability checkers, and helper CLI utilities:
+Install backend linters, formatters, security scanners, architecture linters, and git hooks:
 ```bash
 make setup
 ```
-This command runs `go install` for `goimports`, `staticcheck`, `golangci-lint`, and `govulncheck`.
+This runs `make tools` (installs `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`) then installs lefthook git hooks.
 
 ### 4. Build and Start the Environment
 Launch the local Docker containers (running Go backend, Next.js frontend, and persistent SQLite database):
@@ -139,9 +139,30 @@ If you prefer to run services natively on your host OS:
 
 ---
 
-## 🔍 Linting & Formatting Checks
+## 🔍 Linting, Formatting & Verification Gates
 
 Before pushing code or opening a pull request, ensure it passes all verification gates.
+
+### Full CI Pipeline
+```bash
+make ci
+```
+Runs backend + frontend checks (ci-mod → check-format → lint → test).
+
+### Go Verification Gates
+Deterministic architecture/security/convention gates:
+```bash
+make review-gates
+# Or directly: go run cmd/gates/main.go --all
+```
+Individual gates: `--gate=boundaries`, `--gate=dag`, `--gate=security`, `--gate=branch`, `--gate=coverage`, `--gate=scopedrift`. Output is JSON.
+
+### Pre-commit & Pre-push Hooks (Lefthook)
+Install hooks:
+```bash
+make setup-hooks
+```
+Pre-commit auto-formats staged Go/frontend files. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `biome lint`. Bypass: `--no-verify`.
 
 ### Backend Validation
 Run linter (`golangci-lint`, `staticcheck`, and `govulncheck`), formatting, and test checks:

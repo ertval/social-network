@@ -38,6 +38,7 @@ graph TD
 - **Stage 4: System Design and DDL Specs**: Read [docs/architecture/sds.md](file://docs/architecture/sds.md).
 - **Stage 5: Execution Roadmaps**: Read [docs/architecture/target-architecture-with-phases.md](file://docs/architecture/target-architecture-with-phases.md) and [docs/sprints/ticket-tracker.md](file://docs/sprints/ticket-tracker.md).
 - **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/sprints/sprint-0.md), [sprint-1.md](file://docs/sprints/sprint-1.md), [sprint-2.md](file://docs/sprints/sprint-2.md), [sprint-3.md](file://docs/sprints/sprint-3.md), [sprint-4.md](file://docs/sprints/sprint-4.md), [sprint-5.md](file://docs/sprints/sprint-5.md), and [sprint-6.md](file://docs/sprints/sprint-6.md).
+- **Stage 7: Verification**: Read [docs/requirements/audit.md](file://docs/requirements/audit.md) and [docs/requirements/readme.md](file://docs/requirements/readme.md) for grading acceptance criteria.
 
 ---
 
@@ -247,7 +248,11 @@ make ci
 make be-ci   # Backend only
 make fe-ci   # Frontend only
 
-# Boundary check
+# Go verification gates (architecture, security, conventions)
+make review-gates
+# Equivalent: go run cmd/gates/main.go --all
+
+# Boundary check (D5)
 grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
 ```
 
@@ -258,6 +263,7 @@ go build ./...
 go test -race -coverprofile=coverage.out ./...
 golangci-lint run
 govulncheck ./...
+go run cmd/gates/main.go --all
 ```
 
 ### Q3: Manual Smoke Test Scenarios

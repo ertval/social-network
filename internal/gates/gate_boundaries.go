@@ -71,12 +71,60 @@ func (g *BoundariesGate) runAST() Result {
 
 		// Rule: queries/ must not import store/ or transport/
 		errors = append(errors, checkImports(featureDir, "queries", []string{"/store", "/transport"}, wd)...)
+
+		// Rule: feature root files (e.g. internal/user/user.go) must not import own transport/ or store/
+		errors = append(errors, checkRootImports(featureDir, []string{"/transport", "/store"}, wd)...)
 	}
 
 	if len(errors) > 0 {
 		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
 	}
 	return Result{Gate: g.Name(), Status: "PASS", Message: "D5 boundaries OK (AST fallback)"}
+}
+
+// checkRootImports parses Go files directly in the featureDir (not subdirectories)
+// and checks for forbidden import path fragments.
+func checkRootImports(featureDir string, forbidden []string, wd string) []string {
+	var violations []string
+	fset := token.NewFileSet()
+
+	entries, err := os.ReadDir(featureDir)
+	if err != nil {
+		return nil
+	}
+
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		path := filepath.Join(featureDir, e.Name())
+		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+			continue
+		}
+
+		f, parseErr := parser.ParseFile(fset, path, nil, parser.ImportsOnly)
+		if parseErr != nil {
+			continue
+		}
+
+		for _, imp := range f.Imports {
+			importPath := strings.Trim(imp.Path.Value, `"`)
+			if !strings.Contains(importPath, "internal/") {
+				continue
+			}
+			for _, frag := range forbidden {
+				if strings.Contains(importPath, frag) {
+					pos := fset.Position(imp.Pos())
+					relPath := pos.Filename
+					if wd != "" {
+						relPath = strings.TrimPrefix(relPath, wd+"/")
+					}
+					violations = append(violations, fmt.Sprintf("D5: %s:%d imports %s", relPath, pos.Line, importPath))
+				}
+			}
+		}
+	}
+	return violations
 }
 
 // checkImports parses Go files in a subdirectory and checks for forbidden import path fragments.

@@ -187,6 +187,10 @@ Quick-reference for all tools used across the software development lifecycle.
 | Orchestration | Docker Compose v5.1.1 | `docker-compose.yml` |
 | Dev TLS | `openssl` | `scripts/makecerts.sh` |
 | CI pipeline | Makefile `ci` target | `Makefile` |
+| Pre-commit hooks | Lefthook | `lefthook.yml` |
+| Verification gates | `cmd/gates/main.go` | `Makefile` `review-gates` |
+| Go arch lint | `go-arch-lint` | `.go-arch-lint.yml` |
+| Security scan | `gosec` | `Makefile` / gates |
 
 ### CI Pipeline (`make ci`)
 
@@ -194,10 +198,39 @@ Quick-reference for all tools used across the software development lifecycle.
 
 **Backend** (`make be-ci`):
 ```
-ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
+ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
+> `check-format` verifies formatting without modifying. Use `make format` to auto-format before committing.
 
 **Frontend** (`make fe-ci`):
 ```
 bun run lint → bun run format:check → tsc --noEmit → bun run test
 ```
+
+### Verification Gates (`make review-gates`)
+
+Go-based deterministic gates under `internal/gates/` enforce architectural and convention rules:
+
+| Gate | Tool/Fallback | What It Checks |
+|------|---------------|----------------|
+| Stack | go version / go.mod | Go ≥ 1.24, module path `social-network` |
+| Layout | os.Stat | Target directory structure exists |
+| Boundaries | golangci-lint depguard / AST | D5 — forbidden cross-slice imports |
+| DAG | go-arch-lint / DFS | D6 — dependency graph acyclicity |
+| TDD | os.Stat | Test files exist per command/query |
+| Migrations | glob / grep | Migration naming (`NNNNNN_name.up.sql`), delimiter (`";"`) |
+| Security | gosec / custom AST | SQL concat, WebSocket CheckOrigin, bcrypt cost |
+| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` |
+| Coverage | git worktree + go test | Test coverage threshold (>90%) |
+| ScopeDrift | git diff | Unplanned file changes |
+
+Output: JSON with exit codes. Run via `make review-gates` or `go run cmd/gates/main.go --all`.
+
+### Pre-commit / Pre-push Hooks (Lefthook)
+
+Configured in `lefthook.yml`:
+
+- **Pre-commit** (staged files, parallel): `gofumpt` + `goimports` on `*.go`, Biome format+lint on frontend. Auto-fixes via `stage_fixed: true`.
+- **Pre-push** (parallel): `go vet`, `go test -short`, `go build`, `go-arch-lint check` (backend); `tsc --noEmit`, `biome lint`, `vitest` (frontend).
+
+Install: `make setup-hooks`. Bypass: `--no-verify`.

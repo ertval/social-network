@@ -10,7 +10,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -68,19 +67,19 @@ func getBaselineCoverage(baseBranch string) (float64, error) {
 
 	// Create worktree (--detach avoids failure if baseBranch is checked out)
 	// #nosec G204
-	add := exec.Command("git", "worktree", "add", "--detach", tempDir, baseBranch)
+	add := ExecCommand("git", "worktree", "add", "--detach", tempDir, baseBranch)
 	if err := add.Run(); err != nil {
 		return 0, fmt.Errorf("git worktree add: %w", err)
 	}
 	defer func() {
 		// #nosec G204
-		_ = exec.Command("git", "worktree", "remove", "--force", tempDir).Run()
+		_ = ExecCommand("git", "worktree", "remove", "--force", tempDir).Run()
 	}()
 
 	// Run tests in worktree
 	covFile := filepath.Join(tempDir, "coverage.out")
 	// #nosec G204
-	testCmd := exec.Command("go", "test", "-coverprofile="+covFile, "./...")
+	testCmd := ExecCommand("go", "test", "-coverprofile="+covFile, "./...")
 	testCmd.Dir = tempDir
 	if err := testCmd.Run(); err != nil {
 		return 0, fmt.Errorf("go test in worktree: %w", err)
@@ -94,7 +93,7 @@ func getCurrentCoverage() (float64, error) {
 	defer func() { _ = os.Remove(covFile) }()
 
 	// #nosec G204
-	testCmd := exec.Command("go", "test", "-coverprofile="+covFile, "./...")
+	testCmd := ExecCommand("go", "test", "-coverprofile="+covFile, "./...")
 	if err := testCmd.Run(); err != nil {
 		return 0, fmt.Errorf("go test: %w", err)
 	}
@@ -104,7 +103,7 @@ func getCurrentCoverage() (float64, error) {
 func parseCoverageFile(path string) (float64, error) {
 	// Use go tool cover to get total coverage
 	// #nosec G204
-	cmd := exec.Command("go", "tool", "cover", "-func="+path)
+	cmd := ExecCommand("go", "tool", "cover", "-func="+path)
 	out, err := cmd.Output()
 	if err != nil {
 		return 0, err

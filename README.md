@@ -162,9 +162,9 @@ To configure your local environment for development and testing, install the fol
    curl -fsSL https://bun.sh/install | bash
    ```
 3. **Docker & Docker Compose**: Essential for orchestrating backend/frontend services in a containerized environment.
-4. **Backend Quality Tooling**: Install `goimports`, `staticcheck`, and `golangci-lint` collectively by running:
+4. **Backend Quality Tooling**: Install all Go tools (`gofumpt`, `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gosec`, `go-arch-lint`, lefthook) by running:
    ```bash
-   make tools
+   make setup
    ```
 5. **Biome (Frontend)**: Biome handles Next.js formatting and linting. It is defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
 
@@ -242,12 +242,55 @@ Run the automated check suite locally before pushing:
 make ci
 ```
 This runs the full gate: backend (`make be-ci`) + frontend (`make fe-ci`).
-- **Backend** (`make be-ci`): `ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test`
-- **Frontend** (`make fe-ci`): `bun run lint ──> bun run format:check ──> tsc --noEmit ──> bun run test`
-*   `ci-mod`: Runs `go mod tidy` and asserts no changes.
-*   `format`: Runs `gofumpt` and `goimports`.
-*   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
-*   `test`: Runs unit/integration tests with race checks and generates a coverage report.
+- **Backend** (`make be-ci`): `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`
+- **Frontend** (`make fe-ci`): `bun run lint → bun run format:check → tsc --noEmit → bun run test`
+-   `ci-mod`: Runs `go mod tidy` and asserts no changes.
+-   `check-format`: Verifies `gofumpt` and `goimports` formatting without modifying files.
+-   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
+-   `test`: Runs unit/integration tests with race checks and generates a coverage report.
+
+To auto-format files: `make format` (runs `gofumpt -w` and `goimports -w`).
+
+### 🧪 Go Verification Gates
+Deterministic Go-based gates catch architecture violations, security issues, and branch/convention regressions:
+
+```bash
+go run cmd/gates/main.go --all
+```
+
+Individual gates:
+```bash
+go run cmd/gates/main.go --gate=stack        # Go version + module path
+go run cmd/gates/main.go --gate=layout       # Directory structure
+go run cmd/gates/main.go --gate=boundaries   # D5 import boundary rules
+go run cmd/gates/main.go --gate=dag          # D6 dependency graph acyclicity
+go run cmd/gates/main.go --gate=tdd          # Test file presence
+go run cmd/gates/main.go --gate=migrations   # Migration naming/delimiter
+go run cmd/gates/main.go --gate=security     # gosec + custom AST checks
+go run cmd/gates/main.go --gate=branch       # branch naming convention
+go run cmd/gates/main.go --gate=coverage     # test coverage threshold
+go run cmd/gates/main.go --gate=scopedrift   # scope creep detection
+```
+
+Output is JSON with exit codes (0 = pass). Gates are also run via `make review-gates`.
+
+### 🔗 Pre-commit & Pre-push Hooks (Lefthook)
+Quality hooks run automatically on staged files (pre-commit) and before push (pre-push):
+
+```bash
+# Install hooks (one-time setup)
+make setup-hooks
+
+# Pre-commit (runs on staged files):
+#   - Backend: gofumpt + goimports formatting (auto-fixed)
+#   - Frontend: biome format + biome lint
+
+# Pre-push:
+#   - Backend: go vet ./..., go test -short ./..., go build ./..., go-arch-lint check
+#   - Frontend: tsc --noEmit, biome lint, vitest
+```
+
+To bypass hooks temporarily: `git commit --no-verify` or `git push --no-verify`.
 
 ### ⚛️ Frontend Validation
 Run linting, formatting check, and TypeScript compilation gates:
@@ -300,7 +343,7 @@ opencode skill upgrade
 
 | Layer | Command | What it installs |
 | :--- | :--- | :--- |
-| **Backend (Go)** | `make tools` | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1) |
+| **Backend (Go)** | `make setup` (or `make tools`) | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1), `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`, lefthook |
 | **Backend (Go modules)** | `go mod tidy` | Go library dependencies from `go.mod` |
 | **Frontend (Bun/Next.js)** | `bun install` | npm packages from `frontend/package.json` |
 | **Docker** | `docker compose build` | Container images for backend + frontend |
@@ -346,5 +389,5 @@ A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
 3. Code compiles and linting/formatting passes cleanly (`make ci`).
-4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
+4. PR follows the standard PR description template (found in `.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).

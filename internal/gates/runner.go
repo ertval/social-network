@@ -16,9 +16,11 @@ import (
 // Override in tests to mock subprocess calls.
 var ExecCommand = exec.Command
 
+var lookPath = exec.LookPath
+
 // toolAvailable checks if a binary is in PATH.
 func toolAvailable(name string) bool {
-	_, err := exec.LookPath(name)
+	_, err := lookPath(name)
 	return err == nil
 }
 

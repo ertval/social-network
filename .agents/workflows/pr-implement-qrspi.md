@@ -110,5 +110,5 @@ graph TD
    - Run full CI pipeline: `rtk make ci`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
-2. Draft a beautiful markdown PR description message using the template from `@.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
+2. Draft a beautiful markdown PR description message using the template from `.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
 3. Publish the PR via CLI tools (Gitea `tea` CLI).

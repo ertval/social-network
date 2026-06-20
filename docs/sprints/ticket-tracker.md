@@ -23,7 +23,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S0-BE-04:** Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 
 ### FE-A (Frontend A)
-- [ ] **S0-FE-01:** Next.js Scaffold + Tooling
+- [ ] **S0-FE-01:** Next.js Scaffold + Tooling (Frontend Setup)
 
 ### FE-B (Frontend B)
 - [ ] **S0-FE-02:** shadcn/ui Components + Layout
@@ -31,7 +31,7 @@ For step-by-step ticket instructions, see individual sprint files:
 ### SD-QA (System Design/QA)
 - [x] **S0-SD-01:** golangci-lint Config
 - [ ] **S0-SD-02:** Docker Compose Development Environment
-- [ ] **S0-SD-03:** Pre-commit Hooks
+- [ ] **S0-SD-03:** CI Pipeline, Go Gates & Pre-commit Hooks
 - [x] **S0-SD-04:** Dev Environment Docs
 
 ---

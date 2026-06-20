@@ -94,19 +94,53 @@
 
 ## FE-A (Frontend A) Tickets
 
-### S0-FE-01: Next.js Scaffold + Tooling
+### S0-FE-01: Next.js Scaffold + Tooling (Frontend Setup)
 * **Priority:** P0 (Blocks everything)
 * **Type:** Scaffolding/Setup
 * **Assignee:** FE-A
 * **Story Points:** 5
-* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
+* **Dependencies:** S0-SD-03 (CI pipeline for frontend gates)
+* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, testing frameworks, and Bun runtime. Includes all dependency management, lint/format/test gates, and CI integration.
 * **Detailed Steps:**
-  1. Create a `frontend/` subdirectory in the project root.
-  2. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
-  3. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json` to run `npx @biomejs/biome check src/`.
-  4. Install `shadcn/ui` tooling and Tailwind custom presets.
-  5. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
-* **Verification:** Run `bun run lint`, `bun run format`, `bun run build`, and `bun run test` to verify everything is green.
+  1. **Install Bun runtime** (prerequisite):
+     ```bash
+     curl -fsSL https://bun.sh/install | bash
+     ```
+     Verify: `bun --version` (requires ≥ 1.1).
+  2. Create a `frontend/` subdirectory in the project root.
+  3. Bootstrap Next.js using `npx -y create-next-app@latest ./` (App router, TypeScript, Tailwind CSS, strict settings, Bun runtime compatibility).
+  4. Install frontend dependencies:
+     ```bash
+     cd frontend && bun install
+     ```
+  5. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json`:
+     ```json
+     {
+       "scripts": {
+         "lint": "biome check src/",
+         "format": "biome format --write src/",
+         "format:check": "biome format src/",
+         "typecheck": "tsc --noEmit",
+         "test": "vitest run",
+         "test:watch": "vitest"
+       }
+     }
+     ```
+  6. Install `shadcn/ui` tooling and Tailwind custom presets.
+  7. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
+  8. Set up `frontend/Dockerfile` for multi-stage Next.js build (port 3000).
+  9. Verify all frontend gates pass:
+     - `bun run lint` (Biome lint)
+     - `bun run format:check` (Biome formatting check)
+     - `tsc --noEmit` (TypeScript type check)
+     - `bun run test` (Vitest)
+     - `bun run build` (Next.js production build)
+* **Verification:**
+  - Run `bun --version` — version ≥ 1.1.
+  - Run `bun install` from `frontend/` — no errors.
+  - Run `bun run lint`, `bun run format:check`, `tsc --noEmit`, `bun run test`, `bun run build` — all green.
+  - Run `make fe-ci` from root — frontend CI pipeline passes.
+  - Verify `frontend/Dockerfile` builds: `docker build -f frontend/Dockerfile -t social-fe .`
 
 ---
 
@@ -165,21 +199,57 @@
 
 ---
 
-### S0-SD-03: Pre-commit Hooks
+### S0-SD-03: CI Pipeline, Go Gates & Pre-commit Hooks
 * **Priority:** P1
 * **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
-* **Story Points:** 2
-* **Dependencies:** S0-BE-01
-* **Description:** Establish quality git hooks using lefthook to prevent bad code from committing or pushing.
+* **Story Points:** 5
+* **Dependencies:** S0-BE-01, S0-BE-03
+* **Description:** Establish the full quality enforcement pipeline: local git hooks via lefthook, automated Go-based verification gates (`internal/gates/`), and CI integration. Ensures bad code is caught at commit time, pre-push, and in CI.
 * **Detailed Steps:**
-  1. Setup pre-commit hooks that run checks only on staged files:
-     - Backend: runs `gofumpt` and `goimports` formatting.
-     - Frontend: runs `biome format` and `biome lint`.
-  2. Setup a pre-push hook:
-     - Runs `go vet ./...` on backend.
-     - Runs `tsc --noEmit` on frontend.
-* **Verification:** Try to commit an unformatted file and verify the commit gets blocked. Format it, verify it succeeds.
+  1. **Lefthook setup:**
+     - Install lefthook: `go install github.com/evilmartians/lefthook/v2@latest && lefthook install`.
+     - Configure `lefthook.yml` with pre-commit hooks (staged files only):
+       - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` with `stage_fixed: true`.
+       - Frontend: `biome format` and `biome lint` on staged files.
+     - Configure pre-push hooks:
+       - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
+       - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.
+  2. **Go-based verification gates (`internal/gates/`):**
+     - Implement gate runner in `cmd/gates/main.go` registering all 10 gates.
+     - `runner.go`: exported `var ExecCommand = exec.Command` for testability.
+     - `gate_stack.go`: verify Go version ≥ 1.24, module path `social-network`.
+     - `gate_layout.go`: verify target directory structure exists (`cmd/server/`, `internal/core/`, `internal/platform/`, `internal/pkg/`, `db/migrations/`).
+     - `gate_boundaries.go`: run `golangci-lint run --enable-only=depguard --timeout=5m`, AST fallback when tool missing (checks feature subdirectories for forbidden imports per D5 rules).
+     - `gate_dag.go`: run `go-arch-lint check`, DFS cycle-detection fallback with path output (A → B → C → A). Block notification imports per D6.
+     - `gate_tdd.go`: verify test files exist for each command/query package.
+     - `gate_migrations.go`: verify migration file naming convention (`NNNNNN_name.up.sql` / `.down.sql`), delimiter (`";"`).
+     - `gate_security.go`: run `gosec ./...` + 3 custom AST checks:
+       - SQL concatenation detection.
+       - WebSocket `CheckOrigin` returning unconditional `true` — detect and reject.
+       - bcrypt cost: resolve constant-based definitions (not just literals), reject `bcrypt.DefaultCost`.
+     - `gate_branch.go`: regex `^[a-z]+/[A-Za-z0-9-]+-[A-Za-z0-9-]+$`, skip merge commits.
+     - `gate_coverage.go`: `git worktree add --detach` for safe coverage computation.
+     - `gate_scopedrift.go`: detect scope creep (unplanned file changes).
+     - Flags: `--all`, `--gate=<name>`. JSON output with exit codes.
+  3. **CI pipeline integration:**
+     - Add `Makefile` targets:
+       - `make review-gates`: `go run cmd/gates/main.go --all`.
+       - `make setup-hooks`: install + configure lefthook.
+       - `ci-mod`, `format`, `check-format`, `lint`, `test`, `be-ci`, `fe-ci`, `ci`.
+     - `make ci` runs full pipeline: `ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`.
+  4. **Test coverage (target >90%):**
+     - Table-driven tests with `t.Run()` subtests for all gates.
+     - Mock `ExecCommand` to test tool success/failure/missing-binary paths.
+     - Test `Run()` on every gate (Boundaries, DAG, Security, Branch, Coverage, ScopeDrift).
+     - Test `toolAvailable()`, `WriteJSON()`, `FindBaseBranch()`, `GitLog()`, `GitBranch()`, `GitDiffFiles()`, `getFeatureDeps()`, `runFallback()`, `checkNotificationImports()`.
+     - Assert coverage exceeds 90%.
+* **Verification:**
+  - Run `lefthook run pre-commit` and `lefthook run pre-push` — all hooks pass.
+  - Try to commit an unformatted file — commit gets blocked. Format it — succeeds.
+  - Run `go run cmd/gates/main.go --all` — all gates pass with JSON output.
+  - Run `go test -race -coverprofile=coverage_gates.out ./internal/gates/...` — coverage >90%.
+  - Run `make ci` — full pipeline green.
 
 ---
 

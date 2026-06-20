@@ -46,7 +46,7 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ### Phase 1: Branch & Commit Integrity
 - Read `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` first. If the latest status is not `APPROVED` (or `PASS WITH RECOMMENDATIONS` after exhausted fix cycles), and any Critical/Warning finding remains, stop and report that `flowmaster` must run `remedy`/`audit` again.
 - Verify branch name matches `<username>/<ticket/issue-ID>-<detail>` convention.
-- Verify commits follow Conventional Commits format with allowed scopes from conventions.md §6.
+- Verify commits follow Conventional Commits format with allowed scopes from conventions.md §9 (Git & PRs).
 - Ensure branch is rebased on main (no merge commits from main).
 
 ### Phase 2: Sprint Rule Verification

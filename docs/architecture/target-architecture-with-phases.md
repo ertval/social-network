@@ -130,7 +130,7 @@ Quick-reference for all tools across the software development lifecycle.
 
 **Backend** (`make be-ci`):
 ```
-ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
+ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
 
 **Frontend** (`make fe-ci`):
@@ -920,10 +920,10 @@ npx @biomejs/biome format src/
 tsc --noEmit
 
 # Unit & Component Testing
-npm run test # runs Vitest
+bun run test # runs Vitest
 
 # E2E Testing
-npx playwright test
+bunx playwright test
 ```
 
 ### Boundary Verification

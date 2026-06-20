@@ -719,6 +719,8 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Execution command: `golangci-lint run`
 - **Native compiler warnings**: `go vet ./...` runs in pre-commit hooks to identify compiler errors, variable shadowing, lock copying issues, and malformed logging calls.
 - **CVE Scan**: `govulncheck ./...` is run during CI and local builds to verify that third-party modules contain no known vulnerabilities.
+- **Architecture verification**: Deterministic Go gates in `internal/gates/` enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
+- **Pre-commit hooks**: Lefthook auto-formats staged files (gofumpt/goimports for BE, biome for FE) on commit. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `biome lint`, `vitest`. Install: `make setup-hooks`.
 
 #### 7.1.2 Automated Testing
 - **Test suite runner**: `go test -race -v -coverprofile=coverage.out ./...`
@@ -740,13 +742,13 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 
 #### 7.2.2 Automated Testing
 - **Unit & Component Testing**: **Vitest** paired with **React Testing Library** handles state, hook execution, and custom DOM element checks.
-  - Execution command: `npm run test`
+  - Execution command: `bun run test`
 - **End-to-End (E2E) Testing**: **Playwright** performs full-browser flow validation for cross-feature features:
   - User registration flow, cookie generation, and login.
   - Real-time chat (spawning parallel browser contexts to test bidirectional messaging).
   - Notification receipt on events (group invitations, follow requests).
   - Profile locks and access permissions.
-   - Execution command: `npx playwright test`
+   - Execution command: `bunx playwright test`
 
 ---
 

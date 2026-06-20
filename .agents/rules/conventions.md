@@ -86,14 +86,16 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Notifications panel (bell icon, unread count) must be visually distinct from Chat.
 - Real-time notifications via SSE (`GET /api/notifications/stream`) with 15s polling fallback.
 - **Chat gate**: non-followed users cannot chat. Show: _"At least one user must follow the other to initiate a chat."_
-- Pre-commit: `gofumpt`/`goimports` (BE), `biome format`/`biome lint` (FE). Pre-push: `go vet` (BE), `tsc --noEmit` (FE).
+- Pre-commit: `gofumpt`/`goimports` (BE), `biome format`/`biome lint` (FE). Pre-push: `go vet ./...` + `go test -short ./...` + `go build ./...` + `go-arch-lint check` (BE), `tsc --noEmit` + `bun run lint` + `bun run test` (FE).
 <!-- @section:rules-fe:end -->
 
 <!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
 ## 8. CI & Verification
 
-- **`make be-ci`**: `ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`.
+- **`make be-ci`**: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
 - **`make fe-ci`**: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
+- **`make review-gates`**: Go verification gates — `go run cmd/gates/main.go --all`.
+- **`make setup-hooks`**: Install lefthook pre-commit/pre-push hooks.
 - **Standalone commands** (when not using `make`):
   ```
   go vet ./...
@@ -101,11 +103,32 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   go test -race -coverprofile=coverage.out ./...
   golangci-lint run
   govulncheck ./...
+  go run cmd/gates/main.go --all
   ```
+- **Pre-commit hooks** (lefthook, staged files only):
+  - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` (`stage_fixed: true`).
+  - Frontend: `biome format` + `biome lint`.
+- **Pre-push hooks** (lefthook):
+  - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
+  - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.
 - **D5 boundary check**:
   ```
   grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'infra/'
   ```
+- **Go verification gates** (`internal/gates/`):
+  | Gate | Check | Tool/Fallback |
+  |------|-------|---------------|
+  | Stack | Go version ≥ 1.24, module path | go version / go.mod |
+  | Layout | target directory structure | os.Stat |
+  | Boundaries | D5 forbidden imports | golangci-lint depguard / AST |
+  | DAG | D6 acyclic dependencies | go-arch-lint / DFS |
+  | TDD | test file presence per command/query | os.Stat |
+  | Migrations | migration naming, delimiter | glob / grep |
+  | Security | SQL concat, WS CheckOrigin, bcrypt cost | gosec / custom AST |
+  | Branch | branch naming convention | regex |
+  | Coverage | test coverage >90% | git worktree + go test |
+  | ScopeDrift | unplanned file changes | git diff |
+  - Flags: `--all`, `--gate=<name>`. JSON output.
 - **Performance gate**: `make ci-bench` each PR. Fail if regression > 10%.
 - Smoke test scenarios A1–D3: see `docs/sprints/general-instructions.md`.
 <!-- @section:rules-ci:end -->
