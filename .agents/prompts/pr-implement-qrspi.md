@@ -65,7 +65,7 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Instructions**:
   - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
   - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
-  - Enforce branch naming conventions: `<username>/<type>-<detail>`.
+  - Enforce branch naming conventions: `<username>/<ticket/issue-ID>-<detail>`.
   - Checkout and verify clean status.
   - CLI:
     - Antigravity: Run `rtk git checkout -b <branch-name>`

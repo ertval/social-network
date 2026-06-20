@@ -12,13 +12,21 @@ permission:
   lsp: allow
   edit: allow
   bash:
-    "*": ask
+    "*": deny
     git*: allow
+    tea*: allow
     make*: allow
+    "go test": allow
+    "go vet": allow
+    "go build": allow
     bun*: allow
     "tsc *": allow
     curl*: allow
     python3*: allow
+    cat*: allow
+    grep*: allow
+    head*: allow
+    tail*: allow
     "rm .git/PR_DESCRIPTION.md": allow
   task:
     "*": deny
@@ -31,12 +39,14 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ## When invoked, you will receive:
 - The branch name
 - The ticket ID (e.g. `S1-BE-05`)
+- Confirmation that the latest `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` status is clean
 
-## Your job (4 phases):
+## Your job (5 phases):
 
 ### Phase 1: Branch & Commit Integrity
-- Verify branch name matches `<username>/<type>-<detail>` convention.
-- Verify commits follow Conventional Commits format.
+- Read `docs/reviews/PR_<TICKET_ID>_REVIEW_REPORT.md` first. If the latest status is not `APPROVED` (or `PASS WITH RECOMMENDATIONS` after exhausted fix cycles), and any Critical/Warning finding remains, stop and report that `ticket-to-pr` must run `pr-fix`/`pr-review` again.
+- Verify branch name matches `<username>/<ticket/issue-ID>-<detail>` convention.
+- Verify commits follow Conventional Commits format with allowed scopes from conventions.md §6.
 - Ensure branch is rebased on main (no merge commits from main).
 
 ### Phase 2: Sprint Rule Verification
@@ -45,14 +55,54 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 - Re-run validation gates (`make ci` or frontend checks).
 
 ### Phase 3: Draft PR Description
-- Write the PR description to `.git/PR_DESCRIPTION.md` using the template from `.agents/workflows/pr-create.md`.
-- Include: ticket metadata table, overview, proposed changes, audit checklist coverage, verification results, DoD checklist.
+- Copy `.github/PULL_REQUEST_TEMPLATE.md` to `.git/PR_DESCRIPTION.md` and fill in:
+  - Ticket metadata table
+  - Overview of changes
+  - Proposed changes with file list
+  - Audit checklist coverage
+  - Verification results
+  - DoD checklist
 
 ### Phase 4: Push & Create PR
 - Verify `tea` CLI credentials: `tea whoami`
 - Push: `git push -u origin <branch-name>`
-- Fetch collaborators and create the PR with the full command from the workflow.
+- Build reviewer list and create the PR:
+  ```bash
+  KNOWN_DEVS="epapamic,ekaramet,dkotsi,geoikonomou,smichail"
+  PR_AUTHOR=$(tea whoami 2>/dev/null | head -1)
+  REVIEWERS=$(echo "$KNOWN_DEVS" | python3 -c "import sys; author='$PR_AUTHOR'; devs=sys.stdin.read().strip().split(','); print(','.join(d for d in devs if d != author))" 2>/dev/null)
+  API_COLLABS=$(curl -s \
+    "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/collaborators" \
+    -H "Authorization: token $(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')" \
+    2>/dev/null | python3 -c "import json,sys; author='$PR_AUTHOR'; users=json.load(sys.stdin); print(','.join(u['login'] for u in users if u['login']!=author))" 2>/dev/null)
+  ALL_REVIEWERS=$(echo "$REVIEWERS,$API_COLLABS" | python3 -c "import sys; parts=sys.stdin.read().strip().split(','); print(','.join(dict.fromkeys(d for d in parts if d)))" 2>/dev/null)
+  ```
+- Create the PR (`--reviewer` flag does NOT exist on `tea pulls create`):
+  ```bash
+  PR_OUTPUT=$(tea pulls create \
+    --title "[TICKET_ID]: [Brief Title]" \
+    --description "$(cat .git/PR_DESCRIPTION.md)" \
+    --base main \
+    --head <branch-name> \
+    --output simple)
+  echo "$PR_OUTPUT"
+  ```
+- Add reviewers via `tea pulls edit`:
+  ```bash
+  PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
+  tea pulls edit --add-reviewers "$ALL_REVIEWERS" "$PR_NUMBER"
+  ```
 - Clean up: `rm .git/PR_DESCRIPTION.md`
-- Print the PR URL.
 
-Return the PR URL and summary.
+### Phase 5: Update Ticket Tracker
+- Mark the ticket as completed in `docs/sprints/ticket-tracker.md` by changing `- [ ]` to `- [x]` for the target ticket ID.
+- Commit: `git add docs/sprints/ticket-tracker.md && git commit -m "chore(tracker): mark <TICKET_ID> as completed"`
+- Push the tracker update: `git push`
+
+## Return Format (structured):
+```
+PR_URL: <url>
+PR_NUMBER: <number>
+TICKET: <ticket_id> marked as completed
+REVIEWERS: <comma-separated list>
+```

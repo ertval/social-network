@@ -30,7 +30,7 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Instructions**:
   - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
   - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
-  - Plan the target branch name using the pattern: `<username>/<type>-<detail>`.
+  - Plan the target branch name using the pattern: `<username>/<ticket/issue-ID>-<detail>`.
   - Design structs, interfaces, and public API changes.
   - Apply domain-driven vertical slice constraints:
     - **D2 Interface Strategy**: Keep commands/queries decoupled from store implementation; use narrow interfaces.
@@ -65,7 +65,7 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Goal**: Audit the completed implementation against all repository rules, conventions, and branch guidelines.
 * **Context**: Reads the git diff (`git diff origin/main..HEAD`) and the ticket description.
 * **Quality Gates to Verify**:
-  1. **Branch Naming**: Does the branch match `<username>/<type>-<detail>`?
+  1. **Branch Naming**: Does the branch match `<username>/<ticket/issue-ID>-<detail>`?
   2. **Commit History**: Do the commit messages match `type(scope): description` and are there no merge commits?
   3. **Boundary Rules (D5)**:
      - Check: Do files in `commands/` or `queries/` import `store/` or `transport/`? (Fails gate if yes)

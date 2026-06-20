@@ -176,14 +176,14 @@ We enforce a strict branching and commit strategy to maintain a clean git histor
 ### Branch Naming Convention
 Branches must be named in the following format:
 ```
-<username>/<type>-<detail>
+<username>/<ticket/issue-ID>-<detail>
 ```
 * **username**: Gitea username (check `origin` remote) — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
-* **type**: Action category (`feat`, `fix`, `chore`, `refactor`, `docs`, `arch`)
-* **detail**: kebab-case description of the work. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, optional.
+* **ticket/issue-ID**: Ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or GitHub/Gitea issue number (e.g. `42`). **Required** — maps branch to work item.
+* **detail**: kebab-case description (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
 
 **Examples:**
-- `epapamic/feat-user-auth`
+- `epapamic/S1-BE-05-db-factory`
 - `ekaramet/fix-websocket-panic`
 - `geoikonomou/docs-dev-env`
 

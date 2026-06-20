@@ -69,7 +69,7 @@ Save the report to docs/reviews/PR_<TICKET_ID_OR_ISSUE_ID>_REVIEW_REPORT.md.
 
 **Exit gates:**
 - `🟢 APPROVED` — proceed to Phase 4.
-- `🟡 PASS WITH RECOMMENDATIONS` — proceed to Phase 4.
+- `🟡 PASS WITH RECOMMENDATIONS` — proceed to Phase 3 (fix loop). After 3 total reviews, if still `PASS WITH RECOMMENDATIONS`, treat as acceptable and proceed to Phase 4.
 - `🔴 CHANGES REQUESTED` — proceed to Phase 3.
 
 ---
@@ -124,5 +124,5 @@ Each fix iteration must:
 |----------|----------|
 | Research facts | `.agents/scratch/research.md` |
 | Implementation plan | `.agents/scratch/plan.md` |
-| Review report | `docs/reviews/PR_REVIEW_REPORT.md` |
+| Review report | `docs/reviews/PR_<TICKET_ID_OR_ISSUE_ID>_REVIEW_REPORT.md.` |
 | PR description | `.git/PR_DESCRIPTION.md` (cleaned up after PR creation) |

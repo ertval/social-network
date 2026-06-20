@@ -322,17 +322,17 @@ bun update             # update all packages per semver ranges
 ## 🤝 Contribution & Onboarding Workflow
 
 ### 🚀 Developer Branch Strategy
-All branches must match the naming schema: `<username>/<type>-<detail>`
+All branches must match the naming schema: `<username>/<ticket/issue-ID>-<detail>`
 *   *Username*: Gitea username from `origin` remote — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
-*   *Types*: `feat`, `fix`, `refactor`, `docs`, `chore`
-*   *Detail*: kebab-case description. Optional ticket ID prefix (e.g. `S3-fix-`) before type.
-*   *Examples*: `ekaramet/feat-user-slice`, `geoikonomou/fix-sqlite-busy-timeout`
+*   *ticket/issue-ID*: Ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or GitHub/Gitea issue number (e.g. `42`). **Required** — maps branch to work item.
+*   *Detail*: kebab-case description (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
+*   *Examples*: `ekaramet/S1-BE-05-db-factory`, `geoikonomou/42-fix-sqlite-busy-timeout`
 *   Branches must live **$\le$ 3 days** (Trunk-Based Development).
 
 ### 📝 Commit Message Convention
 Squash-merged commits onto the main branch must follow the **Conventional Commits** standard:
 ```
-<type>(<scope>): <description>
+<type>(<scope>)[<ID>]: <description>
 
 [Optional Body explaining the why behind changes]
 ```

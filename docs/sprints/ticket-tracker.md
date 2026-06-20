@@ -8,7 +8,7 @@ For step-by-step ticket instructions, see individual sprint files:
 * [Sprint 2: User & Topic Features](sprint-2.md)
 * [Sprint 3: Follow, Comment & Notification](sprint-3.md)
 * [Sprint 4: Group & Event Features](sprint-4.md)
-* [Sprint 5: Chat & OAuth](sprint-5.md)
+* [Sprint 5: Chat & OAuth](sprint-5.md) 
 * [Sprint 6: Integration, Cleanup & Polish](sprint-6.md)
 
 ---
@@ -29,7 +29,7 @@ For step-by-step ticket instructions, see individual sprint files:
 - [ ] **S0-FE-02:** shadcn/ui Components + Layout
 
 ### SD-QA (System Design/QA)
-- [ ] **S0-SD-01:** golangci-lint Config
+- [x] **S0-SD-01:** golangci-lint Config
 - [ ] **S0-SD-02:** Docker Compose Development Environment
 - [ ] **S0-SD-03:** Pre-commit Hooks
 - [x] **S0-SD-04:** Dev Environment Docs

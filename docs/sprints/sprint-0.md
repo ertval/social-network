@@ -10,24 +10,26 @@
 
 ### S0-BE-01: Go Project Scaffold
 * **Priority:** P0 (Blocks everything)
+* **Type:** Scaffolding/Setup
 * **Assignee:** BE-A
 * **Story Points:** 3
-* **Description:** Adjust the existing codebase layout and establish the directory structure according to the vertical-slice target architecture, reusing existing files.
+* **Description:** Set up new project infrastructure from scratch — adjust the existing codebase layout and establish the directory structure according to the vertical-slice target architecture, reusing existing files. This is scaffolding work that creates or restructures project layout, not bug fixing.
 * **Detailed Steps:**
-  1. Initialize the module at the project root: `go mod init social-network` (or reuse the existing one, updating imports as needed).
-  2. Adjust the existing structure to align with target structure:
+  1. Initialize the module at the project root: `go mod init social-network` (or reuse the **existing** `go.mod`, updating imports as needed).
+  2. Adjust the existing structure to align with target structure (these directories are NEW structural additions; existing code under the old layered layout stays in place and is not rewritten — only moved/reorganized):
      - `cmd/server/main.go` (main entry point)
      - `internal/core/` (sessions, middlewares, websocket base)
      - `internal/platform/` (database factory, cache, eventbus)
      - `internal/pkg/` (shared packages like hashing, uuid)
      - `db/migrations/` (SQL migration scripts)
-  3. Ensure the Go version in `go.mod` is set to `1.24`.
+  3. Ensure the Go version in `go.mod` is set to `1.24` (audit the **existing** `go.mod` and update the version if stale).
 * **Verification:** Run `go vet ./...` and `go build ./cmd/server/`. It should compile successfully (even with empty main function).
 
 ---
 
 ### S0-BE-02: Bug Fixes (B1.1, B1.2, B1.5)
 * **Priority:** P0
+* **Type:** Bug Fix (Existing Codebase)
 * **Assignee:** BE-A
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01
@@ -44,6 +46,7 @@
 
 ### S0-BE-03: Makefile + CI Pipeline
 * **Priority:** P0 (Blocks everything)
+* **Type:** Scaffolding/Setup
 * **Assignee:** BE-B
 * **Story Points:** 2
 * **Dependencies:** S0-BE-01
@@ -74,6 +77,7 @@
 
 ### S0-BE-04: Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 * **Priority:** P0
+* **Type:** Bug Fix (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01
@@ -92,6 +96,7 @@
 
 ### S0-FE-01: Next.js Scaffold + Tooling
 * **Priority:** P0 (Blocks everything)
+* **Type:** Scaffolding/Setup
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, and testing frameworks.
@@ -109,6 +114,7 @@
 
 ### S0-FE-02: shadcn/ui Components + Layout
 * **Priority:** P1
+* **Type:** Scaffolding/Setup
 * **Assignee:** FE-B
 * **Story Points:** 3
 * **Dependencies:** S0-FE-01
@@ -128,6 +134,7 @@
 
 ### S0-SD-01: golangci-lint Config
 * **Priority:** P0
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 1
 * **Dependencies:** S0-BE-03
@@ -142,6 +149,7 @@
 
 ### S0-SD-02: Docker Compose Development Environment
 * **Priority:** P1
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 3
 * **Dependencies:** S0-BE-01, S0-FE-01
@@ -159,6 +167,7 @@
 
 ### S0-SD-03: Pre-commit Hooks
 * **Priority:** P1
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S0-BE-01
@@ -176,6 +185,7 @@
 
 ### S0-SD-04: Dev Environment Docs
 * **Priority:** P2
+* **Type:** Scaffolding/Setup
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** All Sprint 0 tickets

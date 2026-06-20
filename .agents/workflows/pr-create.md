@@ -14,7 +14,7 @@ Before creating the PR, verify that local branch naming and commit history adher
 
 1. **Verify Current Branch Name**:
    - Run: `rtk git branch --show-current`
-   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `dkotsi/fix-sqlite-busy-timeout`).
+   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<ticket/issue-ID>-<detail>` (e.g., `ekaramet/S1-BE-01-db-factory` or `dkotsi/42-oauth-scan-fix`).
    - If the branch does not match this convention, report the discrepancy immediately.
 
 2. **Check Commit Messages**:
