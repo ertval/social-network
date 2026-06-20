@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
+
 	"social-network/internal/domain/chat"
 	"social-network/internal/pkg/uuid"
-	"time"
 )
 
 type Repo struct {
@@ -191,7 +192,8 @@ func (r *Repo) GetChatsForUser(ctx context.Context, userID string) ([]*chat.Chat
 		chats = append(chats, &c)
 	}
 
-	if err := rows.Err(); err != nil {
+	err = rows.Err()
+	if err != nil {
 		return nil, err
 	}
 

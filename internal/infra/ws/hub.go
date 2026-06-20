@@ -3,8 +3,9 @@ package ws
 import (
 	"encoding/json"
 	"log"
-	"social-network/internal/domain/chat"
 	"sync"
+
+	"social-network/internal/domain/chat"
 )
 
 // Hub manages all active WebSocket Connections.
@@ -110,7 +111,7 @@ func (h *Hub) CloseChat(client *Client) {
 }
 
 // returns all the client connections which have currently the chat with chatID open
-// besides the the client that is currently typing with ownUserID
+// besides the client that is currently typing with ownUserID
 func (h *Hub) GetObserversForChat(chatID, ownUserID string) (observers []*Client) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
@@ -129,17 +130,17 @@ func (h *Hub) GetObserversForChat(chatID, ownUserID string) (observers []*Client
 // sending to a channel will wait for as long the channel is full
 // keeping the hubs mutex locked for this period is dangerous
 // some hub operations(register/unregister) might freeze because of the lock
-// for this a copry of the recipients is made and then sends to every recepient
+// for this a copry of the recipients is made and then sends to every recipient
 func (h *Hub) Send(toUserID string, msg []byte) {
 	h.mu.RLock()
-	// these are the recepients
+	// these are the recipients
 	clients := make([]*Client, 0)
 	for client := range h.clients[toUserID] {
 		clients = append(clients, client)
 	}
 	h.mu.RUnlock()
 
-	// sending to every recepient
+	// sending to every recipient
 	for _, client := range clients {
 		client.send <- msg
 	}

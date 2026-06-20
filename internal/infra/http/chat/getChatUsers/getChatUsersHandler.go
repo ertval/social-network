@@ -2,10 +2,11 @@ package getchatusers
 
 import (
 	"net/http"
+	"time"
+
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
-	"time"
 
 	chatqueries "social-network/internal/app/chat/queries"
 )
@@ -23,10 +24,10 @@ func NewHandler(getChatUserQuery chatqueries.GetChatUsersHandler, logger logger.
 }
 
 type ChatUser struct {
+	LastMessageAt *time.Time `json:"last_message_at"`
 	UserID        string     `json:"user_id"`
 	Nickname      string     `json:"nickname"`
 	IsOnline      bool       `json:"is_online"`
-	LastMessageAt *time.Time `json:"last_message_at"`
 }
 
 func (h *Handler) GetChatUsers(w http.ResponseWriter, r *http.Request) {

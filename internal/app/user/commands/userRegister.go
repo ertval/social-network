@@ -2,21 +2,22 @@ package usercommands
 
 import (
 	"context"
+	"time"
+
 	"social-network/internal/domain/user"
 	"social-network/internal/pkg/bcrypt"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/uuid"
-	"time"
 )
 
 type UserRegisterRequest struct {
 	Nickname  string
-	Age       int
 	Gender    string
 	FirstName string
 	LastName  string
 	Password  string
 	Email     string
+	Age       int
 }
 
 type UserRegisterRequestHandler interface {
