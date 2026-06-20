@@ -41,7 +41,7 @@ Reads the ticket-scoped PR review report and applies surgical fixes to resolve C
 ## Context Files (read before fixing):
 Before applying any fix, read and understand the project rules so fixes are architecturally correct:
 - `.agents/rules/conventions.md` — boundary rules D1-D6, security §6, TDD §4, database §5
-- `AGENTS.md` — surgical changes principle, doc reading order, simplicity first
+- `AGENTS.md` — surgical changes principle, doc reading order, simplicity first, bug protocol §5
 - `docs/sprints/general-instructions.md` — TDD workflow R2, Strangler Fig R1, verification gates Q2
 - `docs/architecture/target-architecture-with-phases.md` — D5 boundary table, target directory tree
 
@@ -58,8 +58,10 @@ Before applying any fix, read and understand the project rules so fixes are arch
 8. Run all gates one final time before returning.
 
 ## Self-check before returning:
-- Re-read the review report. Confirm every finding has been addressed or explicitly flagged as unresolvable.
-- Run `git diff main..HEAD --stat` to verify no unexpected files were touched.
+- [ ] Re-read the review report. Confirm every finding has been addressed or explicitly flagged as unresolvable.
+- [ ] Run `git diff main..HEAD --stat` to verify no unexpected files were touched.
+- [ ] All gates pass (`make ci` or equivalent) one final time.
+- [ ] No unused imports/variables/functions left behind from your fixes.
 
 ## Constraints:
 - Do NOT push the branch. Do NOT create a PR.
@@ -71,6 +73,7 @@ Before applying any fix, read and understand the project rules so fixes are arch
 FIXED: <count of findings fixed>
 UNRESOLVED: <count of findings that could not be fixed>
 GATES: <PASS|FAIL>
+SELF_CHECK: <PASS|FAIL>
 SUMMARY: <1-3 sentence summary of what was fixed>
 UNRESOLVED_DETAILS: <list of unresolved findings with reasons, or "none">
 ```

@@ -60,9 +60,10 @@ QRSPI Implement phase. You execute the plan using strict TDD.
 - Do NOT push. Do NOT create PR.
 
 ## Self-check before returning:
-- All tests pass: `make ci` or equivalent.
-- No scope drift: `git diff main..HEAD --stat` shows only files related to the ticket.
-- Plan checklist in `.agents/scratch/PLAN.md` is fully checked off.
+- [ ] All tests pass: `make ci` or equivalent.
+- [ ] No scope drift: `git diff main..HEAD --stat` shows only files related to the ticket.
+- [ ] Plan checklist in `.agents/scratch/PLAN.md` is fully checked off (`[x]` on every item).
+- [ ] No unused imports/variables/functions left behind from your changes.
 
 ## Return Format:
 ```
@@ -71,5 +72,6 @@ FILES_CHANGED: <count>
 TESTS_ADDED: <count>
 GATES: <PASS|FAIL>
 PLAN_ITEMS: <completed>/<total>
+SELF_CHECK: <PASS|FAIL>
 SUMMARY: <2-4 sentences>
 ```

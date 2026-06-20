@@ -26,6 +26,28 @@ dev: docker-dev ## Start development environment (alias)
 
 # ── Tool Installation ─────────────────────────────────────────────────
 
+install: ## Install all dependencies (deterministic, like npm ci)
+	@echo "==> Installing Go module dependencies (from go.sum)..."
+	go mod download
+	@echo "==> Installing root JS tooling (from package-lock.json)..."
+	npm ci
+	@echo "==> Copying .env.example -> .env (if not exists)..."
+	cp -n .env.example .env 2>/dev/null || true
+	@echo "==> Generating SSL certificates..."
+	sh scripts/makecerts.sh 2>/dev/null || echo "     [skip] certs already exist"
+	@echo "==> Installing Go development tools..."
+	$(MAKE) tools
+	@echo "==> Installing git hooks..."
+	$(MAKE) setup-hooks
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Installing frontend dependencies..."; \
+		cd frontend && bun install; \
+	else \
+		echo "==> [skip] frontend not scaffolded yet"; \
+	fi
+	@echo ""
+	@echo "✅ All dependencies installed. Run 'make dev' to start."
+
 setup: tools setup-hooks ## Install all development tools and hooks
 
 tools: ## Install Go development tools (gofumpt, goimports, staticcheck, golangci-lint, govulncheck, gosec, go-arch-lint)
@@ -245,7 +267,7 @@ help: ## Show this help message
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: env dev setup tools setup-hooks bench-tools \
+.PHONY: install env dev setup tools setup-hooks bench-tools \
 	format check-format staticcheck golangci-lint vulncheck lint \
 	test test-short \
 	ci-mod be-ci fe-ci ci review-gates review-gates-fast review-gates-all check-arch \

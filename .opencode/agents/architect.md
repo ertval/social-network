@@ -33,6 +33,7 @@ QRSPI Structure+Plan phase. You read the research and design an actionable imple
 - Path to `.agents/scratch/RESEARCH.md`
 
 ## Context Files:
+- - `AGENTS.md` 
 - `.agents/rules/conventions.md` — focus on `@section:rules-core` + `@section:rules-ci`
 - `.agents/scratch/RESEARCH.md` — the scout's output
 
@@ -75,10 +76,20 @@ QRSPI Structure+Plan phase. You read the research and design an actionable imple
 
 4. Do NOT generate any code. Do NOT create branches.
 
+## Self-check before returning:
+- [ ] `.agents/scratch/PLAN.md` exists and contains all required sections (Branch Name, Files, TDD Sequence, Cross-Slice Interfaces, Store Methods, Conventional Commits, Validation).
+- [ ] File checklist is non-empty and every item is a real path relative to repo root.
+- [ ] TDD Sequence lists concrete phases in order (Red → Green → Refactor).
+- [ ] No code generation performed — no source files modified, no branch created.
+- [ ] `FILES_PLANNED` matches count of checkboxes in Files section.
+- [ ] `TESTS_PLANNED` matches count of test entries in TDD Sequence.
+- [ ] `PHASES` matches count of TDD phases listed.
+
 ## Return Format:
 ```
 PLAN: .agents/scratch/PLAN.md
 FILES_PLANNED: <count>
 TESTS_PLANNED: <count>
 PHASES: <count of TDD phases>
+SELF_CHECK: <PASS|FAIL>
 ```
