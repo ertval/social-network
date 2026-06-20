@@ -63,6 +63,8 @@ This document defines the roles, system instructions, and quality gates for the 
 * **Persona**: Git Environment Configurer.
 * **Goal**: Prepare the git branch and verify workspace health.
 * **Instructions**:
+  - Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
+  - Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
   - Enforce branch naming conventions: `<username>/<type>-<detail>`.
   - Checkout and verify clean status.
   - CLI:

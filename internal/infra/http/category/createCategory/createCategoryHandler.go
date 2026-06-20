@@ -3,14 +3,14 @@ package createcategory
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/app"
-	categorycommands "social-network/internal/app/categories/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	categorycommands "social-network/internal/app/categories/commands"
 )
 
 type RequestModel struct {
@@ -58,7 +58,8 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 
 	_, err := helpers.ParseBodyRequest(r, &categoryToCreate)
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
@@ -71,7 +72,8 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	validator.ValidateCreateCategory(val, &categoryToCreate)
 	if !val.Valid() {
 		h.Logger.PrintError(logger.ErrValidationFailed, val.Errors)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			val.ToStringErrors(),
 		)
@@ -83,7 +85,8 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		CreatedBy:   user.ID,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to create category",
 		)
@@ -109,5 +112,6 @@ func (h *Handler) CreateCategory(w http.ResponseWriter, r *http.Request) {
 		map[string]string{
 			"cat_name": categoryToCreate.Name,
 			"user_id":  user.ID,
-		})
+		},
+	)
 }

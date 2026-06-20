@@ -72,13 +72,13 @@ graph TD
     F --> G["7. Sprints Backlog <br> (sprint-0.md -> sprint-6.md)"]
 ```
 
-- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](file://AGENTS.md) and [.agents/rules/conventions.md](file://.agents/rules/conventions.md).
-- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/plan/sprints/general-instructions.md](file://docs/plan/sprints/general-instructions.md) to understand TDD, Strangler Fig phases, and verification gates.
-- **Stage 3: Architecture Definition**: Read [docs/plan/architecture/architecture.md](file://docs/plan/architecture/architecture.md) for the vertical slice code layout structure.
-- **Stage 4: System Design and DDL Specs**: Read [docs/plan/architecture/sds.md](file://docs/plan/architecture/sds.md) to inspect the data model, interfaces, and platform services.
-- **Stage 5: Execution Roadmaps**: Read [docs/plan/architecture/target-architecture-with-phases.md](file://docs/plan/architecture/target-architecture-with-phases.md) (migration roadmap, target state, design decisions D1-D6) and [docs/plan/sprints/ticket-tracker.md](file://docs/plan/sprints/ticket-tracker.md) (all sprint tickets at a glance).
-- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/plan/sprints/sprint-0.md), [sprint-1.md](file://docs/plan/sprints/sprint-1.md), [sprint-2.md](file://docs/plan/sprints/sprint-2.md), [sprint-3.md](file://docs/plan/sprints/sprint-3.md), [sprint-4.md](file://docs/plan/sprints/sprint-4.md), [sprint-5.md](file://docs/plan/sprints/sprint-5.md), and [sprint-6.md](file://docs/plan/sprints/sprint-6.md).
-- **Stage 7: Verification**: Read [docs/requirements/audit.md](file://docs/requirements/audit.md) and [docs/requirements/readme.md](file://docs/requirements/readme.md) for grading acceptance criteria.
+- **Stage 1: Rules and Guidelines**: Read [AGENTS.md](AGENTS.md) and [.agents/rules/conventions.md](.agents/rules/conventions.md).
+- **Stage 2: Methodology & Strangler Fig Strategy**: Read [docs/sprints/general-instructions.md](docs/sprints/general-instructions.md) to understand TDD, Strangler Fig phases, and verification gates.
+- **Stage 3: Architecture Definition**: Read [docs/architecture/architecture.md](docs/architecture/architecture.md) for the vertical slice code layout structure.
+- **Stage 4: System Design and DDL Specs**: Read [docs/architecture/sds.md](docs/architecture/sds.md) to inspect the data model, interfaces, and platform services.
+- **Stage 5: Execution Roadmaps**: Read [docs/architecture/target-architecture-with-phases.md](docs/architecture/target-architecture-with-phases.md) (migration roadmap, target state, design decisions D1-D6) and [docs/sprints/ticket-tracker.md](docs/sprints/ticket-tracker.md) (all sprint tickets at a glance).
+- **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](docs/sprints/sprint-0.md), [sprint-1.md](docs/sprints/sprint-1.md), [sprint-2.md](docs/sprints/sprint-2.md), [sprint-3.md](docs/sprints/sprint-3.md), [sprint-4.md](docs/sprints/sprint-4.md), [sprint-5.md](docs/sprints/sprint-5.md), and [sprint-6.md](docs/sprints/sprint-6.md).
+- **Stage 7: Verification**: Read [docs/requirements/audit.md](docs/requirements/audit.md) and [docs/requirements/readme.md](docs/requirements/readme.md) for grading acceptance criteria.
 
 
 ## 6. Documentation Conventions
@@ -93,6 +93,8 @@ graph TD
 All branches must follow the format `<username>/<type>-<detail>`.
 
 - **username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
+- **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login.
+- **Username Verification**: After resolving, confirm the username is in the known devs set (`epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`). If not, flag error — branch will fail PR validation.
 - **type**: Short category — `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`
 - **detail**: kebab-case description of the change. Ticket ID (e.g. `S3-fix-`) may prefix type for traceability, but is not required.
 

@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	chatqueries "social-network/internal/app/chat/queries"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
+
+	chatqueries "social-network/internal/app/chat/queries"
 )
 
 type Handler struct {

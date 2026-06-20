@@ -2,9 +2,8 @@ package userqueries
 
 import (
 	"context"
-	"time"
-
 	"social-network/internal/domain/user"
+	"time"
 )
 
 type GetAllUsersResult struct {

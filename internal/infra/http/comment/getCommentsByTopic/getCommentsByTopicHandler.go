@@ -3,14 +3,14 @@ package getcommentsbytopic
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/app"
-	commentQueries "social-network/internal/app/comments/queries"
 	"social-network/internal/config"
 	"social-network/internal/domain/comment"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	commentQueries "social-network/internal/app/comments/queries"
 )
 
 type ResponseModel struct {
@@ -59,7 +59,8 @@ func (h *Handler) GetCommentsByTopic(w http.ResponseWriter, r *http.Request) {
 
 	if !val.Valid() {
 		h.Logger.PrintError(logger.ErrValidationFailed, val.Errors)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			val.ToStringErrors(),
 		)

@@ -7,6 +7,9 @@ export const GraphifyPlugin = async ({ directory }) => {
   let reminded = false;
 
   return {
+    "session.created": async () => {
+      reminded = false;
+    },
     "tool.execute.before": async (input, output) => {
       if (reminded) return;
       if (!existsSync(join(directory, "graphify-out", "graph.json"))) return;

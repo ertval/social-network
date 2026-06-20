@@ -15,11 +15,11 @@ For step-by-step ticket instructions, see individual sprint files:
 
 ## Sprint 0: Foundation (Week 1–2)
 ### BE-A (Backend A)
-- [ ] **S0-BE-01:** Go Project Scaffold
+- [x] **S0-BE-01:** Go Project Scaffold
 - [ ] **S0-BE-02:** Bug Fixes (B1.1, B1.2, B1.5)
 
 ### BE-B (Backend B)
-- [ ] **S0-BE-03:** Makefile + CI Pipeline
+- [x] **S0-BE-03:** Makefile + CI Pipeline
 - [ ] **S0-BE-04:** Bug Fixes (B1.3, B1.4, B1.6, B1.7, B1.8)
 
 ### FE-A (Frontend A)

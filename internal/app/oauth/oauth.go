@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"social-network/internal/domain/oauth"
 	"social-network/internal/domain/user"
-	oauthpkg "social-network/internal/pkg/oAuth"
 	"social-network/internal/pkg/uuid"
+
+	oauthpkg "social-network/internal/pkg/oAuth"
 )
 
 type OAuthService struct {

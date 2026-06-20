@@ -7,6 +7,8 @@
 *.dll
 *.so
 *.dylib
+build/
+bin/
 server
 
 # Test binary, built with `go test -c`
@@ -39,6 +41,7 @@ go.work.sum
 # Certificate files
 *.pem
 
+#nodejs packages
 node_modules/
 .env
 dist/
@@ -52,6 +55,8 @@ frontend/static/images/uploads/
 .audit/
 tmp/
 .agentignore
+.agents/scratch/
+
 
 # Agent scratch / working files
 .agents/scratch/

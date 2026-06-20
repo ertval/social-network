@@ -3,15 +3,15 @@ package deletecategory
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	"social-network/internal/app"
-	categorycommands "social-network/internal/app/categories/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+	"strconv"
+
+	categorycommands "social-network/internal/app/categories/commands"
 )
 
 type ResponseModel struct {
@@ -98,5 +98,6 @@ func (h *Handler) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 		map[string]string{
 			"cat_id":  strconv.Itoa(categoryID),
 			"user_id": user.ID,
-		})
+		},
+	)
 }

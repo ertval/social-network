@@ -5,11 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
-	"time"
-
 	"social-network/internal/domain/category"
 	"social-network/internal/domain/topic"
+	"strings"
+	"time"
 )
 
 type Repo struct {
@@ -232,7 +231,8 @@ func (r *Repo) GetCategoryByID(ctx context.Context, id int) (*category.Category,
 		&category.Name,
 		&category.Description,
 		&category.CreatedBy,
-		&category.CreatedAt)
+		&category.CreatedAt,
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("category with ID %d not found: %w", id, ErrCategoryNotFound)
@@ -282,7 +282,8 @@ func (r *Repo) UpdateCategory(ctx context.Context, category *category.Category) 
 	}
 	defer stmt.Close()
 
-	result, err := stmt.ExecContext(ctx,
+	result, err := stmt.ExecContext(
+		ctx,
 		category.Name,
 		category.Description,
 		category.ID,

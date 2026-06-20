@@ -1,20 +1,30 @@
 ---
 description: Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
 mode: subagent
-model: nvidia/deepseek-ai/deepseek-v4-flash
-temperature: 0.0
+model: opencode/deepseek-v4-flash-free
+color: warning
+steps: 25
+temperature: 0
 permission:
-  edit: allow
-  bash: allow
   read: allow
   glob: allow
   grep: allow
-  webfetch: deny
-  task: deny
-hidden: false
+  lsp: allow
+  edit: allow
+  bash:
+    "*": ask
+    git*: allow
+    make*: allow
+    bun*: allow
+    "tsc *": allow
+    "rm .git/PR_DESCRIPTION.md": allow
+  task:
+    "*": deny
 ---
 
-You are the **pr-fix** subagent. Your job is to read the review report at `docs/reviews/PR_REVIEW_REPORT.md` and fix every Critical and Warning finding.
+## pr-fix
+
+Reads the PR review report and applies surgical fixes to resolve Critical and Warning findings. Re-runs deterministic gates and commits fixes with conventional commit messages.
 
 ## When invoked, you will receive:
 - The branch name
@@ -25,8 +35,8 @@ You are the **pr-fix** subagent. Your job is to read the review report at `docs/
 2. Fix every **Critical** and **Warning** finding. Skip Suggestions (non-blocking).
 3. Perform **surgical edits only** — do not touch unrelated code, do not refactor, do not clean up pre-existing dead code.
 4. After each fix group, run the deterministic gates:
-   - Backend: `rtk make ci` or `rtk make test`
-   - Frontend (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`
+   - Backend: `make ci` or `make test`
+   - Frontend (in `frontend/`): `bun run lint && bun run format:check && tsc --noEmit && bun run test`
 5. Commit each fix group with conventional commit messages (`fix(scope): description of what was fixed`).
 6. When all Critical and Warning findings are addressed, run all gates one final time.
 

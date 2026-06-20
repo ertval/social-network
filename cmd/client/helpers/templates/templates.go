@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-
 	"social-network/internal/pkg/path"
 )
 

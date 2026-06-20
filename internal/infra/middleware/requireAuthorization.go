@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/domain/session"
 	"social-network/internal/pkg/helpers"
 )
@@ -41,7 +40,8 @@ func (a authorization) Required(next http.HandlerFunc) http.HandlerFunc {
 				w,
 				http.StatusUnauthorized,
 				nil,
-				"Unauthorized: Invalid session")
+				"Unauthorized: Invalid session",
+			)
 			return
 		}
 
@@ -63,7 +63,8 @@ func (a authorization) Required(next http.HandlerFunc) http.HandlerFunc {
 				helpers.RespondWithError(
 					w,
 					http.StatusUnauthorized,
-					"Unauthorized: Could not refresh session")
+					"Unauthorized: Could not refresh session",
+				)
 				return
 			}
 			a.cookieManager.SetCookies(w, session)
@@ -75,7 +76,8 @@ func (a authorization) Required(next http.HandlerFunc) http.HandlerFunc {
 			helpers.RespondWithError(
 				w,
 				http.StatusUnauthorized,
-				"Unauthorized: User not found")
+				"Unauthorized: User not found",
+			)
 			return
 		}
 

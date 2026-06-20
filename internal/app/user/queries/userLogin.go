@@ -3,7 +3,6 @@ package userqueries
 import (
 	"context"
 	"fmt"
-
 	"social-network/internal/domain/user"
 	"social-network/internal/pkg/bcrypt"
 )

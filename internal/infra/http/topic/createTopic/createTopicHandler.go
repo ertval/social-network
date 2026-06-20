@@ -7,15 +7,16 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/google/uuid"
-
 	"social-network/internal/app"
-	topicCommands "social-network/internal/app/topics/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	"github.com/google/uuid"
+
+	topicCommands "social-network/internal/app/topics/commands"
 )
 
 const (
@@ -75,7 +76,8 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(maxUploadSize)
 	if err != nil {
 		h.Logger.PrintError(err, nil)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
@@ -89,7 +91,8 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 	case errors.Is(err, http.ErrMissingFile):
 	case err != nil:
 		h.Logger.PrintError(err, nil)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Error Processing uploaded file",
 		)
@@ -126,7 +129,8 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 		User: user,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to create topic",
 		)

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-
 	"social-network/internal/domain/session"
 	"social-network/internal/infra/http/authcookies"
 )

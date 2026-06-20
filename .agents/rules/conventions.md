@@ -6,7 +6,7 @@ description: Coding conventions, tech stack (Go, SQLite, TypeScript, Next.js), T
 
 # Conventions and Technologies
 
-Guidelines for project technologies, refactoring patterns, and Go development best practices. For detailed instructions, see [general-instructions.md](file://docs/sprints/general-instructions.md).
+Guidelines for project technologies, refactoring patterns, and Go development best practices. For detailed instructions, see [general-instructions.md](../../docs/sprints/general-instructions.md).
 
 ## 1. Technology Stack
 - **Backend**: Go (standard library preferred, `slog` for structured logging, `kin-openapi`).
@@ -101,6 +101,8 @@ Every PR must pass the following **Definition of Done (DoD)** checklist:
 - **Trunk-Based Development**: Feature branches must live <= 3 days. Squash merge into `main` with a single conventional commit.
 - **Branch Naming**: `<username>/<type>-<detail>` (e.g. `epapamic/feat-user-slice`).
 - **Username**: Your own Gitea username — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. Use your own (e.g. `ekaramet/...`), not the `origin` remote owner.
+- **Username Resolution**: Run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct Gitea username. This is the `user` field from the default tea login, which maps to the dev's Gitea account (not the repo owner, not the system username).
+- **Username Verification**: After resolving, verify the username matches one of the known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If it does not match any, flag an error — the branch will be rejected by PR validation.
 - **Type**: `feat`, `fix`, `chore`, `refactor`, `docs`, `arch`.
 - **Detail**: kebab-case. Ticket ID (e.g. `S3-fix-`) may prefix type but is not required.
 - **Commit Format**: Conventional Commits (e.g., `feat(user): add login handler`). Allowed scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`.

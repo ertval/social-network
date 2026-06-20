@@ -3,12 +3,12 @@ package ws
 import (
 	"net/http"
 
-	"github.com/gorilla/websocket"
-
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/infra/ws"
 	"social-network/internal/pkg/helpers"
+
+	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{

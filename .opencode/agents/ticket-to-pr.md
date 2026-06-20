@@ -1,30 +1,31 @@
 ---
 description: End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
 mode: primary
-model: nvidia/deepseek-ai/deepseek-v4-pro
+model: opencode/deepseek-v4-flash-free
+color: primary
+steps: 60
 temperature: 0.1
 permission:
-  edit: allow
-  bash: allow
+  read: allow
+  glob: allow
+  grep: allow
+  lsp: allow
+  edit: deny
+  bash: deny
   task:
-    "*": deny
-    ticket-to-pr-*: allow
-    pr-implement: allow
-    pr-review: allow
-    pr-fix: allow
-    pr-create: allow
-  webfetch: deny
+    "*": allow
 ---
 
-You are the **ticket-to-pr orchestrator**. Your job is to take a ticket ID (e.g. `S1-BE-05`, `S3-FE-14`) and execute the end-to-end pipeline defined in `.agents/workflows/ticket-to-pr.md`.
+## ticket-to-pr
+
+End-to-end orchestrator that takes a ticket ID and sequentially spawns subagents to implement, review, fix, and publish the PR. Handles the review-fix loop with a 3-strike limit.
 
 ## Core Loop
-
 1. **Locate** the ticket in `docs/sprints/ticket-tracker.md` and read its sprint spec.
 2. **Implement**: spawn `pr-implement` subagent → code + tests on a feature branch.
 3. **Review**: spawn `pr-review` subagent → run deterministic gates + full review pipeline → save report to `docs/reviews/PR_REVIEW_REPORT.md`.
-4. **Fix loop**: if review is `🔴 CHANGES REQUESTED`, spawn `pr-fix` subagent → re-run review. Repeat up to 3 times.
-5. **Create PR**: on `🟢 APPROVED` or `🟡 PASS WITH RECOMMENDATIONS`, spawn `pr-create` subagent → push branch + open PR via `tea`.
+4. **Fix loop**: if review is `CHANGES REQUESTED`, spawn `pr-fix` subagent → re-run review. Repeat up to 3 times.
+5. **Create PR**: on `APPROVED` or `PASS WITH RECOMMENDATIONS`, spawn `pr-create` subagent → push branch + open PR via `tea`.
 
 ## Rules
 

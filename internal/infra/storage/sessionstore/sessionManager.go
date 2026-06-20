@@ -5,12 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
-
 	"social-network/internal/config"
 	"social-network/internal/domain/session"
 	"social-network/internal/domain/user"
 	"social-network/internal/pkg/uuid"
+	"time"
 )
 
 const (

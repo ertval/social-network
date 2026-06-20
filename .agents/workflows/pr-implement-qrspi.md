@@ -82,11 +82,13 @@ graph TD
 
 ### Stage 6: Worktree / Branch (Environment Setup Subagent)
 *Goal: Provision the development branch and prepare the workspace.*
-1. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `geoikonomou/feat-s1-be-01-db-factory`).
-2. Checkout the branch:
+1. Resolve Gitea username: run `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'` to get the correct dev username.
+2. Verify resolved username is in known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`. If not, flag error.
+3. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `geoikonomou/feat-s1-be-01-db-factory`).
+4. Checkout the branch:
    - For Antigravity: `rtk git checkout -b <branch-name>`
    - For OpenCode: `git checkout -b <branch-name>`
-3. Confirm clean worktree status (`git status`).
+5. Confirm clean worktree status (`git status`).
 
 ---
 

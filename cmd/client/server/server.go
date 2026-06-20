@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"net/http/cookiejar"
-
 	"social-network/cmd/client/config"
 	"social-network/cmd/client/helpers"
 	"social-network/cmd/client/middleware"
@@ -200,7 +199,7 @@ func (cs *ClientServer) SetupRoutes() {
 	// Notification routes
 	cs.Router.HandleFunc("/api/notifications/stream", applyMiddleware(cs.StreamNotifications, middleware.RequireAuth, authMiddleware))
 	cs.Router.HandleFunc("/api/notifications", applyMiddleware(cs.GetNotifications, middleware.RequireAuth, authMiddleware))
-	cs.Router.HandleFunc("/api/notifications/unread-count", applyMiddleware((cs.GetUnreadCount), middleware.RequireAuth, authMiddleware))
+	cs.Router.HandleFunc("/api/notifications/unread-count", applyMiddleware(cs.GetUnreadCount, middleware.RequireAuth, authMiddleware))
 	cs.Router.HandleFunc("/api/notifications/mark-read", applyMiddleware(cs.MarkNotificationAsRead, middleware.RequireAuth, authMiddleware))
 	cs.Router.HandleFunc("/api/notifications/mark-all-read", applyMiddleware(cs.MarkAllNotificationsAsRead, middleware.RequireAuth, authMiddleware))
 	// Logout route - clears cookies

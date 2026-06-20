@@ -3,15 +3,15 @@ package updatecategory
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	"social-network/internal/app"
-	categorycommands "social-network/internal/app/categories/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+	"strconv"
+
+	categorycommands "social-network/internal/app/categories/commands"
 )
 
 type RequestModel struct {
@@ -61,7 +61,8 @@ func (h *Handler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 
 	_, err := helpers.ParseBodyRequest(r, &categoryToUpdate)
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusBadRequest,
 			"Invalid request payload",
 		)
@@ -87,7 +88,8 @@ func (h *Handler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		h.Logger.PrintError(err, nil)
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Error updating category",
 		)
@@ -103,7 +105,8 @@ func (h *Handler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 		w,
 		http.StatusOK,
 		nil,
-		response)
+		response,
+	)
 
 	h.Logger.PrintInfo(
 		"Category updated successfully",
@@ -111,5 +114,6 @@ func (h *Handler) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 			"cat_id":   strconv.Itoa(categoryToUpdate.ID),
 			"cat_name": categoryToUpdate.Name,
 			"user_id":  user.ID,
-		})
+		},
+	)
 }

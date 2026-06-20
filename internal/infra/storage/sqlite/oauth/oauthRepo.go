@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-
 	"social-network/internal/domain/oauth"
 	"social-network/internal/domain/user"
 )
@@ -105,7 +104,8 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
         VALUES (?, ?, ?, '',?)
     `
 
-	_, err = tx.ExecContext(ctx, insertUserQuery,
+	_, err = tx.ExecContext(
+		ctx, insertUserQuery,
 		oauthUser.UserID,
 		oauthUser.Username,
 		oauthUser.Email,
@@ -119,7 +119,8 @@ func (r *Repo) CreateOAuthUser(ctx context.Context, oauthUser *oauth.User) (user
 	VALUES (?, ?, ?, ?, ?, ?)
 	`
 
-	_, err = tx.ExecContext(ctx, insertUserQuery,
+	_, err = tx.ExecContext(
+		ctx, insertUserQuery,
 		oauthUser.UserID,
 		string(oauthUser.Provider),
 		oauthUser.ProviderID,
@@ -151,7 +152,8 @@ func (r *Repo) LinkOAuthProvider(ctx context.Context, userID string, oauthUser *
 	}
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx,
+	_, err = stmt.ExecContext(
+		ctx,
 		userID,
 		string(oauthUser.Provider),
 		oauthUser.ProviderID,

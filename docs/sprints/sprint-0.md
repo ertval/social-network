@@ -60,8 +60,14 @@
      - `make ci` -> Full gate (runs both `be-ci` and `fe-ci`).
      - `make db-reset` -> Helper to wipe local SQLite db files for fresh runs.
      - `make seed` -> seed database with test data
-     # add also some comands to test run and dev the project, seperate front, back and both
-     # add also some comands to test run and dev the project, seperate front, back and both
+     - `make run-backend` -> Run backend application locally.
+     - `make run-frontend` -> Run frontend application locally.
+     - `make run-all` -> Run both backend and frontend concurrently locally.
+     - `make dev` / `make docker-dev` -> Start development environment in Docker.
+     - `make build-backend` -> Build backend application locally.
+     - `make build-frontend` -> Build frontend application locally.
+     - `make build` -> Build both backend and frontend locally.
+     - `make docker-build` -> Build Docker images for both backend and frontend.
 * **Verification:** Running `make ci` on the command line should execute both BE and FE checks and finish with exit code 0.
 
 ---

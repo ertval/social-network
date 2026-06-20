@@ -3,11 +3,11 @@ package userlogin
 import (
 	"context"
 	"net/http"
-
-	userQueries "social-network/internal/app/user/queries"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	userQueries "social-network/internal/app/user/queries"
 )
 
 type LoginUserUsernameRequestModel struct {
@@ -69,7 +69,8 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 		Password: userToLogin.Password,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"error logging in user",
 		)

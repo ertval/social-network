@@ -2,9 +2,9 @@ package chatcommands
 
 import (
 	"context"
+	"social-network/internal/domain/chat"
 
 	chatapp "social-network/internal/app/chat"
-	"social-network/internal/domain/chat"
 )
 
 type SendChatRequest struct {

@@ -2,7 +2,6 @@ package notificationqueries
 
 import (
 	"context"
-
 	"social-network/internal/domain/notification"
 )
 

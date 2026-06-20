@@ -3,14 +3,14 @@ package deletecomment
 import (
 	"context"
 	"net/http"
-
 	"social-network/internal/app"
-	commentCommands "social-network/internal/app/comments/commands"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
+
+	commentCommands "social-network/internal/app/comments/commands"
 )
 
 type ResponseModel struct {
@@ -75,7 +75,8 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		User:      user,
 	})
 	if err != nil {
-		helpers.RespondWithError(w,
+		helpers.RespondWithError(
+			w,
 			http.StatusInternalServerError,
 			"Failed to delete comment",
 		)

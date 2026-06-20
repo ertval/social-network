@@ -2,7 +2,6 @@ package categorycommands
 
 import (
 	"context"
-
 	"social-network/internal/domain/category"
 )
 

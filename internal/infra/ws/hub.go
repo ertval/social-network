@@ -11,9 +11,9 @@ import (
 // Hub manages all active WebSocket Connections.
 // One Hub runs for the lifetime of the server.
 type Hub struct {
-	clients       map[string]map[*Client]bool
-	chatObservers map[string]map[*Client]bool
 	mu            sync.RWMutex
+	clients       map[string]map[*Client]bool // userID --> set of connections.
+	chatObservers map[string]map[*Client]bool
 }
 
 func NewHub() *Hub {

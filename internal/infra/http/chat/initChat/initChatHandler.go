@@ -2,11 +2,11 @@ package initchat
 
 import (
 	"net/http"
-
-	chatcommands "social-network/internal/app/chat/commands"
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
+
+	chatcommands "social-network/internal/app/chat/commands"
 )
 
 type Handler struct {

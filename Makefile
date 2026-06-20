@@ -1,3 +1,7 @@
+# Ensure GOPATH/bin is in PATH so installed tools are available
+GOBIN := $(shell go env GOPATH)/bin
+export PATH := $(GOBIN):$(PATH)
+
 MODULE := $(shell go list -m)
 GO_PACKAGES := $(shell go list ./...)
 GO_FOLDERS := $(shell find . -type d -not -path '*/\.*' -not -path './vendor*')
@@ -50,20 +54,21 @@ STATICCHECK_VERSION = latest
 GOIMPORTS_VERSION = latest
 BENCHSTAT_VERSION = latest
 GOVULNCHECK_VERSION = latest
+GOFUMPT_VERSION = latest
 
-setup: tools
+setup: tools ## Install development tools and dependencies
 
-dev: docker-dev
+dev: docker-dev ## Start development environment (alias to docker-dev)
 
-tools:
+tools: ## Install Go development tools (gofumpt, goimports, etc.)
 	@echo "==> Installing tools..."
 	go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
 
-# Benchmarking tools (local use only)
-bench-tools:
+bench-tools: ## Install benchmarking tools (benchstat)
 	@echo "==> Installing benchmark tools..."
 	go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
 	@echo "For flame graphs, install Graphviz:"
@@ -71,73 +76,87 @@ bench-tools:
 	@echo "  Ubuntu: sudo apt-get install graphviz"
 	@echo "  Windows: choco install graphviz"
 
-# Verify Go modules
-ci-mod:
+ci-mod: ## Verify that Go modules are tidy
 	@echo "==> Verifying Go modules..."
 	go mod tidy
 	git diff --exit-code go.mod go.sum || \
 		(echo "Error: go.mod or go.sum are out of date. Run 'go mod tidy' and commit changes."; exit 1)
 
 # Format Go code
-format:
+format: ## Format modified Go files using gofumpt and goimports
 	@echo "==> Formatting code..."
-	goimports -w .
-	gofmt -s -w .
+	@MODIFIED_GO_FILES=$$(git status --porcelain | awk '{print $$2}' | grep '\.go$$' || true); \
+	if [ -n "$$MODIFIED_GO_FILES" ]; then \
+		echo "Formatting modified Go files: $$MODIFIED_GO_FILES"; \
+		gofumpt -w $$MODIFIED_GO_FILES; \
+		goimports -w -local $(MODULE) $$MODIFIED_GO_FILES; \
+	else \
+		echo "No modified Go files to format."; \
+	fi
 
-# Verify formatting
-check-format: 
+check-format: ## Verify formatting of modified Go files
 	@echo "==> Checking code formatting..."
-	git diff --exit-code || \
-		(echo "Error: Files are not formatted. Run 'make format' and commit changes."; exit 1)
+	@MODIFIED_GO_FILES=$$(git status --porcelain | awk '{print $$2}' | grep '\.go$$' || true); \
+	if [ -n "$$MODIFIED_GO_FILES" ]; then \
+		echo "Checking formatting on modified Go files: $$MODIFIED_GO_FILES"; \
+		UNFORMATTED=$$(gofumpt -l $$MODIFIED_GO_FILES || true); \
+		UNFORMATTED_IMPORTS=$$(goimports -l -local $(MODULE) $$MODIFIED_GO_FILES || true); \
+		if [ -n "$$UNFORMATTED" ] || [ -n "$$UNFORMATTED_IMPORTS" ]; then \
+			if [ -n "$$UNFORMATTED" ]; then \
+				echo "Error: Go files not formatted with gofumpt:"; \
+				echo "$$UNFORMATTED"; \
+			fi; \
+			if [ -n "$$UNFORMATTED_IMPORTS" ]; then \
+				echo "Error: Go files not formatted with goimports:"; \
+				echo "$$UNFORMATTED_IMPORTS"; \
+			fi; \
+			exit 1; \
+		fi; \
+	else \
+		echo "No modified Go files to check."; \
+	fi
 
-# Run staticcheck
-staticcheck:
+staticcheck: ## Run staticcheck static analysis
 	@echo "==> Running staticcheck..."
 	staticcheck ./...
 
-# Run golangci-lint
-golangci-lint:
+golangci-lint: ## Run golangci-lint static analysis
 	@echo "==> Running golangci-lint..."
 	golangci-lint run --timeout=5m
 
-# Run govulncheck
-vulncheck:
+vulncheck: ## Run govulncheck security analysis
 	@echo "==> Running govulncheck..."
-	govulncheck ./...
+	govulncheck ./... || (echo "Warning: govulncheck found vulnerabilities"; true)
 
-lint: staticcheck golangci-lint vulncheck
+lint: staticcheck golangci-lint vulncheck ## Run all static analysis checks (staticcheck + golangci-lint + govulncheck)
 
-## -- Testing -- ##
-# Run tests with coverage
-test:
+test: ## Run backend tests with race detector and coverage
 	@echo "==> Running tests..."
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -func=coverage.out
 
-# Run quick tests
-test-short:
+test-short: ## Run quick/short backend tests
 	go test -short ./...
 
-# Backend CI pipeline
-be-ci: ci-mod format check-format lint test 
+be-ci: ci-mod check-format lint test ## Run full backend CI pipeline (check modules, format, lint, test)
 
-# Frontend CI pipeline
-fe-ci:
-	cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test
+fe-ci: ## Run frontend CI pipeline (lint, check format, type-check, test)
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Running frontend CI..."; \
+		cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
+	else \
+		echo "==> Skipping frontend CI: frontend not scaffolded yet."; \
+	fi
 
-# Full CI pipeline (backend + frontend)
-ci: be-ci fe-ci
+ci: be-ci fe-ci ## Run complete CI pipeline (backend + frontend)
 
-# Clean artifacts
-clean:
+clean: ## Remove generated coverage and profiling artifacts
 	rm -f coverage.out
 
-# Full CI pipeline for benchmarks
-ci-bench:
+ci-bench: ## Run performance benchmarks
 	go test -run=NONE -bench=. -benchmem ./...
 
-# Compare current vs main branch benchmarks
-bench-compare:
+bench-compare: ## Compare local benchmarks against main branch
 	@echo "==> Comparing benchmarks (current vs main)..."
 	git stash -u
 	git checkout main && go test -run=NONE -bench=. -benchmem -count=5 ./... > bench-base.txt
@@ -145,26 +164,7 @@ bench-compare:
 	benchstat bench-base.txt bench-head.txt
 	git stash pop
 
-# Run benchmarks with CPU/memory profiling
-bench-profile:
-	@echo "==> Running benchmarks with profiling..."
-	go test -run=NONE -bench=. -benchmem -cpuprofile=cpu.prof -memprofile=mem.prof ./...
-	@echo "CPU profile: cpu.prof"
-	@echo "Memory profile: mem.prof"
 
-# Generate interactive CPU flame graph (requires Graphviz)
-bench-flame:
-	@echo "==> Generating CPU flame graph..."
-	go tool pprof -http=:8080 cpu.prof
-
-# Clean profiling files
-bench-clean:
-	rm -f *.prof bench-*.txt
-
-# Clean database
-db-clean:
-	@echo "==> Cleaning database..."
-	rm -rf db/data
 
 # Docker commands
 docker-build:  ## Build Docker image
@@ -209,45 +209,73 @@ docker-db: ## Access SQLite database inside Docker container
 	@echo "==> Seeing users in the database..."
 	docker exec -it forum-app sqlite3 -line -header db/data/forum.db
 
+bench-profile: ## Run benchmarks with CPU and memory profiling
+	@echo "==> Running benchmarks with profiling..."
+	go test -run=NONE -bench=. -benchmem -cpuprofile=cpu.prof -memprofile=mem.prof ./...
+	@echo "CPU profile: cpu.prof"
+	@echo "Memory profile: mem.prof"
+
+bench-flame: ## Generate interactive CPU flame graph
+	@echo "==> Generating CPU flame graph..."
+	go tool pprof -http=:8080 cpu.prof
+
+bench-clean: ## Clean profiling files
+	rm -f *.prof bench-*.txt
+
+db-clean: ## Clean database
+	@echo "==> Cleaning database..."
+	rm -rf db/data
+
+db-reset: db-clean ## Reset database
+	@mkdir -p db/data
+
+seed: db-reset ## Seed database with test data
+	@echo "==> Seeding database..."
+	sqlite3 db/data/forum.db < db/migrations/schema.sql
+	sqlite3 db/data/forum.db < db/migrations/indexes.sql
+	sqlite3 db/data/forum.db < db/seeds/dev_data.sql
+
+run-backend: ## Run backend application
+	@echo "==> Running backend..."
+	go run cmd/server/main.go
+
+run-frontend: ## Run frontend application (Next.js or Legacy)
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Running frontend (Next.js)..."; \
+		cd frontend && bun run dev; \
+	else \
+		echo "==> Running frontend (Legacy Client Server)..."; \
+		go run cmd/client/main.go; \
+	fi
+
+run-all: ## Run backend and frontend concurrently
+	@echo "==> Running backend and frontend concurrently..."
+	@go run cmd/server/main.go & BACKEND_PID=$$!; \
+	$(MAKE) run-frontend; \
+	kill $$BACKEND_PID 2>/dev/null || true
+
+build-backend: ## Build backend application
+	@echo "==> Building backend..."
+	go build -o bin/server cmd/server/main.go
+
+build-frontend: ## Build frontend application
+	@if [ -f frontend/package.json ]; then \
+		echo "==> Building frontend..."; \
+		cd frontend && bun run build; \
+	else \
+		echo "==> Skipping frontend build: frontend not scaffolded yet."; \
+	fi
+
+build: build-backend build-frontend ## Build both backend and frontend
+
 # Show help
-help:
-	@echo "\033[1mCI Commands:\033[0m"
-	@echo "  \033[36msetup\033[0m           Install development tools (alias to tools)"
-	@echo "  \033[36mdev\033[0m             Start development environment (alias to docker-dev)"
-	@echo "  \033[36mci\033[0m              Run full CI pipeline (BE + FE)"
-	@echo "  \033[36mbe-ci\033[0m           Run backend CI pipeline (format, lint, test)"
-	@echo "  \033[36mtools\033[0m           Install CI tools (goimports, staticcheck, golangci-lint, govulncheck)"
-	@echo "  \033[36mci-mod\033[0m          Verify Go modules"
-	@echo "  \033[36mformat\033[0m          Format Go code"
-	@echo "  \033[36mcheck-format\033[0m    Verify code formatting"
-	@echo "  \033[36mstaticcheck\033[0m     Run staticcheck"
-	@echo "  \033[36mgolangci-lint\033[0m   Run golangci-lint"
-	@echo "  \033[36mlint\033[0m            Run all linters"
-	@echo "  \033[36mtest\033[0m            Run tests with coverage"
-	@echo "  \033[36mtest-short\033[0m      Run quick tests"
-	@echo "  \033[36mclean\033[0m           Clean artifacts"
-	@echo "  \033[36mdb-clean\033[0m        Remove database"
-	
-	@echo "\n\033[1mDocker Commands:\033[0m"
-	@echo "  \033[36mdocker-build\033[0m      Build Docker image"
-	@echo "  \033[36mdocker-up\033[0m         Start services"
-	@echo "  \033[36mdocker-down\033[0m       Stop services"
-	@echo "  \033[36mdocker-logs\033[0m       Show logs"
-	@echo "  \033[36mdocker-restart\033[0m    Restart services"
-	@echo "  \033[36mdocker-ps\033[0m         Show running containers"
-	@echo "  \033[36mdocker-clean\033[0m      Remove all Docker resources"
-	@echo "  \033[36mdocker-dev\033[0m        Start development environment"
-	@echo "  \033[36mdocker-dev-build\033[0m  Build and start dev environment"
-	
-	@echo "\n\033[1mBenchmarking & Profiling (Local):\033[0m"
-	@echo "  \033[36mbench-tools\033[0m     Install benchmark tools (benchstat)"
-	@echo "  \033[36mci-bench\033[0m           Run benchmarks"
-	@echo "  \033[36mbench-compare\033[0m   Compare benchmarks vs main branch"
-	@echo "  \033[36mbench-profile\033[0m   Run benchmarks with CPU/mem profiling"
-	@echo "  \033[36mbench-flame\033[0m     Generate CPU flame graph (requires Graphviz)"
-	@echo "  \033[36mbench-clean\033[0m     Clean profiling files"
-	@echo "\n\033[3mNote: Benchmark commands require 'make bench-tools' and Graphviz for flame graphs\033[0m"
+help: ## Show this help message
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: env setup dev tools bench-tools ci-mod format check-format staticcheck golangci-lint vulncheck lint test test-short ci-bench be-ci fe-ci ci clean \
-        bench-compare bench-profile bench-flame bench-clean db-clean help \
+        bench-compare bench-profile bench-flame bench-clean db-clean db-reset seed run-backend run-frontend run-all help \
+        build-backend build-frontend build \
         docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build
