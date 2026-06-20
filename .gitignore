@@ -120,3 +120,7 @@ graphify-out/
 
 # Archived/completed docs
 docs/zdone/
+
+# Test scripts (not part of production code)
+scripts/test_*
+scripts/*_test.sh
