@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/arnald/forum/cmd/client/domain"
-	"github.com/arnald/forum/cmd/client/helpers"
+	"social-network/cmd/client/domain"
+	"social-network/cmd/client/helpers"
 )
 
 type contextKey string

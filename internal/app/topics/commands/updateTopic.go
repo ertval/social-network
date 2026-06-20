@@ -2,11 +2,12 @@ package topiccommands
 
 import (
 	"context"
-	"github.com/arnald/forum/internal/app/topics"
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/user"
 	"io"
 	"strings"
+
+	"social-network/internal/app/topics"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/user"
 )
 
 const (

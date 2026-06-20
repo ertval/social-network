@@ -3,7 +3,7 @@ package chatqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/chat"
+	"social-network/internal/domain/chat"
 )
 
 type GetChatHistoryRequest struct {

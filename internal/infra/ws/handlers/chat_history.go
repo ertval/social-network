@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	chatqueries "github.com/arnald/forum/internal/app/chat/queries"
-	"github.com/arnald/forum/internal/domain/chat"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/ws"
+	chatqueries "social-network/internal/app/chat/queries"
+	"social-network/internal/domain/chat"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/ws"
 )
 
 type ChatHistoryHandler struct {
@@ -24,7 +24,8 @@ func NewChatHistoryHandler(getChatHistoryHandler chatqueries.GetChatHistoryHandl
 
 func (h *ChatHistoryHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.HistoryPayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}

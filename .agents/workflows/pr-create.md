@@ -14,7 +14,7 @@ Before creating the PR, verify that local branch naming and commit history adher
 
 1. **Verify Current Branch Name**:
    - Run: `rtk git branch --show-current`
-   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `arnald/fix-sqlite-busy-timeout`).
+   - **Rule Check**: Confirm that the branch name matches the pattern `<username>/<type>-<detail>` (e.g., `ekaramet/feat-s1-be-01-db-factory` or `dkotsi/fix-sqlite-busy-timeout`).
    - If the branch does not match this convention, report the discrepancy immediately.
 
 2. **Check Commit Messages**:
@@ -50,13 +50,9 @@ Verify that the implemented changes strictly comply with sprint tickets and core
      - **Surgical Changes**: Ensure NO scope drift, unrelated formatting improvements, or pre-existing dead code cleanups. Remove imports/variables orphaned by your own changes.
 
 3. **Run Verification Gates**:
-   - Run standard backend validation:
-     - `rtk make ci` or `rtk make test`
-   - Run standard frontend validation (run in the `frontend/` directory):
-     - `rtk bun run lint`
-     - `rtk bun run format:check`
-     - `rtk tsc --noEmit`
-     - `rtk bun run test`
+   - Run full CI pipeline:
+      - `rtk make ci`
+   - Or run individually: `rtk make be-ci` (BE) / `rtk make fe-ci` (FE)
    - Do not proceed with PR creation if these validation gates fail.
 
 ---
@@ -70,68 +66,9 @@ Follow premium typographic best practices:
 - Use tables for ticket metadata.
 - Embed alerts for notable warnings, design choices, or migrations.
 
-### PR Description Template:
-```markdown
-# 🚀 Pull Request: [Ticket ID] — [Brief Title]
+### PR Description Template
 
-## 📋 Ticket Metadata
-| Field | Value |
-|---|---|
-| **Ticket ID** | `[Ticket ID]` |
-| **Assignee** | `[Name]` |
-| **Sprint** | Sprint `[N]` |
-| **Branch** | `[branch-name]` |
-
-> [!NOTE]
-> Resolves ticket: [Ticket Details](file://docs/sprints/sprint-[N].md#[Ticket-Anchor])
-
-## 🔍 Overview & Rationale
-*Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*
-
-## 🛠️ Proposed Changes
-### [Component / Slice Name]
-- **[NEW / MODIFY / DELETE]** `[path/to/file.go](file://path/to/file.go)`
-  - *Detailed bullet points of specific additions or changes.*
-
-### DB Migrations (if applicable)
-- Added sequential migrations:
-  - `[00000X_migration.up.sql](file://db/migrations/00000X_migration.up.sql)`
-  - `[00000X_migration.down.sql](file://db/migrations/00000X_migration.down.sql)`
-
-## 📋 Audit Checklist Coverage
-*Verify which audit checklist requirements from general-instructions.md / sn-code-audit.md are covered by this pull request.*
-| Requirement / Feature ID | Status | Component / Page | Description |
-|---|---|---|---|
-| `/register` (G1) | [Covered / N/A] | `RegisterForm` | 8 fields inputs & avatar support |
-| `/login` | | `LoginForm` | Username/email + password, OAuth links |
-| `/profile/[id]` (G2/G10) | | `ProfileCard` / `PrivacyToggle` | Full info display, privacy switch dialog |
-| `FollowButton` (G6/G10) | | `FollowButton` / `UnfollowConfirmDialog` | Follow, request, unfollow confirmation |
-| `/post/new` (G4/G5) | | `PostForm` / `VisibilitySelector` | Image/GIF attachments, 3 privacy levels |
-| `/groups` (G7) | | `GroupDirectory` | Browse and discovery |
-| `/groups/[id]` (G7) | | `JoinRequestButton` | Join requests and invite acceptance |
-| `/groups/[id]/events` (G7) | | `EventForm` / `RSVPOptions` | Event creation & Going/Not going options |
-| `/groups/[id]/chat` (G6) | | `GroupChatWindow` | Real-time workspace chat room |
-| `/chat/[userId]` (G6/G8) | | `ChatWindow` | Unicode emoji, follow-gate validation |
-| `NotificationBell` (G3) | | `NotificationBell` | Global notifications panel distinct from chat |
-
-## ✅ Verification & Testing Results
-*Provide evidence that the implementation works and satisfies the verification criteria.*
-
-### Automated Test Output
-```bash
-# Paste short, successful test summary here (e.g. go test, vitest)
-```
-
-### Manual Smoke Tests
-- [ ] Checked scenario `[e.g. A1 / B2]` from `general-instructions.md` → Result: `[Passed]`
-
-## 🏁 Definition of Done (DoD) Checklist
-- [x] Code conforms to D5 boundary rules (no cross-slice transport/store imports).
-- [x] Concurrency and SQLite WAL, busy timeout, and pooling rules followed.
-- [x] Unit/integration tests written and verified passing (Vitest for FE, Go test for BE).
-- [x] Type checking passes (`tsc --noEmit` / `go vet`).
-- [x] Format & Lint gates pass cleanly (`make ci` for BE, Biome for FE).
-- [x] Branch named correctly and commits follow conventional naming.
+Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` and fill in the details.
 
 ---
 
@@ -145,15 +82,28 @@ Once the PR message is written and saved to `.git/PR_DESCRIPTION.md`, execute th
 2. **Push the Branch**:
    - Run: `rtk git push -u origin <branch-name>`
 
-3. **Create the Pull Request**:
-   - Run the non-interactive Gitea CLI command to publish the PR:
+3. **Fetch collaborators and create the Pull Request**:
+   - First, dynamically fetch all repo collaborators via the Gitea API (excluding the PR author):
      ```bash
-     rtk tea pulls create \
+     COLLABORATORS=$(rtk curl -s \
+       "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/collaborators" \
+       -H "Authorization: token $(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')" \
+       2>/dev/null | python3 -c "import json,sys; users=json.load(sys.stdin); print(','.join(u['login'] for u in users if u['login']!='$(rtk tea whoami 2>/dev/null | head -1)'))" 2>/dev/null)
+     ```
+   - Create the PR (note: `--reviewer` flag does NOT exist on `tea pulls create`):
+     ```bash
+     PR_OUTPUT=$(rtk tea pulls create \
        --title "[Ticket ID]: [Brief Title]" \
        --description "$(cat .git/PR_DESCRIPTION.md)" \
        --base main \
        --head [branch-name] \
-       --output simple
+       --output simple)
+     echo "$PR_OUTPUT"
+     ```
+   - Extract the PR number and add reviewers via `tea pulls edit`:
+     ```bash
+     PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
+     rtk tea pulls edit --add-reviewers "$COLLABORATORS" "$PR_NUMBER"
      ```
    - Print the generated PR URL and details to the user.
    - Clean up the temporary description file: `rm .git/PR_DESCRIPTION.md`.

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/arnald/forum/cmd/client/config"
-	"github.com/arnald/forum/cmd/client/server"
+	"social-network/cmd/client/config"
+	"social-network/cmd/client/server"
 )
 
 func main() {

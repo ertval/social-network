@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/arnald/forum/internal/domain/comment"
+	"social-network/internal/domain/comment"
 )
 
 type Repo struct {

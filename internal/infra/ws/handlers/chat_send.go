@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	chatcommands "github.com/arnald/forum/internal/app/chat/commands"
-	"github.com/arnald/forum/internal/infra/logger"
-	ws "github.com/arnald/forum/internal/infra/ws"
+
+	chatcommands "social-network/internal/app/chat/commands"
+	"social-network/internal/infra/logger"
+	ws "social-network/internal/infra/ws"
 )
 
 type ChatSendHandler struct {
@@ -22,7 +23,8 @@ func NewChatSendHandler(sendChatHandler chatcommands.SendChatHandler, logger log
 
 func (h *ChatSendHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.SendPayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}
@@ -59,8 +61,8 @@ func (h *ChatSendHandler) Handle(client *ws.Client, env ws.Envelope) {
 		Payload:   outPayload,
 	})
 
-	//this is considered the response in the websocket level
+	// this is considered the response in the websocket level
 	client.Send(reply)
-	//i cannot decide whether this broadcast should be part of the ws handler or the app use-case
+	// i cannot decide whether this broadcast should be part of the ws handler or the app use-case
 	// h.hub.Send(res.RecipientID, reply)
 }

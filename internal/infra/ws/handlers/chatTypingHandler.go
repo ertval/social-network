@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 
-	ws "github.com/arnald/forum/internal/infra/ws"
+	ws "social-network/internal/infra/ws"
 )
 
 type ChatTypingHandler struct {
@@ -18,7 +18,8 @@ func NewChatTypingHandler(hub *ws.Hub) *ChatTypingHandler {
 
 func (h *ChatTypingHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.ChatTypingPayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}

@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	oauth "github.com/arnald/forum/internal/pkg/oAuth"
-	"github.com/arnald/forum/internal/pkg/oAuth/httpclient"
+	oauth "social-network/internal/pkg/oAuth"
+	"social-network/internal/pkg/oAuth/httpclient"
 )
 
 const (

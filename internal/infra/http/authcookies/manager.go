@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/session"
+	"social-network/internal/config"
+	"social-network/internal/domain/session"
 )
 
 type Manager struct {

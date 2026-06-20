@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+server
 
 # Test binary, built with `go test -c`
 *.test
@@ -52,6 +53,9 @@ frontend/static/images/uploads/
 tmp/
 .agentignore
 
+# Agent scratch / working files
+.agents/scratch/
+
 # Agent auto-generated lock files
 .agents/skills-lock.json
 skills-lock.json
@@ -64,3 +68,6 @@ skills-lock.json
 
 # graphify knowledge graph (http://github.com/safishamsi/graphify)
 graphify-out/
+
+# Archived/completed docs
+docs/zdone/

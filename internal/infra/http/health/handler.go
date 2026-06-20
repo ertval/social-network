@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/arnald/forum/internal/app/health/queries"
-	notificationcommands "github.com/arnald/forum/internal/app/notifications/commands"
-	"github.com/arnald/forum/internal/domain/notification"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/app/health/queries"
+	notificationcommands "social-network/internal/app/notifications/commands"
+	"social-network/internal/domain/notification"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
 )
 
 type Handler struct {

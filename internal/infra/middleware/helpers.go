@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/session"
+	"social-network/internal/domain/user"
 )
 
 type Key string

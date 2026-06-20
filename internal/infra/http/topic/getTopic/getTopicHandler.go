@@ -5,15 +5,15 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/arnald/forum/internal/app"
-	topicQueries "github.com/arnald/forum/internal/app/topics/queries"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/infra/storage/sqlite/topics"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
+	"social-network/internal/app"
+	topicQueries "social-network/internal/app/topics/queries"
+	"social-network/internal/config"
+	"social-network/internal/domain/comment"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/infra/storage/sqlite/topics"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 type ResponseModel struct {

@@ -236,18 +236,17 @@ bun run dev
 
 We enforce strict validation pipelines to ensure codebase stability.
 
-### ⚙️ CI Pipeline (Backend)
+### ⚙️ CI Pipeline
 Run the automated check suite locally before pushing:
 ```bash
 make ci
 ```
-This commands runs:
-```
-ci-mod ──> format ──> check-format ──> lint ──> test
-```
+This runs the full gate: backend (`make be-ci`) + frontend (`make fe-ci`).
+- **Backend** (`make be-ci`): `ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test`
+- **Frontend** (`make fe-ci`): `bun run lint ──> bun run format:check ──> tsc --noEmit ──> bun run test`
 *   `ci-mod`: Runs `go mod tidy` and asserts no changes.
 *   `format`: Runs `gofumpt` and `goimports`.
-*   `lint`: Evaluates code against `staticcheck` and `golangci-lint`.
+*   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
 *   `test`: Runs unit/integration tests with race checks and generates a coverage report.
 
 ### ⚛️ Frontend Validation
@@ -324,8 +323,10 @@ bun update             # update all packages per semver ranges
 
 ### 🚀 Developer Branch Strategy
 All branches must match the naming schema: `<username>/<type>-<detail>`
+*   *Username*: Gitea username from `origin` remote — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
 *   *Types*: `feat`, `fix`, `refactor`, `docs`, `chore`
-*   *Examples*: `arnald/feat-user-slice`, `ekaramet/fix-sqlite-busy-timeout`
+*   *Detail*: kebab-case description. Optional ticket ID prefix (e.g. `S3-fix-`) before type.
+*   *Examples*: `ekaramet/feat-user-slice`, `geoikonomou/fix-sqlite-busy-timeout`
 *   Branches must live **$\le$ 3 days** (Trunk-Based Development).
 
 ### 📝 Commit Message Convention
@@ -344,6 +345,6 @@ Squash-merged commits onto the main branch must follow the **Conventional Commit
 A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
-3. Code compiles and linting/formatting passes cleanly on both layers (`make ci` + `bun run lint`).
-4. PR follows the standard PR description template (found in `docs/sprints/general-instructions.md`).
+3. Code compiles and linting/formatting passes cleanly (`make ci`).
+4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).

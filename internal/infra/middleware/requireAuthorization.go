@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/arnald/forum/internal/domain/session"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/domain/session"
+	"social-network/internal/pkg/helpers"
 )
 
 // type requireAuthMiddleware struct {

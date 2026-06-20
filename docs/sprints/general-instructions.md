@@ -13,7 +13,7 @@
 | Sprint length | 1 week |
 | Total duration | ~7 weeks (7 sprints) |
 | Methodology | TDD (Red → Green → Refactor), Strangler Fig, Trunk-Based Development |
-| Branch naming | `username/type-detail` (e.g. `ekaramet/feat-user-slice`) |
+| Branch naming | `username/type-detail` (e.g. `geoikonomou/feat-user-slice`) |
 | Ticket format | **ID** — component, priority, dependency, assignee, story points, acceptance criteria |
 
 ---
@@ -46,76 +46,13 @@ graph TD
 ### Onboarding Guide
 
 1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/sprints/ticket-tracker.md`. Verify dependencies.
-2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `ekaramet/feat-user-slice`).
+2. **Set Up Branch**: Standard `username/type-detail` naming (e.g. `geoikonomou/feat-user-slice`).
 3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
-4. **PR Guidelines**: Squash merge, run all validation gates (`make ci` for BE, Bun commands for FE), and draft description using the PR template.
+4. **PR Guidelines**: Squash merge, run all validation gates (`make ci`), and draft description using the PR template.
 
 ### PR Description Template
 
-Include the following template in the `.git/PR_DESCRIPTION.md` file when preparing a pull request:
-
-```markdown
-# 🚀 Pull Request: [Ticket ID] — [Brief Title]
-
-## 📋 Ticket Metadata
-| Field | Value |
-|---|---|
-| **Ticket ID** | `[Ticket ID]` |
-| **Assignee** | `[Name]` |
-| **Sprint** | Sprint `[N]` |
-| **Branch** | `[branch-name]` |
-
-> [!NOTE]
-> Resolves ticket: [Ticket Details](file://docs/sprints/sprint-[N].md#[Ticket-Anchor])
-
-## 🔍 Overview & Rationale
-*Describe high-level context of why this change was made, how it solves the ticket requirements, and any technical decisions.*
-
-## 🛠️ Proposed Changes
-### [Component / Slice Name]
-- **[NEW / MODIFY / DELETE]** `[path/to/file.go](file://path/to/file.go)`
-  - *Detailed bullet points of specific additions or changes.*
-
-### DB Migrations (if applicable)
-- Added sequential migrations:
-  - `[00000X_migration.up.sql](file://db/migrations/00000X_migration.up.sql)`
-  - `[00000X_migration.down.sql](file://db/migrations/00000X_migration.down.sql)`
-
-## 📋 Audit Checklist Coverage
-*Verify which audit checklist requirements from general-instructions.md / sn-code-audit.md are covered by this pull request.*
-| Requirement / Feature ID | Status | Component / Page | Description |
-|---|---|---|---|
-| `/register` (G1) | [Covered / N/A] | `RegisterForm` | 8 fields inputs & avatar support |
-| `/login` | | `LoginForm` | Username/email + password, OAuth links |
-| `/profile/[id]` (G2/G10) | | `ProfileCard` / `PrivacyToggle` | Full info display, privacy switch dialog |
-| `FollowButton` (G6/G10) | | `FollowButton` / `UnfollowConfirmDialog` | Follow, request, unfollow confirmation |
-| `/post/new` (G4/G5) | | `PostForm` / `VisibilitySelector` | Image/GIF attachments, 3 privacy levels |
-| `/groups` (G7) | | `GroupDirectory` | Browse and discovery |
-| `/groups/[id]` (G7) | | `JoinRequestButton` | Join requests and invite acceptance |
-| `/groups/[id]/events` (G7) | | `EventForm` / `RSVPOptions` | Event creation & Going/Not going options |
-| `/groups/[id]/chat` (G6) | | `GroupChatWindow` | Real-time workspace chat room |
-| `/chat/[userId]` (G6/G8) | | `ChatWindow` | Unicode emoji, follow-gate validation |
-| `NotificationBell` (G3) | | `NotificationBell` | Global notifications panel distinct from chat |
-
-## ✅ Verification & Testing Results
-*Provide evidence that the implementation works and satisfies the verification criteria.*
-
-### Automated Test Output
-\`\`\`bash
-# Paste short, successful test summary here (e.g. go test, vitest)
-\`\`\`
-
-### Manual Smoke Tests
-- [ ] Checked scenario `[e.g. A1 / B2]` from `general-instructions.md` → Result: `[Passed]`
-
-## 🏁 Definition of Done (DoD) Checklist
-- [x] Code conforms to D5 boundary rules (no cross-slice transport/store imports).
-- [x] Concurrency and SQLite WAL, busy timeout, and pooling rules followed.
-- [x] Unit/integration tests written and verified passing (Vitest for FE, Go test for BE).
-- [x] Type checking passes (`tsc --noEmit` / `go vet`).
-- [x] Format & Lint gates pass cleanly (`make ci` for BE, Biome for FE).
-- [x] Branch named correctly and commits follow conventional naming.
-```
+Copy `.github/PULL_REQUEST_TEMPLATE.md` into `.git/PR_DESCRIPTION.md` when preparing a pull request and fill in the details.
 
 ---
 
@@ -157,7 +94,7 @@ For each use case (one command/query file):
 3. REFACTOR: Clean up
    - Extract helpers if duplicated 3+ times
    - Ensure boundary rules (D5) are intact
-   - Run full CI: make ci
+   - Run full CI: `make ci`
 ```
 
 **Test file convention:**
@@ -210,7 +147,7 @@ Every PR must pass:
 - [ ] **Interface rules** (D2): within slice = full interface, across = narrow consumer-defined
 - [ ] **Cross-slice communication** (D3): ID-only refs, consumer interfaces, event bus for mutations
 - [ ] **Tests present**: unit tests for each command/query, store tests with real in-memory SQLite
-- [ ] **Format + lint**: `make ci` green
+- [ ] **Format + lint + test**: `make ci` green
 - [ ] **No dead code**: removed imports/variables introduced by the change
 
 ---
@@ -303,21 +240,24 @@ Define the directory mapping:
 **Mandatory:** After every sprint, before marking complete, run:
 
 ```bash
-# Backend
+# Full CI gate (BE + FE)
+make ci
+
+# Or individually:
+make be-ci   # Backend only
+make fe-ci   # Frontend only
+
+# Boundary check
+grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
+```
+
+Equivalent standalone commands if running without `make`:
+```bash
 go vet ./...
 go build ./...
 go test -race -coverprofile=coverage.out ./...
 golangci-lint run
 govulncheck ./...
-
-# Frontend
-npx @biomejs/biome lint src/
-npx @biomejs/biome format src/
-tsc --noEmit
-npx vitest run
-
-# Boundary check
-grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
 ```
 
 ### Q3: Manual Smoke Test Scenarios
@@ -415,7 +355,7 @@ if config.Features.Follow {
 
 A ticket is DONE when:
 - [ ] Code written (TDD: tests first, then implementation)
-- [ ] All tests pass: `make ci` for BE, `npm run lint && npm run test` for FE
+- [ ] All tests pass: `make ci`
 - [ ] Boundary rules verified (no cross-slice transport/store imports)
 - [ ] PR reviewed by other dev in same discipline (BE reviews BE, FE reviews FE)
 - [ ] Merged to main via squash merge

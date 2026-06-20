@@ -82,7 +82,7 @@ graph TD
 
 ### Stage 6: Worktree / Branch (Environment Setup Subagent)
 *Goal: Provision the development branch and prepare the workspace.*
-1. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `arnald/feat-s1-be-01-db-factory`).
+1. Determine the branch name based on the convention: `<username>/<type>-<detail>` (e.g. `geoikonomou/feat-s1-be-01-db-factory`).
 2. Checkout the branch:
    - For Antigravity: `rtk git checkout -b <branch-name>`
    - For OpenCode: `git checkout -b <branch-name>`
@@ -109,5 +109,5 @@ graph TD
    - Run frontend validation (in `frontend/`): `rtk bun run lint && rtk bun run format:check && rtk tsc --noEmit && rtk bun run test`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
-2. Draft a beautiful markdown PR description message using the template from `general-instructions.md` (including the Audit Checklist Coverage table).
+2. Draft a beautiful markdown PR description message using the template from `@.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
 3. Publish the PR via CLI tools (Gitea `tea` CLI).

@@ -3,12 +3,12 @@ package notificationcommands
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/notification"
+	"social-network/internal/domain/notification"
 )
 
 type MarkAsReadRequest struct {
-	NotificationID int
 	UserID         string
+	NotificationID int
 }
 
 type MarkAsReadHandler interface {

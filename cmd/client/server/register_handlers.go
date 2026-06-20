@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/arnald/forum/cmd/client/domain"
-	"github.com/arnald/forum/cmd/client/helpers"
-	"github.com/arnald/forum/cmd/client/helpers/templates"
-	"github.com/arnald/forum/cmd/client/middleware"
-	val "github.com/arnald/forum/internal/pkg/validator"
+	"social-network/cmd/client/domain"
+	"social-network/cmd/client/helpers"
+	"social-network/cmd/client/helpers/templates"
+	"social-network/cmd/client/middleware"
+	val "social-network/internal/pkg/validator"
 )
 
 type RegisterFormErrors struct {

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/user"
-	testhelpers "github.com/arnald/forum/internal/pkg/testing"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/user"
+	testhelpers "social-network/internal/pkg/testing"
 )
 
 func TestCreateTopicHandler_Handle(t *testing.T) {

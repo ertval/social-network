@@ -3,10 +3,10 @@ package infra
 import (
 	"database/sql"
 
-	"github.com/arnald/forum/internal/bootstrap"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra/http"
-	"github.com/arnald/forum/internal/infra/storage/sqlite"
+	"social-network/internal/bootstrap"
+	"social-network/internal/config"
+	"social-network/internal/infra/http"
+	"social-network/internal/infra/storage/sqlite"
 )
 
 type Services struct {

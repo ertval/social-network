@@ -3,8 +3,8 @@ package topicqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/topic"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/topic"
 )
 
 type GetTopicRequest struct {

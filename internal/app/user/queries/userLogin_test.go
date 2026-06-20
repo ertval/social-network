@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/arnald/forum/internal/domain/user"
-	testhelpers "github.com/arnald/forum/internal/pkg/testing"
+	"social-network/internal/domain/user"
+	testhelpers "social-network/internal/pkg/testing"
 )
 
 func TestUserLoginHandler_Handle(t *testing.T) {

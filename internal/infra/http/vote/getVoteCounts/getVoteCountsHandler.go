@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/arnald/forum/internal/app"
-	votequeries "github.com/arnald/forum/internal/app/votes/queries"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/domain/vote"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/app"
+	votequeries "social-network/internal/app/votes/queries"
+	"social-network/internal/config"
+	"social-network/internal/domain/vote"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
 )
 
 type Response struct {

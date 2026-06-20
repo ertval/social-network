@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/arnald/forum/cmd/client/domain"
+	"social-network/cmd/client/domain"
 )
 
 const (
