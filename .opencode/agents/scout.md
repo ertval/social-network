@@ -1,6 +1,7 @@
 ---
 description: "QRSPI Questions+Research phase. Reads the ticket spec, scans the codebase for related code, documents findings. No code generation."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: info
 steps: 20

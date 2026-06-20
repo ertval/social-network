@@ -1,6 +1,7 @@
 ---
 description: Reads the ticket-scoped PR review report and applies surgical fixes to resolve ALL findings (Critical, Warning, Suggestion, Recommendation). Re-runs deterministic gates and commits fixes with conventional commit messages.
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: warning
 steps: 35

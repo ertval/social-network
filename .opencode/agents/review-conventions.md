@@ -1,6 +1,7 @@
 ---
 description: "Convention compliance checker. Validates all rules in conventions.md against the diff. Produces a compliance matrix."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: accent
 steps: 20

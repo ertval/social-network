@@ -1,6 +1,7 @@
 ---
 description: Verifies branch conventions, drafts the PR description, pushes the branch, and creates the PR via Gitea tea CLI with all repo collaborators as reviewers.
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: primary
 steps: 30

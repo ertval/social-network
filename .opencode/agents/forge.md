@@ -1,6 +1,7 @@
 ---
 description: "QRSPI Implement phase. Executes the approved plan using TDD. Creates branch, writes tests first, then minimal code."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: success
 steps: 45

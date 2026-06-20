@@ -1,6 +1,7 @@
 ---
 description: "Deep code analysis agent. Analyzes the diff across 5 dimensions: scope drift, logic, architecture, security, and testing. Produces a findings list."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: accent
 steps: 25

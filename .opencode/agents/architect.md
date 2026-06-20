@@ -1,6 +1,7 @@
 ---
 description: "QRSPI Structure+Plan phase. Reads research output and designs the implementation plan with file checklist, TDD strategy, and phase boundaries."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: info
 steps: 15

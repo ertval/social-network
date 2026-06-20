@@ -1,6 +1,7 @@
 ---
 description: "Deterministic gate runner. Executes make review-gates and reports JSON results. No LLM reasoning — pure script execution."
 mode: subagent
+hidden: true
 model: opencode/deepseek-v4-flash-free
 color: accent
 steps: 10
