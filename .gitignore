@@ -9,6 +9,7 @@
 *.dylib
 build/
 bin/
+server
 
 # Test binary, built with `go test -c`
 *.test
@@ -54,6 +55,8 @@ frontend/static/images/uploads/
 .audit/
 tmp/
 .agentignore
+.agents/scratch/
+
 
 # Agent scratch / working files
 .agents/scratch/

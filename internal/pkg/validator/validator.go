@@ -14,7 +14,7 @@ import (
 const (
 	InvalidType  = "invalid type"
 	InvalidEmail = "invalid email"
-	// maxUploadSizeBytes is used by image file validation (20 MB)
+	// maxUploadSizeBytes is used by image file validation (20 MB).
 	maxUploadSizeBytes = 20 << 20
 )
 

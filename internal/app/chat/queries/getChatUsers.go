@@ -2,10 +2,11 @@ package chatqueries
 
 import (
 	"context"
-	"social-network/internal/domain/chat"
-	"social-network/internal/domain/user"
 	"sort"
 	"time"
+
+	"social-network/internal/domain/chat"
+	"social-network/internal/domain/user"
 
 	chatapp "social-network/internal/app/chat"
 )
@@ -15,12 +16,12 @@ type GetChatUsersRequest struct {
 }
 
 type ChatUser struct {
+	LastMessageAt *time.Time `json:"last_message_at"`
 	UserID        string     `json:"user_id"`
 	Nickname      string     `json:"nickname"`
-	IsOnline      bool       `json:"is_online"`
-	LastMessageAt *time.Time `json:"last_message_at"`
 	ChatId        string     `json:"chat_id,omitempty"`
 	UnreadCount   int        `json:"unread_count"`
+	IsOnline      bool       `json:"is_online"`
 }
 type GetChatUsersHandler interface {
 	Handle(ctx context.Context, req GetChatUsersRequest) ([]ChatUser, error)

@@ -2,6 +2,7 @@ package notificationcommands
 
 import (
 	"context"
+
 	"social-network/internal/app/notifications"
 	"social-network/internal/domain/notification"
 )
@@ -27,7 +28,8 @@ func NewCreateNotificationHandler(repo notification.Repository, notifier notific
 }
 
 func (h *createNotificationHandler) Handle(ctx context.Context, req CreateNotificationRequest) error {
-	if err := h.repo.Create(ctx, req.Notification); err != nil {
+	err := h.repo.Create(ctx, req.Notification)
+	if err != nil {
 		return err
 	}
 	h.notifier.BroadcastToUser(req.Notification.UserID, req.Notification)

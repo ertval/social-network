@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
+
 	"social-network/internal/app"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"
@@ -13,9 +14,9 @@ import (
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
 
-	topicCommands "social-network/internal/app/topics/commands"
-
 	"github.com/google/uuid"
+
+	topicCommands "social-network/internal/app/topics/commands"
 )
 
 const (

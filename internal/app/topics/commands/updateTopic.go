@@ -3,10 +3,11 @@ package topiccommands
 import (
 	"context"
 	"io"
+	"strings"
+
 	"social-network/internal/app/topics"
 	"social-network/internal/domain/topic"
 	"social-network/internal/domain/user"
-	"strings"
 )
 
 const (
