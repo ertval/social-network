@@ -1,4 +1,4 @@
-module github.com/arnald/forum
+module social-network
 
 go 1.24.4
 

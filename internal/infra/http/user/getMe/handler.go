@@ -3,9 +3,9 @@ package getme
 import (
 	"net/http"
 
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 )
 
 type Handler struct {

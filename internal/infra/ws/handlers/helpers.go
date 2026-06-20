@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 
-	ws "github.com/arnald/forum/internal/infra/ws"
+	ws "social-network/internal/infra/ws"
 )
 
 func sendError(client *ws.Client, requestID, message string) {

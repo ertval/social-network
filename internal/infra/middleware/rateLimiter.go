@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arnald/forum/internal/infra/middleware/ratelimiter"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/infra/middleware/ratelimiter"
+	"social-network/internal/pkg/helpers"
 )
 
 type rateLimitMiddleware struct {

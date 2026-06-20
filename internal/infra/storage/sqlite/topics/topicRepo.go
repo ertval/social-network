@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/topic"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/topic"
 )
 
 type Repo struct {
@@ -104,6 +104,7 @@ func (r Repo) GetImagePathFromTopicID(ctx context.Context, topicID int, userID s
 	}
 	return imagepath.String, nil
 }
+
 func (r Repo) UpdateTopic(ctx context.Context, topic *topic.Topic) error {
 	tx, err := r.DB.BeginTx(ctx, nil)
 	if err != nil {

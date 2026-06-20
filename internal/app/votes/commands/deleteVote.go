@@ -3,7 +3,7 @@ package votecommands
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/vote"
+	"social-network/internal/domain/vote"
 )
 
 type DeleteVoteRequest struct {

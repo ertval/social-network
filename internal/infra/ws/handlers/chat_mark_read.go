@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	chatcommands "github.com/arnald/forum/internal/app/chat/commands"
-	"github.com/arnald/forum/internal/infra/logger"
-	ws "github.com/arnald/forum/internal/infra/ws"
+	chatcommands "social-network/internal/app/chat/commands"
+	"social-network/internal/infra/logger"
+	ws "social-network/internal/infra/ws"
 )
 
 type ChatMarkReadHandler struct {
@@ -23,13 +23,14 @@ func NewChatMarkReadHandler(markAsReadHandler chatcommands.MarkAsReadHandler, lo
 
 func (h *ChatMarkReadHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.MarkReadPayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		h.logger.PrintError(err, nil)
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}
 
-	err := h.markAsRead.Handle(context.Background(), chatcommands.MarkAsReadRequest{
+	err = h.markAsRead.Handle(context.Background(), chatcommands.MarkAsReadRequest{
 		ChatID:        payload.ChatID,
 		UserID:        client.UserID,
 		UpToMessageID: payload.UpToMessageID,

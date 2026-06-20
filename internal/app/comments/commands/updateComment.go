@@ -3,8 +3,8 @@ package commentcommands
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/user"
 )
 
 type UpdateCommentRequest struct {

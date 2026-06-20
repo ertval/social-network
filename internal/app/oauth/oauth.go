@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/arnald/forum/internal/domain/oauth"
-	"github.com/arnald/forum/internal/domain/user"
-	oauthpkg "github.com/arnald/forum/internal/pkg/oAuth"
-	"github.com/arnald/forum/internal/pkg/uuid"
+	"social-network/internal/domain/oauth"
+	"social-network/internal/domain/user"
+	oauthpkg "social-network/internal/pkg/oAuth"
+	"social-network/internal/pkg/uuid"
 )
 
 type OAuthService struct {
@@ -48,7 +48,7 @@ func (s *OAuthService) Link(ctx context.Context, userID string, code string, pro
 	if existingUser != nil {
 		return oauth.ErrAlreadyLinkedToProvider
 	}
-	//the check for userID,provider here is optional since we have the unique(userID,provider) in the DB table of oauthProvider
+	// the check for userID,provider here is optional since we have the unique(userID,provider) in the DB table of oauthProvider
 
 	oauthUser := &oauth.User{
 		ProviderID: providerID,
@@ -60,6 +60,7 @@ func (s *OAuthService) Link(ctx context.Context, userID string, code string, pro
 	}
 	return s.oauthRepo.LinkOAuthProvider(ctx, userID, oauthUser)
 }
+
 func (s *OAuthService) Login(ctx context.Context, code string, provider oauthpkg.Provider) (*user.User, error) {
 	accessToken, err := provider.ExchangeCode(ctx, code)
 	if err != nil {

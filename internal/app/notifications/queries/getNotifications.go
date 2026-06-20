@@ -3,7 +3,7 @@ package notificationqueries
 import (
 	"context"
 
-	"github.com/arnald/forum/internal/domain/notification"
+	"social-network/internal/domain/notification"
 )
 
 type GetNotificationsRequest struct {

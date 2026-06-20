@@ -8,8 +8,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/arnald/forum/cmd/client/helpers"
-	"github.com/arnald/forum/cmd/client/middleware"
+	"social-network/cmd/client/helpers"
+	"social-network/cmd/client/middleware"
 )
 
 type voteCountsResponse struct {

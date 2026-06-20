@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/arnald/forum/cmd/client/helpers"
-	"github.com/arnald/forum/cmd/client/middleware"
+	"social-network/cmd/client/helpers"
+	"social-network/cmd/client/middleware"
 )
 
 func (cs *ClientServer) GitHubRegister(w http.ResponseWriter, r *http.Request) {

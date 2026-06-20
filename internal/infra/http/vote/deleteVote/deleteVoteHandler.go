@@ -6,12 +6,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/arnald/forum/internal/app"
-	votecommands "github.com/arnald/forum/internal/app/votes/commands"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
+	"social-network/internal/app"
+	votecommands "social-network/internal/app/votes/commands"
+	"social-network/internal/config"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
 )
 
 type request struct {

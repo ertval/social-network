@@ -3,18 +3,20 @@ package updatetopic
 import (
 	"context"
 	"errors"
-	"github.com/arnald/forum/internal/app"
-	topicCommands "github.com/arnald/forum/internal/app/topics/commands"
-	"github.com/arnald/forum/internal/config"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/infra/middleware"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
-	"github.com/google/uuid"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
 	"strconv"
+
+	"github.com/google/uuid"
+
+	"social-network/internal/app"
+	topicCommands "social-network/internal/app/topics/commands"
+	"social-network/internal/config"
+	"social-network/internal/infra/logger"
+	"social-network/internal/infra/middleware"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 const (
@@ -125,7 +127,8 @@ func (h *Handler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 		Content:      topicToUpdate.Content,
 		ImagePath:    topicToUpdate.ImagePath,
 		OldImagePath: topicToUpdate.OldImagePath,
-		ImageFile: topicCommands.TopicImage{File: &topicToUpdate.ImageFile.Content,
+		ImageFile: topicCommands.TopicImage{
+			File:   &topicToUpdate.ImageFile.Content,
 			Header: topicToUpdate.ImageFile.Header,
 		},
 		User: user,

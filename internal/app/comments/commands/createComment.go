@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/arnald/forum/internal/app/notifications"
-	"github.com/arnald/forum/internal/domain/comment"
-	"github.com/arnald/forum/internal/domain/notification"
-	"github.com/arnald/forum/internal/domain/topic"
-	"github.com/arnald/forum/internal/domain/user"
+	"social-network/internal/app/notifications"
+	"social-network/internal/domain/comment"
+	"social-network/internal/domain/notification"
+	"social-network/internal/domain/topic"
+	"social-network/internal/domain/user"
 )
 
 type CreateCommentRequest struct {
@@ -45,7 +45,7 @@ func (h *createCommentRequestHandler) Handle(ctx context.Context, req CreateComm
 		Content: req.Content,
 	}
 
-	//only issue here is in the instance of a successful comment write in the db and a failure in a notification write it returns an err and the handler doesnt know what happened, could be fixed with error types
+	// only issue here is in the instance of a successful comment write in the db and a failure in a notification write it returns an err and the handler doesnt know what happened, could be fixed with error types
 	err := h.commentrepo.CreateComment(ctx, comment)
 	if err != nil {
 		return nil, err

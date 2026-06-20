@@ -3,8 +3,8 @@ package chatcommands
 import (
 	"context"
 
-	chatapp "github.com/arnald/forum/internal/app/chat"
-	"github.com/arnald/forum/internal/domain/chat"
+	chatapp "social-network/internal/app/chat"
+	"social-network/internal/domain/chat"
 )
 
 type SendChatRequest struct {

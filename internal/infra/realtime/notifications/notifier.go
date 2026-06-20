@@ -3,7 +3,7 @@ package notifications
 import (
 	"sync"
 
-	"github.com/arnald/forum/internal/domain/notification"
+	"social-network/internal/domain/notification"
 )
 
 const ChannelCapacity int = 10

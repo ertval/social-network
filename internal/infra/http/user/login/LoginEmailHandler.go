@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	userQueries "github.com/arnald/forum/internal/app/user/queries"
-	"github.com/arnald/forum/internal/infra/logger"
-	"github.com/arnald/forum/internal/pkg/helpers"
-	"github.com/arnald/forum/internal/pkg/validator"
+	userQueries "social-network/internal/app/user/queries"
+	"social-network/internal/infra/logger"
+	"social-network/internal/pkg/helpers"
+	"social-network/internal/pkg/validator"
 )
 
 type LoginUserEmailRequestModel struct {
@@ -90,7 +90,7 @@ func (h Handler) UserLoginEmail(w http.ResponseWriter, r *http.Request) {
 		Username: user.Nickname,
 		// AccessToken:  newSession.AccessToken,
 		// RefreshToken: newSession.RefreshToken,
-		//not sure if we need them anymore in the response
+		// not sure if we need them anymore in the response
 	}
 
 	h.CookieManager.SetCookies(w, newSession)
