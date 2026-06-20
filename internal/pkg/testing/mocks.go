@@ -13,16 +13,16 @@ import (
 var ErrTest = errors.New("test error")
 
 type MockRepository struct {
-	UserRegisterFunc        func(ctx context.Context, user *user.User) error
-	GetUserByEmailFunc      func(ctx context.Context, email string) (*user.User, error)
-	GetUserByUsernameFunc   func(ctx context.Context, username string) (*user.User, error)
-	GetAllFunc              func(ctx context.Context) ([]user.User, error)
-	CreateTopicFunc         func(ctx context.Context, topic *topic.Topic) error
-	UpdateTopicFunc         func(ctx context.Context, topic *topic.Topic) error
-	DeleteTopicFunc         func(ctx context.Context, userID string, topicID int) error
-	GetTopicByIDFunc        func(ctx context.Context, topicID int, userID *string) (*topic.Topic, error)
-	GetAllTopicsFunc        func(ctx context.Context, page, size, categoryID int, orderBy, order, filter string, userID *string) ([]topic.Topic, error)
-	GetTotalTopicsCountFunc func(ctx context.Context, filter string, categoryID int) (int, error)
+	UserRegisterFunc            func(ctx context.Context, user *user.User) error
+	GetUserByEmailFunc          func(ctx context.Context, email string) (*user.User, error)
+	GetUserByUsernameFunc       func(ctx context.Context, username string) (*user.User, error)
+	GetAllFunc                  func(ctx context.Context) ([]user.User, error)
+	CreateTopicFunc             func(ctx context.Context, topic *topic.Topic) error
+	UpdateTopicFunc             func(ctx context.Context, topic *topic.Topic) error
+	DeleteTopicFunc             func(ctx context.Context, userID string, topicID int) error
+	GetTopicByIDFunc            func(ctx context.Context, topicID int, userID *string) (*topic.Topic, error)
+	GetAllTopicsFunc            func(ctx context.Context, page, size, categoryID int, orderBy, order, filter string, userID *string) ([]topic.Topic, error)
+	GetTotalTopicsCountFunc     func(ctx context.Context, filter string, categoryID int) (int, error)
 	GetImagePathFromTopicIDFunc func(ctx context.Context, topicID int, userID string) (imagePath string, err error)
 }
 

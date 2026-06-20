@@ -95,7 +95,7 @@ func (h Handler) UserLoginUsername(w http.ResponseWriter, r *http.Request) {
 		Username: user.Nickname,
 		// AccessToken:  newSession.AccessToken,
 		// RefreshToken: newSession.RefreshToken,
-		//not sure if we need them anymore in the response
+		// not sure if we need them anymore in the response
 	}
 
 	h.CookieManager.SetCookies(w, newSession)

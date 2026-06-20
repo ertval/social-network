@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"social-network/internal/app/notifications/queries"
+	notificationqueries "social-network/internal/app/notifications/queries"
 	"social-network/internal/infra/middleware"
 )
 

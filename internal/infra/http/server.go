@@ -100,7 +100,6 @@ func middlewareChain(handler http.HandlerFunc, middlewares ...func(http.HandlerF
 }
 
 func (server *Server) initWSRouter() {
-
 	chatHistoryWShandler := wshandlers.NewChatHistoryHandler(server.appServices.Queries.GetChatHistory, server.logger)
 
 	pingWShandler := wshandlers.NewPingHandler()
@@ -122,6 +121,7 @@ func (server *Server) initWSRouter() {
 		chatTypingHandler,
 	)
 }
+
 func (server *Server) AddHTTPRoutes() {
 	server.router.HandleFunc(apiContext+"/health",
 		middlewareChain(

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Inbound message types (client -> server)
+// Inbound message types (client -> server).
 const (
 	TypeChatSend    = "chat.send"
 	TypeChatHistory = "chat.history"
@@ -16,7 +16,7 @@ const (
 	TypeChatClose   = "chat.close"
 )
 
-// Outbound message types (server -> client)
+// Outbound message types (server -> client).
 const (
 	TypeChatMessage    = "chat.message"
 	TypeHistoryResult  = "chat.history_result"
@@ -33,7 +33,7 @@ type Envelope struct {
 	Payload   json.RawMessage `json:"payload"`
 }
 
-// Payloads for inbound messages
+// Payloads for inbound messages.
 type SendPayload struct {
 	ChatID          string `json:"chat_id"`
 	Content         string `json:"content"`
@@ -63,19 +63,19 @@ type MarkReadPayload struct {
 	UpToMessageID int    `json:"up_to_message_id"`
 }
 
-// Payloads for outbound messages
+// Payloads for outbound messages.
 type ChatIsTyping struct {
 	ChatID string `json:"chat_id"`
 	UserID string `json:"user_id"`
 }
 
 type MessagePayload struct {
-	ID              int       `json:"id"`
+	CreatedAt       time.Time `json:"created_at"`
+	ClientMessageID *string   `json:"client_message_id,omitempty"`
 	ChatID          string    `json:"chat_id"`
 	SenderID        string    `json:"sender_id"`
 	Content         string    `json:"content"`
-	CreatedAt       time.Time `json:"created_at"`
-	ClientMessageID *string   `json:"client_message_id,omitempty"`
+	ID              int       `json:"id"`
 }
 
 type ErrorPayload struct {

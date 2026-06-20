@@ -18,7 +18,8 @@ func NewChatOpenHandler(hub *ws.Hub) *ChatOpenHandler {
 
 func (h *ChatOpenHandler) Handle(client *ws.Client, env ws.Envelope) {
 	var payload ws.ChatOpenClosePayload
-	if err := json.Unmarshal(env.Payload, &payload); err != nil {
+	err := json.Unmarshal(env.Payload, &payload)
+	if err != nil {
 		sendError(client, env.RequestID, "invalid payload")
 		return
 	}

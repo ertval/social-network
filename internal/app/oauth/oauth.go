@@ -48,7 +48,7 @@ func (s *OAuthService) Link(ctx context.Context, userID string, code string, pro
 	if existingUser != nil {
 		return oauth.ErrAlreadyLinkedToProvider
 	}
-	//the check for userID,provider here is optional since we have the unique(userID,provider) in the DB table of oauthProvider
+	// the check for userID,provider here is optional since we have the unique(userID,provider) in the DB table of oauthProvider
 
 	oauthUser := &oauth.User{
 		ProviderID: providerID,
@@ -60,6 +60,7 @@ func (s *OAuthService) Link(ctx context.Context, userID string, code string, pro
 	}
 	return s.oauthRepo.LinkOAuthProvider(ctx, userID, oauthUser)
 }
+
 func (s *OAuthService) Login(ctx context.Context, code string, provider oauthpkg.Provider) (*user.User, error) {
 	accessToken, err := provider.ExchangeCode(ctx, code)
 	if err != nil {

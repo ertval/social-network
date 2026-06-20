@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/google/uuid"
+
 	"social-network/internal/app"
 	topicCommands "social-network/internal/app/topics/commands"
 	"social-network/internal/config"
@@ -14,7 +16,6 @@ import (
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
-	"github.com/google/uuid"
 )
 
 const (
@@ -118,7 +119,8 @@ func (h *Handler) CreateTopic(w http.ResponseWriter, r *http.Request) {
 		Title:       topicToCreate.Title,
 		Content:     topicToCreate.Content,
 		ImagePath:   topicToCreate.ImagePath,
-		ImageFile: topicCommands.TopicImage{File: &topicToCreate.ImageFile.Content,
+		ImageFile: topicCommands.TopicImage{
+			File:   &topicToCreate.ImageFile.Content,
 			Header: topicToCreate.ImageFile.Header,
 		},
 		User: user,

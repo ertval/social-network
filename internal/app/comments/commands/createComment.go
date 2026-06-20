@@ -45,7 +45,7 @@ func (h *createCommentRequestHandler) Handle(ctx context.Context, req CreateComm
 		Content: req.Content,
 	}
 
-	//only issue here is in the instance of a successful comment write in the db and a failure in a notification write it returns an err and the handler doesnt know what happened, could be fixed with error types
+	// only issue here is in the instance of a successful comment write in the db and a failure in a notification write it returns an err and the handler doesnt know what happened, could be fixed with error types
 	err := h.commentrepo.CreateComment(ctx, comment)
 	if err != nil {
 		return nil, err

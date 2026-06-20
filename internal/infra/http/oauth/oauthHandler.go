@@ -72,6 +72,7 @@ func (h *OAuthHandler) Link(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, authURL, http.StatusTemporaryRedirect)
 }
+
 func (h *OAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var stateData oauthpkg.StateData
 	stateData.Flow = "login"
@@ -270,5 +271,4 @@ func (h *OAuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		frontendCallbackURL := fmt.Sprintf("%s?%s", frontendCallbackBase, params.Encode())
 		http.Redirect(w, r, frontendCallbackURL, http.StatusTemporaryRedirect)
 	}
-
 }

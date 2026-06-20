@@ -12,12 +12,12 @@ import (
 
 type UserRegisterRequest struct {
 	Nickname  string
-	Age       int
 	Gender    string
 	FirstName string
 	LastName  string
 	Password  string
 	Email     string
+	Age       int
 }
 
 type UserRegisterRequestHandler interface {

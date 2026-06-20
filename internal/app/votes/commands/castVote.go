@@ -46,7 +46,7 @@ func (h *castVoteRequestHandler) Handle(ctx context.Context, req CastVoteRequest
 	if err != nil {
 		return err
 	}
-	//notification send, if failed, fails silently, we could fix that
+	// notification send, if failed, fails silently, we could fix that
 	h.sendVoteNotification(ctx, req)
 
 	return nil
