@@ -1,3 +1,8 @@
+/*
+Runner handles registration and orchestration of gate checks.
+It defines the main interfaces, structures, and helper functions for executing
+the validation pipeline and formatting the report output into structured JSON.
+*/
 package gates
 
 import (

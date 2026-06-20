@@ -1,3 +1,8 @@
+/*
+BranchGate validates the current Git branch name against the pattern
+'<username>/<ticket-ID>-<detail>' and checks that all commit messages
+on the branch follow the Conventional Commits format.
+*/
 package gates
 
 import (

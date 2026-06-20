@@ -1,3 +1,8 @@
+/*
+ScopeDriftGate detects and reports the number of files changed between the
+current branch and the base branch, serving as an advisory gate to monitor
+unexpected scope drift during ticket implementation.
+*/
 package gates
 
 import (

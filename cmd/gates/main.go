@@ -1,9 +1,16 @@
+/*
+Package main provides the entry point for the CI gates CLI runner.
+It registers all individual gate checks and processes command-line flags
+to run either a specific gate check or all checks, printing the results
+as structured JSON.
+*/
 package main
 
 import (
 	"flag"
 	"fmt"
 	"os"
+
 	"social-network/internal/gates"
 )
 

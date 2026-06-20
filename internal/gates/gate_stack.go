@@ -1,3 +1,8 @@
+/*
+StackGate validates the Go compiler version and module configuration (Gate #1).
+It parses the go.mod file to confirm that the Go version starts with '1.24'
+and the module name is correctly defined as 'social-network'.
+*/
 package gates
 
 import (

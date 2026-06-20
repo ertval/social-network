@@ -1,3 +1,8 @@
+/*
+BoundariesGate validates D5 import boundary rules between packages.
+It uses 'golangci-lint run --enable-only=depguard' to check boundaries,
+with an AST-based parser fallback if golangci-lint is not installed.
+*/
 package gates
 
 import (

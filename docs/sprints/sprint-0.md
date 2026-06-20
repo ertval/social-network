@@ -171,7 +171,7 @@
 * **Assignee:** SD-QA
 * **Story Points:** 2
 * **Dependencies:** S0-BE-01
-* **Description:** Establish quality git hooks using Husky/lefthook to prevent bad code from committing or pushing.
+* **Description:** Establish quality git hooks using lefthook to prevent bad code from committing or pushing.
 * **Detailed Steps:**
   1. Setup pre-commit hooks that run checks only on staged files:
      - Backend: runs `gofumpt` and `goimports` formatting.

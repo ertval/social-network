@@ -1,3 +1,7 @@
+/*
+Package gates tests verify the correct behavior of all gate checks,
+using mock directories, AST fixtures, and command-line execution overrides.
+*/
 package gates
 
 import (

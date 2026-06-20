@@ -1,3 +1,8 @@
+/*
+Git provides shared helper functions for Git repository interaction,
+including retrieving the current branch name, finding the merge base,
+fetching the commit log, and identifying changed files.
+*/
 package gates
 
 import (
