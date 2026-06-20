@@ -72,6 +72,6 @@ This document defines the roles, system instructions, and quality gates for the 
   5. **TDD / Test presence**: Are tests present for all new commands and queries? Do they use table-driven subtests? Are store tests using isolated in-memory SQLite instances?
   6. **SQLite WAL/Timeout**: Are DSN configurations in SQLite initialization containing WAL and busy timeout?
   7. **No Dead Code**: Did the changes introduce unused imports, variables, or functions? (Fails gate if yes)
-  8. **Build / Lint**: Run `make ci` (BE + FE). All must be 100% green.
+   8. **Build / Lint**: Run `make ci` (BE + FE). All must be 100% green.
 
 If any check fails, the Validator must reject the implementation and provide a clear report highlighting the exact file and lines that violate the rules, requesting the agent to return to Phase 3.

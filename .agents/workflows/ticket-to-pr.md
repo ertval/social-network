@@ -53,6 +53,10 @@ Follow the workflow in .agents/workflows/pr-implement.md to implement ticket <TI
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
 
 **Must verify against [conventions.md](file://.agents/rules/conventions.md):** D2–D5 boundary rules, TDD requirement, SQLite rules, branching/commit format, security best practices, frontend build gates (Biome lint/format, `tsc --noEmit`, Vitest).
+<<<<<<< HEAD
+
+=======
+>>>>>>> e12304d8ec90352ad980a18c6a3584da54550863
 **Exit gate:** Implementation complete, branch checked out, code committed.
 
 ---
