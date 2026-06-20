@@ -169,7 +169,7 @@
 * **Story Points:** 5
 * **Description:** Implement complete interactive screens for Login and Registration according to strict spec fields. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create registration form page under `src/app/register/page.tsx` containing all 8 fields: Email, Password, First Name, Last Name, Date of Birth, Avatar (file upload input), Nickname, and About Me.
   2. Add client-side validation (e.g. valid email syntax, minimum password length, minimum age of 13 years old).
   3. Create login screen page under `src/app/login/page.tsx` with email/nickname and password inputs.
@@ -184,7 +184,7 @@
 * **Story Points:** 2
 * **Description:** Set up custom fetch API wrapper with automatic session cookies and global error parsing. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create `src/lib/api-client.ts`.
   2. Implement global default headers (including credential modes: `credentials: 'include'`).
   3. Handle generic API error structures and trigger routing to `/login` upon receiving `401 Unauthorized` responses.
@@ -201,7 +201,7 @@
 * **Story Points:** 3
 * **Description:** Finalize layout navigation, responsive states, and design theme provider. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Build navigation sidebar listing links to Feed, Groups, Profile, and Chat.
   2. Build theme system provider (supporting Dark/Light HSL toggling).
   3. Implement responsive drawer menu for mobile breakpoints.
@@ -239,7 +239,7 @@
 * **Dependencies:** S1-FE-04
 * **Description:** Configure Mock Service Worker (msw) to allow mock testing frontend authentication flows prior to backend completions. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Install `msw`. Configure service worker script in `src/mocks/browser.ts`.
   2. Implement mock route handlers mimicking backend response JSON payloads for login, registration, and logout commands.
   3. Conditionalize browser boot to initialize MSW when running in mock environments.

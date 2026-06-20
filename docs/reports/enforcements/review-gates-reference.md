@@ -484,7 +484,7 @@ spell-check: ## Gate: no misspellings in docs/comments
 | `pre-commit-filename-linter` | Multi-lang, configurable per pattern |
 | `convention-lint` (Rust) | Cargo subcommand, glob patterns |
 | `python_filename_linter` | Python PEP8 snake_case |
-| `Biome useFilenamingConvention` | JS/TS |
+| `ESLint naming convention` | JS/TS |
 | Pre-commit `fail` language | Custom regex pattern |
 | Custom script | `scripts/check-filenames.sh` |
 

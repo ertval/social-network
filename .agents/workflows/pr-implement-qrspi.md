@@ -98,7 +98,7 @@ graph TD
 2. Follow the TDD loop for every new behavior:
    - **RED**: Write failing tests (Vitest for frontend components/hooks, or Go testing for backend) and verify failure.
    - **GREEN**: Write the minimal code/markup to pass the tests.
-   - **REFACTOR**: Tidy up and run lints/formatting (using Biome for frontend, standard formatting for backend).
+   - **REFACTOR**: Tidy up and run lints/formatting (using ESLint + Prettier for frontend, standard formatting for backend).
 3. Perform surgical changes: do not fix adjacent formatting or delete pre-existing dead code. Clean up imports/variables orphaned by your changes.
 4. Keep the checklist in `.agents/scratch/qrspi-plan.md` updated.
 

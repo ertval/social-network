@@ -59,7 +59,7 @@
      - `make lint` -> Run static checks and `golangci-lint`.
      - `make test` -> Run Go unit tests with race detector: `go test -race -cover ./...`.
      - `make be-ci` -> Backend: `go mod tidy`, format checking, linting (staticcheck + golangci-lint + govulncheck), running tests.
-     - `make fe-ci` -> Frontend: Biome lint, Biome format check, `tsc --noEmit`, Vitest.
+     - `make fe-ci` -> Frontend: ESLint, Prettier format check, `tsc --noEmit`, Vitest.
      - `make ci` -> Full gate (runs both `be-ci` and `fe-ci`).
      - `make db-reset` -> Helper to wipe local SQLite db files for fresh runs.
      - `make seed` -> seed database with test data
@@ -100,7 +100,7 @@
 * **Assignee:** FE-A
 * **Story Points:** 5
 * **Dependencies:** S0-SD-03 (CI pipeline for frontend gates)
-* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, Biome, testing frameworks, and Bun runtime. Includes all dependency management, lint/format/test gates, and CI integration.
+* **Description:** Set up the frontend workspace using Next.js App Router, TypeScript, Tailwind CSS, ESLint + Prettier, testing frameworks, and Bun runtime. Includes all dependency management, lint/format/test gates, and CI integration.
 * **Detailed Steps:**
   1. **Install Bun runtime** (prerequisite):
      ```bash
@@ -113,13 +113,13 @@
      ```bash
      cd frontend && bun install
      ```
-  5. Configure Biome formatter and linter in `biome.json`. Set indentation, formatting, and strict rules. Add scripts in `package.json`:
+  5. Configure ESLint + Prettier formatter and linter in `eslint.config.mjs + .prettierrc`. Set indentation, formatting, and strict rules. Add scripts in `package.json`:
      ```json
-     {
-       "scripts": {
-         "lint": "biome check src/",
-         "format": "biome format --write src/",
-         "format:check": "biome format src/",
+      {
+        "scripts": {
+          "lint": "eslint src/",
+          "format": "prettier --write src/",
+          "format:check": "prettier --check src/",
          "typecheck": "tsc --noEmit",
          "test": "vitest run",
          "test:watch": "vitest"
@@ -130,8 +130,8 @@
   7. Install `Vitest` and `Playwright` testing setups (`vitest.config.ts`, `playwright.config.ts`).
   8. Set up `frontend/Dockerfile` for multi-stage Next.js build (port 3000).
   9. Verify all frontend gates pass:
-     - `bun run lint` (Biome lint)
-     - `bun run format:check` (Biome formatting check)
+     - `bun run lint` (ESLint)
+     - `bun run format:check` (Prettier format check)
      - `tsc --noEmit` (TypeScript type check)
      - `bun run test` (Vitest)
      - `bun run build` (Next.js production build)
@@ -211,7 +211,7 @@
      - Install lefthook: `go install github.com/evilmartians/lefthook/v2@latest && lefthook install`.
      - Configure `lefthook.yml` with pre-commit hooks (staged files only):
        - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` with `stage_fixed: true`.
-       - Frontend: `biome format` and `biome lint` on staged files.
+       - Frontend: `prettier --write` and `eslint` on staged files.
      - Configure pre-push hooks:
        - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
        - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.

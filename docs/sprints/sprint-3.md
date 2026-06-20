@@ -392,7 +392,7 @@
 * **Story Points:** 3
 * **Description:** Interactive toggle button with popup confirmation before unfollowing a user. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. If following -> click triggers Dialog popup confirming "Are you sure you want to unfollow?".
   2. Confirm -> posts to `/api/unfollow`.
   3. If not following -> click posts to `/api/follow`.
@@ -407,7 +407,7 @@
 * **Story Points:** 3
 * **Description:** Build lists of followers and following links on the profile view. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create sub-views showing user cards with action buttons.
 * **Verification:** Assert visual rendering correctness.
 
@@ -420,7 +420,7 @@
 * **Story Points:** 3
 * **Description:** Render inline accept/decline action items for follow requests. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. List item displaying user name, avatar, and buttons to Accept or Decline.
 * **Verification:** Confirm accept triggers target state.
 
@@ -435,7 +435,7 @@
 * **Story Points:** 5
 * **Description:** Build comment listing and text entry component featuring image attachment upload. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Fetch comments under target post cards.
   2. Form with file selector allowing JPG/PNG/GIF upload checking.
 * **Verification:** Visual validation and Playwright submission testing.
@@ -449,7 +449,7 @@
 * **Story Points:** 3
 * **Description:** Build UI panel displaying unread count badges in navigation bars. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Badge icon displaying count. Clicking drops down notification listing drawer.
 * **Verification:** Verify badge matches response totals.
 
@@ -462,7 +462,7 @@
 * **Story Points:** 3
 * **Description:** Implement Server-Sent Events (SSE) notification streaming connection. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
    1. Establish connection to `GET /api/notifications/stream` using the browser `EventSource` API.
    2. When events arrive, update the global notification badge state and append notifications to the panel view.
    3. Gracefully fall back to polling `GET /api/notifications/unread-count` on a 15-second interval if the SSE connection drops or fails.
@@ -478,7 +478,7 @@
 * **Dependencies:** S3-FE-16
 * **Description:** Implement upvote/downvote action items on comments. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render buttons on comment card components. Trigger POST calls to `/api/comments/:id/vote` and dynamically update local vote tally state.
 * **Verification:** Verify interactive click increments tally.
 

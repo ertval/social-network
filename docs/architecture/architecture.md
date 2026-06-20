@@ -176,7 +176,7 @@ Quick-reference for all tools used across the software development lifecycle.
 |-------|------|-------|
 | Runtime | Bun | `package.json` (scripts) |
 | Package manager | Bun | `bun.lock` |
-| Linting + formatting | Biome | `biome.json` |
+| Linting + formatting | ESLint + Prettier | `eslint.config.mjs` + `.prettierrc` |
 | Type checking | `tsc --noEmit` | `package.json` |
 | Unit/component tests | Vitest (planned) | `vitest.config.ts` |
 | E2E tests | Playwright (planned) | `playwright.config.ts` |
@@ -232,8 +232,8 @@ Output: JSON with exit codes. Run via `make review-gates` or `go run cmd/gates/m
 
 Configured in `lefthook.yml`:
 
-- **Pre-commit** (staged files, parallel): `gofumpt` + `goimports` on `*.go`, Biome format+lint on frontend. Auto-fixes via `stage_fixed: true`.
-- **Pre-push** (parallel): `go vet`, `go test -short`, `go build`, `go-arch-lint check` (backend); `tsc --noEmit`, `biome lint`, `vitest` (frontend).
+- **Pre-commit** (staged files, parallel): `gofumpt` + `goimports` on `*.go`, ESLint + Prettier format+lint on frontend. Auto-fixes via `stage_fixed: true`.
+- **Pre-push** (parallel): `go vet`, `go test -short`, `go build`, `go-arch-lint check` (backend); `tsc --noEmit`, `eslint`, `vitest` (frontend).
 
 Install: `make setup-hooks`. Bypass: `--no-verify`.
 

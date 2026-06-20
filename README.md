@@ -144,7 +144,7 @@ Every developer and sub-agent must adhere to these architectural guidelines:
 | **Backend** | Formatting | `gofmt -s`, `gofumpt` | `Makefile` (`make format`) |
 | **Backend** | Vuln Check | `govulncheck` | Local execution |
 | **Frontend**| Package/Run | `Bun` | `package.json` |
-| **Frontend**| Formatting/Lint | `Biome` | `biome.json` |
+| **Frontend**| Formatting/Lint | `ESLint` + `Prettier` | `eslint.config.mjs` + `.prettierrc` |
 | **Frontend**| Testing | `Vitest` (planned) | `vitest.config.ts` |
 | **Frontend**| E2E Testing | `Playwright` (planned) | `playwright.config.ts` |
 
@@ -166,7 +166,7 @@ To configure your local environment for development and testing, install the fol
    ```bash
    make setup
    ```
-5. **Biome (Frontend)**: Biome handles Next.js formatting and linting. It is defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
+5. **ESLint + Prettier (Frontend)**: ESLint + Prettier handle Next.js formatting and linting. They are defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
 
 ---
 
@@ -285,11 +285,11 @@ make setup-hooks
 
 # Pre-commit (runs on staged files):
 #   - Backend: gofumpt + goimports formatting (auto-fixed)
-#   - Frontend: biome format + biome lint
+#   - Frontend: Prettier + ESLint
 
 # Pre-push:
 #   - Backend: go vet ./..., go test -short ./..., go build ./..., go-arch-lint check
-#   - Frontend: tsc --noEmit, biome lint, vitest
+#   - Frontend: tsc --noEmit, eslint, vitest
 ```
 
 To bypass hooks temporarily: `git commit --no-verify` or `git push --no-verify`.
@@ -298,8 +298,8 @@ To bypass hooks temporarily: `git commit --no-verify` or `git push --no-verify`.
 Run linting, formatting check, and TypeScript compilation gates:
 ```bash
 cd frontend
-bun run lint            # Biome linting
-bun run format:check    # Biome formatting check
+bun run lint            # ESLint linting
+bun run format:check    # Prettier formatting check
 bun run typecheck       # tsc --noEmit check
 bun run test            # Vitest unit & component tests
 ```

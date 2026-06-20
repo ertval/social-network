@@ -273,7 +273,7 @@
 * **Story Points:** 5
 * **Description:** Implement direct messaging workspace `/chat` displaying conversational partner threads list and chats panel view. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Retrieve conversations list. Render chat cards. Selecting card loads chat pane.
 * **Verification:** Visual validation and states checking tests.
 
@@ -287,7 +287,7 @@
 * **Dependencies:** S5-FE-28
 * **Description:** Connect real-time WebSocket messaging handling typing indicators, online presence indicators, and incoming message dispatches. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
    1. Connect to websocket. Handle incoming payload types (`chat.message`, `chat.typing`, `chat.presence`).
    2. **Typing indicators:** On keystroke (debounced 500ms), send `chat.typing` WS message with recipientID. On receiving `chat.typing`, show "typing..." bubble for 2s after last event.
    3. **Online presence:** On WS connect/disconnect, broadcast `chat.presence` with status (online/offline). Track via hub client registry. Display green dot on online conversation partners.
@@ -304,7 +304,7 @@
 * **Dependencies:** S5-FE-28
 * **Description:** Render chat text bubble matching timestamps and emoji characters. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render styled message cells. Support emojis (Unicode formatting).
 * **Verification:** Verify HTML characters render correctly.
 
@@ -319,7 +319,7 @@
 * **Story Points:** 3
 * **Description:** Implement GitHub button mapping clicks to initiation pathways. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Add login option. Click routes to `/api/auth/oauth/github/init`.
 * **Verification:** Test clicking routes to correct URL.
 
@@ -333,7 +333,7 @@
 * **Dependencies:** S5-FE-31
 * **Description:** Implement Google button mapping clicks to initiation pathways. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Add login option. Click routes to `/api/auth/oauth/google/init`.
 * **Verification:** Test clicking routes to correct URL.
 

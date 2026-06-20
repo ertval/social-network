@@ -28,7 +28,7 @@ conventions.md **captures all D1-D6 design decisions, all security rules, all TD
 
 | Info | conventions.md Location | Source Verified |
 |------|-------------------------|-----------------|
-| Technology stack (Go 1.24, SQLite, Next.js, Tailwind, shadcn/ui, Biome) | §1 | ✓ |
+| Technology stack (Go 1.24, SQLite, Next.js, Tailwind, shadcn/ui, ESLint + Prettier) | §1 | ✓ |
 | Strangler Fig 6-step process | §2 lines 24-30 | ✓ matches R1 |
 | Route prefix convention (`/api/` vs `/api/v1/`) | §2 lines 31-34 | ✓ |
 | D1 vertical slice layout | §2 line 35 | ✓ |

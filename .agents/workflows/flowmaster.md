@@ -52,7 +52,7 @@ Follow the workflow in .agents/workflows/forge.md to implement ticket <TICKET_ID
 
 This subagent runs the HumanLayer RPI loop (Research → Plan → Implement → Validate) and persists scratch state to `.agents/scratch/`. It creates the branch and writes code+tests.
 
-**Must verify against [conventions.md](../rules/conventions.md):** D2–D5 boundary rules, TDD requirement, SQLite rules, branching/commit format, security best practices, frontend build gates (Biome lint/format, `tsc --noEmit`, Vitest).
+**Must verify against [conventions.md](../rules/conventions.md):** D2–D5 boundary rules, TDD requirement, SQLite rules, branching/commit format, security best practices, frontend build gates (ESLint + Prettier lint/format, `tsc --noEmit`, Vitest).
 **Exit gate:** Implementation complete, branch checked out, code committed.
 
 ---

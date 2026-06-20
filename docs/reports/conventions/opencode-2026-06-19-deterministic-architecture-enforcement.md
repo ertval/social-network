@@ -127,7 +127,7 @@ PR → Deterministic Gate → Structured Report → LLM Deep Analysis → Human
 | 8 | Security (bcrypt, SQLi) | `grep` patterns | locations | ⚠️ Partial |
 | 9 | Branch & commits | `git branch` regex, commitlint | pass/fail | ✅ |
 | 10 | DoD checklist | Composite of above | summary | ✅ |
-| 11 | Frontend (Biome, tsc) | `make fe-ci` | pass/fail | ✅ |
+| 11 | Frontend (ESLint + Prettier, tsc) | `make fe-ci` | pass/fail | ✅ |
 | 12 | Infrastructure (healthz) | Code reading | ❌ LLM only | ❌ |
 | 13 | Test coverage delta | `go test -coverprofile`, diff | % change | ✅ |
 | 14 | Binary size regression | `ls -l`, threshold compare | pass/fail | ✅ |

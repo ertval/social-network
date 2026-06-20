@@ -46,7 +46,7 @@
 
 ### Components
 
-**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with **shadcn/ui components + Tailwind CSS styling + Biome for linting/formatting**.
+**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with **shadcn/ui components + Tailwind CSS styling + ESLint + Prettier for linting/formatting**.
 
 **Backend (Go)** — HTTP server on port 8080. Entry point for all API requests. Organized as **vertical feature slices** under `internal/<feature>/`, each encapsulating domain entities, CQRS commands/queries, HTTP transport handlers, and a SQLite store implementation. Cross-cutting concerns (auth, sessions, WebSocket hub, middleware) live in `internal/core/`. Platform abstractions (database factory, event bus, cache) live in `internal/platform/`.
 
@@ -110,7 +110,7 @@ Quick-reference for all tools across the software development lifecycle.
 |-------|------|-------|
 | Runtime | Bun | `package.json` (scripts) |
 | Package manager | Bun | `bun.lock` |
-| Linting + formatting | Biome | `biome.json` |
+| Linting + formatting | ESLint + Prettier | `eslint.config.mjs` + `.prettierrc` |
 | Type checking | `tsc --noEmit` | `package.json` |
 | Unit/component tests | Vitest | `vitest.config.ts` |
 | E2E tests | Playwright | `playwright.config.ts` |
@@ -711,7 +711,7 @@ After all features migrated:
 - Component Library: Integrate **shadcn/ui** for UI components.
 - Styling: **Tailwind CSS** with custom HSL values (dark mode, glassmorphism, micro-animations).
 - Structure: `src/app/` (routes), `src/components/ui/` (primitives), `src/components/features/` (composite elements), `src/styles/`.
-- Code Quality: **Biome** for fast linting, formatting, and import sorting (configured via `biome.json`).
+- Code Quality: **ESLint + Prettier** for linting, formatting, and import sorting (configured via `eslint.config.mjs` and `.prettierrc`).
 - Typography: Google Fonts (Inter or Outfit).
 
 ### 6.2 Core Pages
@@ -916,9 +916,9 @@ govulncheck ./...
 
 #### Frontend (Next.js)
 ```bash
-# Lint and Format checks (Biome)
-npx @biomejs/biome lint src/
-npx @biomejs/biome format src/
+# Lint and Format checks (ESLint + Prettier)
+npx eslint src/
+npx prettier --check src/
 
 # Type Checking
 tsc --noEmit

@@ -10,7 +10,7 @@
 
 | Topic | Source Doc | Coverage |
 |-------|-----------|----------|
-| Tech stack (Go 1.24, SQLite, Next.js, shadcn, Biome) | Both | ✅ Complete |
+| Tech stack (Go 1.24, SQLite, Next.js, shadcn, ESLint + Prettier) | Both | ✅ Complete |
 | Strangler Fig 6-step process | Both | ✅ Complete |
 | D1–D6 (layout, interfaces, cross-slice, DB factory, boundaries, deps) | Both | ✅ Complete |
 | TDD (Red-Green-Refactor, table-driven, naming) | general-instructions | ✅ Adequate |

@@ -67,7 +67,7 @@ graph TD
 1. **TDD Loop**:
    - **RED**: Write failing tests (Vitest for frontend components/hooks, or `*_test.go` for backend commands/queries/stores) and run them to verify failure.
    - **GREEN**: Write the minimal code to satisfy the tests. Ensure database stores accept `platform/database.DB` (D4).
-   - **REFACTOR**: Clean up code and test structures. Format code (using Biome for frontend, standard formatting for backend).
+   - **REFACTOR**: Clean up code and test structures. Format code (using ESLint + Prettier for frontend, standard formatting for backend).
 2. **Mandatory Frontend Standards Check**:
    - Ensure all implemented features conform to **Mandatory Frontend Standards** (F1 FEATURE-TO-AUDIT requirements: proper form inputs, privacy confirmation dialogs, follow gates, chat emojis, image mime validation, RSC boundaries).
 3. **SQLite Rules**:

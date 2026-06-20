@@ -368,7 +368,7 @@
 * **Story Points:** 3
 * **Description:** Build list view browsing all existing groups. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render lists of groups with search triggers and links.
 * **Verification:** Check visual outputs.
 
@@ -381,7 +381,7 @@
 * **Story Points:** 5
 * **Description:** Build view rendering group headers details, admin controls panel, and join toggle buttons. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render details. If creator/admin -> render invitation search box and join request approvals table.
   2. If non-member -> show join group requests toggles.
 * **Verification:** Verify layout modifications per role.
@@ -395,7 +395,7 @@
 * **Story Points:** 5
 * **Description:** Render posts list cards inside group profile views. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Enforce locked feeds container layout for non-members.
   2. Render post feeds dialog form allowing public attachments posts creation for members.
 * **Verification:** Lock triggers check.
@@ -409,7 +409,7 @@
 * **Story Points:** 5
 * **Description:** Interactive instant message container workspace inside groups profile page. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Connect to websocket groups chat topic channel. Render streams.
 * **Verification:** WS message delivery verification.
 
@@ -424,7 +424,7 @@
 * **Story Points:** 3
 * **Description:** Form overlay allowing group members to schedule events. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Fields: title, description, day/time, options input list.
 * **Verification:** Check input validators triggers.
 
@@ -437,7 +437,7 @@
 * **Story Points:** 3
 * **Description:** Render events widgets. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render widgets inside group sidebar showing scheduled events.
 * **Verification:** Output listings.
 
@@ -450,7 +450,7 @@
 * **Story Points:** 2
 * **Description:** Selection checkboxes on events card showing going/not going toggling. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Clicking posts option choose updates to `/api/events/:id/rsvp`.
 * **Verification:** State tallies update verify.
 
@@ -464,7 +464,7 @@
 * **Dependencies:** S4-FE-22
 * **Description:** Implement frontend layout dialog and accordion under group post cards to create and list comments. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create accordion component loading comments via `GET /api/group-posts/:id/comments` on expand.
   2. Create inline text form submitting commenting details to `/api/group-posts/:id/comments`.
 * **Verification:** Confirm visual comments updating.

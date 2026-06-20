@@ -21,7 +21,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - **Go 1.24**, stdlib preferred, `slog` logging, `kin-openapi` validation.
 - **Module path**: `social-network`. **Entry point**: `cmd/server/main.go`.
 - **SQLite**: WAL mode, busy timeout, `db.SetMaxOpenConns(1)`. Tests use in-memory instances.
-- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, Biome. Vitest (planned) + React Testing Library + Playwright (planned).
+- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, ESLint + Prettier. Vitest (planned) + React Testing Library + Playwright (planned).
 - **Ports**: BE `:8080`, FE `:3000`.
 
 ## 2. Vertical Slices & Boundaries
@@ -93,7 +93,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Notifications panel (bell icon, unread count) must be visually distinct from Chat.
 - Real-time notifications via SSE (`GET /api/notifications/stream`) with 15s polling fallback.
 - **Chat gate**: non-followed users cannot chat. Show: _"At least one user must follow the other to initiate a chat."_
-- Pre-commit: `gofumpt`/`goimports` (BE), `biome format`/`biome lint` (FE). Pre-push: `go vet ./...` + `go test -short ./...` + `go build ./...` + `go-arch-lint check` (BE), `tsc --noEmit` + `bun run lint` + `bun run test` (FE).
+- Pre-commit: `gofumpt`/`goimports` (BE), `prettier --write`/`eslint` (FE). Pre-push: `go vet ./...` + `go test -short ./...` + `go build ./...` + `go-arch-lint check` (BE), `tsc --noEmit` + `bun run lint` + `bun run test` (FE).
 <!-- @section:rules-fe:end -->
 
 <!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
@@ -114,7 +114,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   ```
 - **Pre-commit hooks** (lefthook, staged files only):
   - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` (`stage_fixed: true`).
-  - Frontend: `biome format` + `biome lint`.
+  - Frontend: `prettier --write` + `eslint`.
 - **Pre-push hooks** (lefthook):
   - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
   - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.
@@ -167,7 +167,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - [ ] SQLite: WAL + busy timeout + `SetMaxOpenConns(1)`.
 - [ ] Tests written and passing (Go test for BE, Vitest for FE).
 - [ ] `go vet` / `tsc --noEmit` clean.
-- [ ] `make ci` / Biome gates pass.
+- [ ] `make ci` / ESLint + Prettier gates pass.
 - [ ] Branch named correctly, conventional commits.
 - [ ] No dead code from your changes (unused imports/vars/functions removed).
 - [ ] PR description template filled.

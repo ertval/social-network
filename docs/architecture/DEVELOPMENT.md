@@ -178,7 +178,7 @@ Install hooks:
 ```bash
 make setup-hooks
 ```
-Pre-commit auto-formats staged Go/frontend files. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `biome lint`. Bypass: `--no-verify`.
+Pre-commit auto-formats staged Go/frontend files. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `eslint`. Bypass: `--no-verify`.
 
 ### Backend Validation
 Run linter (`golangci-lint`, `staticcheck`, and `govulncheck`), formatting, and test checks:
@@ -198,8 +198,8 @@ make fe-ci
 
 Individual commands (run from `frontend/`):
 ```bash
-bun run lint        # Biome lint
-bun run format:check  # Biome format check
+bun run lint        # ESLint lint
+bun run format:check  # Prettier format check
 tsc --noEmit          # TypeScript type check
 bun run test          # Vitest
 ```
