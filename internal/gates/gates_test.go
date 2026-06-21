@@ -447,8 +447,10 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 					script = "echo 'main'"
 				} else if os.Getenv("MOCK_REV_FAIL") == "1" {
 					script = "exit 1"
+				} else if os.Getenv("MOCK_REV_UNAPPROVED") == "1" {
+					script = "echo 'unapproved/S1-BE-01-add-auth'"
 				} else {
-					script = "echo 'user/S1-BE-01-add-auth'"
+					script = "echo 'ekaramet/S1-BE-01-add-auth'"
 				}
 			case "diff":
 				if os.Getenv("MOCK_GIT_EMPTY") == "1" {
@@ -737,6 +739,17 @@ func TestBranchGate_Run(t *testing.T) {
 			t.Errorf("expected branch check FAIL for bad commit, got: %s", res.Status)
 		}
 	})
+
+	t.Run("unapproved branch username", func(t *testing.T) {
+		t.Setenv("MOCK_REV_MAIN", "0")
+		t.Setenv("MOCK_REV_UNAPPROVED", "1")
+		t.Setenv("MOCK_COMMIT_FAIL", "0")
+		g := &BranchGate{}
+		res := g.Run()
+		if res.Status != "FAIL" || !strings.Contains(res.Message, "doesn't match <username>") {
+			t.Errorf("expected branch check FAIL for unapproved username, got: %s (%s)", res.Status, res.Message)
+		}
+	})
 }
 
 func TestBranchGate_CommitPattern(t *testing.T) {
@@ -852,8 +865,8 @@ func TestGitHelpers(t *testing.T) {
 
 	// GitBranch
 	branch := GitBranch()
-	if branch != "user/S1-BE-01-add-auth" {
-		t.Errorf("expected user/S1-BE-01-add-auth, got: %s", branch)
+	if branch != "ekaramet/S1-BE-01-add-auth" {
+		t.Errorf("expected ekaramet/S1-BE-01-add-auth, got: %s", branch)
 	}
 
 	// GitDiffFiles
