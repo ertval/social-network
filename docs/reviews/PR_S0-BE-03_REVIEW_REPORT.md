@@ -27,7 +27,7 @@ This pull request implements a robust Makefile and configures the CI pipeline ch
    - `make format` formats files using `golangci-lint run --fix`.
    - `make check-format` checks formatting using `git diff --exit-code` after `make format`.
    - `make be-ci` runs module check, check-format, linting, and tests.
-   - `make fe-ci` checks frontend (Biome formatting/linting, TypeScript, Vitest) once `S0-FE-01` is completed, otherwise skips safely.
+   - `make fe-ci` checks frontend (ESLint + Prettier formatting/linting, TypeScript, Vitest) once `S0-FE-01` is completed, otherwise skips safely.
    - `make ci` runs both pipelines.
 
 2. **Database Helpers**:

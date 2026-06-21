@@ -46,7 +46,7 @@
 
 ### Components
 
-**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with **shadcn/ui components + Tailwind CSS styling + Biome for linting/formatting**.
+**Frontend (Next.js)** — Serves the client-side UI on port 3000. Uses the App Router for server-side and client-side rendering. Communicates with the backend via HTTP REST for CRUD operations and WebSocket for real-time chat and notifications. Built with **shadcn/ui components + Tailwind CSS styling + ESLint + Prettier for linting/formatting**.
 
 **Backend (Go)** — HTTP server on port 8080. Entry point for all API requests. Organized as **vertical feature slices** under `internal/<feature>/`, each encapsulating domain entities, CQRS commands/queries, HTTP transport handlers, and a SQLite store implementation. Cross-cutting concerns (auth, sessions, WebSocket hub, middleware) live in `internal/core/`. Platform abstractions (database factory, event bus, cache) live in `internal/platform/`.
 
@@ -110,7 +110,7 @@ Quick-reference for all tools across the software development lifecycle.
 |-------|------|-------|
 | Runtime | Bun | `package.json` (scripts) |
 | Package manager | Bun | `bun.lock` |
-| Linting + formatting | Biome | `biome.json` |
+| Linting + formatting | ESLint + Prettier | `eslint.config.mjs` + `.prettierrc` |
 | Type checking | `tsc --noEmit` | `package.json` |
 | Unit/component tests | Vitest | `vitest.config.ts` |
 | E2E tests | Playwright | `playwright.config.ts` |
@@ -130,7 +130,7 @@ Quick-reference for all tools across the software development lifecycle.
 
 **Backend** (`make be-ci`):
 ```
-ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
+ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
 
 **Frontend** (`make fe-ci`):
@@ -284,13 +284,14 @@ session        → user
 follow         → user, eventbus
 topic          → user
 comment        → user, topic
-vote           → user, topic, comment, eventbus
 group          → user, eventbus
 event          → group, eventbus
 chat           → user, FollowChecker (interface, not follow import)
 notification   → user (subscribes to eventbus, no feature imports)
 oauth          → user
 ```
+
+Vote logic is absorbed into `topic/` and `comment/` — there is no standalone `vote` slice.
 
 `notification` is never imported by other features. It subscribes to events at boot time. This prevents circular dependencies and keeps notification as a pure side-effect consumer.
 
@@ -518,10 +519,12 @@ Create numbered migration scripts:
 - `000003_topic_privacy.up.sql` — Add `visibility` to topics; create `topic_allowed_users`
 - `000003_topic_privacy.down.sql` — Reverse
 - `000004_follow_system.up.sql` — Create `follows`, `follow_requests`
-- `000005_groups.up.sql` — Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`
-- `000006_events.up.sql` — Create `events`, `event_rsvps`
-- `000007_seed_data.up.sql` — Optional seed demo data (users, posts, groups, follows) — bonus feature
-- `000007_seed_data.down.sql` — Remove seed data
+- `000005_migrate_notifications.up.sql` — Convert old notifications data to new schema
+- `000006_groups.up.sql` — Create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`
+- `000007_events.up.sql` — Create `events`, `event_rsvps`
+- `000008_migrate_chats.up.sql` — Create `chats`, `messages` and migrate legacy chats
+- `000009_seed_data.up.sql` — Optional seed demo data (users, posts, groups, follows) — bonus feature
+- `000009_seed_data.down.sql` — Remove seed data
 
 **Verify**: Run migrations on fresh DB. `go vet ./...`.
 
@@ -708,7 +711,7 @@ After all features migrated:
 - Component Library: Integrate **shadcn/ui** for UI components.
 - Styling: **Tailwind CSS** with custom HSL values (dark mode, glassmorphism, micro-animations).
 - Structure: `src/app/` (routes), `src/components/ui/` (primitives), `src/components/features/` (composite elements), `src/styles/`.
-- Code Quality: **Biome** for fast linting, formatting, and import sorting (configured via `biome.json`).
+- Code Quality: **ESLint + Prettier** for linting, formatting, and import sorting (configured via `eslint.config.mjs` and `.prettierrc`).
 - Typography: Google Fonts (Inter or Outfit).
 
 ### 6.2 Core Pages
@@ -746,8 +749,9 @@ services:
     ports: ["8080:8080"]
     volumes: ["./data:/app/data"]  # SQLite persistence
     environment:
-      DATABASE_DRIVER: sqlite
-      DATABASE_DSN: /app/data/social.db?_journal_mode=WAL&_busy_timeout=5000
+      DB_DRIVER: sqlite3
+      DB_PATH: /app/data/forum.db
+      DB_PRAGMA: "_foreign_keys=on&_journal_mode=WAL"
 
   frontend:
     build: ./frontend
@@ -912,18 +916,18 @@ govulncheck ./...
 
 #### Frontend (Next.js)
 ```bash
-# Lint and Format checks (Biome)
-npx @biomejs/biome lint src/
-npx @biomejs/biome format src/
+# Lint and Format checks (ESLint + Prettier)
+npx eslint src/
+npx prettier --check src/
 
 # Type Checking
 tsc --noEmit
 
 # Unit & Component Testing
-npm run test # runs Vitest
+bun run test # runs Vitest
 
 # E2E Testing
-npx playwright test
+bunx playwright test
 ```
 
 ### Boundary Verification
