@@ -1,8 +1,8 @@
-# 🌐 Social Network — Clean Architecture & Vertical Slices
+# 🌐 Social Network — Vertical Slices with CQRS
 
 A premium, high-performance social networking platform built with a **Go 1.24 Backend API** organized around Feature-Based Vertical Slices, and a modern **Next.js App Router Frontend** powered by Bun, Tailwind CSS, and shadcn/ui. 
 
-The project features decoupled infrastructure abstractions (SQLite, PostgreSQL, Redis, and RabbitMQ), a non-blocking Event Bus, strict boundary rules, secure WebSocket/SSE real-time features, and a responsive glassmorphic design.
+The project features decoupled infrastructure abstractions (SQLite, PostgreSQL, Redis, and RabbitMQ), an asynchronous in-process channel-based Event Bus, strict boundary rules, secure WebSocket/SSE real-time features, and a responsive glassmorphic design.
 
 ---
 
@@ -20,11 +20,11 @@ graph TD
 
 ### 1. Presentation Layer (Frontend)
 *   **Next.js App Router (Port 3000)**: Server-side and client-side rendering with Tailwind CSS and shadcn/ui.
-*   **Real-time Communication**: Persistent WebSockets for chats and Server-Sent Events (SSE) or WebSockets for instant user notifications.
+*   **Real-time Communication**: Persistent WebSockets for chats and Server-Sent Events (SSE) for live notifications.
 *   **Client Verification**: Native Unicode emoji parsing, magic-byte image validation, and client-side file size and extension checks before transport.
 
 ### 2. Business Logic & Feature Layer (Backend)
-*   **Vertical Feature Slices (Port 8080)**: Organized under `internal/<feature>/`. Each slice wraps domain entities, CQRS commands/queries, HTTP/WebSocket transports, and SQLite storage implementations.
+*   **Vertical Slices with CQRS (Port 8080)**: Organized under `internal/<feature>/`. Each slice wraps domain entities, CQRS commands/queries, HTTP/WebSocket transports, and SQLite storage implementations.
 *   **Cross-Cutting Core**: Reusable utilities, session tracking, WebSocket hubs, and route routers live under `internal/core/`.
 
 ### 3. Decoupled Platform Services
@@ -47,7 +47,7 @@ graph TD
 *   **Image Support**: Attach JPEG, PNG, and GIF files (magic-byte validated).
 *   **Privacy Scopes**:
     *   `public`: Visible to everyone.
-    *   `almost private`: Restrained to current followers.
+    *   `almost_private`: Restrained to current followers.
     *   `private`: Restricted to selected followers chosen via a user picker.
 
 ### 💬 Real-Time Unified Chat
@@ -120,7 +120,7 @@ Every developer and sub-agent must adhere to these architectural guidelines:
 │   # ─── Bootstrap & Helpers ───
 │   ├── bootstrap/                   # Composition root & service wiring
 │   ├── config/                      # Configuration loader
-│   └── pkg/                         # Shared helpers (bcrypt, uuid, validators, imgutil)
+│   └── pkg/                         # Shared helpers (bcrypt, uuid, validator, helpers, oauth, imgutil) — migrates to repo-root pkg/ in S5-BE-99
 │
 └── frontend/                        # Next.js Application Root (TypeScript + Bun)
 ```
@@ -144,9 +144,9 @@ Every developer and sub-agent must adhere to these architectural guidelines:
 | **Backend** | Formatting | `gofmt -s`, `gofumpt` | `Makefile` (`make format`) |
 | **Backend** | Vuln Check | `govulncheck` | Local execution |
 | **Frontend**| Package/Run | `Bun` | `package.json` |
-| **Frontend**| Formatting/Lint | `Biome` | `biome.json` |
-| **Frontend**| Testing | `Vitest` | `vitest.config.ts` |
-| **Frontend**| E2E Testing | `Playwright` | `playwright.config.ts` |
+| **Frontend**| Formatting/Lint | `ESLint` + `Prettier` | `eslint.config.mjs` + `.prettierrc` |
+| **Frontend**| Testing | `Vitest` (planned) | `vitest.config.ts` |
+| **Frontend**| E2E Testing | `Playwright` (planned) | `playwright.config.ts` |
 
 ---
 
@@ -162,11 +162,11 @@ To configure your local environment for development and testing, install the fol
    curl -fsSL https://bun.sh/install | bash
    ```
 3. **Docker & Docker Compose**: Essential for orchestrating backend/frontend services in a containerized environment.
-4. **Backend Quality Tooling**: Install `goimports`, `staticcheck`, and `golangci-lint` collectively by running:
+4. **Backend Quality Tooling**: Install all Go tools (`gofumpt`, `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gosec`, `go-arch-lint`, lefthook) by running:
    ```bash
-   make tools
+   make setup
    ```
-5. **Biome (Frontend)**: Biome handles Next.js formatting and linting. It is defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
+5. **ESLint + Prettier (Frontend)**: ESLint + Prettier handle Next.js formatting and linting. They are defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
 
 ---
 
@@ -178,7 +178,7 @@ To configure your local environment for development and testing, install the fol
    SERVER_PORT=8080
    CLIENT_PORT=3000
    DATABASE_DRIVER=sqlite
-   DATABASE_DSN=data/social.db?_journal_mode=WAL&_busy_timeout=5000
+    DATABASE_DSN=db/data/forum.db?_journal_mode=WAL&_busy_timeout=5000
    DB_SEED_ON_START=true
    GITHUB_CLIENT_ID=your_github_client_id
    GITHUB_CLIENT_SECRET=your_github_client_secret
@@ -194,6 +194,8 @@ To configure your local environment for development and testing, install the fol
    *To run the development setup with code mounting and hot reload:*
    ```bash
    make docker-dev
+   # Or use the alias:
+   make dev
    ```
 
 3. **Access points**  
@@ -220,7 +222,7 @@ Run the database migrations and boot the Go API Server:
 # Run server (database is initialized automatically via migrations runner)
 go run cmd/server/main.go
 ```
-The local SQLite file is generated at `internal/platform/database/social.db` (or as configured).
+The local SQLite file is generated at `db/data/forum.db` (or as configured per `DB_PATH` in `.env`).
 
 #### 2. Setup Frontend
 Install dependencies and run the Next.js development server:
@@ -242,22 +244,80 @@ Run the automated check suite locally before pushing:
 make ci
 ```
 This runs the full gate: backend (`make be-ci`) + frontend (`make fe-ci`).
-- **Backend** (`make be-ci`): `ci-mod ──> format ──> check-format ──> lint (staticcheck + golangci-lint + govulncheck) ──> test`
-- **Frontend** (`make fe-ci`): `bun run lint ──> bun run format:check ──> tsc --noEmit ──> bun run test`
-*   `ci-mod`: Runs `go mod tidy` and asserts no changes.
-*   `format`: Runs `gofumpt` and `goimports`.
-*   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
-*   `test`: Runs unit/integration tests with race checks and generates a coverage report.
+- **Backend** (`make be-ci`): `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`
+- **Frontend** (`make fe-ci`): `bun run lint → bun run format:check → tsc --noEmit → bun run test`
+-   `ci-mod`: Runs `go mod tidy` and asserts no changes.
+-   `check-format`: Verifies `gofumpt` and `goimports` formatting without modifying files.
+-   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
+-   `test`: Runs unit/integration tests with race checks and generates a coverage report.
+
+To auto-format files: `make format` (runs `gofumpt -w` and `goimports -w`).
+
+### 🧪 Go Verification Gates
+Deterministic Go-based gates catch architecture violations, security issues, and branch/convention regressions:
+
+```bash
+go run cmd/gates/main.go --all
+```
+
+Individual gates:
+```bash
+go run cmd/gates/main.go --gate=stack        # Go version + module path
+go run cmd/gates/main.go --gate=layout       # Directory structure
+go run cmd/gates/main.go --gate=boundaries   # D5 import boundary rules
+go run cmd/gates/main.go --gate=dag          # D6 dependency graph acyclicity
+go run cmd/gates/main.go --gate=tdd          # Test file presence
+go run cmd/gates/main.go --gate=migrations   # Migration naming/delimiter
+go run cmd/gates/main.go --gate=security     # gosec + custom AST checks
+go run cmd/gates/main.go --gate=branch       # branch naming convention
+go run cmd/gates/main.go --gate=coverage     # test coverage threshold
+go run cmd/gates/main.go --gate=scopedrift   # scope creep detection
+```
+
+Output is JSON with exit codes (0 = pass). Gates are also run via `make review-gates`.
+
+### 🔗 Pre-commit & Pre-push Hooks (Lefthook)
+Quality hooks run automatically on staged files (pre-commit) and before push (pre-push):
+
+```bash
+# Install hooks (one-time setup)
+make setup-hooks
+
+# Pre-commit (runs on staged files):
+#   - Backend: gofumpt + goimports formatting (auto-fixed)
+#   - Frontend: Prettier + ESLint
+
+# Pre-push:
+#   - Backend: go vet ./..., go test -short ./..., go build ./..., go-arch-lint check
+#   - Frontend: tsc --noEmit, eslint, vitest
+```
+
+To bypass hooks temporarily: `git commit --no-verify` or `git push --no-verify`.
 
 ### ⚛️ Frontend Validation
 Run linting, formatting check, and TypeScript compilation gates:
 ```bash
 cd frontend
-bun run lint            # Biome linting
-bun run format:check    # Biome formatting check
+bun run lint            # ESLint linting
+bun run format:check    # Prettier formatting check
 bun run typecheck       # tsc --noEmit check
 bun run test            # Vitest unit & component tests
 ```
+
+---
+
+## 📚 Documentation Reading Order
+
+This project uses progressive disclosure to avoid cognitive overload. Read in this order:
+
+1. **Rules & Guidelines**: [AGENTS.md](AGENTS.md) + [conventions.md](.agents/rules/conventions.md)
+2. **Methodology**: [general-instructions.md](docs/sprints/general-instructions.md)
+3. **Architecture**: [architecture.md](docs/architecture/architecture.md)
+4. **Design Specs**: [sds.md](docs/architecture/sds.md)
+5. **Roadmap**: [target-architecture-with-phases.md](docs/architecture/target-architecture-with-phases.md)
+6. **Sprints**: [sprint-0.md](docs/sprints/sprint-0.md) through [sprint-6.md](docs/sprints/sprint-6.md)
+
+See [conventions.md](.agents/rules/conventions.md#14-progressive-disclosure--doc-reading-order) for the full dependency graph.
 
 ---
 
@@ -300,7 +360,7 @@ opencode skill upgrade
 
 | Layer | Command | What it installs |
 | :--- | :--- | :--- |
-| **Backend (Go)** | `make tools` | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1) |
+| **Backend (Go)** | `make setup` (or `make tools`) | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1), `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`, lefthook |
 | **Backend (Go modules)** | `go mod tidy` | Go library dependencies from `go.mod` |
 | **Frontend (Bun/Next.js)** | `bun install` | npm packages from `frontend/package.json` |
 | **Docker** | `docker compose build` | Container images for backend + frontend |
@@ -323,7 +383,7 @@ bun update             # update all packages per semver ranges
 
 ### 🚀 Developer Branch Strategy
 All branches must match the naming schema: `<username>/<ticket/issue-ID>-<detail>`
-*   *Username*: Gitea username from `origin` remote — known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
+*   *Username*: Your own Gitea username — resolve via `tea whoami` or `cat ~/.config/tea/config.yml | grep 'user:' | head -1 | awk '{print $2}'`. Known devs: `epapamic`, `ekaramet`, `dkotsi`, `geoikonomou`, `smichail`
 *   *ticket/issue-ID*: Ticket ID from `docs/sprints/ticket-tracker.md` (e.g. `S3-BE-01`) or GitHub/Gitea issue number (e.g. `42`). **Required** — maps branch to work item.
 *   *Detail*: kebab-case description (e.g. `db-factory`, `fix-sqlite-busy-timeout`).
 *   *Examples*: `ekaramet/S1-BE-05-db-factory`, `geoikonomou/42-fix-sqlite-busy-timeout`
@@ -337,14 +397,23 @@ Squash-merged commits onto the main branch must follow the **Conventional Commit
 [Optional Body explaining the why behind changes]
 ```
 *   *Examples*:
-    *   `feat(follow): add follow requests workflow`
-    *   `fix(core): recover from websocket write panic`
-    *   `refactor(topic): migrate topic store to vertical slice`
+    *   `feat(follow)[S3-BE-37]: add follow requests workflow`
+    *   `fix(core)[42]: recover from websocket write panic`
+    *   `refactor(topic)[S2-BE-26]: migrate topic store to vertical slice`
 
 ### 🏁 Definition of Done (DoD)
 A task is marked completed when:
 1. **TDD cycle** is fully executed (write failing test -> make it pass -> refactor).
 2. **Boundary checks** (D5) verify no cross-slice http/store imports.
 3. Code compiles and linting/formatting passes cleanly (`make ci`).
-4. PR follows the standard PR description template (found in `@.github/PULL_REQUEST_TEMPLATE.md`).
+4. PR follows the standard PR description template (found in `.github/PULL_REQUEST_TEMPLATE.md`).
 5. Successfully verified through targeted manual smoke tests (e.g. age locks, privacy gates, follow actions).
+
+### 🏗️ Strangler Fig Migration Pattern
+
+Legacy layered code is migrated to vertical slices using the Strangler Fig pattern. See [conventions.md](.agents/rules/conventions.md#3-strangler-fig-migration) for full steps:
+1. Write contract tests against old API
+2. Build new slice alongside old code
+3. Verify contract tests match
+4. Swap routing in bootstrap
+5. Delete old code after confidence window

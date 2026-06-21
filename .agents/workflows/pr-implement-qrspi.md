@@ -98,7 +98,7 @@ graph TD
 2. Follow the TDD loop for every new behavior:
    - **RED**: Write failing tests (Vitest for frontend components/hooks, or Go testing for backend) and verify failure.
    - **GREEN**: Write the minimal code/markup to pass the tests.
-   - **REFACTOR**: Tidy up and run lints/formatting (using Biome for frontend, standard formatting for backend).
+   - **REFACTOR**: Tidy up and run lints/formatting (using ESLint + Prettier for frontend, standard formatting for backend).
 3. Perform surgical changes: do not fix adjacent formatting or delete pre-existing dead code. Clean up imports/variables orphaned by your changes.
 4. Keep the checklist in `.agents/scratch/qrspi-plan.md` updated.
 
@@ -110,5 +110,5 @@ graph TD
    - Run full CI pipeline: `rtk make ci`.
    - Check boundary rules (no cross-slice transport/store imports).
    - Verify branch and conventional commit message styles.
-2. Draft a beautiful markdown PR description message using the template from `@.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
+2. Draft a beautiful markdown PR description message using the template from `.github/PULL_REQUEST_TEMPLATE.md` (including the Audit Checklist Coverage table).
 3. Publish the PR via CLI tools (Gitea `tea` CLI).

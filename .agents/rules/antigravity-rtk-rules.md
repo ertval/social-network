@@ -7,9 +7,9 @@ description: Always use `rtk <cmd>` instead of raw commands. RTK filters and com
 
 **Usage**: Token-optimized CLI proxy for shell commands.
 
-## Rule
+## Rule (Recommended)
 
-Always prefix shell commands with `rtk` to minimize token consumption.
+When `rtk` is available in the environment, prefix shell commands with `rtk` to minimize token consumption. If `rtk` is not permitted by your agent configuration, fall back to the raw command.
 
 Examples:
 

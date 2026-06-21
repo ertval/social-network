@@ -8,12 +8,20 @@ description: Coding conventions for Go/SQLite/Next.js social network. Loaded by 
 
 Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) for detailed workflows.
 
+<!-- @section:rules-core — D1-D6, security, TDD (needed by all agents) -->
+## 0. Naming Conventions
+
+- **Go struct fields**: use `username` in domain structs.
+- **DB columns / API JSON**: use `username` — matches SDS schema.
+- The entity field maps to the DB column;
+- **Command/Query handlers (target)**: commands use `*Handler` suffix (e.g. `FollowUserHandler`), queries use `*Resolver` suffix (e.g. `GetFollowersResolver`). See SDS §2 for target state. Legacy code may use `*Handler` for both.
+
 ## 1. Stack
 
 - **Go 1.24**, stdlib preferred, `slog` logging, `kin-openapi` validation.
 - **Module path**: `social-network`. **Entry point**: `cmd/server/main.go`.
 - **SQLite**: WAL mode, busy timeout, `db.SetMaxOpenConns(1)`. Tests use in-memory instances.
-- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, Biome. Vitest + React Testing Library + Playwright.
+- **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, ESLint + Prettier. Vitest (planned) + React Testing Library + Playwright (planned).
 - **Ports**: BE `:8080`, FE `:3000`.
 
 ## 2. Vertical Slices & Boundaries
@@ -50,7 +58,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Table-driven tests with `t.Run()`. Run `go test -race ./...`.
 - **Test naming**: `Test<Handler>_<Scenario>`. Contract: `Test<Feature>Store_Migrated_SameAsOld_<Method>`.
 - **Test files**: `commands/<use_case>_test.go`, `store/sqlite_migration_test.go` for contract tests.
-- **Testing pyramid**: ~300+ unit, ~50 integration, ~20 E2E (Playwright).
+- **Testing pyramid**: ~300+ unit, ~50 integration, ~20 E2E (Playwright, planned).
 - **OpenAPI 3.0**: spec per feature in `docs/api/<feature>.yaml`. BE validates via `kin-openapi`. FE mocks via `msw`.
 - **Goroutine recovery**: all WS read/write loops and client goroutines must `defer recover()`.
 - **RateLimiter**: any `time.Ticker` must have `stop chan struct{}` to prevent leaks.
@@ -60,7 +68,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Sequential: `000001_name.up.sql` / `000001_name.down.sql`.
 - Never drop column in same migration as replacement. Add → populate → drop in next migration.
 - Delimiter: `";"` (never `":"`).
-- Rollback: `go run cmd/migrate/main.go down N`.
+- Rollback: revert last migration manually (no dedicated rollback script yet).
 - Test each migration: up → verify → down → verify clean.
 
 ## 6. Security
@@ -72,7 +80,9 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - WebSocket: validate origin in `CheckOrigin` (never unconditional `true`). Timeouts: `writeWait=10s`, `pongWait=60s`, `pingPeriod=54s`, max msg 512KB.
 - Session cookies: `HttpOnly`, `Secure`, `SameSite=Lax`.
 - **Session isolation**: different browsers/profiles must maintain independent sessions. Non-logged-in browsers = guest.
+<!-- @section:rules-core:end -->
 
+<!-- @section:rules-fe — Frontend standards (needed by FE agents) -->
 ## 7. Frontend
 
 - **Structure**: `src/app/`, `src/components/ui/`, `src/components/features/`, `src/lib/`, `src/styles/`.
@@ -83,12 +93,16 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - Notifications panel (bell icon, unread count) must be visually distinct from Chat.
 - Real-time notifications via SSE (`GET /api/notifications/stream`) with 15s polling fallback.
 - **Chat gate**: non-followed users cannot chat. Show: _"At least one user must follow the other to initiate a chat."_
-- Pre-commit: `gofumpt`/`goimports` (BE), `biome format`/`biome lint` (FE). Pre-push: `go vet` (BE), `tsc --noEmit` (FE).
+- Pre-commit: `gofumpt`/`goimports` (BE), `prettier --write`/`eslint` (FE). Pre-push: `go vet ./...` + `go test -short ./...` + `go build ./...` + `go-arch-lint check` (BE), `tsc --noEmit` + `bun run lint` + `bun run test` (FE).
+<!-- @section:rules-fe:end -->
 
+<!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
 ## 8. CI & Verification
 
-- **`make be-ci`**: `ci-mod → format → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`.
+- **`make be-ci`**: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
 - **`make fe-ci`**: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
+- **`make review-gates`**: Go verification gates — `go run cmd/gates/main.go --all`.
+- **`make setup-hooks`**: Install lefthook pre-commit/pre-push hooks.
 - **Standalone commands** (when not using `make`):
   ```
   go vet ./...
@@ -96,14 +110,37 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   go test -race -coverprofile=coverage.out ./...
   golangci-lint run
   govulncheck ./...
+  go run cmd/gates/main.go --all
   ```
+- **Pre-commit hooks** (lefthook, staged files only):
+  - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` (`stage_fixed: true`).
+  - Frontend: `prettier --write` + `eslint`.
+- **Pre-push hooks** (lefthook):
+  - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
+  - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.
 - **D5 boundary check**:
   ```
   grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'infra/'
   ```
+- **Go verification gates** (`cmd/gates/main.go`):
+  | Gate | Check | Tool/Fallback |
+  |------|-------|---------------|
+  | Stack | Go version ≥ 1.24, module path | go version / go.mod |
+  | Layout | target directory structure | os.Stat |
+  | Boundaries | D5 forbidden imports | golangci-lint depguard / AST |
+  | DAG | D6 acyclic dependencies | go-arch-lint / DFS |
+  | TDD | test file presence per command/query | os.Stat |
+  | Migrations | migration naming, delimiter | glob / grep |
+  | Security | SQL concat, WS CheckOrigin, bcrypt cost | gosec / custom AST |
+  | Branch | branch naming convention | regex |
+  | coverage-delta | test coverage >90% | git worktree + go test |
+  | scope-drift | unplanned file changes | git diff |
+  - Flags: `--all`, `--gate=<name>`. JSON output.
 - **Performance gate**: `make ci-bench` each PR. Fail if regression > 10%.
 - Smoke test scenarios A1–D3: see `docs/sprints/general-instructions.md`.
+<!-- @section:rules-ci:end -->
 
+<!-- @section:rules-git — Branch naming, commits, PRs (needed by publish) -->
 ## 9. Git & PRs
 
 - **Trunk-based**: feature branches ≤ 3 days. Squash merge into `main`.
@@ -117,9 +154,11 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
     - `ekaramet/S1-BE-05-db-factory`
     - `dkotsi/S3-FE-14-follow-button`
     - `smichail/42-oauth-scan-fix`
-- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/`.)
+- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/` and `comment/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
+<!-- @section:rules-git:end -->
 
+<!-- @section:rules-dod — Definition of Done checklist (needed by review agents) -->
 ## 10. Definition of Done
 
 - [ ] D5 boundary rules pass (no cross-slice transport/store imports).
@@ -128,11 +167,12 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - [ ] SQLite: WAL + busy timeout + `SetMaxOpenConns(1)`.
 - [ ] Tests written and passing (Go test for BE, Vitest for FE).
 - [ ] `go vet` / `tsc --noEmit` clean.
-- [ ] `make ci` / Biome gates pass.
+- [ ] `make ci` / ESLint + Prettier gates pass.
 - [ ] Branch named correctly, conventional commits.
 - [ ] No dead code from your changes (unused imports/vars/functions removed).
 - [ ] PR description template filled.
 - [ ] Squash merged to `main`.
+<!-- @section:rules-dod:end -->
 
 ## 11. Infrastructure
 
