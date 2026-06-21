@@ -26,9 +26,12 @@ func main() {
 	runner.Register(&gates.LayoutGate{})
 	runner.Register(&gates.BoundariesGate{})
 	runner.Register(&gates.DAGGate{})
+	runner.Register(&gates.TDDGate{})
 	runner.Register(&gates.MigrationsGate{})
+	runner.Register(&gates.SecurityGate{})
 	runner.Register(&gates.BranchGate{})
 	runner.Register(&gates.ScopeDriftGate{})
+	runner.Register(&gates.CoverageGate{})
 
 	if *gate != "" {
 		result, err := runner.RunOne(*gate)
