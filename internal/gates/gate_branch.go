@@ -18,7 +18,7 @@ func (g *BranchGate) Name() string { return "branch" }
 
 var (
 	branchPattern = regexp.MustCompile(`^[a-z]+/[A-Za-z0-9-]+-[A-Za-z0-9-]+$`)
-	commitPattern = regexp.MustCompile(`^(feat|fix|test|refactor|chore|docs|style|perf|ci|build|revert)\((user|topic|follow|group|event|chat|notification|oauth|core|platform|comment)\):`)
+	commitPattern = regexp.MustCompile(`^(feat|fix|test|refactor|chore|docs|style|perf|ci|build|revert)(?:\((user|topic|follow|group|event|chat|notification|oauth|core|platform|comment|docs)\))?!?:`)
 )
 
 func (g *BranchGate) Run() Result {

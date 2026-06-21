@@ -739,6 +739,34 @@ func TestBranchGate_Run(t *testing.T) {
 	})
 }
 
+func TestBranchGate_CommitPattern(t *testing.T) {
+	tests := []struct {
+		msg   string
+		match bool
+	}{
+		{"feat(user): add auth handler", true},
+		{"fix(docs): resolve drift-report issues", true},
+		{"refactor: migrate agent configurations", true},
+		{"chore: hide all subagents except flowmaster", true},
+		{"docs: replace all Biome references", true},
+		{"feat!: breaking change", true},
+		{"feat(user)!: breaking change with scope", true},
+		{"invalid: commit msg", false},
+		{"feat(invalid_scope): msg", false},
+		{"Fixing code", false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.msg, func(t *testing.T) {
+			matched := commitPattern.MatchString(tc.msg)
+			if matched != tc.match {
+				t.Errorf("expected match=%v for %q, got %v", tc.match, tc.msg, matched)
+			}
+		})
+	}
+}
+
+
 func TestCoverageGate_Run(t *testing.T) {
 	oldExec := ExecCommand
 	defer func() { ExecCommand = oldExec }()

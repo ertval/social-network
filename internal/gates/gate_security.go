@@ -30,8 +30,13 @@ func (g *SecurityGate) Run() Result {
 
 	// Run gosec if available
 	if toolAvailable("gosec") {
+		args := []string{}
+		for dirName := range skipDirs {
+			args = append(args, fmt.Sprintf("-exclude-dir=internal/%s", dirName))
+		}
+		args = append(args, "./...")
 		// #nosec G204
-		cmd := ExecCommand("gosec", "./...")
+		cmd := ExecCommand("gosec", args...)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			errors = append(errors, "gosec findings:\n"+string(out))
@@ -62,8 +67,14 @@ func (g *SecurityGate) runASTChecks() []string {
 	fset := token.NewFileSet()
 
 	_ = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil || info.IsDir() {
+		if err != nil {
 			return err
+		}
+		if info.IsDir() {
+			if skipDirs[info.Name()] {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
 			return nil

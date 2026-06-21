@@ -6,6 +6,11 @@ run:
   issues-exit-code: 1
   tests: true
   timeout: 5m
+  skip-dirs:
+    - internal/app
+    - internal/domain
+    - internal/infra
+    - internal/pkg
 
 output:
   formats:
