@@ -88,10 +88,16 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
     --output simple)
   echo "$PR_OUTPUT"
   ```
-- Add reviewers via `tea pulls edit`:
+- Add reviewers via Gitea API (`tea pulls edit --add-reviewers` does not exist):
   ```bash
   PR_NUMBER=$(echo "$PR_OUTPUT" | grep -oP '#\K\d+' | head -1)
-  tea pulls edit --add-reviewers "$ALL_REVIEWERS" "$PR_NUMBER"
+  API_TOKEN=$(grep -A10 'zone01' ~/.config/tea/config.yml | grep token | awk '{print $2}')
+  curl -s -X POST \
+    "https://platform.zone01.gr/git/api/v1/repos/dkotsi/social-network/pulls/$PR_NUMBER/requested_reviewers" \
+    -H "Content-Type: application/json" \
+    -H "Authorization: token $API_TOKEN" \
+    -d "$(echo "$ALL_REVIEWERS" | python3 -c "import json,sys; users=sys.stdin.read().strip().split(','); print(json.dumps({'reviewers': users}))")" \
+    2>/dev/null
   ```
 - Clean up: `rm .git/PR_DESCRIPTION.md`
 
