@@ -24,6 +24,8 @@ func main() {
 	// Register all gates
 	runner.Register(&gates.StackGate{})
 	runner.Register(&gates.LayoutGate{})
+	runner.Register(&gates.BoundariesGate{})
+	runner.Register(&gates.DAGGate{})
 	runner.Register(&gates.MigrationsGate{})
 	runner.Register(&gates.BranchGate{})
 	runner.Register(&gates.ScopeDriftGate{})
