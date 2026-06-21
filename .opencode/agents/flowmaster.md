@@ -67,7 +67,10 @@ loop:
   review_count++
   gate_retry_count = 0  # reset on successful gate pass
 
-  synthesize report
+  synthesize report → set STATUS based on findings:
+    if 0 Critical + 0 Warning → STATUS = APPROVED
+    elif 0 Critical + 0 Warning but suggestions remain after ≥3 cycles → STATUS = PASS_WITH_RECOMMENDATIONS
+    else → STATUS = CHANGES_REQUESTED
 
   if STATUS == APPROVED:
     break → publish
