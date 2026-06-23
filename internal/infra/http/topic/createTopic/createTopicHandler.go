@@ -6,7 +6,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
-
 	"social-network/internal/app"
 	"social-network/internal/config"
 	"social-network/internal/infra/logger"

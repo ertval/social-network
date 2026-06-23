@@ -3,9 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"social-network/internal/infra/logger"
 
 	chatcommands "social-network/internal/app/chat/commands"
-	"social-network/internal/infra/logger"
+
 	ws "social-network/internal/infra/ws"
 )
 

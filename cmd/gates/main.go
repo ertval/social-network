@@ -10,7 +10,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-
 	"social-network/internal/gates"
 )
 

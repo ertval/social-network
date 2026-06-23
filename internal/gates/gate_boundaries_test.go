@@ -1,7 +1,7 @@
 package gates
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -85,7 +85,7 @@ func TestBoundariesGate_Run(t *testing.T) {
 	}
 
 	// 3. Tool missing, AST Fallback PASS
-	lookPath = func(name string) (string, error) { return "", fmt.Errorf("missing") }
+	lookPath = func(name string) (string, error) { return "", errors.New("missing") }
 	t.Setenv("MOCK_FAIL", "0")
 	dir := t.TempDir()
 	g.InternalDir = dir
@@ -156,7 +156,7 @@ func TestBoundariesAndDAGEdgeCases(t *testing.T) {
 	// getFeatureDeps with error and bad json
 	oldExec := ExecCommand
 	defer func() { ExecCommand = oldExec }()
-	
+
 	t.Run("getFeatureDeps command error", func(t *testing.T) {
 		ExecCommand = func(command string, args ...string) *exec.Cmd {
 			return exec.Command("sh", "-c", "exit 1")

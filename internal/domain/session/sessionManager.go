@@ -2,7 +2,6 @@ package session
 
 import (
 	"context"
-
 	"social-network/internal/domain/user"
 )
 

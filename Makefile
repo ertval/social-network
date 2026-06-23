@@ -16,13 +16,14 @@ GOARCHLINT_VERSION := latest
 
 # ── Environment ───────────────────────────────────────────────────────
 
-env: ## Show environment information
+env:
 	@echo "=== System ===" && uname -a
 	@echo "=== Go ===" && go version && go env
 	@echo "=== Module ===" && echo "$(MODULE)"
 	@echo "=== Packages ===" && go list ./... | tr '\n' ' ' && echo ""
 
-dev: docker-dev ## Start development environment (alias)
+dev: ## Start development environment using Docker Compose with hot-reload
+	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 # ── Tool Installation ─────────────────────────────────────────────────
 
@@ -48,9 +49,9 @@ install: ## Install all dependencies (deterministic, like npm ci)
 	@echo ""
 	@echo "✅ All dependencies installed. Run 'make dev' to start."
 
-setup: tools setup-hooks ## Install all development tools and hooks
+setup: tools setup-hooks
 
-tools: ## Install Go development tools (gofumpt, goimports, staticcheck, golangci-lint, govulncheck, gosec, go-arch-lint)
+tools:
 	@echo "==> Installing Go tools..."
 	go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
 	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
@@ -60,76 +61,71 @@ tools: ## Install Go development tools (gofumpt, goimports, staticcheck, golangc
 	go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
 	go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
 
-setup-hooks: ## Install Lefthook git hooks
+setup-hooks:
 	@echo "==> Installing Lefthook hooks..."
 	go install github.com/evilmartians/lefthook/v2@latest
 	lefthook install
 
-bench-tools: ## Install benchmarking tools (benchstat)
+bench-tools:
 	@echo "==> Installing benchmark tools..."
 	go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
 	@echo "For flame graphs: macOS: brew install graphviz | Ubuntu: sudo apt-get install graphviz"
 
 # ── Code Formatting ───────────────────────────────────────────────────
 
-format: ## Format modified Go files using gofumpt and goimports
+format: ## Format all Go files using gofumpt and goimports
 	@echo "==> Formatting code..."
-	@MODIFIED_GO_FILES=$$(git status --porcelain | awk '{print $$2}' | grep '\.go$$' || true); \
-	if [ -n "$$MODIFIED_GO_FILES" ]; then \
-		gofumpt -w $$MODIFIED_GO_FILES && goimports -w -local $(MODULE) $$MODIFIED_GO_FILES; \
-	else \
-		echo "No modified Go files to format."; \
-	fi
+	@goimports -w -local $(MODULE) cmd internal
+	@gofumpt -w cmd internal
+	@golangci-lint run --fix --timeout=5m || true
 
-check-format: ## Verify formatting of modified Go files
+check-format:
 	@echo "==> Checking code formatting..."
-	@MODIFIED_GO_FILES=$$(git status --porcelain | awk '{print $$2}' | grep '\.go$$' || true); \
-	if [ -n "$$MODIFIED_GO_FILES" ]; then \
-		UNFORMATTED=$$(gofumpt -l $$MODIFIED_GO_FILES || true); \
-		UNFORMATTED_IMPORTS=$$(goimports -l -local $(MODULE) $$MODIFIED_GO_FILES || true); \
-		if [ -n "$$UNFORMATTED" ] || [ -n "$$UNFORMATTED_IMPORTS" ]; then \
-			[ -n "$$UNFORMATTED" ] && echo "gofumpt errors:" && echo "$$UNFORMATTED"; \
-			[ -n "$$UNFORMATTED_IMPORTS" ] && echo "goimports errors:" && echo "$$UNFORMATTED_IMPORTS"; \
-			exit 1; \
-		fi; \
-	else \
-		echo "No modified Go files to check."; \
+	@UNFORMATTED=$$(gofumpt -l cmd internal || true); \
+	UNFORMATTED_IMPORTS=$$(goimports -l -local $(MODULE) cmd internal || true); \
+	if [ -n "$$UNFORMATTED" ] || [ -n "$$UNFORMATTED_IMPORTS" ]; then \
+		[ -n "$$UNFORMATTED" ] && echo "gofumpt errors:" && echo "$$UNFORMATTED"; \
+		[ -n "$$UNFORMATTED_IMPORTS" ] && echo "goimports errors:" && echo "$$UNFORMATTED_IMPORTS"; \
+		exit 1; \
 	fi
 
 # ── Linting & Static Analysis ─────────────────────────────────────────
 
-staticcheck: ## Run staticcheck static analysis
+staticcheck:
 	@echo "==> Running staticcheck..." && staticcheck ./...
 
-golangci-lint: ## Run golangci-lint static analysis
+golangci-lint:
 	@echo "==> Running golangci-lint..." && golangci-lint run --timeout=5m
 
-vulncheck: ## Run govulncheck security analysis
-	@echo "==> Running govulncheck..." && govulncheck ./... || true
+vulncheck:
+	@echo "==> Running govulncheck..." && govulncheck ./...
 
-lint: staticcheck golangci-lint vulncheck ## Run all static analysis checks
+gosec:
+	@echo "==> Running gosec..." && gosec -quiet ./...
+
+lint: staticcheck golangci-lint vulncheck gosec
 
 # ── Testing ───────────────────────────────────────────────────────────
 
-test: ## Run backend tests with race detector and coverage
+test:
 	@echo "==> Running tests..."
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -func=coverage.out
 
-test-short: ## Run quick/short backend tests
+test-short:
 	go test -short ./...
 
 # ── CI Pipeline ───────────────────────────────────────────────────────
 
-ci-mod: ## Verify that Go modules are tidy
+ci-mod:
 	@echo "==> Verifying Go modules..."
 	go mod tidy
 	git diff --exit-code go.mod go.sum || \
 		(echo "Error: go.mod/go.sum out of date. Run 'go mod tidy'."; exit 1)
 
-be-ci: ci-mod check-format lint test ## Run full backend CI pipeline
+be-ci: ci-mod check-format lint test
 
-fe-ci: ## Run frontend CI pipeline (lint, format:check, type-check, test)
+fe-ci:
 	@if [ -f frontend/package.json ]; then \
 		echo "==> Running frontend CI..."; \
 		cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
@@ -137,49 +133,48 @@ fe-ci: ## Run frontend CI pipeline (lint, format:check, type-check, test)
 		echo "==> Skipping frontend CI: frontend not scaffolded yet."; \
 	fi
 
-ci: be-ci fe-ci ## Run complete CI pipeline (backend + frontend)
+ci: be-ci fe-ci
 
-review-gates: ## Run all deterministic review gates (JSON output)
-	@echo "==> Running review gates..." && go run cmd/gates/main.go --all
+review-gates: ci ## Run all quality gates (lint, tests, format, and verification gates)
+	@echo "==> Running verification gates..." && go run cmd/gates/main.go --all
 
-review-gates-fast: ci-mod check-format staticcheck ## Run fast quality gates
-	@echo "✅ Fast gates passed"
+gates: review-gates
 
-review-gates-all: review-gates vulncheck ## Run all gates including slow ones
-	@echo "✅ All review gates passed"
-
-check-arch: ## Run go-arch-lint architectural boundary check
+check-arch:
 	@echo "==> Running go-arch-lint..." && go-arch-lint check
 
 # ── Performance & Benchmarking ────────────────────────────────────────
 
-ci-bench: ## Run performance benchmarks
+ci-bench:
 	go test -run=NONE -bench=. -benchmem ./...
 
 bench-compare: ## Compare benchmarks against main branch
 	@echo "==> Comparing benchmarks (current vs main)..."
-	git stash -u
-	git checkout main && go test -run=NONE -bench=. -benchmem -count=5 ./... > bench-base.txt
-	git checkout - && go test -run=NONE -bench=. -benchmem -count=5 ./... > bench-head.txt
-	benchstat bench-base.txt bench-head.txt
-	git stash pop
+	@git worktree remove -f .git-worktree-main 2>/dev/null || true
+	@rm -rf .git-worktree-main
+	@git worktree add -d .git-worktree-main main
+	@cd .git-worktree-main && go test -run=NONE -bench=. -benchmem -count=5 ./... > ../bench-base.txt
+	@git worktree remove -f .git-worktree-main
+	@go test -run=NONE -bench=. -benchmem -count=5 ./... > bench-head.txt
+	@benchstat bench-base.txt bench-head.txt
+	@rm -f bench-base.txt bench-head.txt
 
-bench-profile: ## Run benchmarks with CPU/memory profiling
+bench-profile:
 	go test -run=NONE -bench=. -benchmem -cpuprofile=cpu.prof -memprofile=mem.prof ./...
 	@echo "Profiles: cpu.prof mem.prof"
 
-bench-flame: ## Generate interactive CPU flame graph
+bench-flame:
 	go tool pprof -http=:8080 cpu.prof
 
-bench-clean: ## Clean profiling files
+bench-clean:
 	rm -f *.prof bench-*.txt
 
 # ── Build ─────────────────────────────────────────────────────────────
 
-build-backend: ## Build backend application
+build-backend:
 	@echo "==> Building backend..." && go build -o bin/server cmd/server/main.go
 
-build-frontend: ## Build frontend application
+build-frontend:
 	@if [ -f frontend/package.json ]; then \
 		echo "==> Building frontend..."; \
 		cd frontend && bun run build; \
@@ -187,14 +182,14 @@ build-frontend: ## Build frontend application
 		echo "==> Skipping frontend build: not scaffolded yet."; \
 	fi
 
-build: build-backend build-frontend ## Build both backend and frontend
+build: build-backend build-frontend
 
 # ── Run ───────────────────────────────────────────────────────────────
 
-run-backend: ## Run backend application
+run-backend:
 	@echo "==> Running backend..." && go run cmd/server/main.go
 
-run-frontend: ## Run frontend application
+run-frontend:
 	@if [ -f frontend/package.json ]; then \
 		echo "==> Running frontend (Next.js)..."; \
 		cd frontend && bun run dev; \
@@ -203,53 +198,32 @@ run-frontend: ## Run frontend application
 		go run cmd/client/main.go; \
 	fi
 
-run-all: ## Run backend and frontend concurrently
+run: ## Run backend and frontend concurrently (native local development)
 	@echo "==> Running backend and frontend..."
 	@trap 'kill 0' EXIT; \
-	$(MAKE) run-backend & \
-	$(MAKE) run-frontend
+	$(MAKE) -s run-backend & \
+	$(MAKE) -s run-frontend
+
+run-all: run
 
 # ── Docker ────────────────────────────────────────────────────────────
 
-docker-build: ## Build Docker images
-	docker compose build
-
-docker-up: ## Start services in detached mode
-	docker compose up -d
-
-docker-down: ## Stop and remove containers
-	docker compose down
-
-docker-logs: ## Show service logs
-	docker compose logs -f
-
-docker-restart: ## Restart services
-	docker compose restart
-
-docker-ps: ## Show running containers
-	docker compose ps
-
-docker-clean: ## Remove containers, volumes, and images
+docker-clean:
 	docker compose down -v --rmi local
 
-docker-dev: ## Start development environment with hot-reload
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up
-
-docker-dev-build: ## Build and start development environment
-	docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
-
-docker-db: ## Access SQLite database inside Docker container
+docker-db:
 	docker exec -it forum-app sqlite3 -line -header db/data/forum.db
 
 # ── Database ──────────────────────────────────────────────────────────
 
-db-clean: ## Clean database files
+db-clean:
 	@echo "==> Cleaning database..." && rm -rf db/data
 
-db-reset: db-clean ## Reset database
+db-reset: db-clean ## Reset and seed SQLite database
 	@mkdir -p db/data
+	@$(MAKE) -s seed
 
-seed: ## Seed database with test data
+seed:
 	@echo "==> Seeding database..." && \
 	sqlite3 db/data/forum.db < db/migrations/schema.sql && \
 	sqlite3 db/data/forum.db < db/migrations/indexes.sql && \
@@ -268,11 +242,11 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: install env dev setup tools setup-hooks bench-tools \
-	format check-format staticcheck golangci-lint vulncheck lint \
+	format check-format staticcheck golangci-lint vulncheck gosec lint \
 	test test-short \
-	ci-mod be-ci fe-ci ci review-gates review-gates-fast review-gates-all check-arch \
+	ci-mod be-ci fe-ci ci review-gates gates check-arch \
 	ci-bench bench-compare bench-profile bench-flame bench-clean \
 	build-backend build-frontend build \
-	run-backend run-frontend run-all \
-	docker-build docker-up docker-down docker-logs docker-restart docker-ps docker-clean docker-dev docker-dev-build docker-db \
+	run-backend run-frontend run run-all \
+	docker-clean docker-db \
 	db-clean db-reset seed clean help

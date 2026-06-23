@@ -339,4 +339,3 @@ func isCheckOrigin(expr ast.Expr) bool {
 	}
 	return false
 }
-

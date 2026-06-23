@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-
 	"social-network/internal/config"
 	"social-network/internal/domain/vote"
 	"social-network/internal/infra/logger"

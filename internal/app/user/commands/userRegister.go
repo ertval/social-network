@@ -2,12 +2,11 @@ package usercommands
 
 import (
 	"context"
-	"time"
-
 	"social-network/internal/domain/user"
 	"social-network/internal/pkg/bcrypt"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/uuid"
+	"time"
 )
 
 type UserRegisterRequest struct {

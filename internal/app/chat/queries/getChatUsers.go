@@ -2,12 +2,12 @@ package chatqueries
 
 import (
 	"context"
+	"social-network/internal/domain/chat"
+	"social-network/internal/domain/user"
 	"sort"
 	"time"
 
 	chatapp "social-network/internal/app/chat"
-	"social-network/internal/domain/chat"
-	"social-network/internal/domain/user"
 )
 
 type GetChatUsersRequest struct {

@@ -1,7 +1,7 @@
 package gates
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -35,7 +35,7 @@ func TestDAGGate_Run(t *testing.T) {
 	}
 
 	// 3. Tool missing, fallback cycle detection FAIL
-	lookPath = func(name string) (string, error) { return "", fmt.Errorf("missing") }
+	lookPath = func(name string) (string, error) { return "", errors.New("missing") }
 	dir := t.TempDir()
 	if err := os.MkdirAll(filepath.Join(dir, "user"), 0o700); err != nil {
 		t.Fatal(err)

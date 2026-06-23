@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
-
 	"social-network/internal/domain/chat"
 	"social-network/internal/pkg/uuid"
+	"time"
 )
 
 type Repo struct {
