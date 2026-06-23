@@ -350,7 +350,7 @@
 * **Story Points:** 5
 * **Description:** Implement registration form details, image file selection, and payload submissions. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Bind form inputs to state hooks.
   2. Convert upload image file to multipart form data structure.
   3. Validate forms for local client bounds before posting.
@@ -365,7 +365,7 @@
 * **Story Points:** 3
 * **Description:** Complete login page layout and credentials request mapping. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Implement login view. Post username/email and password parameters to `/api/login`.
 * **Verification:** Check visual styling and test input submits.
 
@@ -378,7 +378,7 @@
 * **Story Points:** 5
 * **Description:** Implement `/profile/[id]` layout with follower tallies, user activity posts feed, and private lock screens. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render user details, follow counts, and followers lists.
   2. Fetch profile data: if locked, show overlay screen with locked lock icon.
   3. Render feed list of posts created by the user.
@@ -393,7 +393,7 @@
 * **Story Points:** 2
 * **Description:** Build privacy toggle switch with confirmation dialog box before updating state. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render switch component. When toggled, pop up confirmation Dialog.
   2. Send request to `/api/profile/privacy` only if confirmed.
 * **Verification:** Interactive test confirming cancel ignores, accept updates database.
@@ -409,7 +409,7 @@
 * **Story Points:** 5
 * **Description:** Build the main feed page with infinite scroll loading or pagination. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Fetch items from `/api/feed`. Handle loading skeleton states.
 * **Verification:** Render page with mock data arrays.
 
@@ -422,7 +422,7 @@
 * **Story Points:** 5
 * **Description:** Build post creation UI container with image file attachment selector and visibility settings. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Build creation box. Add Select dropdown (public, almost private, private).
   2. If private is chosen, render user selector to pick permitted users.
 * **Verification:** Interactive submission check testing parameters sent.
@@ -436,7 +436,7 @@
 * **Story Points:** 3
 * **Description:** Render feed post item. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render header (author name, timestamp), Content, Image if present, and vote counts buttons.
 * **Verification:** Test component renders correctly with varying input datasets.
 

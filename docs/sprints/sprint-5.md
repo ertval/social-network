@@ -16,7 +16,7 @@
 * **Detailed Steps:**
   1. In `internal/bootstrap/bootstrap.go`, import chat and oauth transport packages.
   2. Call their route registration functions on the HTTP mux and WS router.
-  3. Wire OAuth provider clients (github, google) per S5-BE-97/15.
+  3. Wire OAuth provider clients (github, google) per S5-BE-97/98.
 * **Verification:** `go build ./...` passes, new endpoints respond 200/401/403 (not 404).
 
 ---
@@ -234,7 +234,7 @@
 ---
 
 ### S5-BE-99: Shared: Refactor OAuth Packages
-* **Priority:** P0 (Prerequisite for S5-BE-97/15)
+* **Priority:** P0 (Prerequisite for S5-BE-97/98)
 * **Type:** Refactoring/Migration (Existing Codebase)
 * **Assignee:** BE-B
 * **Story Points:** 1
@@ -242,7 +242,7 @@
 * **Description:** Move and restructure OAuth packages to `pkg/oauth/` per the target architecture, doing the rename in Sprint 5 to prevent breaking the old bootstrap compilation earlier. This migration refactors OAuth logic into `pkg/oauth/` and the new vertical slice structure for seamless third-party authentication.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
-   1. Move `internal/pkg/oAuth/` to `pkg/oauth/` (repo root, per target architecture — not `internal/pkg/oauth/`).
+   1. Move `internal/pkg/` to `pkg/` (repo root, per target architecture — not `internal/pkg/`), which includes moving hashing, uuid, validator, helpers, and imgutil packages to root `pkg/` and renaming `oAuth/` to `oauth/`.
    2. Flatten subdirectories: `internal/pkg/oAuth/githubclient/` → `pkg/oauth/github/client.go`, `internal/pkg/oAuth/googleclient/` → `pkg/oauth/google/client.go`.
    3. Move raw HTTP OAuth token exchange clients from `internal/pkg/oAuth/httpclient/` into `pkg/oauth/client.go`.
 * **Verification:** Ensure old auth compilation paths are updated (using alias imports if necessary) and all projects compile. `go build ./...` passes.
@@ -258,8 +258,8 @@
 * **Description:** Create the database migration files for the Chat vertical slice to transition legacy chats storage to the architecture's standard schemas. This migration moves chat domain and WebSocket handlers from `internal/infra/ws/handlers/` into the `internal/chat/` slice, integrating the new `FollowChecker` interface for cross-slice authorization.
 * **Detailed Steps:**
     * *Migration Note:* Follow the Strangler Fig pattern (R1). Write contract tests against the old API first, build the new CQRS slice, and swap routing only when tests match.
-  1. Create `db/migrations/000010_migrate_chats.up.sql` to create `chats` and `messages` tables (with clean columns and UUID message IDs) and migrate existing data from the legacy `direct_chats` and `chat_messages` tables.
-  2. Create `db/migrations/000010_migrate_chats.down.sql` to reverse this migration.
+  1. Create `db/migrations/000008_migrate_chats.up.sql` to create `chats` and `messages` tables (with clean columns and UUID message IDs) and migrate existing data from the legacy `direct_chats` and `chat_messages` tables.
+  2. Create `db/migrations/000008_migrate_chats.down.sql` to reverse this migration.
 * **Verification:** Run up/down migration tests and verify message logs and active conversation entries are preserved.
 
 ---
@@ -273,7 +273,7 @@
 * **Story Points:** 5
 * **Description:** Implement direct messaging workspace `/chat` displaying conversational partner threads list and chats panel view. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Retrieve conversations list. Render chat cards. Selecting card loads chat pane.
 * **Verification:** Visual validation and states checking tests.
 
@@ -287,7 +287,7 @@
 * **Dependencies:** S5-FE-28
 * **Description:** Connect real-time WebSocket messaging handling typing indicators, online presence indicators, and incoming message dispatches. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
    1. Connect to websocket. Handle incoming payload types (`chat.message`, `chat.typing`, `chat.presence`).
    2. **Typing indicators:** On keystroke (debounced 500ms), send `chat.typing` WS message with recipientID. On receiving `chat.typing`, show "typing..." bubble for 2s after last event.
    3. **Online presence:** On WS connect/disconnect, broadcast `chat.presence` with status (online/offline). Track via hub client registry. Display green dot on online conversation partners.
@@ -304,7 +304,7 @@
 * **Dependencies:** S5-FE-28
 * **Description:** Render chat text bubble matching timestamps and emoji characters. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render styled message cells. Support emojis (Unicode formatting).
 * **Verification:** Verify HTML characters render correctly.
 
@@ -319,7 +319,7 @@
 * **Story Points:** 3
 * **Description:** Implement GitHub button mapping clicks to initiation pathways. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Add login option. Click routes to `/api/auth/oauth/github/init`.
 * **Verification:** Test clicking routes to correct URL.
 
@@ -333,7 +333,7 @@
 * **Dependencies:** S5-FE-31
 * **Description:** Implement Google button mapping clicks to initiation pathways. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Add login option. Click routes to `/api/auth/oauth/google/init`.
 * **Verification:** Test clicking routes to correct URL.
 
