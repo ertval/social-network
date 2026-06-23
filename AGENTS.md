@@ -46,3 +46,17 @@ Use the Gitea CLI (`tea`) to manage issues, pull requests, releases, and reposit
 
 ## 6. Git push last changes
 Always push after you made changes
+
+## 7. Verification Gates
+Before completing a task, run verification gates to ensure code quality and that all requirements are met. Use `make review-gates` to run all gates or `make test` for basic tests.
+
+## 8. Documentation Drifts
+Whenever you make changes or updates to files (docs), you should also update all other docs need update.
+You should run a validation and verfication subagents before closing a task to ensure there is no drift in documentation.
+- Critical folders to always check are :
+  - `README.md`
+  - `docs/architecture/architecture.md`
+  - `docs/architecture/DEVELOPMENT.md`
+  - `docs/architecture/sds.md`
+  - `docs/architecture/target-architecture-with-phases.md`
+  - `.agents/rules/conventions.md`
