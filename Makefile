@@ -110,7 +110,7 @@ lint: staticcheck golangci-lint vulncheck gosec
 test:
 	@echo "==> Running tests..."
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
-	go tool cover -func=coverage.out
+	@go tool cover -func=coverage.out | grep total
 
 test-short:
 	go test -short ./...
