@@ -21,8 +21,12 @@ The project is structured around self-contained vertical slices inside `internal
 ```
 .
 ├── cmd/
-│   └── server/
-│       └── main.go         # Application entry point & service bootstrap configuration
+│   ├── server/
+│   │   └── main.go         # Application entry point & service bootstrap configuration
+│   ├── gates/
+│   │   └── main.go         # CLI runner for verification gates
+│   └── client/
+│       └── main.go         # CLI client for testing/ops
 ├── db/
 │   └── migrations/         # Numbered database up/down migration SQL scripts (includes optional seed data via 000009_seed_data)
 ├── internal/
@@ -49,6 +53,10 @@ The project is structured around self-contained vertical slices inside `internal
 │   │   ├── cache/          # In-memory and Redis cache interfaces
 │   │   ├── database/       # DB factory (SQLite/PostgreSQL interface)
 │   │   └── eventbus/       # Async event publishing & subscription
+│   #
+│   #
+│   # ─── Quality Gates ───
+│   ├── gates/              # Deterministic verification gates (boundaries, DAG, security, coverage, TDD, etc.)
 │   #
 │   # ─── Bootstrap & Config ───
 │   ├── bootstrap/          # Composition root (wiring slices and platform services)
@@ -211,7 +219,7 @@ bun run lint → bun run format:check → tsc --noEmit → bun run test
 
 ### Verification Gates (`make review-gates`)
 
-Go-based deterministic gates under `cmd/gates/main.go` enforce architectural and convention rules:
+Go-based deterministic gates under `internal/gates/` (see [README](../../internal/gates/README.md)) enforce architectural and convention rules:
 
 | Gate | Tool/Fallback | What It Checks |
 |------|---------------|----------------|

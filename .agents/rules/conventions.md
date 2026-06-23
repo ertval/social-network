@@ -122,7 +122,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
   ```
   grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/' | grep -v 'infra/'
   ```
-- **Go verification gates** (`cmd/gates/main.go`):
+- **Go verification gates** (`cmd/gates/main.go`). See [README](../../internal/gates/README.md) for full catalog, file map, and architecture:
   | Gate | Check | Tool/Fallback |
   |------|-------|---------------|
   | Stack | Go version ≥ 1.24, module path | go version / go.mod |

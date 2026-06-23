@@ -151,7 +151,7 @@ Runs backend + frontend checks (ci-mod → check-format → lint → test).
 
 ### Go Verification Gates
 
-Deterministic Go-based gates under `internal/gates/` enforce architectural and convention rules:
+Deterministic Go-based gates under `internal/gates/` (see [README](../../internal/gates/README.md)) enforce architectural and convention rules:
 
 ```bash
 make review-gates

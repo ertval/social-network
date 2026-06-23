@@ -303,6 +303,10 @@ Vote logic is absorbed into `topic/` and `comment/` — there is no standalone `
 cmd/
   server/
     main.go                              # Application entry point
+  gates/
+    main.go                              # CLI runner for verification gates
+  client/
+    main.go                              # CLI client for testing/ops
 
 internal/
   # ─── Feature Slices (all follow D1 layout) ───
@@ -447,6 +451,9 @@ internal/
     database/       # DB interface + factory (SQLite now, PostgreSQL later)
     eventbus/       # EventBus interface + in-process impl (RabbitMQ later)
     cache/          # Cache interface + in-memory map (Redis later)
+
+  # ─── Quality Gates ───
+  gates/                                # Deterministic verification gates (boundaries, DAG, security, coverage, TDD)
 
   # ─── Shared Utilities ───
   pkg/

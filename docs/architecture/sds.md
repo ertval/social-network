@@ -736,7 +736,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Execution command: `golangci-lint run`
 - **Native compiler warnings**: `go vet ./...` runs in pre-commit hooks to identify compiler errors, variable shadowing, lock copying issues, and malformed logging calls.
 - **CVE Scan**: `govulncheck ./...` is run during CI and local builds to verify that third-party modules contain no known vulnerabilities.
-- **Architecture verification**: Deterministic Go gates in `cmd/gates/main.go` enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
+- **Architecture verification**: Deterministic Go gates in `internal/gates/` (see [README](../../internal/gates/README.md)) enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
 - **Pre-commit hooks**: Lefthook auto-formats staged files (gofumpt/goimports for BE, eslint + prettier for FE) on commit. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `eslint`, `vitest`. Install: `make setup-hooks`.
 
 #### 7.1.2 Automated Testing

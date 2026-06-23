@@ -88,8 +88,12 @@ Every developer and sub-agent must adhere to these architectural guidelines:
 ```
 .
 ├── cmd/
-│   └── server/
-│       └── main.go                  # Application entry point & configuration bootstrap
+│   ├── server/
+│   │   └── main.go                  # Application entry point & configuration bootstrap
+│   ├── gates/
+│   │   └── main.go                  # CLI runner for verification gates
+│   └── client/
+│       └── main.go                  # CLI client for testing/ops
 ├── db/
 │   └── migrations/                  # Sequential up/down SQL database migrations
 ├── internal/
@@ -116,6 +120,9 @@ Every developer and sub-agent must adhere to these architectural guidelines:
 │   │   ├── cache/                   # Memory cache & Redis wrappers
 │   │   ├── database/                # DB factory and migrations runner
 │   │   └── eventbus/                # Event publishing channels
+│   #
+│   # ─── Quality Gates ───
+│   ├── gates/                       # Deterministic verification gates (boundaries, DAG, security, coverage, TDD, etc.)
 │   #
 │   # ─── Bootstrap & Helpers ───
 │   ├── bootstrap/                   # Composition root & service wiring
