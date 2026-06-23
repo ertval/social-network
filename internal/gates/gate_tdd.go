@@ -33,7 +33,7 @@ func (g *TDDGate) Run() Result {
 
 	var errors []string
 	for _, e := range entries {
-		if !e.IsDir() || skipDirs[e.Name()] {
+		if !e.IsDir() || !isFeatureSlice(dir, e.Name()) {
 			continue
 		}
 		feature := e.Name()

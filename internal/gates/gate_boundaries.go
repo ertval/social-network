@@ -55,7 +55,7 @@ func (g *BoundariesGate) runAST() Result {
 	var errors []string
 
 	for _, e := range entries {
-		if !e.IsDir() || skipDirs[e.Name()] {
+		if !e.IsDir() || !isFeatureSlice(dir, e.Name()) {
 			continue
 		}
 		featureDir := filepath.Join(dir, e.Name())

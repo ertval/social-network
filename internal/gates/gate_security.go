@@ -31,8 +31,16 @@ func (g *SecurityGate) Run() Result {
 	// Run gosec if available
 	if toolAvailable("gosec") {
 		args := []string{}
-		for dirName := range skipDirs {
-			args = append(args, fmt.Sprintf("-exclude-dir=internal/%s", dirName))
+		dir := g.InternalDir
+		if dir == "" {
+			dir = "internal"
+		}
+		if entries, err := os.ReadDir(dir); err == nil {
+			for _, e := range entries {
+				if e.IsDir() && !isFeatureSlice(dir, e.Name()) {
+					args = append(args, fmt.Sprintf("-exclude-dir=%s/%s", dir, e.Name()))
+				}
+			}
 		}
 		args = append(args, "./...")
 		// #nosec G204
@@ -66,25 +74,19 @@ func (g *SecurityGate) runASTChecks() []string {
 	var errors []string
 	fset := token.NewFileSet()
 
-	_ = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			if skipDirs[info.Name()] {
-				return filepath.SkipDir
-			}
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
 			return nil
 		}
-		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
+		return []string{fmt.Sprintf("cannot read %s: %v", dir, err)}
+	}
 
+	inspectFile := func(path string) {
 		f, parseErr := parser.ParseFile(fset, path, nil, parser.AllErrors)
 		if parseErr != nil || f == nil {
-			return nil //nolint:nilerr // skip unparseable files
+			return
 		}
-
 		ast.Inspect(f, func(n ast.Node) bool {
 			switch node := n.(type) {
 			case *ast.CallExpr:
@@ -95,8 +97,35 @@ func (g *SecurityGate) runASTChecks() []string {
 			}
 			return true
 		})
-		return nil
-	})
+	}
+
+	for _, e := range entries {
+		path := filepath.Join(dir, e.Name())
+		if !e.IsDir() {
+			if strings.HasSuffix(e.Name(), ".go") && !strings.HasSuffix(e.Name(), "_test.go") {
+				inspectFile(path)
+			}
+			continue
+		}
+
+		if !isFeatureSlice(dir, e.Name()) {
+			continue
+		}
+
+		_ = filepath.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if info.IsDir() {
+				return nil
+			}
+			if !strings.HasSuffix(walkPath, ".go") || strings.HasSuffix(walkPath, "_test.go") {
+				return nil
+			}
+			inspectFile(walkPath)
+			return nil
+		})
+	}
 
 	return errors
 }

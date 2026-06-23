@@ -44,7 +44,7 @@ func (g *LayoutGate) Run() Result {
 			continue
 		}
 		name := e.Name()
-		if skipDirs[name] {
+		if !isFeatureSlice(dir, name) {
 			continue
 		}
 

@@ -54,7 +54,7 @@ func (g *DAGGate) runFallback() Result {
 
 	var features []string
 	for _, e := range entries {
-		if e.IsDir() && !skipDirs[e.Name()] {
+		if e.IsDir() && isFeatureSlice(dir, e.Name()) {
 			features = append(features, e.Name())
 		}
 	}
@@ -66,7 +66,7 @@ func (g *DAGGate) runFallback() Result {
 	// Build dependency graph
 	deps := make(map[string][]string)
 	for _, feature := range features {
-		featureDeps, err := getFeatureDeps(feature)
+		featureDeps, err := getFeatureDeps(dir, feature)
 		if err != nil {
 			continue
 		}
@@ -145,10 +145,10 @@ func (g *DAGGate) checkNotificationImports() []string {
 
 	var errors []string
 	for _, e := range entries {
-		if !e.IsDir() || skipDirs[e.Name()] || e.Name() == "notification" {
+		if !e.IsDir() || !isFeatureSlice(dir, e.Name()) || e.Name() == "notification" {
 			continue
 		}
-		featureDeps, err := getFeatureDeps(e.Name())
+		featureDeps, err := getFeatureDeps(dir, e.Name())
 		if err != nil {
 			continue
 		}
@@ -166,7 +166,7 @@ type goListPkg struct {
 }
 
 // getFeatureDeps returns other feature slices that this feature imports.
-func getFeatureDeps(feature string) ([]string, error) {
+func getFeatureDeps(internalDir, feature string) ([]string, error) {
 	cmd := ExecCommand("go", "list", "-json", "social-network/internal/"+feature+"/...")
 	out, err := cmd.Output()
 	if err != nil {

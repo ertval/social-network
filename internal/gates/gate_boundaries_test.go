@@ -161,7 +161,7 @@ func TestBoundariesAndDAGEdgeCases(t *testing.T) {
 		ExecCommand = func(command string, args ...string) *exec.Cmd {
 			return exec.Command("sh", "-c", "exit 1")
 		}
-		_, err := getFeatureDeps("user")
+		_, err := getFeatureDeps("internal", "user")
 		if err == nil {
 			t.Error("expected error from getFeatureDeps, got none")
 		}
@@ -171,7 +171,7 @@ func TestBoundariesAndDAGEdgeCases(t *testing.T) {
 		ExecCommand = func(command string, args ...string) *exec.Cmd {
 			return exec.Command("sh", "-c", "echo 'invalid json'")
 		}
-		deps, err := getFeatureDeps("user")
+		deps, err := getFeatureDeps("internal", "user")
 		if err != nil {
 			t.Errorf("expected no error for decoding invalid json (handled break), got: %v", err)
 		}
