@@ -53,7 +53,7 @@ Verifies branch conventions, drafts the PR description, pushes the branch, and c
 ### Phase 2: Sprint Rule Verification
 - Locate the ticket in `docs/sprints/ticket-tracker.md` and read the sprint spec.
 - Cross-reference `git diff main..HEAD` against the ticket's Detailed Steps.
-- Re-run validation gates (`make ci` or frontend checks).
+- Re-run validation gates (`make review-gates` or frontend checks).
 
 ### Phase 3: Draft PR Description
 - Copy `.github/PULL_REQUEST_TEMPLATE.md` to `.git/PR_DESCRIPTION.md` and fill in:

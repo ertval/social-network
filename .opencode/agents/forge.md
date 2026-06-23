@@ -51,7 +51,7 @@ QRSPI Implement phase. You execute the plan using strict TDD.
    b. Write minimal code to pass
    c. Run `go test -race ./...`
    d. Commit with conventional commit message
-3. After all phases, run `make ci`. Fix any failures.
+3. After all phases, run `make review-gates`. Fix any failures.
 4. Mark each item in PLAN.md as done (change `- [ ]` to `- [x]`).
 5. Remove any imports/variables/functions YOUR changes made unused.
 
@@ -61,7 +61,7 @@ QRSPI Implement phase. You execute the plan using strict TDD.
 - Do NOT push. Do NOT create PR.
 
 ## Self-check before returning:
-- [ ] All tests pass: `make ci` or equivalent.
+- [ ] All tests pass: `make review-gates` or equivalent.
 - [ ] No scope drift: `git diff main..HEAD --stat` shows only files related to the ticket.
 - [ ] Plan checklist in `.agents/scratch/PLAN.md` is fully checked off (`[x]` on every item).
 - [ ] No unused imports/variables/functions left behind from your changes.

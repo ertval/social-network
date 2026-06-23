@@ -4,13 +4,7 @@ Guidelines, rules, and configuration tracking for AI agents operating in this re
 
 ---
 
-## 1. Caveman Mode
-
-Always use the `caveman` skill to reduce context size.
-
----
-
-## 2. RTK - Rust Token Killer
+## 1. RTK - Rust Token Killer
 
 All shell commands MUST be prefixed with the `rtk` command to optimize context size and minimize token consumption:
 - **Rule**: Use `rtk <command>` instead of raw shell commands.
@@ -22,7 +16,7 @@ All shell commands MUST be prefixed with the `rtk` command to optimize context s
 
 ---
 
-## 3. Karpathy Guidelines
+## 2. Karpathy Guidelines
 
 Follow the 4 principles of software engineering to minimize coding errors (see details in the local karpathy-guidelines skill) (@.agents/skills/karpathy-guidelines/SKILL.md):
 1. **Think Before Coding**: Explicitly state assumptions, surface tradeoffs, and clarify ambiguity.
@@ -32,25 +26,29 @@ Follow the 4 principles of software engineering to minimize coding errors (see d
 
 ---
 
-## 4. Bug Protocol
+## 3. Bug Protocol
 
 **If you find a bug, first write a test that reproduces it, then fix the bug and verify the test passes.**
 
 ---
 
-## 5. Gitea CLI (tea)
+## 4. Gitea CLI (tea)
 
 Use the Gitea CLI (`tea`) to manage issues, pull requests, releases, and repository configuration under the `zone01` login.
 
 ---
 
-## 6. Git push last changes
+## 5. Git push last changes
 Always push after you made changes
 
-## 7. Verification Gates
+---
+
+## 6. Verification Gates
 Before completing a task, run verification gates to ensure code quality and that all requirements are met. Use `make review-gates` to run all gates or `make test` for basic tests.
 
-## 8. Documentation Drifts
+---
+
+## 7. Documentation Drifts
 Whenever you make changes or updates to files (docs), you should also update all other docs need update.
 You should run a validation and verfication subagents before closing a task to ensure there is no drift in documentation.
 - Critical folders to always check are :

@@ -51,7 +51,7 @@ Before applying any fix, read and understand the project rules so fixes are arch
 2. Fix ALL findings: **Critical**, **Warning**, **Suggestion**, and **Recommendation**. Do not skip any severity level.
 3. Perform **surgical edits only** — do not touch unrelated code, do not refactor, do not clean up pre-existing dead code. Match existing code style.
 4. After each fix group, run the deterministic gates:
-   - Backend: `make ci` or `make test`
+   - Backend: `make review-gates` or `make test`
    - Frontend (in `frontend/`): `bun run lint && bun run format:check && tsc --noEmit && bun run test`
 5. Commit each fix group with conventional commit messages (`fix(scope): description of what was fixed`).
 6. After all fixes, verify no scope drift was introduced: only lines related to the ticket should be changed.
@@ -61,7 +61,7 @@ Before applying any fix, read and understand the project rules so fixes are arch
 ## Self-check before returning:
 - [ ] Re-read the review report. Confirm every finding has been addressed or explicitly flagged as unresolvable.
 - [ ] Run `git diff main..HEAD --stat` to verify no unexpected files were touched.
-- [ ] All gates pass (`make ci` or equivalent) one final time.
+- [ ] All gates pass (`make review-gates` or equivalent) one final time.
 - [ ] No unused imports/variables/functions left behind from your fixes.
 
 ## Constraints:

@@ -61,7 +61,7 @@ graph TD
 1. **Pick a Ticket**: Claim open `BE-*` / `FE-*` / `SD-QA-*` items from `docs/sprints/ticket-tracker.md`. Verify dependencies.
 2. **Set Up Branch**: Standard `username/<ticketID>-detail` naming (e.g. `geoikonomou/S1-BE-05-db-factory`).
 3. **Development Cycle (TDD)**: Test first (Vitest for FE, `_test.go` for BE), minimal implementation, refactor, and formatting checks.
-4. **PR Guidelines**: Squash merge, run all validation gates (`make ci`), and draft description using the PR template.
+4. **PR Guidelines**: Squash merge, run all validation gates (`make review-gates`), and draft description using the PR template.
 
 ### PR Description Template
 
@@ -107,7 +107,7 @@ For each use case (one command/query file):
 3. REFACTOR: Clean up
    - Extract helpers if duplicated 3+ times
    - Ensure boundary rules (D5) are intact
-   - Run full CI: `make ci`
+   - Run all verification gates: `make review-gates`
 ```
 
 **Test file convention:**
@@ -160,7 +160,7 @@ Every PR must pass:
 - [ ] **Interface rules** (D2): within slice = full interface, across = narrow consumer-defined
 - [ ] **Cross-slice communication** (D3): ID-only refs, consumer interfaces, event bus for mutations
 - [ ] **Tests present**: unit tests for each command/query, store tests with real in-memory SQLite
-- [ ] **Format + lint + test**: `make ci` green
+- [ ] **Format + lint + test**: `make review-gates` green
 - [ ] **No dead code**: removed imports/variables introduced by the change
 
 ---
@@ -246,15 +246,15 @@ Define the directory mapping:
 1. Write reproducer test (failing) for each bug
 2. Apply fix
 3. Verify test passes
-4. Run `make ci`
+4. Run `make review-gates`
 
 ### Q2: Verification Gates (per sprint)
 
 **Mandatory:** After every sprint, before marking complete, run:
 
 ```bash
-# Full CI gate (BE + FE)
-make ci
+# Full CI and verification gates
+make review-gates
 
 # Or individually:
 make be-ci   # Backend only
@@ -373,7 +373,7 @@ if config.Features.Follow {
 
 A ticket is DONE when:
 - [ ] Code written (TDD: tests first, then implementation)
-- [ ] All tests pass: `make ci`
+- [ ] All tests and verification gates pass: `make review-gates`
 - [ ] Boundary rules verified (no cross-slice transport/store imports)
 - [ ] PR reviewed by other dev in same discipline (BE reviews BE, FE reviews FE)
 - [ ] Merged to main via squash merge

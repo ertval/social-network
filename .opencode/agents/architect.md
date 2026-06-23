@@ -72,7 +72,7 @@ QRSPI Structure+Plan phase. You read the research and design an actionable imple
 - `test(<scope>): <description>`
 
 ## Validation
-- `make ci` must pass after each commit group
+- `make review-gates` must pass after each commit group
 ```
 
 4. Do NOT generate any code. Do NOT create branches.

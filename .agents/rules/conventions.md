@@ -103,7 +103,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - **`make setup`**: Install Go development tools + git hooks only (subset of `make install`).
 - **`make be-ci`**: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
 - **`make fe-ci`**: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
-- **`make review-gates`**: Go verification gates — `go run cmd/gates/main.go --all`.
+- **`make review-gates`**: Full CI pipeline (BE + FE) + Go verification gates — `go run cmd/gates/main.go --all`.
 - **`make setup-hooks`**: Install lefthook pre-commit/pre-push hooks.
 - **Standalone commands** (when not using `make`):
   ```
@@ -169,7 +169,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - [ ] SQLite: WAL + busy timeout + `SetMaxOpenConns(1)`.
 - [ ] Tests written and passing (Go test for BE, Vitest for FE).
 - [ ] `go vet` / `tsc --noEmit` clean.
-- [ ] `make ci` / ESLint + Prettier gates pass.
+- [ ] `make review-gates` passes successfully.
 - [ ] Branch named correctly, conventional commits.
 - [ ] No dead code from your changes (unused imports/vars/functions removed).
 - [ ] PR description template filled.
