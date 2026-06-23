@@ -1,0 +1,59 @@
+/*
+StackGate validates the Go compiler version and module configuration (Gate #1).
+It parses the go.mod file to confirm that the Go version starts with '1.24'
+and the module name is correctly defined as 'social-network'.
+*/
+package gates
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
+
+// StackGate validates Go version and module path (Gate #1).
+type StackGate struct {
+	GoModPath string // path to go.mod, defaults to "go.mod"
+}
+
+func (g *StackGate) Name() string { return "stack" }
+
+func (g *StackGate) Run() Result {
+	path := g.GoModPath
+	if path == "" {
+		path = "go.mod"
+	}
+
+	// #nosec G304
+	f, err := os.Open(path)
+	if err != nil {
+		return Result{Gate: g.Name(), Status: "FAIL", Message: fmt.Sprintf("cannot open go.mod: %v", err)}
+	}
+	defer f.Close()
+
+	var goVersion, modulePath string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if strings.HasPrefix(line, "go ") {
+			goVersion = strings.TrimPrefix(line, "go ")
+		}
+		if strings.HasPrefix(line, "module ") {
+			modulePath = strings.TrimPrefix(line, "module ")
+		}
+	}
+
+	var errors []string
+	if !strings.HasPrefix(goVersion, "1.24") {
+		errors = append(errors, "expected Go 1.24, got "+goVersion)
+	}
+	if modulePath != "social-network" {
+		errors = append(errors, "expected module 'social-network', got '"+modulePath+"'")
+	}
+
+	if len(errors) > 0 {
+		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+	}
+	return Result{Gate: g.Name(), Status: "PASS", Message: "Go 1.24, module social-network"}
+}
