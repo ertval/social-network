@@ -52,9 +52,10 @@
 * **Dependencies:** S0-BE-01
 * **Description:** Create a robust `Makefile` that handles project setup, linting, formatting, tests, and cleanups.
 * **Detailed Steps:**
-  1. Add standard commands:
-     - `make setup` -> Install dependencies (`govulncheck`, `golangci-lint`, `goimports`).
-     - `make format` -> Format backend using `gofumpt -s` and `goimports`.
+   1. Add standard commands:
+      - `make install` -> Install ALL project dependencies: Go modules, root JS tooling, `.env` config, SSL certs, Go dev tools, git hooks, and frontend deps.
+      - `make setup` -> Install Go development tools and git hooks only (subset of `make install`).
+      - `make format` -> Format backend using `gofumpt -s` and `goimports`.
      - `make check-format` -> Fail if code format changes.
      - `make lint` -> Run static checks and `golangci-lint`.
      - `make test` -> Run Go unit tests with race detector: `go test -race -cover ./...`.
@@ -264,7 +265,7 @@
   1. Create `DEVELOPMENT.md` in the project root.
   2. Document:
      - Prerequisite tools (Go 1.24, Bun, Docker, openssl)
-     - Step-by-step setup (`make setup`, `make dev`, `make ci` (full gate))
+      - Step-by-step setup (`make install`, `make dev`, `make ci` (full gate))
      - Docker compose command sequences
      - Branch naming conventions and pull request rules
 * **Verification:** A fresh developer should be able to set up their machine by following `DEVELOPMENT.md` alone.

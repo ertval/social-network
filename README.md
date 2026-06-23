@@ -169,11 +169,13 @@ To configure your local environment for development and testing, install the fol
    curl -fsSL https://bun.sh/install | bash
    ```
 3. **Docker & Docker Compose**: Essential for orchestrating backend/frontend services in a containerized environment.
-4. **Backend Quality Tooling**: Install all Go tools (`gofumpt`, `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gosec`, `go-arch-lint`, lefthook) by running:
+4. **Install All Project Dependencies**: Run the single unified install command:
    ```bash
-   make setup
+   make install
    ```
-5. **ESLint + Prettier (Frontend)**: ESLint + Prettier handle Next.js formatting and linting. They are defined in the project package dependencies and can be run via `bun run lint` / `bun run format:check` (no global installation needed).
+   This installs everything: Go modules, root JS tooling, `.env` config, SSL certs, Go development tools (`gofumpt`, `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gosec`, `go-arch-lint`, lefthook), git hooks, and frontend dependencies.
+   
+   > If you only need Go tools (without frontend/certs/env), use `make setup`.
 
 ---
 
@@ -363,13 +365,14 @@ To update all skills to their latest version:
 opencode skill upgrade
 ```
 
-**Development Dependencies** — two runtimes, two package managers:
+**Development Dependencies** — one command to install everything:
 
 | Layer | Command | What it installs |
 | :--- | :--- | :--- |
+| **All (unified)** | `make install` | Go modules + root JS + `.env` + SSL certs + Go tools + git hooks + frontend deps |
 | **Backend (Go)** | `make setup` (or `make tools`) | `goimports`, `staticcheck`, `golangci-lint` (v2.2.1), `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`, lefthook |
-| **Backend (Go modules)** | `go mod tidy` | Go library dependencies from `go.mod` |
-| **Frontend (Bun/Next.js)** | `bun install` | npm packages from `frontend/package.json` |
+| **Backend (Go modules)** | `go mod download` (via `make install`) | Go library dependencies from `go.sum` |
+| **Frontend (Bun/Next.js)** | `bun install` (via `make install`) | npm packages from `frontend/package.json` |
 | **Docker** | `docker compose build` | Container images for backend + frontend |
 
 To update Go dependencies:

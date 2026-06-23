@@ -32,28 +32,24 @@ Before starting, ensure you have the following tools installed on your local mac
 
 Follow these steps to configure your local development environment:
 
-### 1. Configure Local Environment
-Copy the example environment file and adjust variables as needed:
+### 1. Install All Dependencies
+Install every project dependency (Go modules, root JS tooling, `.env` config, SSL certs, Go dev tools, git hooks, and frontend packages) with a single command:
 ```bash
-cp .env.example .env
+make install
 ```
+This runs:
+- `go mod download` — Go library dependencies
+- `npm ci` — Root JS tooling (from `package-lock.json`)
+- `cp -n .env.example .env` — Environment config (safe, won't overwrite)
+- `sh scripts/makecerts.sh` — SSL/TLS certificates for HTTPS/WSS
+- `make tools` — Go development tools (`goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`)
+- `make setup-hooks` — Lefthook git hooks (pre-commit/pre-push)
+- `bun install` — Frontend dependencies
 
-### 2. Generate Local SSL/TLS Certificates
-Our local development environment uses HTTPS/WSS. Generate the development TLS certificate files using `openssl` via our helper script:
-```bash
-sh scripts/makecerts.sh
-```
-> [!IMPORTANT]
-> The generated certificates will be stored under `certs/` as defined in your `.env` file (by default `certs/localhost+2.pem` and `certs/localhost+2-key.pem`).
+> [!TIP]
+> If you already have the environment set up and just need to reinstall Go tools, use `make setup` (runs tools + hooks only).
 
-### 3. Install Development Tools
-Install backend linters, formatters, security scanners, architecture linters, and git hooks:
-```bash
-make setup
-```
-This runs `make tools` (installs `goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`) then installs lefthook git hooks.
-
-### 4. Build and Start the Environment
+### 2. Build and Start the Environment
 Launch the local Docker containers (running Go backend, Next.js frontend, and persistent SQLite database):
 ```bash
 make dev
@@ -61,7 +57,7 @@ make dev
 > [!NOTE]
 > `make dev` is an alias to `make docker-dev` which launches the dev compose configuration.
 
-### 5. Verify Setup (Run CI Checks)
+### 3. Verify Setup (Run CI Checks)
 Ensure everything compiles, formats, lints, and tests successfully (both BE and FE):
 ```bash
 make ci
@@ -112,30 +108,23 @@ make docker-db
 
 If you prefer to run services natively on your host OS:
 
+> [!TIP]
+> Run `make install` first — it handles Go module download, `.env` setup, certs, and frontend deps (`bun install`) in one step. Then use the commands below.
+
 ### Backend Development
-1. Verify Go modules:
-   ```bash
-   go mod tidy
-   ```
-2. Start the Go server:
+1. Start the Go server:
    ```bash
    go run cmd/server/main.go
    ```
 
 ### Frontend Development
-1. Navigate to the frontend directory:
+1. Start the Next.js development server:
    ```bash
-   cd frontend
-   ```
-2. Install frontend dependencies using Bun:
-   ```bash
-   bun install
-   ```
-3. Start the Next.js development server:
-   ```bash
-   bun run dev
+   cd frontend && bun run dev
    ```
    *(By default, the server runs on `http://localhost:3000`)*
+
+> If you skipped `make install`, run `bun install` inside `frontend/` first.
 
 ---
 

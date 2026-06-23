@@ -99,6 +99,8 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 <!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
 ## 8. CI & Verification
 
+- **`make install`**: Install ALL project dependencies (Go modules, root JS tooling, `.env`, SSL certs, Go dev tools, git hooks, frontend deps). One command for new devs.
+- **`make setup`**: Install Go development tools + git hooks only (subset of `make install`).
 - **`make be-ci`**: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
 - **`make fe-ci`**: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
 - **`make review-gates`**: Go verification gates — `go run cmd/gates/main.go --all`.
