@@ -10,7 +10,6 @@ bin/
 build/
 dist/
 server
-/gates
 
 # ──────────────────────────────────────────────────────────────────────
 # Go Workspaces, Testing, & Profiling
