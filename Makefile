@@ -109,11 +109,24 @@ lint: staticcheck golangci-lint vulncheck gosec
 
 test:
 	@echo "==> Running tests..."
-	go test -race -coverprofile=coverage.out -covermode=atomic ./...
+	@if go test -race -coverprofile=coverage.out -covermode=atomic ./... > test.log 2>&1; then \
+		rm -f test.log; \
+	else \
+		cat test.log; \
+		rm -f test.log; \
+		exit 1; \
+	fi
 	@go tool cover -func=coverage.out | grep total
 
 test-short:
-	go test -short ./...
+	@if go test -short ./... > test.log 2>&1; then \
+		rm -f test.log; \
+		echo "All tests passed."; \
+	else \
+		cat test.log; \
+		rm -f test.log; \
+		exit 1; \
+	fi
 
 # ── CI Pipeline ───────────────────────────────────────────────────────
 
