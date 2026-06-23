@@ -2,7 +2,7 @@
 
 **Outcome:** Groups with membership, group feed, group chat via WebSocket, and the event RSVP voting system work end-to-end.
 
-> **Missing migration DDL:** Architecture specifies `000005_groups.up.sql` and `000006_events.up.sql`. S1-BE-06 created `000005` and `000006` stubs (empty or minimal). S4-BE-62 and S4-BE-78 must extend these files with actual Group and Event table DDL — or create replacement migration files if stubs were not created.
+> **Missing migration DDL:** Architecture specifies `000006_groups.up.sql` and `000007_events.up.sql`. S1-BE-06 created `000006` and `000007` stubs (empty or minimal). S4-BE-62 and S4-BE-78 must extend these files with actual Group and Event table DDL — or create replacement migration files if stubs were not created.
 
 ---
 
@@ -33,7 +33,7 @@
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/group/group.go`.
-  2. Define `Group` (ID, Title, Description, CreatorID, CreatedAt), `GroupMember` (GroupID, UserID, Role: owner/member, JoinedAt), `Invitation` (GroupID, InviterID, InviteeID, CreatedAt), `JoinRequest` (GroupID, RequesterID, CreatedAt), and `GroupPost` (ID, GroupID, AuthorID, Title, Content, ImagePath, CreatedAt).
+  2. Define `Group` (ID, Title, Description, CreatorID, CreatedAt), `GroupMember` (GroupID, UserID, Role: creator/admin/member, JoinedAt), `Invitation` (GroupID, InviterID, InviteeID, CreatedAt), `JoinRequest` (GroupID, RequesterID, CreatedAt), and `GroupPost` (ID, GroupID, AuthorID, Title, Content, ImagePath, CreatedAt).
   3. **Note:** In alignment with the database schema, `Invitation` and `JoinRequest` do not have a `status` column (row presence denotes a pending status, and accept/decline actions delete the row). Also, `GroupPost` contains a `Title` field to map to the `group_posts.title` NOT NULL database column.
   4. Define the `Repository` interface mapping required storage operations.
 * **Verification:** Compile check `go build ./internal/group/...`.
@@ -50,7 +50,7 @@
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
    1. Create `internal/group/store/sqlite.go`. Implement queries checking group membership: `IsMember(ctx context.Context, groupID, userID string) (bool, error)`.
-* **Verification:** Integration tests checking memberships writing against the tables created by the `000005` migration.
+* **Verification:** Integration tests checking memberships writing against the tables created by the `000006` migration.
 
 ---
 
@@ -60,7 +60,7 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
-* **Description:** Create group record and automatically set the creator as the group owner. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
+* **Description:** Create group record and automatically set the creator as group creator (with admin privileges). As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/group/commands/create_group.go`.
@@ -107,7 +107,7 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-61
-* **Description:** Submit request to join group, notifying owner. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
+* **Description:** Submit request to join group, notifying creator/admin. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/group/commands/request_join.go`. Insert record in `group_join_requests`, publish `group.join_requested` event.
@@ -121,12 +121,12 @@
 * **Assignee:** BE-A
 * **Story Points:** 2
 * **Dependencies:** S4-BE-66
-* **Description:** Allow group creator/owner to approve join requests. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
+* **Description:** Allow group creator/admin to approve join requests. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
   1. Create `internal/group/commands/respond_join.go`. Enforce that only the group creator can approve.
   2. Delete join request row. If accepted -> add user to member list.
-* **Verification:** Assert only owners can trigger, and member writes succeed.
+* **Verification:** Assert only creator/admin can trigger, and member writes succeed.
 
 ---
 
@@ -295,7 +295,7 @@
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
    1. Create `internal/event/store/sqlite.go`.
-* **Verification:** Integration tests checking storage against the tables created by the `000006` migration.
+* **Verification:** Integration tests checking storage against the tables created by the `000007` migration.
 
 ---
 
@@ -349,7 +349,7 @@
 * **Type:** Greenfield (New Module/Feature - Event system)
 * **Assignee:** BE-B
 * **Story Points:** 2
-* **Dependencies:** S4-BE-79..20
+* **Dependencies:** S4-BE-79..81
 * **Description:** Bind HTTP handlers. As a greenfield backend feature, this implements the new event system for groups (creation, RSVP with multiple options) under `internal/event/`, publishing `event.created` to the event bus.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
@@ -368,7 +368,7 @@
 * **Story Points:** 3
 * **Description:** Build list view browsing all existing groups. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render lists of groups with search triggers and links.
 * **Verification:** Check visual outputs.
 
@@ -379,10 +379,10 @@
 * **Type:** Greenfield (New Frontend UI)
 * **Assignee:** FE-A
 * **Story Points:** 5
-* **Description:** Build view rendering group headers details, owner controls panel, and join toggle buttons. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
+* **Description:** Build view rendering group headers details, admin controls panel, and join toggle buttons. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
-  1. Render details. If owner -> render invitation search box and join request approvals table.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+  1. Render details. If creator/admin -> render invitation search box and join request approvals table.
   2. If non-member -> show join group requests toggles.
 * **Verification:** Verify layout modifications per role.
 
@@ -395,7 +395,7 @@
 * **Story Points:** 5
 * **Description:** Render posts list cards inside group profile views. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Enforce locked feeds container layout for non-members.
   2. Render post feeds dialog form allowing public attachments posts creation for members.
 * **Verification:** Lock triggers check.
@@ -409,7 +409,7 @@
 * **Story Points:** 5
 * **Description:** Interactive instant message container workspace inside groups profile page. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Connect to websocket groups chat topic channel. Render streams.
 * **Verification:** WS message delivery verification.
 
@@ -424,7 +424,7 @@
 * **Story Points:** 3
 * **Description:** Form overlay allowing group members to schedule events. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Fields: title, description, day/time, options input list.
 * **Verification:** Check input validators triggers.
 
@@ -437,7 +437,7 @@
 * **Story Points:** 3
 * **Description:** Render events widgets. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Render widgets inside group sidebar showing scheduled events.
 * **Verification:** Output listings.
 
@@ -450,7 +450,7 @@
 * **Story Points:** 2
 * **Description:** Selection checkboxes on events card showing going/not going toggling. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Clicking posts option choose updates to `/api/events/:id/rsvp`.
 * **Verification:** State tallies update verify.
 
@@ -464,7 +464,7 @@
 * **Dependencies:** S4-FE-22
 * **Description:** Implement frontend layout dialog and accordion under group post cards to create and list comments. As a greenfield frontend task, this implements new Next.js UI components in `frontend/src/` utilizing shadcn/ui and Tailwind CSS, wiring them to the Next.js App Router.
 * **Detailed Steps:**
-    * *Greenfield Note:* Use Biome for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
+    * *Greenfield Note:* Use ESLint + Prettier for linting/formatting and ensure session cookies are handled securely without localStorage leakage.
   1. Create accordion component loading comments via `GET /api/group-posts/:id/comments` on expand.
   2. Create inline text form submitting commenting details to `/api/group-posts/:id/comments`.
 * **Verification:** Confirm visual comments updating.
@@ -473,7 +473,7 @@
 
 ## SD-QA (System Design/QA) Tickets
 
-### S4-SD-16: Platform: Group & Event Migrations (000005 & 000006)
+### S4-SD-16: Platform: Group & Event Migrations (000006 & 000007)
 * **Priority:** P0
 * **Type:** Greenfield (New Module/Feature - DB Migrations)
 * **Assignee:** SD-QA
@@ -482,10 +482,10 @@
 * **Description:** Create the database migration files for the Group and Event vertical slices. As a greenfield backend feature, this implements the entirely new group ecosystem (creation, invites, join requests, group chat, group posts) under `internal/group/`, isolated from other domains.
 * **Detailed Steps:**
     * *Greenfield Note:* Follow TDD (Red-Green-Refactor). Ensure the slice adheres strictly to boundary rules (D5) without importing other slices' stores/transports.
-  1. Create `db/migrations/000005_groups.up.sql` to create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`, `group_posts`, and `group_post_comments` tables.
-  2. Create `db/migrations/000005_groups.down.sql` to reverse.
-  3. Create `db/migrations/000006_events.up.sql` to create `events`, `event_options`, and `event_rsvps` tables.
-  4. Create `db/migrations/000006_events.down.sql` to reverse.
+  1. Create `db/migrations/000006_groups.up.sql` to create `groups`, `group_members`, `group_invitations`, `group_join_requests`, `group_chat_messages`, `group_posts`, and `group_post_comments` tables.
+  2. Create `db/migrations/000006_groups.down.sql` to reverse.
+  3. Create `db/migrations/000007_events.up.sql` to create `events`, `event_options`, and `event_rsvps` tables.
+  4. Create `db/migrations/000007_events.down.sql` to reverse.
 * **Verification:** Run up/down checks confirming schema updates execute.
 
 ---

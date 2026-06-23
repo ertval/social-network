@@ -9,7 +9,7 @@
 ### Problem
 
 general-instructions.md is ~80% backend-focused. Frontend gets:
-- Q2: 4 verification commands (biome lint/format, tsc, vitest)
+- Q2: 4 verification commands (ESLint, Prettier, tsc, vitest)
 - A6: Two FE lines in Definition of Done
 - Phase 6 of target-architecture: scaffold + pages summary
 
@@ -127,8 +127,8 @@ frontend/
 - **Environment**: `NEXT_PUBLIC_API_URL` pointing to backend (default `http://localhost:8080`)
 - **Verification commands** (must match Q2):
   ```bash
-  bun run lint          # Biome lint
-  bun run format:check  # Biome format check
+  bun run lint          # ESLint lint
+  bun run format:check  # Prettier format check
   tsc --noEmit          # Type checking
   bun run test          # Vitest unit/component tests
   bun run test:e2e      # Playwright E2E tests
@@ -179,13 +179,13 @@ frontend/
 ### Step 4: Implement (TDD)
 - RED: Write failing Vitest test for your component/hook.
 - GREEN: Implement minimum code to pass.
-- REFACTOR: Clean up, ensure Biome lint/format passes.
+- REFACTOR: Clean up, ensure ESLint + Prettier lint/format passes.
 - Run: `bun run lint && bun run format:check && tsc --noEmit && bun run test`
 
 ### Step 5: Open a PR
 - Use `pr-create` workflow or follow template below.
 - FE reviews FE (cross-review with other frontend dev).
-- PR must pass: Biome, tsc, Vitest, manual smoke test.
+- PR must pass: ESLint + Prettier, tsc, Vitest, manual smoke test.
 ```
 
 ### 2.2 PR Template for Frontend
@@ -225,7 +225,7 @@ bun run test
 
 ## Definition of Done (Frontend)
 - [ ] Component renders per F1 audit mapping
-- [ ] Biome lint + format:check passes
+- [ ] ESLint + Prettier lint/format passes
 - [ ] tsc --noEmit passes
 - [ ] Vitest tests pass
 - [ ] FE cross-review completed
@@ -243,7 +243,7 @@ bun run test
 | F5: Project structure (app/ routes, components/ui, components/features) | Error boundaries per route |
 | F6: Bun, Dockerfile, verification commands | Loading skeletons (loading.tsx) |
 | TDD for components (Vitest) | Image optimization (<Image>) |
-| Biome + tsc + vitest green | Code splitting (dynamic imports) |
+| ESLint + Prettier + tsc + vitest green | Code splitting (dynamic imports) |
 | Branch naming + conventional commits | Playwright E2E tests |
 
 ---
@@ -276,7 +276,7 @@ bun run test
    - File upload supports JPG/PNG/GIF (F4)
    - Auth is cookie-based, no localStorage-only (F3)
    - Notification bell present in global nav (F2)
-3. PR template DoD: Add frontend-specific items (Biome, tsc, Vitest, FE cross-review, audit checklist coverage)
+3. PR template DoD: Add frontend-specific items (ESLint + Prettier, tsc, Vitest, FE cross-review, audit checklist coverage)
 
 ### 3.2 pr-implement-qrspi.md
 
@@ -302,7 +302,7 @@ bun run test
 3. Stage 7: Add frontend TDD loop:
    - RED: Write failing Vitest test (component render, user interaction, hook output)
    - GREEN: Implement component/hook
-   - REFACTOR: Run Biome lint + format
+   - REFACTOR: Run ESLint + Prettier lint/format
 4. Stage 8: Change `npm run` → `bun run`. Add `tsc --noEmit` and `bun run test`
 
 ### 3.3 pr-implement.md
@@ -323,7 +323,7 @@ bun run test
 2. Phase 3: Add frontend TDD:
    - Vitest for unit/component tests
    - Playwright for E2E
-   - Biome for lint/format
+   - ESLint + Prettier for lint/format
 3. Phase 4: Add frontend verification: `bun run lint && bun run format:check && tsc --noEmit && bun run test`
 
 ### 3.4 pr-review.md

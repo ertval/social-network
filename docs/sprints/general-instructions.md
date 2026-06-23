@@ -10,11 +10,23 @@
 | Field | Value |
 |-------|-------|
 | Team | 5 devs (**SD-QA**, **BE-A**, **BE-B**, **FE-A**, **FE-B**) |
-| Sprint length | 1 week |
-| Total duration | ~7 weeks (7 sprints) |
+| Sprint length | 2 weeks |
+| Total duration | ~14 weeks (7 sprints) |
 | Methodology | TDD (Red → Green → Refactor), Strangler Fig, Trunk-Based Development |
 | Branch naming | `username/<ticketID>-detail` (e.g. `geoikonomou/S1-BE-05-db-factory`) |
 | Ticket format | **ID** — component, priority, dependency, assignee, story points, acceptance criteria |
+
+### Architecture Phase ↔ Sprint Mapping
+
+| Architecture Phase | Sprint Mapping |
+|-------------------|----------------|
+| **Phase 1**: Critical Bug Fixes | Sprint 0 |
+| **Phase 2**: Platform Foundation | Sprint 1 |
+| **Phase 3**: Cross-Cutting Core | Sprint 1 |
+| **Phase 4**: Greenfield Slices (Follow, Group, Event) | Sprints 3–4 |
+| **Phase 5**: Migrate Features (User, Topic, Comment, Chat, Notification, OAuth) | Sprints 2, 3, 5 |
+| **Phase 6**: Next.js Frontend | Across all sprints |
+| **Phase 7**: Docker Compose (2 Services) | Sprint 0 setup, Sprint 6 finalization |
 
 ---
 
@@ -38,6 +50,7 @@ graph TD
 - **Stage 4: System Design and DDL Specs**: Read [docs/architecture/sds.md](file://docs/architecture/sds.md).
 - **Stage 5: Execution Roadmaps**: Read [docs/architecture/target-architecture-with-phases.md](file://docs/architecture/target-architecture-with-phases.md) and [docs/sprints/ticket-tracker.md](file://docs/sprints/ticket-tracker.md).
 - **Stage 6: Sprint Implementation Slices**: Sprints [sprint-0.md](file://docs/sprints/sprint-0.md), [sprint-1.md](file://docs/sprints/sprint-1.md), [sprint-2.md](file://docs/sprints/sprint-2.md), [sprint-3.md](file://docs/sprints/sprint-3.md), [sprint-4.md](file://docs/sprints/sprint-4.md), [sprint-5.md](file://docs/sprints/sprint-5.md), and [sprint-6.md](file://docs/sprints/sprint-6.md).
+- **Stage 7: Verification**: Read [docs/requirements/audit.md](file://docs/requirements/audit.md) and [docs/requirements/readme.md](file://docs/requirements/readme.md) for grading acceptance criteria.
 
 ---
 
@@ -247,7 +260,11 @@ make ci
 make be-ci   # Backend only
 make fe-ci   # Frontend only
 
-# Boundary check
+# Go verification gates (architecture, security, conventions)
+make review-gates
+# Equivalent: go run cmd/gates/main.go --all
+
+# Boundary check (D5)
 grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | grep -v 'platform/' | grep -v 'pkg/'
 ```
 
@@ -258,6 +275,7 @@ go build ./...
 go test -race -coverprofile=coverage.out ./...
 golangci-lint run
 govulncheck ./...
+go run cmd/gates/main.go --all
 ```
 
 ### Q3: Manual Smoke Test Scenarios
@@ -311,16 +329,16 @@ Run these after each feature migration to catch regression:
 ### A2: Commit Convention
 
 ```
-type(scope): description
+type(scope)[<ID>]: description
 
 type: feat, fix, refactor, test, chore, docs
 scope: feature name (user, topic, follow, group, event, chat, notification, oauth, core, platform)
 ```
 
 Examples:
-- `feat(user): add register command with age validation`
-- `fix(core): recover from WebSocket goroutine panic`
-- `refactor(topic): migrate topic store to vertical slice`
+- `feat(user)[S2-BE-17]: add register command with age validation`
+- `fix(core)[42]: recover from WebSocket goroutine panic`
+- `refactor(topic)[S2-BE-26]: migrate topic store to vertical slice`
 - `test(event): add rsvp command table-driven tests`
 
 ### A3: Feature Toggle Pattern
@@ -404,11 +422,11 @@ Sprint 6:  Cleanup + Integration + Docker ────┘
 
 | Sprint | BE Tickets | FE Tickets | DevOps | Total |
 |--------|-----------|-----------|--------|-------|
-| Sprint 0 | 5 | 2 | 3 | 10 |
-| Sprint 1 | 11 | 4 | 0 | 15 |
+| Sprint 0 | 4 | 2 | 4 | 10 |
+| Sprint 1 | 9 | 3 | 2 | 14 |
 | Sprint 2 | 23 | 8 | 0 | 31 |
-| Sprint 3 | 26 | 8 | 0 | 34 |
+| Sprint 3 | 25 | 7 | 5 | 37 |
 | Sprint 4 | 22 | 8 | 0 | 30 |
 | Sprint 5 | 17 | 7 | 0 | 24 |
 | Sprint 6 | 8 | 7 | 5 | 20 |
-| **Total** | **103** | **35** | **34** | **172** |
+| **Total** | **108** | **42** | **16** | **166** |
