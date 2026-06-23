@@ -22,7 +22,7 @@ effort: high
 tags: [orchestration, multi-model, analysis, reports]
 ---
 
-# Multi-Model Orchestrator
+# Polymerge Multi-Model Orchestrator
 
 Orchestrates 5 models in parallel, deduplicates findings into one report.
 
