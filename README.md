@@ -250,17 +250,20 @@ We enforce strict validation pipelines to ensure codebase stability.
 ### ⚙️ CI Pipeline
 Run the automated check suite locally before pushing:
 ```bash
-make ci
+make review-gates
 ```
-This runs the full gate: backend (`make be-ci`) + frontend (`make fe-ci`).
-- **Backend** (`make be-ci`): `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`
-- **Frontend** (`make fe-ci`): `bun run lint → bun run format:check → tsc --noEmit → bun run test`
--   `ci-mod`: Runs `go mod tidy` and asserts no changes.
--   `check-format`: Verifies `gofumpt` and `goimports` formatting without modifying files.
--   `lint`: Evaluates code against `staticcheck`, `golangci-lint`, and `govulncheck`.
--   `test`: Runs unit/integration tests with race checks and generates a coverage report.
+This runs the decoupled PR quality gate suite:
+1.  **`go build ./...`**: Compiles all Go packages (legacy + new) for basic build safety.
+2.  **`go run cmd/gates/main.go --all`**: Runs the custom Go verification gates.
+3.  **`make be-ci-new`**: Runs the scoped new-code CI pipeline:
+    `ci-mod → check-format-new → lint-new (staticcheck-new + golangci-lint-new + vet-new + vulncheck-new + gosec-new) → test-new`
+4.  **`make fe-ci`**: Runs the frontend CI pipeline (scopes to `frontend-next/` if it exists, falling back to legacy `frontend/`). Runs:
+    `bun run lint → bun run format:check → tsc --noEmit → bun run test`
 
-To auto-format files: `make format` (runs `gofumpt -w` and `goimports -w`).
+*Note: You can still run the legacy full-system check via `make ci` (runs blanket `make be-ci` + `make fe-ci`), which is informational and does not block PR gates.*
+
+To auto-format files in new directories:
+`PATH=<GOBIN>:$PATH gofumpt -w <dirs> && PATH=<GOBIN>:$PATH goimports -w -local social-network <dirs>`
 
 ### 🧪 Go Verification Gates
 Deterministic Go-based gates catch architecture violations, security issues, and branch/convention regressions:
@@ -272,13 +275,13 @@ go run cmd/gates/main.go --all
 Individual gates:
 ```bash
 go run cmd/gates/main.go --gate=stack        # Go version + module path
-go run cmd/gates/main.go --gate=layout       # Directory structure
+go run cmd/gates/main.go --gate=layout       # Directory structure (D1 layout)
 go run cmd/gates/main.go --gate=boundaries   # D5 import boundary rules
-go run cmd/gates/main.go --gate=dag          # D6 dependency graph acyclicity
+go run cmd/gates/main.go --gate=dag          # D6 dependency graph acyclicity (supports go-arch-lint)
 go run cmd/gates/main.go --gate=tdd          # Test file presence
 go run cmd/gates/main.go --gate=migrations   # Migration naming/delimiter
-go run cmd/gates/main.go --gate=security     # gosec + custom AST checks
-go run cmd/gates/main.go --gate=branch       # branch naming convention
+go run cmd/gates/main.go --gate=security     # gosec + custom AST checks (scoped to new code)
+go run cmd/gates/main.go --gate=branch       # branch naming convention (includes 'dev' scope)
 go run cmd/gates/main.go --gate=coverage     # test coverage threshold
 go run cmd/gates/main.go --gate=scopedrift   # scope creep detection
 ```

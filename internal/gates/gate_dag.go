@@ -166,7 +166,7 @@ type goListPkg struct {
 }
 
 // getFeatureDeps returns other feature slices that this feature imports.
-func getFeatureDeps(internalDir, feature string) ([]string, error) {
+func getFeatureDeps(_, feature string) ([]string, error) {
 	cmd := ExecCommand("go", "list", "-json", "social-network/internal/"+feature+"/...")
 	out, err := cmd.Output()
 	if err != nil {

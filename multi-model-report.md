@@ -64,6 +64,7 @@
 |-------|---------|---------|------------|
 | `govulncheck` on legacy | Big Pickle/GLM: keep scanning | DeepSeek: skip legacy | Compromise: run in optional `make be-ci-legacy` or as separate weekly scan, not in PR gate |
 | Diff-aware vs. path-targeted | Big Pickle: diff is cleaner | Kimi/Mimo: explicit paths simpler | Start with explicit paths (simpler, less error-prone). Evolve to diff-based if maintenance burden grows |
+> WE DONT NEED TO SCAN LEGACY CODE, ONLY NEW CODE, IN NEW MODULES. OLD CODE WILL BE REMOVED IN THE END
 
 ## Per-Model Summary
 
@@ -77,66 +78,131 @@
 
 ## Recommended Plan
 
-### Step 1: Fix `make review-gates` (Makefile change)
-Replace `make ci` dependency with targeted steps:
+### Step 1: Decouple `review-gates` from `make ci`
 
-```makefile
-review-gates: build ## Run PR gates on new code only
-	@echo "==> Compiling all code (legacy + new)..."
-	go build ./...
-	@echo "==> Running custom verification gates..."
-	go run cmd/gates/main.go --all
-	@echo "==> Checking new-code formatting..."
-	@gofumpt -l $(NEW_DIRS) | xargs -r echo "Formatting issues in:" && \
-	  goimports -l -local $(MODULE) $(NEW_DIRS) | xargs -r echo "Import issues in:" && \
-	  test -z "$(shell gofumpt -l $(NEW_DIRS))" || (echo "Formatting failures"; exit 1)
-	@echo "==> Running new-code linters..."
-	staticcheck $(NEW_PKGS)
-	golangci-lint run --timeout=5m ./$(NEW_DIRS)...
-	go vet $(NEW_PKGS)
-```
+`make review-gates` no longer depends on `make ci`. It runs:
+1. `go build ./...` — compiles all code (legacy + new), zero-cost safety net
+2. Custom Go gates — `go run cmd/gates/main.go --all` (already skip legacy)
+3. Format + lint + vet + test — scoped to `$(NEW_DIRS)`/`$(NEW_PKGS)` only
 
-### Step 2: Define `NEW_DIRS` / `NEW_PKGS` in Makefile
+`make be-ci` becomes scoped exclusively to new-code dirs. `make ci` (full legacy+new) is available but NOT a gate dependency.
+
 ```makefile
 NEW_DIRS := internal/user internal/follow internal/topic internal/comment \
             internal/group internal/event internal/chat internal/notification \
             internal/oauth internal/core internal/platform internal/bootstrap \
             internal/config internal/gates cmd/gates cmd/server
-NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
-```
 
-### Step 3: Keep legacy as optional target
-```makefile
-be-ci-legacy: ## Check legacy code (advisory, not in PR gates)
+NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
+
+# ── Scoped CI (new code only) ─────────────────────────────────────────
+
+be-ci-new: ci-mod check-format-new lint-new test-new
+check-format-new:
+	@UNFORMATTED=$$(gofumpt -l $(NEW_DIRS) || true); \
+	UNFORMATTED_IMPORTS=$$(goimports -l -local $(MODULE) $(NEW_DIRS) || true); \
+	if [ -n "$$UNFORMATTED" ] || [ -n "$$UNFORMATTED_IMPORTS" ]; then \
+		[ -n "$$UNFORMATTED" ] && echo "gofumpt errors:" && echo "$$UNFORMATTED"; \
+		[ -n "$$UNFORMATTED_IMPORTS" ] && echo "goimports errors:" && echo "$$UNFORMATTED_IMPORTS"; \
+		exit 1; \
+	fi
+lint-new: staticcheck-new golangci-lint-new vet-new vulncheck-new gosec-new
+staticcheck-new: ; staticcheck $(NEW_PKGS)
+golangci-lint-new: ; golangci-lint run --timeout=5m $(NEW_PKGS)
+vet-new: ; go vet $(NEW_PKGS)
+vulncheck-new: ; govulncheck $(NEW_PKGS)
+gosec-new: ; gosec -quiet $(NEW_DIRS)/...
+test-new:
+	@if go test -race -coverprofile=coverage.out -covermode=atomic $(NEW_PKGS) > test.log 2>&1; then \
+		rm -f test.log; \
+	else cat test.log; rm -f test.log; exit 1; fi
+
+# ── Legacy (advisory, not in PR gates) ─────────────────────────────────
+
+be-ci-legacy:
 	@echo "==> Running legacy checks..."
 	gofumpt -l internal/app internal/domain internal/infra
 	golangci-lint run ./internal/app/... ./internal/domain/... ./internal/infra/...
+
+# ── Full CI (legacy + new, informational) ──────────────────────────────
+
+be-ci: ci-mod check-format lint test  # blanket ./... as before
+
+# ── Review gates (PR blocker, new-code only) ───────────────────────────
+
+review-gates: build
+	@echo "==> Compiling all code (legacy + new)..."
+	go build ./...
+	@echo "==> Running custom verification gates..."
+	go run cmd/gates/main.go --all
+	@echo "==> Scoped CI on new code..."
+	$(MAKE) be-ci-new
 ```
 
+### Step 2: FE-CI scoped to `frontend-next/`
+
+The new frontend lives exclusively in `frontend-next/`. FE-CI gates only that directory:
+
+```makefile
+FE_NEXT_DIR := frontend-next
+
+fe-ci:
+	@if [ -f $(FE_NEXT_DIR)/package.json ]; then \
+		echo "==> Running frontend-next CI..."; \
+		cd $(FE_NEXT_DIR) && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
+	elif [ -f frontend/package.json ]; then \
+		echo "==> [legacy] Running frontend CI..."; \
+		cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
+	else \
+		echo "==> Skipping frontend CI: no frontend scaffolded yet."; \
+	fi
+```
+
+### Step 3: `frontend-next/` directory structure
+
+```
+frontend-next/
+  src/
+    app/
+    components/
+      ui/
+      features/
+    lib/
+    styles/
+    __tests__/
+```
+
+Create with `.gitkeep` files in each empty directory.
+
 ### Step 4: Fix branch gate
+
 Either:
 - Update `GitLog()` in `internal/gates/git.go` to only check commits since base branch (`git log main..HEAD`)
 - Or rebase offending commit before proceeding
 
 ### Step 5: Add test fixtures + gates tests
+
 Create test file `internal/gates/gate_legacy_scope_test.go`:
 
 ```go
 func TestLegacyCodeNotGatedByFormatCheck(t *testing.T) {
     // Given: a fixture with bad formatting in legacy dir (internal/app/.../bad.go)
     // Then: make review-gates should PASS (legacy is excluded)
-    // Assert: exactly
 }
 
 func TestNewCodeGatedByFormatCheck(t *testing.T) {
     // Given: a fixture with bad formatting in new dir (internal/user/bad_test_stub.go)
     // Then: make review-gates should FAIL (new code is enforced)
-    // Assert: exactly
 }
 ```
 
-### Step 6: Update docs (general-instructions.md, DEVELOPMENT.md)
-Update Q2 gate commands to reflect new scoping. Update R5 code review checklist.
+### Step 6: Update docs
+
+Update `conventions.md`, `architecture.md`, `DEVELOPMENT.md`, `general-instructions.md`, `sds.md`, `target-architecture-with-phases.md` to reflect new CI scoping:
+- `be-ci-new` / `be-ci-legacy` / `be-ci` (full) targets
+- `fe-ci` scoped to `frontend-next/`
+- `review-gates` decoupled from `make ci`
+- `NEW_DIRS` / `NEW_PKGS` variables documented
 
 ## Raw Reports
 

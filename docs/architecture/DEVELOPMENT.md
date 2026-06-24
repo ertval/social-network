@@ -132,11 +132,17 @@ If you prefer to run services natively on your host OS:
 
 Before pushing code or opening a pull request, ensure it passes all verification gates.
 
-### Full CI Pipeline
+### Full CI Pipeline & Gates
 ```bash
-make ci
+make review-gates
 ```
-Runs backend + frontend checks (ci-mod → check-format → lint → test).
+Decoupled from legacy blanket check. Performs:
+1. `go build ./...` — Compiles all code (legacy + new) for build safety.
+2. `go run cmd/gates/main.go --all` — Runs the custom Go verification gates.
+3. `make be-ci-new` — Runs new-code scoped check.
+4. `make fe-ci` — Runs frontend CI check (scoped to `frontend-next/` if it exists).
+
+*Note: You can run legacy blanket checks via `make ci` (runs `make be-ci` + `make fe-ci`), which checks all legacy files as well.*
 
 ### Go Verification Gates
 
@@ -152,11 +158,11 @@ make review-gates
 | Stack | go version / go.mod | Go ≥ 1.24, module path `social-network` |
 | Layout | os.Stat | Target directory structure exists |
 | Boundaries | golangci-lint depguard / AST | D5 — forbidden cross-slice imports |
-| DAG | go-arch-lint / DFS | D6 — dependency graph acyclicity |
+| DAG | go-arch-lint / DFS | D6 — dependency graph acyclicity (supports go-arch-lint) |
 | TDD | os.Stat | Test files exist per command/query |
 | Migrations | glob / grep | Migration naming (`NNNNNN_name.up.sql`), delimiter (`";"`) |
-| Security | gosec / custom AST | SQL concat, WebSocket CheckOrigin, bcrypt cost |
-| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` |
+| Security | gosec / custom AST | SQL concat, WebSocket CheckOrigin, bcrypt cost (scoped to new code) |
+| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` (includes `dev` scope support) |
 | Coverage | git worktree + go test | Test coverage threshold (>90%) |
 | ScopeDrift | git diff | Unplanned file changes |
 
@@ -170,22 +176,22 @@ make setup-hooks
 Pre-commit auto-formats staged Go/frontend files. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `eslint`. Bypass: `--no-verify`.
 
 ### Backend Validation
-Run linter (`golangci-lint`, `staticcheck`, and `govulncheck`), formatting, and test checks:
+Run scoped linter (`golangci-lint`, `staticcheck`, and `govulncheck`), formatting, and test checks:
 ```bash
-make be-ci
+make be-ci-new
 ```
 To run tests separately with code coverage:
 ```bash
-make test
+make test-new
 ```
 
 ### Frontend Validation
-Run the composite frontend gate (or individual commands in `frontend/`):
+Run the composite frontend gate (scopes to `frontend-next/` if it exists, falling back to legacy `frontend/`):
 ```bash
 make fe-ci
 ```
 
-Individual commands (run from `frontend/`):
+Individual commands (run from `frontend-next/`):
 ```bash
 bun run lint        # ESLint lint
 bun run format:check  # Prettier format check

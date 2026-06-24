@@ -202,24 +202,35 @@ Quick-reference for all tools used across the software development lifecycle.
 | Go arch lint | `go-arch-lint` | `.go-arch-lint.yml` |
 | Security scan | `gosec` | `Makefile` / gates |
 
-### CI Pipeline (`make ci`)
+### CI Pipeline (`make ci` / `make be-ci-new`)
 
-**`make ci`** runs the full gate: backend + frontend.
+During local development and PR verification, the CI pipeline is split into legacy blanket targets and scoped new-code targets:
 
-**Backend** (`make be-ci`):
+**New-Code Scoped CI** (`make be-ci-new`):
+```
+ci-mod → check-format-new → lint-new (staticcheck-new + golangci-lint-new + vet-new + vulncheck-new + gosec-new) → test-new
+```
+> This pipeline is scoped exclusively to `NEW_DIRS` (the vertical slices under `internal/`, bootstrap, core, config, platform, gates, etc.), avoiding failures on legacy code.
+
+**Legacy Blanket CI** (`make be-ci`):
 ```
 ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test
 ```
-> `check-format` verifies formatting without modifying. Use `make format` to auto-format before committing.
+> Runs checks across the entire codebase (informational, not blocking PRs).
 
 **Frontend** (`make fe-ci`):
 ```
 bun run lint → bun run format:check → tsc --noEmit → bun run test
 ```
+> Automatically targets the new `frontend-next/` directory if it exists, falling back to legacy `frontend/`, or skips if not scaffolded.
 
 ### Verification Gates (`make review-gates`)
 
-Go-based deterministic gates under `internal/gates/` (see [README](../../internal/gates/README.md)) enforce architectural and convention rules:
+Go-based deterministic gates under `internal/gates/` enforce architectural and convention rules. `make review-gates` is decoupled from the legacy CI and executes:
+1. `go build ./...` — Compiles all code (legacy + new) for build safety.
+2. `go run cmd/gates/main.go --all` — Runs the Go verification gates.
+3. `make be-ci-new` — Performs the scoped CI pipeline on the new codebase.
+4. `make fe-ci` — Performs the scoped CI pipeline on the frontend.
 
 | Gate | Tool/Fallback | What It Checks |
 |------|---------------|----------------|
@@ -230,7 +241,7 @@ Go-based deterministic gates under `internal/gates/` (see [README](../../interna
 | TDD | os.Stat | Test files exist per command/query |
 | Migrations | glob / grep | Migration naming (`NNNNNN_name.up.sql`), delimiter (`";"`) |
 | Security | gosec / custom AST | SQL concat, WebSocket CheckOrigin, bcrypt cost |
-| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` |
+| Branch | regex | Branch naming convention `<user>/<ticket>-<detail>` (includes `dev` scope support) |
 | Coverage | git worktree + go test | Test coverage threshold (>90%) |
 | ScopeDrift | git diff | Unplanned file changes |
 

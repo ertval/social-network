@@ -730,18 +730,18 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 
 ### 7.1 Go Backend Validation Pipeline
 
-#### 7.1.1 Static Analysis & Linting
+#### 7.1.1 Static Analysis & Scoped Linting
 - **Linter**: `golangci-lint` acts as the primary quality gate.
-  - Configuration: Defined in `.golangci.yml`. Enforces linters like `goimports`, `errcheck`, `staticcheck`, `revive`, and `govet`.
-  - Execution command: `golangci-lint run`
-- **Native compiler warnings**: `go vet ./...` runs in pre-commit hooks to identify compiler errors, variable shadowing, lock copying issues, and malformed logging calls.
-- **CVE Scan**: `govulncheck ./...` is run during CI and local builds to verify that third-party modules contain no known vulnerabilities.
-- **Architecture verification**: Deterministic Go gates in `internal/gates/` (see [README](../../internal/gates/README.md)) enforce boundary rules (D5), dependency DAG (D6), branch naming, security checks (gosec + custom AST), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`. JSON output with exit codes.
+  - Configuration: Defined in `.golangci.yml` (formatting linters disabled in golangci-lint to prevent conflicts; checked by standalone tools instead).
+  - Scoped execution command: `golangci-lint run --timeout=5m $(addsuffix /..., $(NEW_DIRS))` (runs as part of `make be-ci-new`).
+- **Native compiler warnings**: `go vet $(NEW_PKGS)` runs in scoped CI and hooks.
+- **CVE Scan**: `govulncheck $(NEW_PKGS) || true` is run during scoped CI and local builds to identify vulnerabilities without blocking PRs on stdlib issues.
+- **Architecture verification**: Deterministic Go gates in `internal/gates/` (see [README](../../internal/gates/README.md)) enforce boundary rules (D5), dependency DAG (D6), branch naming (including `dev` scope support), security checks (gosec + custom AST, scoped to new code), test coverage threshold, and scope drift detection. Run via `make review-gates` or `go run cmd/gates/main.go --all`.
 - **Pre-commit hooks**: Lefthook auto-formats staged files (gofumpt/goimports for BE, eslint + prettier for FE) on commit. Pre-push runs `go vet`, `go test -short`, `go build`, `go-arch-lint`, `tsc --noEmit`, `eslint`, `vitest`. Install: `make setup-hooks`.
 
 #### 7.1.2 Automated Testing
-- **Test suite runner**: `go test -race -v -coverprofile=coverage.out ./...`
-  - Runs all unit and integration tests under the Go race detector to expose potential data races.
+- **Test suite runner**: `go test -race -v -coverprofile=coverage.out $(NEW_PKGS)` (runs via `make test-new`).
+  - Runs all unit and integration tests of the new codebase under the Go race detector.
 - **Database Test Assertions**: Unit tests for SQL repository layers verify SQLite WAL settings and query isolation by ensuring the application runs migrations on a fresh memory/test DB file.
 - **WebSocket Verification**: Integration tests mock connection lifecycle events, WebSocket upgrades, token validations, and hub routing to prevent crashes.
 

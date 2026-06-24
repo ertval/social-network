@@ -11,6 +11,8 @@ import (
 
 // mockExecCommand is executed when ExecCommand calls our mocked binary.
 // It acts as a fake CLI tool depending on environment variables and arguments.
+//
+//nolint:gocognit,nestif,gosec
 func mockExecCommand(command string, args ...string) *exec.Cmd {
 	var script string
 

@@ -219,10 +219,7 @@ linters:
       - frontend/
 
 formatters:
-  enable:
-    - gofmt
-    - gofumpt
-    - goimports
+  enable: []
 
   exclusions:
     generated: lax

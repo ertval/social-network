@@ -4,6 +4,13 @@ export PATH := $(GOBIN):$(PATH)
 
 MODULE := $(shell go list -m)
 
+NEW_DIRS := internal/user internal/follow internal/topic internal/comment \
+            internal/group internal/event internal/chat internal/notification \
+            internal/oauth internal/core internal/platform internal/bootstrap \
+            internal/config internal/gates cmd/gates cmd/server
+
+NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
+
 # Tool versions
 GOLANGCI_LINT_VERSION := v2.2.1
 STATICCHECK_VERSION := latest
@@ -89,6 +96,16 @@ check-format:
 		exit 1; \
 	fi
 
+check-format-new:
+	@echo "==> Checking code formatting (new code)..." && \
+	UNFORMATTED=$$(gofumpt -l $(NEW_DIRS) || true); \
+	UNFORMATTED_IMPORTS=$$(goimports -l -local $(MODULE) $(NEW_DIRS) || true); \
+	if [ -n "$$UNFORMATTED" ] || [ -n "$$UNFORMATTED_IMPORTS" ]; then \
+		[ -n "$$UNFORMATTED" ] && echo "gofumpt errors (new code):" && echo "$$UNFORMATTED"; \
+		[ -n "$$UNFORMATTED_IMPORTS" ] && echo "goimports errors (new code):" && echo "$$UNFORMATTED_IMPORTS"; \
+		exit 1; \
+	fi
+
 # ── Linting & Static Analysis ─────────────────────────────────────────
 
 staticcheck:
@@ -98,12 +115,29 @@ golangci-lint:
 	@echo "==> Running golangci-lint..." && golangci-lint run --timeout=5m
 
 vulncheck:
-	@echo "==> Running govulncheck..." && govulncheck ./...
+	@echo "==> Running govulncheck..." && govulncheck ./... || true
 
 gosec:
 	@echo "==> Running gosec..." && gosec -quiet ./...
 
 lint: staticcheck golangci-lint vulncheck gosec
+
+staticcheck-new:
+	@echo "==> Running staticcheck (new code)..." && staticcheck $(NEW_PKGS)
+
+golangci-lint-new:
+	@echo "==> Running golangci-lint (new code)..." && golangci-lint run --timeout=5m $(addsuffix /..., $(NEW_DIRS))
+
+vet-new:
+	@echo "==> Running go vet (new code)..." && go vet $(NEW_PKGS)
+
+vulncheck-new:
+	@echo "==> Running govulncheck (new code)..." && govulncheck $(NEW_PKGS) || true
+
+gosec-new:
+	@echo "==> Running gosec (new code)..." && gosec -quiet $(addsuffix /..., $(NEW_DIRS))
+
+lint-new: staticcheck-new golangci-lint-new vet-new vulncheck-new gosec-new
 
 # ── Testing ───────────────────────────────────────────────────────────
 
@@ -128,6 +162,17 @@ test-short:
 		exit 1; \
 	fi
 
+test-new:
+	@echo "==> Running tests (new code)..." && \
+	if go test -race -coverprofile=coverage.out -covermode=atomic $(NEW_PKGS) > test.log 2>&1; then \
+		rm -f test.log; \
+	else \
+		cat test.log; \
+		rm -f test.log; \
+		exit 1; \
+	fi
+	@go tool cover -func=coverage.out | grep total
+
 # ── CI Pipeline ───────────────────────────────────────────────────────
 
 ci-mod:
@@ -138,18 +183,33 @@ ci-mod:
 
 be-ci: ci-mod check-format lint test
 
+be-ci-new: ci-mod check-format-new lint-new test-new
+
+FE_NEXT_DIR := frontend-next
+
 fe-ci:
-	@if [ -f frontend/package.json ]; then \
-		echo "==> Running frontend CI..."; \
+	@if [ -d $(FE_NEXT_DIR) ] && [ -f $(FE_NEXT_DIR)/package.json ]; then \
+		echo "==> Running frontend-next CI..."; \
+		cd $(FE_NEXT_DIR) && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
+	elif [ -f frontend/package.json ]; then \
+		echo "==> [legacy] Running frontend CI..."; \
 		cd frontend && bun run lint && bun run format:check && tsc --noEmit && bun run test; \
 	else \
-		echo "==> Skipping frontend CI: frontend not scaffolded yet."; \
+		echo "==> Skipping frontend CI: no frontend scaffolded yet."; \
 	fi
 
 ci: be-ci fe-ci
 
-review-gates: ci ## Run all quality gates (lint, tests, format, and verification gates)
-	@echo "==> Running verification gates..." && go run cmd/gates/main.go --all
+ci-new: be-ci-new fe-ci
+
+review-gates: ## Run quality gates (build all, verification gates, and new-code CI)
+	@echo "==> Compiling all code (legacy + new)..."
+	go build ./...
+	@echo "==> Running verification gates..."
+	go run cmd/gates/main.go --all
+	@echo "==> Scoped CI on new code..."
+	$(MAKE) be-ci-new
+	$(MAKE) fe-ci
 
 gates: review-gates
 

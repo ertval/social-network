@@ -101,24 +101,25 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 
 - **`make install`**: Install ALL project dependencies (Go modules, root JS tooling, `.env`, SSL certs, Go dev tools, git hooks, frontend deps). One command for new devs.
 - **`make setup`**: Install Go development tools + git hooks only (subset of `make install`).
-- **`make be-ci`**: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
-- **`make fe-ci`**: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
-- **`make review-gates`**: Full CI pipeline (BE + FE) + Go verification gates — `go run cmd/gates/main.go --all`.
+- **`make be-ci`**: Legacy blanket check: `ci-mod → check-format → lint (staticcheck + golangci-lint + govulncheck) → test`. (Use `make format` to auto-format.)
+- **`make be-ci-new`**: Scoped check for new vertical slices and new code: `ci-mod → check-format-new → lint-new (staticcheck-new + golangci-lint-new + vet-new + vulncheck-new + gosec-new) → test-new`.
+- **`make fe-ci`**: Frontend CI target. Scopes to `frontend-next/` (if it exists) or falls back to legacy `frontend/` or skips if neither exists. Runs: `bun run lint → bun run format:check → tsc --noEmit → bun run test`.
+- **`make review-gates`**: Decoupled from legacy CI. Gating pipeline: compiles all code (`go build ./...` for sanity), runs Go verification gates (`go run cmd/gates/main.go --all`), and executes new-code scoped checks (`be-ci-new` and `fe-ci`).
 - **`make setup-hooks`**: Install lefthook pre-commit/pre-push hooks.
 - **Standalone commands** (when not using `make`):
   ```
-  go vet ./...
+  go vet $(NEW_PKGS)
   go build ./...
-  go test -race -coverprofile=coverage.out ./...
-  golangci-lint run
-  govulncheck ./...
+  go test -race -coverprofile=coverage.out $(NEW_PKGS)
+  golangci-lint run --timeout=5m $(addsuffix /..., $(NEW_DIRS))
+  govulncheck $(NEW_PKGS)
   go run cmd/gates/main.go --all
   ```
 - **Pre-commit hooks** (lefthook, staged files only):
   - Backend: `gofumpt -l {staged_files} | xargs -r gofumpt -w` + `goimports -w -local social-network {staged_files}` (`stage_fixed: true`).
   - Frontend: `prettier --write` + `eslint`.
 - **Pre-push hooks** (lefthook):
-  - Backend: `go vet ./...`, `go test -short ./...`, `go build ./...`, `go-arch-lint check`.
+  - Backend: `go vet $(NEW_PKGS)`, `go test -short $(NEW_PKGS)`, `go build ./...`, `go-arch-lint check`.
   - Frontend: `tsc --noEmit`, `bun run lint`, `bun run test`.
 - **D5 boundary check**:
   ```
@@ -156,7 +157,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
     - `ekaramet/S1-BE-05-db-factory`
     - `dkotsi/S3-FE-14-follow-button`
     - `smichail/42-oauth-scan-fix`
-- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`. (`vote` absorbed into `topic/` and `comment/`.)
+- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`, `dev`. (`vote` absorbed into `topic/` and `comment/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
 <!-- @section:rules-git:end -->
 
