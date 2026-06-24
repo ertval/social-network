@@ -22,7 +22,7 @@ Catch violations early — at commit time, pre-push, and CI — before code reac
 | 10 | `scope-drift` | `gate_scopedrift.go` | Scope Drift | Advisory: files changed vs base branch count |
 | 11 | `format` | `gate_format.go` | Code Formatting | Checks formatting via `gofumpt` and `goimports` |
 | 12 | `lint` | `gate_lint.go` | Code Quality / Lint | Checks Go code style using `golangci-lint` (or fallback tools `staticcheck` + `go vet`) |
-| 13 | `go-test` | `gate_unittest.go` | Go Unit Tests | Runs Go unit tests via `go test -race ./...` |
+| 13 | `go-test` | `gate_unittest.go` | Go Unit Tests | Runs Go unit tests via `go test -race <new_packages>` |
 | 14 | `frontend` | `gate_frontend.go` | Frontend CI | Runs lint, format, typecheck, and tests in frontend modules |
 
 ## File Map

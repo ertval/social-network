@@ -63,3 +63,26 @@ func TestGitHelpers_Empty(t *testing.T) {
 		t.Errorf("expected nil files for empty output, got: %v", files)
 	}
 }
+
+func TestGitHelpers_RepoRoot(t *testing.T) {
+	oldExec := ExecCommand
+	defer func() { ExecCommand = oldExec }()
+	ExecCommand = mockExecCommand
+
+	root := GitRepoRoot()
+	if root != "/mock/root" {
+		t.Errorf("expected /mock/root, got: %s", root)
+	}
+}
+
+func TestGitHelpers_RepoRootFail(t *testing.T) {
+	oldExec := ExecCommand
+	defer func() { ExecCommand = oldExec }()
+	ExecCommand = mockExecCommand
+
+	t.Setenv("MOCK_REV_FAIL", "1")
+	root := GitRepoRoot()
+	if root != "" {
+		t.Errorf("expected empty string on failure, got: %s", root)
+	}
+}

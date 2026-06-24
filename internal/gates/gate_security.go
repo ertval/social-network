@@ -38,7 +38,7 @@ func (g *SecurityGate) Run() Result {
 		// #nosec G204
 		cmd := ExecCommand("gosec", args...)
 		if _, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, "Run 'gosec -quiet ./...' to check details.")
+			errors = append(errors, "Run 'gosec -quiet <new_dirs>' to check details.")
 		}
 	}
 
@@ -50,7 +50,7 @@ func (g *SecurityGate) Run() Result {
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			if hasThirdPartyVulns(string(out)) {
-				errors = append(errors, "Run 'govulncheck ./...' to check details.")
+				errors = append(errors, "Run 'govulncheck <new_packages>' to check details.")
 			}
 		}
 	}
@@ -81,53 +81,71 @@ func (g *SecurityGate) Run() Result {
 }
 
 func (g *SecurityGate) runASTChecks() []string {
-	dir := g.InternalDir
-	if dir == "" {
-		dir = "internal"
-	}
-
 	var errors []string
 	fset := token.NewFileSet()
 
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		if os.IsNotExist(err) {
+	if g.InternalDir != "" {
+		return g.runTestASTChecks(fset, &errors)
+	}
+
+	return g.runProdASTChecks(fset, &errors)
+}
+
+func (g *SecurityGate) inspectFile(fset *token.FileSet, path string, errors *[]string) {
+	f, parseErr := parser.ParseFile(fset, path, nil, parser.AllErrors)
+	if parseErr != nil || f == nil {
+		return
+	}
+	ast.Inspect(f, func(n ast.Node) bool {
+		switch node := n.(type) {
+		case *ast.CallExpr:
+			*errors = append(*errors, checkSQLConcat(fset, node, path)...)
+			*errors = append(*errors, checkBcryptCost(fset, f, node, path)...)
+		case *ast.KeyValueExpr, *ast.AssignStmt, *ast.FuncDecl:
+			*errors = append(*errors, checkCheckOrigin(fset, node, path)...)
+		}
+		return true
+	})
+}
+
+func (g *SecurityGate) runTestASTChecks(fset *token.FileSet, errors *[]string) []string {
+	err := filepath.Walk(g.InternalDir, func(walkPath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
 			return nil
 		}
-		return []string{fmt.Sprintf("cannot read %s: %v", dir, err)}
-	}
-
-	inspectFile := func(path string) {
-		f, parseErr := parser.ParseFile(fset, path, nil, parser.AllErrors)
-		if parseErr != nil || f == nil {
-			return
+		if !strings.HasSuffix(walkPath, ".go") || strings.HasSuffix(walkPath, "_test.go") {
+			return nil
 		}
-		ast.Inspect(f, func(n ast.Node) bool {
-			switch node := n.(type) {
-			case *ast.CallExpr:
-				errors = append(errors, checkSQLConcat(fset, node, path)...)
-				errors = append(errors, checkBcryptCost(fset, f, node, path)...)
-			case *ast.KeyValueExpr, *ast.AssignStmt, *ast.FuncDecl:
-				errors = append(errors, checkCheckOrigin(fset, node, path)...)
-			}
-			return true
-		})
+		g.inspectFile(fset, walkPath, errors)
+		return nil
+	})
+	if err != nil && !os.IsNotExist(err) {
+		return []string{fmt.Sprintf("cannot read %s: %v", g.InternalDir, err)}
 	}
+	return *errors
+}
 
-	for _, e := range entries {
-		path := filepath.Join(dir, e.Name())
-		if !e.IsDir() {
-			if strings.HasSuffix(e.Name(), ".go") && !strings.HasSuffix(e.Name(), "_test.go") {
-				inspectFile(path)
+func (g *SecurityGate) runProdASTChecks(fset *token.FileSet, errors *[]string) []string {
+	for _, dir := range NewDirs {
+		info, err := os.Stat(dir)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return []string{fmt.Sprintf("cannot stat %s: %v", dir, err)}
+		}
+
+		if !info.IsDir() {
+			if strings.HasSuffix(dir, ".go") && !strings.HasSuffix(dir, "_test.go") {
+				g.inspectFile(fset, dir, errors)
 			}
 			continue
 		}
 
-		if !isFeatureSlice(dir, e.Name()) {
-			continue
-		}
-
-		_ = filepath.Walk(path, func(walkPath string, info os.FileInfo, err error) error {
+		err = filepath.Walk(dir, func(walkPath string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
@@ -137,12 +155,14 @@ func (g *SecurityGate) runASTChecks() []string {
 			if !strings.HasSuffix(walkPath, ".go") || strings.HasSuffix(walkPath, "_test.go") {
 				return nil
 			}
-			inspectFile(walkPath)
+			g.inspectFile(fset, walkPath, errors)
 			return nil
 		})
+		if err != nil {
+			return []string{fmt.Sprintf("cannot walk %s: %v", dir, err)}
+		}
 	}
-
-	return errors
+	return *errors
 }
 
 // checkSQLConcat detects fmt.Sprintf with SQL keywords (potential injection).

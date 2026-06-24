@@ -44,6 +44,16 @@ func GitBranch() string {
 	return strings.TrimSpace(string(out))
 }
 
+// GitRepoRoot returns the absolute path to the root of the git repository.
+func GitRepoRoot() string {
+	cmd := ExecCommand("git", "rev-parse", "--show-toplevel")
+	out, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
 // GitDiffFiles returns filenames changed between base..HEAD.
 func GitDiffFiles(base string) ([]string, error) {
 	// #nosec G204

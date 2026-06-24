@@ -8,6 +8,7 @@ package gates
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -17,11 +18,16 @@ type FrontendGate struct{}
 func (g *FrontendGate) Name() string { return "frontend" }
 
 func (g *FrontendGate) Run() Result {
+	root := GitRepoRoot()
+	if root == "" {
+		root = "."
+	}
+
 	var dir string
-	if _, err := os.Stat("frontend-next/package.json"); err == nil {
-		dir = "frontend-next"
-	} else if _, err := os.Stat("frontend/package.json"); err == nil {
-		dir = "frontend"
+	if _, err := os.Stat(filepath.Join(root, "frontend-next", "package.json")); err == nil {
+		dir = filepath.Join(root, "frontend-next")
+	} else if _, err := os.Stat(filepath.Join(root, "frontend", "package.json")); err == nil {
+		dir = filepath.Join(root, "frontend")
 	}
 
 	if dir == "" {

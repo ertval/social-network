@@ -39,7 +39,7 @@ Use the Gitea CLI (`tea`) to manage issues, pull requests, releases, and reposit
 ---
 
 ## 5. Git push last changes
-Always push after you made changes
+Always push after you made changes. Never use `--force` or `--force-with-lease`. Use softer ways to resolve conflicts, rebasing etc.
 
 ---
 

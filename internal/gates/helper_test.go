@@ -137,7 +137,11 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 					script = "echo 'feat(user): add auth handler'"
 				}
 			case "rev-parse":
-				if os.Getenv("MOCK_REV_MAIN") == "1" {
+				if os.Getenv("MOCK_REV_FAIL") == "1" {
+					script = "exit 1"
+				} else if len(args) > 1 && args[1] == "--show-toplevel" {
+					script = "echo '/mock/root'"
+				} else if os.Getenv("MOCK_REV_MAIN") == "1" {
 					script = "echo 'main'"
 				} else if os.Getenv("MOCK_REV_FAIL") == "1" {
 					script = "exit 1"

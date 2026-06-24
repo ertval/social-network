@@ -61,7 +61,9 @@ func (g *CoverageGate) Run() Result {
 
 func getBaselineCoverage(baseBranch string) (float64, error) {
 	tempDir := filepath.Join(os.TempDir(), "sn-gate-cov-base")
-	// Clean up stale tempdir from prior crashed runs
+	// Clean up stale tempdir and worktree registration from prior crashed runs
+	// #nosec G204
+	_ = ExecCommand("git", "worktree", "remove", "--force", tempDir).Run()
 	_ = os.RemoveAll(tempDir)
 	defer func() { _ = os.RemoveAll(tempDir) }()
 
@@ -78,8 +80,9 @@ func getBaselineCoverage(baseBranch string) (float64, error) {
 
 	// Run tests in worktree
 	covFile := filepath.Join(tempDir, "coverage.out")
+	args := append([]string{"test", "-coverprofile=" + covFile}, NewPkgs...)
 	// #nosec G204
-	testCmd := ExecCommand("go", "test", "-coverprofile="+covFile, "./...")
+	testCmd := ExecCommand("go", args...)
 	testCmd.Dir = tempDir
 	if err := testCmd.Run(); err != nil {
 		return 0, fmt.Errorf("go test in worktree: %w", err)
@@ -92,8 +95,9 @@ func getCurrentCoverage() (float64, error) {
 	covFile := filepath.Join(os.TempDir(), "sn-gate-cov-branch.out")
 	defer func() { _ = os.Remove(covFile) }()
 
+	args := append([]string{"test", "-coverprofile=" + covFile}, NewPkgs...)
 	// #nosec G204
-	testCmd := ExecCommand("go", "test", "-coverprofile="+covFile, "./...")
+	testCmd := ExecCommand("go", args...)
 	if err := testCmd.Run(); err != nil {
 		return 0, fmt.Errorf("go test: %w", err)
 	}

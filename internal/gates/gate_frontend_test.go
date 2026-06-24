@@ -15,6 +15,8 @@ func TestFrontendGate_Run(t *testing.T) {
 	}()
 	ExecCommand = mockExecCommand
 
+	t.Setenv("MOCK_REV_FAIL", "1")
+
 	g := &FrontendGate{}
 
 	// Scenario 1: No frontend exists

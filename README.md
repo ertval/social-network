@@ -255,10 +255,6 @@ make review-gates
 This runs the decoupled PR quality gate suite:
 1.  **`go build ./...`**: Compiles all Go packages (legacy + new) for basic build safety.
 2.  **`go run cmd/gates/main.go --all`**: Runs the custom Go verification gates.
-3.  **`make be-ci-new`**: Runs the scoped new-code CI pipeline:
-    `ci-mod → check-format-new → lint-new (staticcheck-new + golangci-lint-new + vet-new + vulncheck-new + gosec-new) → test-new`
-4.  **`make fe-ci`**: Runs the frontend CI pipeline (scopes to `frontend-next/` if it exists, falling back to legacy `frontend/`). Runs:
-    `bun run lint → bun run format:check → tsc --noEmit → bun run test`
 
 *Note: You can still run the legacy full-system check via `make ci` (runs blanket `make be-ci` + `make fe-ci`), which is informational and does not block PR gates.*
 
@@ -274,19 +270,23 @@ go run cmd/gates/main.go --all
 
 Individual gates:
 ```bash
-go run cmd/gates/main.go --gate=stack        # Go version + module path
-go run cmd/gates/main.go --gate=layout       # Directory structure (D1 layout)
-go run cmd/gates/main.go --gate=boundaries   # D5 import boundary rules
-go run cmd/gates/main.go --gate=dag          # D6 dependency graph acyclicity (supports go-arch-lint)
-go run cmd/gates/main.go --gate=tdd          # Test file presence
-go run cmd/gates/main.go --gate=migrations   # Migration naming/delimiter
-go run cmd/gates/main.go --gate=security     # gosec + custom AST checks (scoped to new code)
-go run cmd/gates/main.go --gate=branch       # branch naming convention (includes 'dev' scope)
-go run cmd/gates/main.go --gate=coverage     # test coverage threshold
-go run cmd/gates/main.go --gate=scopedrift   # scope creep detection
+go run cmd/gates/main.go --gate=stack           # Go version + module path
+go run cmd/gates/main.go --gate=d1-layout       # Directory structure (D1 layout)
+go run cmd/gates/main.go --gate=d5-boundaries   # D5 import boundary rules
+go run cmd/gates/main.go --gate=d6-dag          # D6 dependency graph acyclicity (supports go-arch-lint)
+go run cmd/gates/main.go --gate=tdd             # Test file presence
+go run cmd/gates/main.go --gate=migrations      # Migration naming/delimiter
+go run cmd/gates/main.go --gate=security        # gosec + govulncheck + custom AST checks (scoped to new code)
+go run cmd/gates/main.go --gate=branch          # branch naming convention (includes 'dev' scope)
+go run cmd/gates/main.go --gate=coverage-delta  # test coverage threshold
+go run cmd/gates/main.go --gate=scope-drift     # scope creep detection
+go run cmd/gates/main.go --gate=format          # code formatting (gofumpt / gofmt)
+go run cmd/gates/main.go --gate=lint            # code linting (golangci-lint / staticcheck / go vet)
+go run cmd/gates/main.go --gate=go-test         # Go unit tests
+go run cmd/gates/main.go --gate=frontend        # frontend CI checks (lint, format, tsc, test)
 ```
 
-Output is JSON with exit codes (0 = pass). Gates are also run via `make review-gates`.
+Default output is human-readable text; use `--json` for JSON format. Exit code is 0 on success, 1 on failure. Gates are also run via `make review-gates`.
 
 ### 🔗 Pre-commit & Pre-push Hooks (Lefthook)
 Quality hooks run automatically on staged files (pre-commit) and before push (pre-push):
