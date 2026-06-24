@@ -157,7 +157,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
     - `ekaramet/S1-BE-05-db-factory`
     - `dkotsi/S3-FE-14-follow-button`
     - `smichail/42-oauth-scan-fix`
-- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`, `dev`. (`vote` absorbed into `topic/` and `comment/`.)
+- **Commits**: Conventional Commits. Scopes: `user`, `topic`, `follow`, `group`, `event`, `chat`, `notification`, `oauth`, `core`, `platform`, `comment`, `dev`, `gates`. (`vote` absorbed into `topic/` and `comment/`.)
 - **PR template**: copy `.github/PULL_REQUEST_TEMPLATE.md` → `.git/PR_DESCRIPTION.md`, fill in.
 <!-- @section:rules-git:end -->
 

@@ -12,9 +12,10 @@ NEW_DIRS := internal/user internal/follow internal/topic internal/comment \
 NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
 
 # Tool versions (pinned for deterministic installs)
-GOLANGCI_LINT_VERSION := v2.2.1
+GOLANGCI_LINT_VERSION := v2.12.2
 STATICCHECK_VERSION := v0.7.0
 GOIMPORTS_VERSION := v0.46.0
+# golang.org/x/perf has no semver tags for subcommands; locked by go.sum on install
 BENCHSTAT_VERSION := latest
 GOVULNCHECK_VERSION := v1.4.0
 GOFUMPT_VERSION := v0.10.0
@@ -36,20 +37,35 @@ dev: ## Start development environment using Docker Compose with hot-reload
 # ── Tool Installation ─────────────────────────────────────────────────
 
 install: ## Install all dependencies (deterministic, like npm ci)
+	@echo "==> Checking prerequisites..."
+	@command -v go >/dev/null 2>&1 || { echo "Error: Go not found. Install Go >= 1.24."; exit 1; }
 	@echo "==> Installing Go module dependencies (from go.sum)..."
 	go mod download
 	@echo "==> Installing root JS tooling (from package-lock.json)..."
-	npm ci
+	@if [ -f package-lock.json ]; then \
+		npm ci; \
+	else \
+		echo "  [skip] no root package-lock.json found"; \
+	fi
 	@echo "==> Copying .env.example -> .env (if not exists)..."
-	cp -n .env.example .env 2>/dev/null || true
+	@if [ -f .env.example ]; then \
+		cp -n .env.example .env || true; \
+	else \
+		echo "  [skip] .env.example not found"; \
+	fi
 	@echo "==> Generating SSL certificates..."
 	bash scripts/makecerts.sh
 	@echo "==> Installing Go development tools..."
 	$(MAKE) tools
 	@echo "==> Installing git hooks..."
 	$(MAKE) setup-hooks
-	@if [ -f frontend/package.json ]; then \
+	@if [ -d frontend-next ] && [ -f frontend-next/package.json ]; then \
+		echo "==> Installing frontend-next dependencies..."; \
+		command -v bun >/dev/null 2>&1 || { echo "Error: bun not found. Install from https://bun.sh"; exit 1; }; \
+		cd frontend-next && bun install; \
+	elif [ -f frontend/package.json ]; then \
 		echo "==> Installing frontend dependencies..."; \
+		command -v bun >/dev/null 2>&1 || { echo "Error: bun not found. Install from https://bun.sh"; exit 1; }; \
 		cd frontend && bun install; \
 	else \
 		echo "==> [skip] frontend not scaffolded yet"; \
@@ -60,23 +76,22 @@ install: ## Install all dependencies (deterministic, like npm ci)
 setup: tools setup-hooks
 
 tools:
-	@echo "==> Installing Go tools..."
-	@which goimports >/dev/null 2>&1 && echo "  [skip] goimports already installed" || go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
-	@which staticcheck >/dev/null 2>&1 && echo "  [skip] staticcheck already installed" || go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
-	@which golangci-lint >/dev/null 2>&1 && echo "  [skip] golangci-lint already installed" || go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
-	@which govulncheck >/dev/null 2>&1 && echo "  [skip] govulncheck already installed" || go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
-	@which gofumpt >/dev/null 2>&1 && echo "  [skip] gofumpt already installed" || go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
-	@which gosec >/dev/null 2>&1 && echo "  [skip] gosec already installed" || go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
-	@which go-arch-lint >/dev/null 2>&1 && echo "  [skip] go-arch-lint already installed" || go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
+	@echo "==> Installing Go tools (pinned versions)..."
+	@go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
+	@go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	@go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	@go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
+	@go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
+	@go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
+	@go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
 
 setup-hooks:
 	@echo "==> Installing Lefthook hooks..."
-	@which lefthook >/dev/null 2>&1 && echo "  [skip] lefthook already installed" || go install github.com/evilmartians/lefthook/v2@$(LEFTHOOK_VERSION)
+	@go install github.com/evilmartians/lefthook/v2@$(LEFTHOOK_VERSION)
 	lefthook install
 
-bench-tools:
-	@echo "==> Installing benchmark tools..."
-	@which benchstat >/dev/null 2>&1 && echo "  [skip] benchstat already installed" || go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
+bench-tools: tools
 	@echo "For flame graphs: macOS: brew install graphviz | Ubuntu: sudo apt-get install graphviz"
 
 # ── Code Formatting ───────────────────────────────────────────────────

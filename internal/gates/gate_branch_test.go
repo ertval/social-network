@@ -63,6 +63,7 @@ func TestBranchGate_CommitPattern(t *testing.T) {
 		{"docs: replace all Biome references", true},
 		{"feat!: breaking change", true},
 		{"feat(user)!: breaking change with scope", true},
+		{"feat(gates): add source file line limit checks to lint gate", true},
 		{"invalid: commit msg", false},
 		{"feat(invalid_scope): msg", false},
 		{"Fixing code", false},
