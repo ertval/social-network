@@ -8,11 +8,17 @@ import (
 )
 
 func TestHighlightStatus(t *testing.T) {
+	saved := noColor
+	noColor = true
+	defer func() { noColor = saved }()
+
 	tests := []struct {
 		msg  string
 		want string
 	}{
 		{msg: "no pipes", want: "no pipes"},
+		{msg: "checked: formatting | why: consistency | status: OK - all good", want: "status: OK - all good | reason: Checks formatting consistency"},
+		{msg: "checked: lint | why: quality | status: FAIL - violations | debug: fix it", want: "status: FAIL - violations | reason: Checks lint quality | debug: fix it"},
 	}
 	noCol := func(s string) string { return s }
 	for _, tt := range tests {
@@ -33,11 +39,11 @@ func TestPlainMessage(t *testing.T) {
 	if !strings.Contains(got, "[PASS]") {
 		t.Errorf("plainMessage should contain [PASS], got: %q", got)
 	}
-	if !strings.Contains(got, "checked: Go formatting") {
-		t.Errorf("plainMessage should contain checked part, got: %q", got)
-	}
 	if !strings.Contains(got, "status: OK") {
-		t.Errorf("plainMessage should contain status findings, got: %q", got)
+		t.Errorf("plainMessage should have status first, got: %q", got)
+	}
+	if !strings.Contains(got, "reason: Checks Go formatting consistency") {
+		t.Errorf("plainMessage should contain merged reason, got: %q", got)
 	}
 	if !strings.Contains(got, "format") {
 		t.Errorf("plainMessage should contain gate name, got: %q", got)
@@ -51,8 +57,11 @@ func TestPlainMessage_FailWithDebug(t *testing.T) {
 		Message: "checked: lint checks | why: quality | status: FAIL - violations found | debug: run 'golangci-lint run'",
 	}
 	got := plainMessage(r)
+	if !strings.Contains(got, "status: FAIL - violations found") {
+		t.Errorf("plainMessage(FAIL) should show status first, got: %q", got)
+	}
 	if !strings.Contains(got, "debug:") {
-		t.Errorf("plainMessage(FAIL) should contain debug suggestion, got: %q", got)
+		t.Errorf("plainMessage(FAIL) should contain debug, got: %q", got)
 	}
 }
 

@@ -166,26 +166,46 @@ func main() {
 	os.Exit(2)
 }
 
-func highlightStatus(msg string, col func(string) string) string {
-	statusLabel := " | status: "
-	statusIdx := strings.Index(msg, statusLabel)
+func highlightStatus(msg string, _ func(string) string) string {
+	const (
+		checkedPrefix = "checked: "
+		whySep        = " | why: "
+		statusSep     = " | status: "
+		debugSep      = " | debug: "
+	)
+
+	statusIdx := strings.Index(msg, statusSep)
 	if statusIdx < 0 {
 		return msg
 	}
 
-	before := msg[:statusIdx]
-	rest := msg[statusIdx:]
-
-	// Check for debug portion after status
-	debugLabel := " | debug: "
-	debugIdx := strings.LastIndex(rest, debugLabel)
-	if debugIdx >= 0 {
-		statusSection := rest[:debugIdx]
-		afterSection := rest[debugIdx:]
-		return dim(before) + " " + col(bold(statusSection)) + dim(afterSection)
+	// Extract status findings (what was actually found)
+	debugIdx := strings.LastIndex(msg, debugSep)
+	var statusContent string
+	if debugIdx > statusIdx {
+		statusContent = strings.TrimSpace(msg[statusIdx+len(statusSep) : debugIdx])
+	} else {
+		statusContent = strings.TrimSpace(msg[statusIdx+len(statusSep):])
 	}
 
-	return dim(before) + " " + col(bold(rest))
+	var b strings.Builder
+	b.WriteString(bold("status: " + statusContent))
+
+	// Merge checked + why into reason prose
+	checkedIdx := strings.Index(msg, checkedPrefix)
+	whyIdx := strings.Index(msg, whySep)
+	if checkedIdx >= 0 && whyIdx >= 0 && whyIdx > checkedIdx && statusIdx > whyIdx {
+		what := strings.TrimSpace(msg[checkedIdx+len(checkedPrefix) : whyIdx])
+		why := strings.TrimSpace(msg[whyIdx+len(whySep) : statusIdx])
+		what = strings.TrimRight(what, ".")
+		b.WriteString(dim(" | reason: Checks " + what + " " + why))
+	}
+
+	if debugIdx >= 0 {
+		b.WriteString(dim(msg[debugIdx:]))
+	}
+
+	return b.String()
 }
 
 func printResult(result gates.Result) {
@@ -251,7 +271,8 @@ func statusIconPlain(status string) string {
 
 func plainMessage(result gates.Result) string {
 	icon := statusIconPlain(result.Status)
-	return fmt.Sprintf("  %s %-20s %s", icon, result.Gate, result.Message)
+	display := highlightStatus(result.Message, nil)
+	return fmt.Sprintf("  %s %-20s %s", icon, result.Gate, display)
 }
 
 func plainHeader() string {
