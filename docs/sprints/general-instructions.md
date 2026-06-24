@@ -207,11 +207,11 @@ Maps each audit checklist item to a frontend component/page:
 ### F5: Frontend Project Structure (REQUIRED)
 
 Define the directory mapping:
-- `frontend/src/app/` (routes)
-- `frontend/src/components/ui/` (shadcn primitives)
-- `frontend/src/components/features/` (domain-specific composables: `auth`, `profile`, `post`, `group`, `chat`, `notification`)
-- `frontend/src/lib/` (API client, session cookies helper, WS coordinator)
-- `frontend/src/styles/` (Tailwind globals)
+- `frontend-next/src/app/` (routes)
+- `frontend-next/src/components/ui/` (shadcn primitives)
+- `frontend-next/src/components/features/` (domain-specific composables: `auth`, `profile`, `post`, `group`, `chat`, `notification`)
+- `frontend-next/src/lib/` (API client, session cookies helper, WS coordinator)
+- `frontend-next/src/styles/` (Tailwind globals)
 
 ### F6: Frontend Build & Deploy (REQUIRED)
 
@@ -257,8 +257,9 @@ Define the directory mapping:
 make review-gates
 
 # Or individually:
-make be-ci   # Backend only
-make fe-ci   # Frontend only
+make be-ci   # Legacy blanket check
+make be-ci-new   # Scoped new-code CI
+make fe-ci   # Frontend CI (scoped to frontend-next/ if it exists)
 
 # Go verification gates (architecture, security, conventions)
 make review-gates
@@ -270,13 +271,20 @@ grep -rn 'import' internal/*/transport/ internal/*/store/ | grep 'internal/' | g
 
 Equivalent standalone commands if running without `make`:
 ```bash
-go vet ./...
+go vet $(NEW_PKGS)
 go build ./...
-go test -race -coverprofile=coverage.out ./...
-golangci-lint run
-govulncheck ./...
+go test -race -coverprofile=coverage.out $(NEW_PKGS)
+golangci-lint run --timeout=5m $(addsuffix /..., $(NEW_DIRS))
+govulncheck $(NEW_PKGS)
 go run cmd/gates/main.go --all
 ```
+
+Scoped CI targets (`make be-ci-new`) execute:
+```bash
+ci-mod → check-format-new → lint-new (staticcheck-new + golangci-lint-new + vet-new + vulncheck-new + gosec-new) → test-new
+```
+
+`NEW_DIRS` and `NEW_PKGS` are defined in the Makefile and list all new vertical-slice packages under `internal/`: `internal/user`, `internal/follow`, `internal/topic`, `internal/comment`, `internal/group`, `internal/event`, `internal/chat`, `internal/notification`, `internal/oauth`, `internal/core`, `internal/platform`, `internal/bootstrap`, `internal/config`, `internal/gates`, `cmd/gates`, `cmd/server`.
 
 ### Q3: Manual Smoke Test Scenarios
 
@@ -332,7 +340,7 @@ Run these after each feature migration to catch regression:
 type(scope)[<ID>]: description
 
 type: feat, fix, refactor, test, chore, docs
-scope: feature name (user, topic, follow, group, event, chat, notification, oauth, core, platform)
+scope: feature name (user, topic, follow, group, event, chat, notification, oauth, core, platform, comment, dev)
 ```
 
 Examples:
