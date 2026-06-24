@@ -4,7 +4,7 @@ pre-commit:
   jobs:
     - name: go-format
       glob: "*.go"
-      run: gofumpt -l {staged_files} | xargs -r gofumpt -w && goimports -w -local social-network {staged_files}
+      run: GOFUMPT=$(go env GOPATH)/bin/gofumpt GOIMPORTS=$(go env GOPATH)/bin/goimports; $GOFUMPT -l {staged_files} | xargs -r $GOFUMPT -w && $GOIMPORTS -w -local social-network {staged_files}
       stage_fixed: true
 
 pre-push:
