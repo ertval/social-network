@@ -31,7 +31,7 @@ func iconFor(status string) string {
 	m := map[string]string{
 		"PASS": "\u2705",
 		"FAIL": "\u274C",
-		"SKIP": "\u23ED\uFE0F",
+		"SKIP": "\u2796",
 	}
 	if noColor {
 		m2 := map[string]string{
@@ -57,6 +57,15 @@ func colorFor(status string) func(string) string {
 	}
 }
 
+func printHeader() {
+	sep := dim(strings.Repeat("━", 48))
+	fmt.Println()
+	fmt.Printf("  %s\n", sep)
+	fmt.Printf("  %s %s\n", bold(" 🔍  Review Gates"), dim("— Code quality verification"))
+	fmt.Printf("  %s\n", sep)
+	fmt.Println()
+}
+
 //nolint:nestif
 func main() {
 	all := flag.Bool("all", false, "run all gates")
@@ -78,7 +87,7 @@ func main() {
 	runner.Register(&gates.ScopeDriftGate{})
 	runner.Register(&gates.CoverageGate{})
 	runner.Register(&gates.FormatGate{})
-	runner.Register(&gates.LintGate{})
+	runner.Register(&gates.LintGate{MaxLines: 400})
 	runner.Register(&gates.UnitTestGate{})
 	runner.Register(&gates.FrontendGate{})
 
@@ -96,6 +105,7 @@ func main() {
 				os.Exit(2)
 			}
 		} else {
+			printHeader()
 			printResult(result)
 			printSummary(report)
 		}
@@ -108,6 +118,8 @@ func main() {
 
 	if *all || flag.NArg() == 0 {
 		if !*jsonOutput {
+			printHeader()
+
 			runner.OnResult = func(result gates.Result) {
 				printResult(result)
 			}

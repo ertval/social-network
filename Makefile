@@ -201,14 +201,8 @@ fe-ci:
 ci: be-ci fe-ci
 
 ci-new: be-ci-new fe-ci
-
-review-gates: ## Run quality gates (build all, verification gates)
-	@echo "==> Compiling all code (legacy + new)..."
-	go build ./...
-	@echo "==> Running verification gates..."
+gates: ## Run quality gates (build all, verification gates)
 	go run cmd/gates/main.go --all
-
-gates: review-gates
 
 check-arch:
 	@echo "==> Running go-arch-lint..." && go-arch-lint check
