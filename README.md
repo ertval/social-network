@@ -274,7 +274,7 @@ We enforce strict validation pipelines to ensure codebase stability.
 Run the automated check suite locally before pushing:
 
 ```bash
-make review-gates
+make gates
 ```
 
 This runs the decoupled PR quality gate suite:
@@ -314,7 +314,7 @@ go run cmd/gates/main.go --gate=go-test         # Go unit tests
 go run cmd/gates/main.go --gate=frontend        # frontend CI checks (lint, format, tsc, test)
 ```
 
-Default output is human-readable text; use `--json` for JSON format. Exit code is 0 on success, 1 on failure. Gates are also run via `make review-gates`.
+Default output is human-readable text; use `--json` for JSON format. Exit code is 0 on success, 1 on failure. Gates are also run via `make gates`.
 
 ### 🔗 Pre-commit & Pre-push Hooks (Lefthook)
 

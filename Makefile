@@ -223,9 +223,9 @@ ci: be-ci fe-ci
 
 ci-new: be-ci-new fe-ci
 
-# Run all verification gates
-# (infra → quality → tests → architecture → security → diff → frontend)
-gates: go run cmd/gates/main.go --all
+# Run all verification gates (new code only: format, lint, test, security, architecture)
+gates:
+	go run cmd/gates/main.go --all
 
 check-arch:
 	@echo "==> Running go-arch-lint..." && go-arch-lint check
@@ -329,9 +329,11 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: install env dev setup tools setup-hooks bench-tools \
-	format check-format staticcheck golangci-lint vulncheck gosec lint \
-	test test-short \
-	ci-mod be-ci fe-ci ci review-gates gates check-arch \
+	format check-format check-format-new staticcheck staticcheck-new \
+	golangci-lint golangci-lint-new vet-new vulncheck vulncheck-new \
+	gosec gosec-new lint lint-new \
+	test test-short test-new \
+	ci-mod be-ci be-ci-new fe-ci ci ci-new gates check-arch \
 	ci-bench bench-compare bench-profile bench-flame bench-clean \
 	build-backend build-frontend build \
 	run-backend run-frontend run run-all \

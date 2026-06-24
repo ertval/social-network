@@ -36,7 +36,7 @@ All quality gates are implemented as standard Go code within `internal/gates/` a
 
 ## Makefile Targets
 
-- `make review-gates`: Runs `go run cmd/gates/main.go --all`
+- `make gates`: Runs `go run cmd/gates/main.go --all`
 - `make ci`: Runs full backend CI checks (format, lint, test)
 - `make fe-ci`: Runs frontend ESLint + Prettier/Vitest/build checks
 - `make setup-hooks`: Installs and configures Lefthook hooks

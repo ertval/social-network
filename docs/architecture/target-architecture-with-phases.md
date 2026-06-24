@@ -125,12 +125,12 @@ Quick-reference for all tools across the software development lifecycle.
 | Dev TLS certs             | `openssl`             | `scripts/makecerts.sh` |
 | Task runner / CI pipeline | Makefile              | `Makefile` `ci` target |
 
-### CI Pipeline (`make review-gates` / `make be-ci-new`)
+### CI Pipeline (`make gates` / `make be-ci-new`)
 
 Local development and PR verification run the decoupled quality gate pipeline:
 
 ```bash
-make review-gates
+make gates
 ```
 
 This performs:

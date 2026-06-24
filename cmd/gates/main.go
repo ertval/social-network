@@ -66,7 +66,6 @@ func printHeader() {
 	fmt.Println()
 }
 
-//nolint:nestif
 func main() {
 	all := flag.Bool("all", false, "run all gates")
 	gate := flag.String("gate", "", "run a specific gate by name")

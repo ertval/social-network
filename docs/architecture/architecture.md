@@ -195,16 +195,16 @@ Quick-reference for all tools used across the software development lifecycle.
 
 ### Infrastructure & CI
 
-| Phase              | Tool                  | Where                     |
-| ------------------ | --------------------- | ------------------------- |
-| Containers         | Docker (multi-stage)  | `Dockerfile`              |
-| Orchestration      | Docker Compose v5.1.1 | `docker-compose.yml`      |
-| Dev TLS            | `openssl`             | `scripts/makecerts.sh`    |
-| CI pipeline        | Makefile `ci` target  | `Makefile`                |
-| Pre-commit hooks   | Lefthook              | `lefthook.yml`            |
-| Verification gates | `cmd/gates/main.go`   | `Makefile` `review-gates` |
-| Go arch lint       | `go-arch-lint`        | `.go-arch-lint.yml`       |
-| Security scan      | `gosec`               | `Makefile` / gates        |
+| Phase              | Tool                  | Where                  |
+| ------------------ | --------------------- | ---------------------- |
+| Containers         | Docker (multi-stage)  | `Dockerfile`           |
+| Orchestration      | Docker Compose v5.1.1 | `docker-compose.yml`   |
+| Dev TLS            | `openssl`             | `scripts/makecerts.sh` |
+| CI pipeline        | Makefile `ci` target  | `Makefile`             |
+| Pre-commit hooks   | Lefthook              | `lefthook.yml`         |
+| Verification gates | `cmd/gates/main.go`   | `make gates`           |
+| Go arch lint       | `go-arch-lint`        | `.go-arch-lint.yml`    |
+| Security scan      | `gosec`               | `Makefile` / gates     |
 
 ### CI Pipeline (`make ci` / `make be-ci-new`)
 
@@ -234,9 +234,9 @@ bun run lint → bun run format:check → tsc --noEmit → bun run test
 
 > Automatically targets the new `frontend-next/` directory if it exists, falling back to legacy `frontend/`, or skips if not scaffolded.
 
-### Verification Gates (`make review-gates`)
+### Verification Gates (`make gates`)
 
-Go-based deterministic gates under `internal/gates/` enforce architectural and convention rules. `make review-gates` is decoupled from the legacy CI and executes:
+Go-based deterministic gates under `internal/gates/` enforce architectural and convention rules. `make gates` is decoupled from the legacy CI and executes:
 
 1. `go build ./...` — Compiles all code (legacy + new) for build safety.
 2. `go run cmd/gates/main.go --all` — Runs the Go verification gates.
@@ -256,7 +256,7 @@ Go-based deterministic gates under `internal/gates/` enforce architectural and c
 | Coverage   | git worktree + go test       | Test coverage threshold (>90%)                                                     |
 | ScopeDrift | git diff                     | Unplanned file changes                                                             |
 
-Output: JSON with exit codes. Run via `make review-gates` or `go run cmd/gates/main.go --all`.
+Output: JSON with exit codes. Run via `make gates` or `go run cmd/gates/main.go --all`.
 
 ### Pre-commit / Pre-push Hooks (Lefthook)
 

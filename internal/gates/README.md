@@ -8,22 +8,22 @@ Catch violations early — at commit time, pre-push, and CI — before code reac
 
 ## Gate Catalog
 
-| # | Gate | File | Rule | What It Checks |
-|---|------|------|------|----------------|
-| 1 | `stack` | `gate_stack.go` | Stack Configuration | `go.mod` (Go version and module name), `.env` (SQLite WAL/busy timeout), Next.js frontend, and `internal/platform` readiness |
-| 2 | `d1-layout` | `gate_layout.go` | D1 — Vertical Slice Layout | Each feature has `<feature>.go`, `commands/`, `queries/`, `transport/`, `store/` |
-| 3 | `d5-boundaries` | `gate_boundaries.go` | D5 — Import Boundaries | No feature root/commands/queries imports own store/transport; no store imports commands/queries/transport |
-| 4 | `d6-dag` | `gate_dag.go` | D6 — Dependency DAG | Feature import graph acyclic (DFS cycle detection); no feature imports `notification` |
-| 5 | `tdd` | `gate_tdd.go` | Test Coverage per Slice | Each `commands/` dir with Go files must have matching `*_test.go` |
-| 6 | `migrations` | `gate_migrations.go` | Migration Integrity | Every `.up.sql` has matching `.down.sql`; no colon-terminated statements |
-| 7 | `security` | `gate_security.go` | Security & Vulns | `gosec` + `govulncheck` + AST checks: bcrypt cost ≥ 12, no SQL concat, no unconditional `CheckOrigin` |
-| 8 | `branch` | `gate_branch.go` | Branch & Commits | Branch matches `<user>/<ticket-ID>-<detail>`; commits follow Conventional Commits |
-| 9 | `coverage-delta` | `gate_coverage.go` | Coverage Threshold | Test coverage drop ≤ 5% vs base branch (git worktree) |
-| 10 | `scope-drift` | `gate_scopedrift.go` | Scope Drift | Advisory: files changed vs base branch count |
-| 11 | `format` | `gate_format.go` | Code Formatting | Checks formatting via `gofumpt` and `goimports` |
-| 12 | `lint` | `gate_lint.go` | Code Quality / Lint | Checks Go code style using `golangci-lint` (or fallback tools `staticcheck` + `go vet`) |
-| 13 | `go-test` | `gate_unittest.go` | Go Unit Tests | Runs Go unit tests via `go test -race <new_packages>` |
-| 14 | `frontend` | `gate_frontend.go` | Frontend CI | Runs lint, format, typecheck, and tests in frontend modules |
+| #   | Gate             | File                 | Rule                       | What It Checks                                                                                                               |
+| --- | ---------------- | -------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `stack`          | `gate_stack.go`      | Stack Configuration        | `go.mod` (Go version and module name), `.env` (SQLite WAL/busy timeout), Next.js frontend, and `internal/platform` readiness |
+| 2   | `d1-layout`      | `gate_layout.go`     | D1 — Vertical Slice Layout | Each feature has `<feature>.go`, `commands/`, `queries/`, `transport/`, `store/`                                             |
+| 3   | `d5-boundaries`  | `gate_boundaries.go` | D5 — Import Boundaries     | No feature root/commands/queries imports own store/transport; no store imports commands/queries/transport                    |
+| 4   | `d6-dag`         | `gate_dag.go`        | D6 — Dependency DAG        | Feature import graph acyclic (DFS cycle detection); no feature imports `notification`                                        |
+| 5   | `tdd`            | `gate_tdd.go`        | Test Coverage per Slice    | Each `commands/` dir with Go files must have matching `*_test.go`                                                            |
+| 6   | `migrations`     | `gate_migrations.go` | Migration Integrity        | Every `.up.sql` has matching `.down.sql`; no colon-terminated statements                                                     |
+| 7   | `security`       | `gate_security.go`   | Security & Vulns           | `gosec` + `govulncheck` + AST checks: bcrypt cost ≥ 12, no SQL concat, no unconditional `CheckOrigin`                        |
+| 8   | `branch`         | `gate_branch.go`     | Branch & Commits           | Branch matches `<user>/<ticket-ID>-<detail>`; commits follow Conventional Commits                                            |
+| 9   | `coverage-delta` | `gate_coverage.go`   | Coverage Threshold         | Test coverage drop ≤ 5% vs base branch (git worktree)                                                                        |
+| 10  | `scope-drift`    | `gate_scopedrift.go` | Scope Drift                | Advisory: files changed vs base branch count                                                                                 |
+| 11  | `format`         | `gate_format.go`     | Code Formatting            | Checks formatting via `gofumpt` and `goimports`                                                                              |
+| 12  | `lint`           | `gate_lint.go`       | Code Quality / Lint        | Checks Go code style using `golangci-lint` (or fallback tools `staticcheck` + `go vet`)                                      |
+| 13  | `go-test`        | `gate_unittest.go`   | Go Unit Tests              | Runs Go unit tests via `go test -race <new_packages>`                                                                        |
+| 14  | `frontend`       | `gate_frontend.go`   | Frontend CI                | Runs lint, format, typecheck, and tests in frontend modules                                                                  |
 
 ## File Map
 
@@ -69,7 +69,7 @@ internal/gates/
 
 ```bash
 # All gates (human-readable text default)
-make review-gates
+make gates
 # or
 go run cmd/gates/main.go --all
 
@@ -83,6 +83,7 @@ go run cmd/gates/main.go --gate=boundaries
 ## Output Format
 
 By default, the runner prints a color-coded summary with emoji indicators:
+
 - ✅ Green bold gate name + dimmed detail message
 - ❌ Red bold gate name + error details
 - ⏭️ Yellow bold gate name + skip reason

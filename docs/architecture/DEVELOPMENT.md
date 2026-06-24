@@ -160,7 +160,7 @@ Before pushing code or opening a pull request, ensure it passes all verification
 ### Full CI Pipeline & Gates
 
 ```bash
-make review-gates
+make gates
 ```
 
 Decoupled from legacy blanket check. Performs:
@@ -177,7 +177,7 @@ _Note: You can run legacy blanket checks via `make ci` (runs `make be-ci` + `mak
 Deterministic Go-based gates under `internal/gates/` (see [README](../../internal/gates/README.md)) enforce architectural and convention rules:
 
 ```bash
-make review-gates
+make gates
 # Or directly: go run cmd/gates/main.go --all
 ```
 
