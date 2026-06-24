@@ -128,8 +128,8 @@ func (g *StackGate) checkGoMod(goModPath string) (string, string, error) {
 		}
 	}
 
-	if !strings.HasPrefix(goVersion, "1.24") {
-		return goVersion, modulePath, fmt.Errorf("expected Go 1.24 in go.mod, got %s", goVersion)
+	if !strings.HasPrefix(goVersion, "1.25") {
+		return goVersion, modulePath, fmt.Errorf("expected Go 1.25 in go.mod, got %s", goVersion)
 	}
 	return goVersion, modulePath, nil
 }

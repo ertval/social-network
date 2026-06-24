@@ -8,7 +8,7 @@ import (
 
 func TestRunnerRunAll(t *testing.T) {
 	runner := NewRunner()
-	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.24\n")})
+	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.25\n")})
 
 	report := runner.RunAll()
 	if report.Overall != "PASS" {
@@ -21,7 +21,7 @@ func TestRunnerRunAll(t *testing.T) {
 
 func TestRunnerRunOne(t *testing.T) {
 	runner := NewRunner()
-	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.24\n")})
+	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.25\n")})
 
 	result, err := runner.RunOne("stack")
 	if err != nil {
@@ -56,7 +56,7 @@ func TestWriteJSON(t *testing.T) {
 
 func TestRunnerOnResult(t *testing.T) {
 	runner := NewRunner()
-	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.24\n")})
+	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.25\n")})
 
 	var called bool
 	var calledWith Result

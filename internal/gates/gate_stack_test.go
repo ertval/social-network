@@ -52,7 +52,7 @@ func createMockStack(t *testing.T, goModContent, envContent string, createPlatfo
 }
 
 func TestStackGate_Pass_NoFrontend(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_journal_mode=WAL&_busy_timeout=5000\n"
 	dir := createMockStack(t, goMod, env, true, "", "", false)
 
@@ -73,7 +73,7 @@ func TestStackGate_Pass_NoFrontend(t *testing.T) {
 }
 
 func TestStackGate_Pass_WithValidFrontend(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_journal_mode=WAL&_busy_timeout=5000\n"
 	pkg := `{"dependencies": {"next": "^14.0.0", "tailwindcss": "^3.0.0"}}`
 	dir := createMockStack(t, goMod, env, true, "frontend-next", pkg, true)
@@ -110,13 +110,13 @@ func TestStackGate_Fail_WrongGoVersion(t *testing.T) {
 	if res.Status != "FAIL" {
 		t.Errorf("expected FAIL, got %s: %s", res.Status, res.Message)
 	}
-	if !strings.Contains(res.Message, "expected Go 1.24 in go.mod") {
-		t.Errorf("expected Go 1.24 error in message, got: %s", res.Message)
+	if !strings.Contains(res.Message, "expected Go 1.25 in go.mod") {
+		t.Errorf("expected Go 1.25 error in message, got: %s", res.Message)
 	}
 }
 
 func TestStackGate_Fail_MissingWAL(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_busy_timeout=5000\n"
 	dir := createMockStack(t, goMod, env, true, "", "", false)
 
@@ -136,7 +136,7 @@ func TestStackGate_Fail_MissingWAL(t *testing.T) {
 }
 
 func TestStackGate_Fail_MissingBusyTimeout(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_journal_mode=WAL\n"
 	dir := createMockStack(t, goMod, env, true, "", "", false)
 
@@ -156,7 +156,7 @@ func TestStackGate_Fail_MissingBusyTimeout(t *testing.T) {
 }
 
 func TestStackGate_Fail_MissingPlatform(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_journal_mode=WAL&_busy_timeout=5000\n"
 	dir := createMockStack(t, goMod, env, false, "", "", false)
 
@@ -176,7 +176,7 @@ func TestStackGate_Fail_MissingPlatform(t *testing.T) {
 }
 
 func TestStackGate_Fail_InvalidFrontend(t *testing.T) {
-	goMod := "module social-network\ngo 1.24\n"
+	goMod := "module social-network\ngo 1.25\n"
 	env := "DB_DRIVER=sqlite3\nDB_PRAGMA=_foreign_keys=on&_journal_mode=WAL&_busy_timeout=5000\n"
 	// Missing tailwind, missing bun lockfile
 	pkg := `{"dependencies": {"next": "^14.0.0"}}`

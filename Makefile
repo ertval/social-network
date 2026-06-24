@@ -38,7 +38,7 @@ dev: ## Start development environment using Docker Compose with hot-reload
 
 install: ## Install all dependencies (deterministic, like npm ci)
 	@echo "==> Checking prerequisites..."
-	@command -v go >/dev/null 2>&1 || { echo "Error: Go not found. Install Go >= 1.24."; exit 1; }
+	@command -v go >/dev/null 2>&1 || { echo "Error: Go not found. Install Go >= 1.25."; exit 1; }
 	@GOBIN=$$(go env GOPATH)/bin; \
 	echo "$$PATH" | tr ':' '\n' | grep -qxF "$$GOBIN" || { \
 		echo "  ⚠️  $$GOBIN not in PATH. Add to ~/.zshrc:"; \

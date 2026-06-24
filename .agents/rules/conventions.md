@@ -9,6 +9,7 @@ description: Coding conventions for Go/SQLite/Next.js social network. Loaded by 
 Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) for detailed workflows.
 
 <!-- @section:rules-core — D1-D6, security, TDD (needed by all agents) -->
+
 ## 0. Naming Conventions
 
 - **Go struct fields**: use `username` in domain structs.
@@ -18,7 +19,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 
 ## 1. Stack
 
-- **Go 1.24**, stdlib preferred, `slog` logging, `kin-openapi` validation.
+- **Go 1.25**, stdlib preferred, `slog` logging, `kin-openapi` validation.
 - **Module path**: `social-network`. **Entry point**: `cmd/server/main.go`.
 - **SQLite**: WAL mode, busy timeout, `db.SetMaxOpenConns(1)`. Tests use in-memory instances.
 - **Frontend**: Next.js, TailwindCSS, `shadcn/ui`, ESLint + Prettier. Vitest (planned) + React Testing Library + Playwright (planned).
@@ -50,6 +51,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 5. Monitor for regressions.
 6. Delete OLD code only after full verification. No partial deletion — old code stays until ALL its features are migrated.
 7. Delete contract tests after old code removed.
+
 - **Route prefixes**: new = `/api/`, legacy = `/api/v1/`. Both coexist during migration.
 
 ## 4. TDD & Go Style
@@ -83,6 +85,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 <!-- @section:rules-core:end -->
 
 <!-- @section:rules-fe — Frontend standards (needed by FE agents) -->
+
 ## 7. Frontend
 
 - **Structure**: `src/app/`, `src/components/ui/`, `src/components/features/`, `src/lib/`, `src/styles/`.
@@ -97,6 +100,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 <!-- @section:rules-fe:end -->
 
 <!-- @section:rules-ci — CI gates, build commands (needed by gate-running agents) -->
+
 ## 8. CI & Verification
 
 - **`make install`**: Install ALL project dependencies (Go modules, root JS tooling, `.env`, SSL certs, Go dev tools, git hooks, frontend deps). One command for new devs.
@@ -128,7 +132,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 - **Go verification gates** (`cmd/gates/main.go`). See [README](../../internal/gates/README.md) for full catalog, file map, and architecture:
   | Gate | Check | Tool/Fallback |
   |------|-------|---------------|
-  | Stack | Go version ≥ 1.24, module path | go version / go.mod |
+  | Stack | Go version ≥ 1.25, module path | go version / go.mod |
   | Layout | target directory structure | os.Stat |
   | Boundaries | D5 forbidden imports | golangci-lint depguard / AST |
   | DAG | D6 acyclic dependencies | go-arch-lint / DFS |
@@ -144,6 +148,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 <!-- @section:rules-ci:end -->
 
 <!-- @section:rules-git — Branch naming, commits, PRs (needed by publish) -->
+
 ## 9. Git & PRs
 
 - **Trunk-based**: feature branches ≤ 3 days. Squash merge into `main`.
@@ -162,6 +167,7 @@ Refer to [general-instructions.md](../../docs/sprints/general-instructions.md) f
 <!-- @section:rules-git:end -->
 
 <!-- @section:rules-dod — Definition of Done checklist (needed by review agents) -->
+
 ## 10. Definition of Done
 
 - [ ] D5 boundary rules pass (no cross-slice transport/store imports).
