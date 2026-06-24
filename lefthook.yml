@@ -19,4 +19,4 @@ pre-push:
   parallel: false
   jobs:
     - name: gates
-      run: go run ./cmd/gates/ --all
+      run: bash -o pipefail -c 'go run ./cmd/gates/ --all 2>&1 | tee -a .gates-report.log'
