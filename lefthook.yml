@@ -8,13 +8,7 @@ pre-commit:
       stage_fixed: true
 
 pre-push:
-  parallel: true
+  parallel: false
   jobs:
-    - name: go-vet
-      run: go vet ./...
-    - name: go-test
-      run: go test -short ./...
-    - name: go-build
-      run: go build ./...
-    - name: arch-lint
-      run: $(go env GOPATH)/bin/go-arch-lint check
+    - name: gates
+      run: go run ./cmd/gates/ --all
