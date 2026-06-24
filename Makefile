@@ -11,6 +11,8 @@ NEW_DIRS := internal/user internal/follow internal/topic internal/comment \
 
 NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
 
+FE_NEXT_DIR := frontend-next
+
 # Tool versions (pinned for deterministic installs)
 GOLANGCI_LINT_VERSION := v2.12.2
 STATICCHECK_VERSION := v0.7.0
@@ -206,8 +208,6 @@ be-ci: ci-mod check-format lint test
 
 be-ci-new: ci-mod check-format-new lint-new test-new
 
-FE_NEXT_DIR := frontend-next
-
 fe-ci:
 	@if [ -d $(FE_NEXT_DIR) ] && [ -f $(FE_NEXT_DIR)/package.json ]; then \
 		echo "==> Running frontend-next CI..."; \
@@ -222,8 +222,10 @@ fe-ci:
 ci: be-ci fe-ci
 
 ci-new: be-ci-new fe-ci
-gates: ## Run quality gates (build all, verification gates)
-	go run cmd/gates/main.go --all
+
+# Run all verification gates
+# (infra → quality → tests → architecture → security → diff → frontend)
+gates: go run cmd/gates/main.go --all
 
 check-arch:
 	@echo "==> Running go-arch-lint..." && go-arch-lint check

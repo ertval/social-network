@@ -75,7 +75,8 @@ func main() {
 
 	runner := gates.NewRunner()
 
-	// Register all gates (ordered: infra → quality → tests → architecture → security → diff → frontend)
+	// Register all gates
+	// infra → quality → tests → architecture → security → diff → frontend
 	runner.Register(&gates.StackGate{})
 	runner.Register(&gates.BranchGate{})
 	runner.Register(&gates.FormatGate{})
