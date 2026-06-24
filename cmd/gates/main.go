@@ -71,7 +71,12 @@ func main() {
 	all := flag.Bool("all", false, "run all gates")
 	gate := flag.String("gate", "", "run a specific gate by name")
 	jsonOutput := flag.Bool("json", false, "output in JSON format")
+	plainOutput := flag.Bool("plain", false, "plain ASCII output (for CI/lefthook)")
 	flag.Parse()
+
+	if *plainOutput {
+		noColor = true
+	}
 
 	runner := gates.NewRunner()
 
@@ -100,12 +105,17 @@ func main() {
 		}
 		report := gates.Report{Overall: result.Status, Gates: []gates.Result{result}}
 
-		if *jsonOutput {
+		switch {
+		case *jsonOutput:
 			if err := gates.WriteJSON(os.Stdout, report); err != nil {
 				fmt.Fprintf(os.Stderr, "error writing JSON: %v\n", err)
 				os.Exit(2)
 			}
-		} else {
+		case *plainOutput:
+			fmt.Print(plainHeader())
+			fmt.Println(plainMessage(result))
+			fmt.Print(plainSummary(report))
+		default:
 			printHeader()
 			printResult(result)
 			printSummary(report)
@@ -118,9 +128,16 @@ func main() {
 	}
 
 	if *all || flag.NArg() == 0 {
-		if !*jsonOutput {
+		switch {
+		case *jsonOutput:
+			runner.OnResult = nil
+		case *plainOutput:
+			fmt.Print(plainHeader())
+			runner.OnResult = func(result gates.Result) {
+				fmt.Println(plainMessage(result))
+			}
+		default:
 			printHeader()
-
 			runner.OnResult = func(result gates.Result) {
 				printResult(result)
 			}
@@ -128,12 +145,15 @@ func main() {
 
 		report := runner.RunAll()
 
-		if *jsonOutput {
+		switch {
+		case *jsonOutput:
 			if err := gates.WriteJSON(os.Stdout, report); err != nil {
 				fmt.Fprintf(os.Stderr, "error writing JSON: %v\n", err)
 				os.Exit(2)
 			}
-		} else {
+		case *plainOutput:
+			fmt.Print(plainSummary(report))
+		default:
 			printSummary(report)
 		}
 
@@ -143,7 +163,7 @@ func main() {
 		return
 	}
 
-	fmt.Fprintln(os.Stderr, "usage: gates --all | --gate=<name> [--json]")
+	fmt.Fprintln(os.Stderr, "usage: gates --all | --gate=<name> [--json] [--plain]")
 	os.Exit(2)
 }
 
@@ -196,4 +216,85 @@ func printSummary(report gates.Report) {
 		fmt.Printf("  %s %s %s\n", dim("┃"), red(iconFor("FAIL")), red(bold("Some gates failed — review above")))
 	}
 	fmt.Printf("  %s\n", sep)
+}
+
+// ── Plain ASCII output mode (for CI / lefthook) ────────────────
+
+func extractSuggestion(msg string) string {
+	if idx := strings.LastIndex(msg, "| debug: "); idx >= 0 {
+		return msg[idx+len("| debug: "):]
+	}
+	return ""
+}
+
+func extractReason(msg string) string {
+	idx := strings.Index(msg, " | status: ")
+	if idx < 0 {
+		return msg
+	}
+	after := msg[idx+len(" | status: "):]
+	statusEnd := strings.Index(after, " - ")
+	if statusEnd < 0 {
+		return after
+	}
+	reason := after[statusEnd+len(" - "):]
+	if debugIdx := strings.LastIndex(reason, " | debug: "); debugIdx >= 0 {
+		reason = reason[:debugIdx]
+	}
+	reason = strings.ReplaceAll(reason, "\n", " ")
+	return strings.TrimSpace(reason)
+}
+
+func statusIconPlain(status string) string {
+	switch status {
+	case "PASS":
+		return "[PASS]"
+	case "FAIL":
+		return "[FAIL]"
+	case "SKIP":
+		return "[SKIP]"
+	default:
+		return ""
+	}
+}
+
+func plainMessage(result gates.Result) string {
+	icon := statusIconPlain(result.Status)
+	reason := extractReason(result.Message)
+	suggestion := extractSuggestion(result.Message)
+
+	if result.Status == "FAIL" && suggestion != "" {
+		return fmt.Sprintf("  %s %-20s %s → %s", icon, result.Gate, reason, suggestion)
+	}
+	return fmt.Sprintf("  %s %-20s %s", icon, result.Gate, reason)
+}
+
+func plainHeader() string {
+	return "\n  ------------------------------------------------\n   Review Gates - Code quality verification\n  ------------------------------------------------\n\n"
+}
+
+func plainSummary(report gates.Report) string {
+	var pass, fail, skip int
+	for _, r := range report.Gates {
+		switch r.Status {
+		case "PASS":
+			pass++
+		case "FAIL":
+			fail++
+		case "SKIP":
+			skip++
+		}
+	}
+	total := pass + fail + skip
+
+	var b strings.Builder
+	b.WriteString("\n  ------------------------------------------------\n")
+	b.WriteString(fmt.Sprintf("  Results: %d passed, %d failed, %d skipped (%d total)\n", pass, fail, skip, total))
+	if report.Overall == "PASS" {
+		b.WriteString("  All gates passed\n")
+	} else {
+		b.WriteString("  Some gates failed - see above\n")
+	}
+	b.WriteString("  ------------------------------------------------\n")
+	return b.String()
 }

@@ -7,11 +7,11 @@ description: >
   when user asks for multi-model analysis, cross-model review, consensus
   finding, or mentions "orchestrate", "multi-model", "all models".
 triggers:
-  - "orchestrate"
-  - "multi-model"
-  - "all models"
-  - "cross-model review"
-  - "consensus"
+  - 'orchestrate'
+  - 'multi-model'
+  - 'all models'
+  - 'cross-model review'
+  - 'consensus'
 allowed-tools:
   - Task
   - Read
@@ -49,6 +49,7 @@ Spawn with subagent_type:
 ```
 
 Important:
+
 - Use `task` with `subagent_type` matching agent names above.
 - Pass the user's input verbatim inside the prompt.
 - Launch all 5 in parallel (single message, 5 tool calls).
@@ -75,6 +76,7 @@ Read each sub-agent's response. Each returns:
 ### 4. Deduplicate
 
 Merge findings across all 5 reports:
+
 - Group identical findings → keep one, note which models agreed
 - Merge similar findings → synthesize into single finding, list all models
 - Flag contradictory findings → keep both, note the contradiction
@@ -85,27 +87,32 @@ Categories to track: BUG, RISK, SUGGESTION, INSIGHT, QUESTION, INFO
 
 ### 5. Save Report
 
-Write final report to `./multi-model-report.md`:
+Write final report to `./multi-model-report_<datetime>.md`:
 
 ```markdown
 # Multi-Model Analysis Report
 
 ## Consensus Findings
+
 <findings where 3+ models agreed>
 
 ## Unique Findings
+
 <findings from 1-2 models>
 
 ## Contradictions
+
 <where models disagreed>
 
 ## Per-Model Summary
-| Model | #Findings | Key Insight |
-|-------|-----------|-------------|
-| DeepSeek V4 Flash | N | ... |
-| ... | ... | ... |
+
+| Model             | #Findings | Key Insight |
+| ----------------- | --------- | ----------- |
+| DeepSeek V4 Flash | N         | ...         |
+| ...               | ...       | ...         |
 
 ## Raw Reports
+
 <each sub-agent report appended>
 ```
 
@@ -122,6 +129,7 @@ Summarize outcome to user: file path + key consensus points.
 ## Agent Registration
 
 Sub-agent files live in `~/.config/opencode/agents/`:
+
 - `report-deepseek-v4-flash.md` — `opencode/deepseek-v4-flash-free`
 - `report-mimo-2.5.md` — `opencode/mimo-v2.5-free`
 - `report-big-pickle.md` — `opencode/big-pickle`
