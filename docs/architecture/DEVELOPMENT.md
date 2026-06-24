@@ -41,7 +41,7 @@ This runs:
 - `go mod download` — Go library dependencies
 - `npm ci` — Root JS tooling (from `package-lock.json`)
 - `cp -n .env.example .env` — Environment config (safe, won't overwrite)
-- `sh scripts/makecerts.sh` — SSL/TLS certificates for HTTPS/WSS
+- `bash scripts/makecerts.sh` — SSL/TLS certificates for HTTPS/WSS (idempotent: skips if certs exist)
 - `make tools` — Go development tools (`goimports`, `staticcheck`, `golangci-lint`, `govulncheck`, `gofumpt`, `gosec`, `go-arch-lint`)
 - `make setup-hooks` — Lefthook git hooks (pre-commit/pre-push)
 - `bun install` — Frontend dependencies

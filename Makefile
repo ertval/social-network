@@ -11,15 +11,16 @@ NEW_DIRS := internal/user internal/follow internal/topic internal/comment \
 
 NEW_PKGS := $(addprefix $(MODULE)/, $(NEW_DIRS))
 
-# Tool versions
+# Tool versions (pinned for deterministic installs)
 GOLANGCI_LINT_VERSION := v2.2.1
-STATICCHECK_VERSION := latest
-GOIMPORTS_VERSION := latest
+STATICCHECK_VERSION := v0.7.0
+GOIMPORTS_VERSION := v0.46.0
 BENCHSTAT_VERSION := latest
-GOVULNCHECK_VERSION := latest
-GOFUMPT_VERSION := latest
-GOSEC_VERSION := latest
-GOARCHLINT_VERSION := latest
+GOVULNCHECK_VERSION := v1.4.0
+GOFUMPT_VERSION := v0.10.0
+GOSEC_VERSION := v2.27.1
+GOARCHLINT_VERSION := v1.15.0
+LEFTHOOK_VERSION := v2.1.9
 
 # ── Environment ───────────────────────────────────────────────────────
 
@@ -42,7 +43,7 @@ install: ## Install all dependencies (deterministic, like npm ci)
 	@echo "==> Copying .env.example -> .env (if not exists)..."
 	cp -n .env.example .env 2>/dev/null || true
 	@echo "==> Generating SSL certificates..."
-	sh scripts/makecerts.sh 2>/dev/null || echo "     [skip] certs already exist"
+	bash scripts/makecerts.sh
 	@echo "==> Installing Go development tools..."
 	$(MAKE) tools
 	@echo "==> Installing git hooks..."
@@ -60,22 +61,22 @@ setup: tools setup-hooks
 
 tools:
 	@echo "==> Installing Go tools..."
-	go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
-	go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
-	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
-	go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
-	go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
-	go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
-	go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
+	@which goimports >/dev/null 2>&1 && echo "  [skip] goimports already installed" || go install golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
+	@which staticcheck >/dev/null 2>&1 && echo "  [skip] staticcheck already installed" || go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)
+	@which golangci-lint >/dev/null 2>&1 && echo "  [skip] golangci-lint already installed" || go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	@which govulncheck >/dev/null 2>&1 && echo "  [skip] govulncheck already installed" || go install golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION)
+	@which gofumpt >/dev/null 2>&1 && echo "  [skip] gofumpt already installed" || go install mvdan.cc/gofumpt@$(GOFUMPT_VERSION)
+	@which gosec >/dev/null 2>&1 && echo "  [skip] gosec already installed" || go install github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)
+	@which go-arch-lint >/dev/null 2>&1 && echo "  [skip] go-arch-lint already installed" || go install github.com/fe3dback/go-arch-lint@$(GOARCHLINT_VERSION)
 
 setup-hooks:
 	@echo "==> Installing Lefthook hooks..."
-	go install github.com/evilmartians/lefthook/v2@latest
+	@which lefthook >/dev/null 2>&1 && echo "  [skip] lefthook already installed" || go install github.com/evilmartians/lefthook/v2@$(LEFTHOOK_VERSION)
 	lefthook install
 
 bench-tools:
 	@echo "==> Installing benchmark tools..."
-	go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
+	@which benchstat >/dev/null 2>&1 && echo "  [skip] benchstat already installed" || go install golang.org/x/perf/cmd/benchstat@$(BENCHSTAT_VERSION)
 	@echo "For flame graphs: macOS: brew install graphviz | Ubuntu: sudo apt-get install graphviz"
 
 # ── Code Formatting ───────────────────────────────────────────────────
