@@ -53,3 +53,23 @@ func TestWriteJSON(t *testing.T) {
 		t.Errorf("unexpected JSON: %s", buf.String())
 	}
 }
+
+func TestRunnerOnResult(t *testing.T) {
+	runner := NewRunner()
+	runner.Register(&StackGate{GoModPath: createTempGoMod(t, "module social-network\n\ngo 1.24\n")})
+
+	var called bool
+	var calledWith Result
+	runner.OnResult = func(res Result) {
+		called = true
+		calledWith = res
+	}
+
+	_ = runner.RunAll()
+	if !called {
+		t.Error("expected OnResult callback to be called")
+	}
+	if calledWith.Gate != "stack" {
+		t.Errorf("expected callback with gate stack, got %s", calledWith.Gate)
+	}
+}

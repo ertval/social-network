@@ -57,6 +57,12 @@ func main() {
 	}
 
 	if *all || flag.NArg() == 0 {
+		if !*jsonOutput {
+			runner.OnResult = func(result gates.Result) {
+				printResult(result)
+			}
+		}
+
 		report := runner.RunAll()
 
 		if *jsonOutput {
@@ -64,8 +70,6 @@ func main() {
 				fmt.Fprintf(os.Stderr, "error writing JSON: %v\n", err)
 				os.Exit(2)
 			}
-		} else {
-			printTextReport(report)
 		}
 
 		if report.Overall == "FAIL" {
@@ -78,17 +82,21 @@ func main() {
 	os.Exit(2)
 }
 
+func printResult(result gates.Result) {
+	switch result.Status {
+	case "PASS":
+		fmt.Printf("[PASS] %s\n", result.Gate)
+	case "FAIL":
+		fmt.Printf("[FAIL] %s: %s\n", result.Gate, result.Message)
+	case "SKIP":
+		fmt.Printf("[SKIP] %s: %s\n", result.Gate, result.Message)
+	default:
+		fmt.Printf("[%s] %s: %s\n", result.Status, result.Gate, result.Message)
+	}
+}
+
 func printTextReport(report gates.Report) {
 	for _, result := range report.Gates {
-		switch result.Status {
-		case "PASS":
-			fmt.Printf("[PASS] %s\n", result.Gate)
-		case "FAIL":
-			fmt.Printf("[FAIL] %s: %s\n", result.Gate, result.Message)
-		case "SKIP":
-			fmt.Printf("[SKIP] %s: %s\n", result.Gate, result.Message)
-		default:
-			fmt.Printf("[%s] %s: %s\n", result.Status, result.Gate, result.Message)
-		}
+		printResult(result)
 	}
 }
