@@ -166,18 +166,35 @@ func main() {
 	os.Exit(2)
 }
 
+func highlightStatus(msg string, col func(string) string) string {
+	statusLabel := " | status: "
+	statusIdx := strings.Index(msg, statusLabel)
+	if statusIdx < 0 {
+		return msg
+	}
+
+	before := msg[:statusIdx]
+	rest := msg[statusIdx:]
+
+	// Check for debug portion after status
+	debugLabel := " | debug: "
+	debugIdx := strings.LastIndex(rest, debugLabel)
+	if debugIdx >= 0 {
+		statusSection := rest[:debugIdx]
+		afterSection := rest[debugIdx:]
+		return dim(before) + " " + col(bold(statusSection)) + dim(afterSection)
+	}
+
+	return dim(before) + " " + col(bold(rest))
+}
+
 func printResult(result gates.Result) {
 	status := result.Status
 	icon := iconFor(status)
 	col := colorFor(status)
-	msg := result.Message
+	display := highlightStatus(result.Message, col)
 
-	switch status {
-	case "PASS":
-		fmt.Printf("  %s %-20s %s\n", icon, col(bold(result.Gate)), dim(msg))
-	default:
-		fmt.Printf("  %s %-20s %s\n", icon, col(bold(result.Gate)), msg)
-	}
+	fmt.Printf("  %s %-20s %s\n", icon, col(bold(result.Gate)), display)
 }
 
 func printSummary(report gates.Report) {
@@ -219,31 +236,6 @@ func printSummary(report gates.Report) {
 
 // ── Plain ASCII output mode (for CI / lefthook) ────────────────
 
-func extractSuggestion(msg string) string {
-	if idx := strings.LastIndex(msg, "| debug: "); idx >= 0 {
-		return msg[idx+len("| debug: "):]
-	}
-	return ""
-}
-
-func extractReason(msg string) string {
-	idx := strings.Index(msg, " | status: ")
-	if idx < 0 {
-		return msg
-	}
-	after := msg[idx+len(" | status: "):]
-	statusEnd := strings.Index(after, " - ")
-	if statusEnd < 0 {
-		return after
-	}
-	reason := after[statusEnd+len(" - "):]
-	if debugIdx := strings.LastIndex(reason, " | debug: "); debugIdx >= 0 {
-		reason = reason[:debugIdx]
-	}
-	reason = strings.ReplaceAll(reason, "\n", " ")
-	return strings.TrimSpace(reason)
-}
-
 func statusIconPlain(status string) string {
 	switch status {
 	case "PASS":
@@ -259,13 +251,7 @@ func statusIconPlain(status string) string {
 
 func plainMessage(result gates.Result) string {
 	icon := statusIconPlain(result.Status)
-	reason := extractReason(result.Message)
-	suggestion := extractSuggestion(result.Message)
-
-	if result.Status == "FAIL" && suggestion != "" {
-		return fmt.Sprintf("  %s %-20s %s → %s", icon, result.Gate, reason, suggestion)
-	}
-	return fmt.Sprintf("  %s %-20s %s", icon, result.Gate, reason)
+	return fmt.Sprintf("  %s %-20s %s", icon, result.Gate, result.Message)
 }
 
 func plainHeader() string {
