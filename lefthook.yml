@@ -17,4 +17,4 @@ pre-push:
     - name: go-build
       run: go build ./...
     - name: arch-lint
-      run: go-arch-lint check
+      run: $(go env GOPATH)/bin/go-arch-lint check
