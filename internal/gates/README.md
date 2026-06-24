@@ -4,7 +4,7 @@ Deterministic Go-based validation gates enforcing architectural rules, security 
 
 ## Goal
 
-Catch violations early — at commit time, pre-push, and CI — before code reaches review. Gates replace subjective review with objective checks: boundary rules, dependency acyclicity, security patterns, branch naming, coverage thresholds, and scope drift.
+Catch violations early — at commit time, pre-push, and CI — before code reaches review. Gates replace subjective review with objective checks: boundary rules, dependency acyclicity, security patterns, branch naming, coverage thresholds, scope drift, formatting, linting, tests, and frontend validation.
 
 ## Gate Catalog
 
@@ -16,17 +16,21 @@ Catch violations early — at commit time, pre-push, and CI — before code reac
 | 4 | `d6-dag` | `gate_dag.go` | D6 — Dependency DAG | Feature import graph acyclic (DFS cycle detection); no feature imports `notification` |
 | 5 | `tdd` | `gate_tdd.go` | Test Coverage per Slice | Each `commands/` dir with Go files must have matching `*_test.go` |
 | 6 | `migrations` | `gate_migrations.go` | Migration Integrity | Every `.up.sql` has matching `.down.sql`; no colon-terminated statements |
-| 7 | `security` | `gate_security.go` | Security Patterns | `gosec` scan (if available) + AST checks: bcrypt cost ≥ 12, no SQL concat, no unconditional `CheckOrigin` |
+| 7 | `security` | `gate_security.go` | Security & Vulns | `gosec` + `govulncheck` + AST checks: bcrypt cost ≥ 12, no SQL concat, no unconditional `CheckOrigin` |
 | 8 | `branch` | `gate_branch.go` | Branch & Commits | Branch matches `<user>/<ticket-ID>-<detail>`; commits follow Conventional Commits |
 | 9 | `coverage-delta` | `gate_coverage.go` | Coverage Threshold | Test coverage drop ≤ 5% vs base branch (git worktree) |
 | 10 | `scope-drift` | `gate_scopedrift.go` | Scope Drift | Advisory: files changed vs base branch count |
+| 11 | `format` | `gate_format.go` | Code Formatting | Checks formatting via `gofumpt` and `goimports` |
+| 12 | `lint` | `gate_lint.go` | Code Quality / Lint | Checks Go code style using `golangci-lint` (or fallback tools `staticcheck` + `go vet`) |
+| 13 | `go-test` | `gate_unittest.go` | Go Unit Tests | Runs Go unit tests via `go test -race ./...` |
+| 14 | `frontend` | `gate_frontend.go` | Frontend CI | Runs lint, format, typecheck, and tests in frontend modules |
 
 ## File Map
 
 ```
 internal/gates/
 ├── README.md                   # This file
-├── runner.go                   # Gate interface, Runner, Result, Report, JSON output
+├── runner.go                   # Gate interface, Runner, Result, Report, JSON helpers
 ├── runner_test.go              # Runner unit tests
 ├── git.go                      # Git helpers: branch, log, diff, merge-base
 ├── git_test.go                 # Git helper tests
@@ -37,38 +41,54 @@ internal/gates/
 ├── gate_dag.go                 # Gate #4: D6 — dependency graph acyclicity (go-arch-lint / DFS)
 ├── gate_tdd.go                 # Gate #5: TDD — test file presence per commands/ dir
 ├── gate_migrations.go          # Gate #6: Migration naming + delimiter checks
-├── gate_security.go            # Gate #7: Security — gosec + bcrypt cost + SQL concat + CheckOrigin
+├── gate_security.go            # Gate #7: Security — gosec + govulncheck + AST checks
 ├── gate_branch.go              # Gate #8: Branch naming + conventional commits
-├── gate_branch_test.go         # Branch gate tests
 ├── gate_coverage.go            # Gate #9: Coverage delta vs base branch
-├── gate_coverage_test.go       # Coverage gate tests
 ├── gate_scopedrift.go          # Gate #10: Scope drift advisory
-├── gate_scopedrift_test.go     # Scope drift gate tests
+├── gate_format.go              # Gate #11: Formatting verification
+├── gate_lint.go                # Gate #12: Lint scoping and validation
+├── gate_unittest.go            # Gate #13: Go unit testing
+├── gate_frontend.go            # Gate #14: Frontend validation
+├── gate_stack_test.go          # Stack gate tests
+├── gate_layout_test.go         # Layout gate tests
 ├── gate_boundaries_test.go     # Boundaries gate tests
 ├── gate_dag_test.go            # DAG gate tests
-├── gate_layout_test.go         # Layout gate tests
+├── gate_tdd_test.go            # TDD gate tests
 ├── gate_migrations_test.go     # Migrations gate tests
 ├── gate_security_test.go       # Security gate tests
-├── gate_stack_test.go          # Stack gate tests
-└── gate_tdd_test.go            # TDD gate tests
+├── gate_branch_test.go         # Branch gate tests
+├── gate_coverage_test.go       # Coverage gate tests
+├── gate_scopedrift_test.go     # Scope drift gate tests
+├── gate_format_test.go         # Format gate tests
+├── gate_lint_test.go           # Lint gate tests
+├── gate_unittest_test.go       # Unit test gate tests
+└── gate_frontend_test.go       # Frontend gate tests
 ```
 
 ## How to Run
 
 ```bash
-# All gates
+# All gates (human-readable text default)
 make review-gates
 # or
 go run cmd/gates/main.go --all
+
+# Output structured JSON report
+go run cmd/gates/main.go --all --json
 
 # Single gate
 go run cmd/gates/main.go --gate=boundaries
 ```
 
-Output: JSON with `overall: PASS|FAIL` and per-gate results.
+## Output Format
+
+By default, the runner prints a clean text summary:
+- Green gates print `[PASS] <name>`
+- Skipping gates print `[SKIP] <name>: <reason>`
+- Red gates print `[FAIL] <name>: gate did not pass. Run '<cmd>' to check details.`
 
 ## Architecture
 
-Each gate has a primary tool (e.g. `golangci-lint`, `go-arch-lint`, `gosec`) and a pure Go fallback (AST scan, DFS, `go list`). Tests mock `ExecCommand` via `helper_test.go` to verify both the primary and fallback paths without requiring external tools.
+Each gate has a primary tool (e.g. `golangci-lint`, `gosec`, `govulncheck`, `bun`) and a pure Go fallback (AST scan, DFS, `go list`). Tests mock `ExecCommand` via `helper_test.go` to verify both paths without requiring external tools.
 
 Gates are integration-tested as a Go package: `go test ./internal/gates/...` with mock CLI binaries injected through the `ExecCommand` variable.

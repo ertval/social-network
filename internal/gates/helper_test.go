@@ -35,6 +35,36 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 		} else {
 			script = "echo 'clean'; exit 0"
 		}
+	case "staticcheck":
+		if os.Getenv("MOCK_FAIL") == "1" {
+			script = "exit 1"
+		} else {
+			script = "exit 0"
+		}
+	case "gofumpt":
+		if os.Getenv("MOCK_FAIL") == "1" {
+			script = "echo 'main.go'; exit 1"
+		} else {
+			script = "exit 0"
+		}
+	case "goimports":
+		if os.Getenv("MOCK_FAIL") == "1" {
+			script = "echo 'main.go'; exit 1"
+		} else {
+			script = "exit 0"
+		}
+	case "govulncheck":
+		if os.Getenv("MOCK_FAIL") == "1" {
+			script = "echo 'vulnerability found'; exit 1"
+		} else {
+			script = "exit 0"
+		}
+	case "bun":
+		if os.Getenv("MOCK_FAIL") == "1" {
+			script = "exit 1"
+		} else {
+			script = "exit 0"
+		}
 	case "go":
 		if len(args) > 0 {
 			switch args[0] {
@@ -72,6 +102,12 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 					} else {
 						script = "exit 0"
 					}
+				}
+			case "vet":
+				if os.Getenv("MOCK_FAIL") == "1" {
+					script = "exit 1"
+				} else {
+					script = "exit 0"
 				}
 			case "tool":
 				if len(args) > 1 && args[1] == "cover" {

@@ -202,14 +202,11 @@ ci: be-ci fe-ci
 
 ci-new: be-ci-new fe-ci
 
-review-gates: ## Run quality gates (build all, verification gates, and new-code CI)
+review-gates: ## Run quality gates (build all, verification gates)
 	@echo "==> Compiling all code (legacy + new)..."
 	go build ./...
 	@echo "==> Running verification gates..."
 	go run cmd/gates/main.go --all
-	@echo "==> Scoped CI on new code..."
-	$(MAKE) be-ci-new
-	$(MAKE) fe-ci
 
 gates: review-gates
 

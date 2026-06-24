@@ -48,22 +48,41 @@ func (g *SecurityGate) Run() Result {
 		}
 		// #nosec G204
 		cmd := ExecCommand("gosec", args...)
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			errors = append(errors, "gosec findings:\n"+string(out))
+		if _, err := cmd.CombinedOutput(); err != nil {
+			errors = append(errors, "Run 'gosec -quiet ./...' to check details.")
+		}
+	}
+
+	// Run govulncheck if available
+	if toolAvailable("govulncheck") {
+		// #nosec G204
+		cmd := ExecCommand("govulncheck", "./...")
+		if _, err := cmd.CombinedOutput(); err != nil {
+			errors = append(errors, "Run 'govulncheck ./...' to check details.")
 		}
 	}
 
 	// Always run custom AST checks (gosec doesn't cover bcrypt cost)
-	errors = append(errors, g.runASTChecks()...)
-
-	if len(errors) > 0 {
-		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+	astErrors := g.runASTChecks()
+	if len(astErrors) > 0 {
+		errors = append(errors, "Check AST security violations in code (bcrypt cost, SQL concat, WebSocket CheckOrigin).")
 	}
 
-	suffix := "gosec + AST"
-	if !toolAvailable("gosec") {
+	if len(errors) > 0 {
+		return Result{
+			Gate:    g.Name(),
+			Status:  "FAIL",
+			Message: "gate did not pass. " + strings.Join(errors, " "),
+		}
+	}
+
+	suffix := "gosec + govulncheck + AST"
+	if !toolAvailable("gosec") && !toolAvailable("govulncheck") {
 		suffix = "AST only"
+	} else if !toolAvailable("gosec") {
+		suffix = "govulncheck + AST"
+	} else if !toolAvailable("govulncheck") {
+		suffix = "gosec + AST"
 	}
 	return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("security OK (%s)", suffix)}
 }
