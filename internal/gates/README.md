@@ -82,10 +82,14 @@ go run cmd/gates/main.go --gate=boundaries
 
 ## Output Format
 
-By default, the runner prints a clean text summary:
-- Green gates print `[PASS] <name>`
-- Skipping gates print `[SKIP] <name>: <reason>`
-- Red gates print `[FAIL] <name>: gate did not pass. Run '<cmd>' to check details.`
+By default, the runner prints a color-coded summary with emoji indicators:
+- ✅ Green bold gate name + dimmed detail message
+- ❌ Red bold gate name + error details
+- ⏭️ Yellow bold gate name + skip reason
+
+After all gates, a footer shows pass/fail/skip tally and overall result.
+
+ANSI colors auto-disable when `NO_COLOR` env var is set or output piped (emojis replaced with `[PASS]`/`[FAIL]`/`[SKIP]` text badges).
 
 ## Architecture
 
