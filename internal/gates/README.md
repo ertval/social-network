@@ -10,7 +10,7 @@ Catch violations early — at commit time, pre-push, and CI — before code reac
 
 | # | Gate | File | Rule | What It Checks |
 |---|------|------|------|----------------|
-| 1 | `stack` | `gate_stack.go` | Go version | `go.mod`: Go ≥ 1.24, module `social-network` |
+| 1 | `stack` | `gate_stack.go` | Stack Configuration | `go.mod` (Go version and module name), `.env` (SQLite WAL/busy timeout), Next.js frontend, and `internal/platform` readiness |
 | 2 | `d1-layout` | `gate_layout.go` | D1 — Vertical Slice Layout | Each feature has `<feature>.go`, `commands/`, `queries/`, `transport/`, `store/` |
 | 3 | `d5-boundaries` | `gate_boundaries.go` | D5 — Import Boundaries | No feature root/commands/queries imports own store/transport; no store imports commands/queries/transport |
 | 4 | `d6-dag` | `gate_dag.go` | D6 — Dependency DAG | Feature import graph acyclic (DFS cycle detection); no feature imports `notification` |
@@ -35,7 +35,7 @@ internal/gates/
 ├── git.go                      # Git helpers: branch, log, diff, merge-base
 ├── git_test.go                 # Git helper tests
 ├── helper_test.go              # Mock exec.Command for all gate tests
-├── gate_stack.go               # Gate #1: Go version + module path
+├── gate_stack.go               # Gate #1: Stack configuration (Go version, module, SQLite WAL, Next.js, platform)
 ├── gate_layout.go              # Gate #2: D1 — vertical slice directory structure
 ├── gate_boundaries.go          # Gate #3: D5 — import boundary rules (golangci-lint depguard / AST fallback)
 ├── gate_dag.go                 # Gate #4: D6 — dependency graph acyclicity (go-arch-lint / DFS)
