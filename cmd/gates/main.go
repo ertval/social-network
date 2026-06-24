@@ -75,20 +75,20 @@ func main() {
 
 	runner := gates.NewRunner()
 
-	// Register all gates
+	// Register all gates (ordered: infra → quality → tests → architecture → security → diff → frontend)
 	runner.Register(&gates.StackGate{})
+	runner.Register(&gates.BranchGate{})
+	runner.Register(&gates.FormatGate{})
+	runner.Register(&gates.LintGate{MaxLines: 400})
+	runner.Register(&gates.UnitTestGate{})
+	runner.Register(&gates.CoverageGate{})
 	runner.Register(&gates.LayoutGate{})
 	runner.Register(&gates.BoundariesGate{})
 	runner.Register(&gates.DAGGate{})
 	runner.Register(&gates.TDDGate{})
 	runner.Register(&gates.MigrationsGate{})
 	runner.Register(&gates.SecurityGate{})
-	runner.Register(&gates.BranchGate{})
 	runner.Register(&gates.ScopeDriftGate{})
-	runner.Register(&gates.CoverageGate{})
-	runner.Register(&gates.FormatGate{})
-	runner.Register(&gates.LintGate{MaxLines: 400})
-	runner.Register(&gates.UnitTestGate{})
 	runner.Register(&gates.FrontendGate{})
 
 	if *gate != "" {

@@ -15,6 +15,30 @@ import (
 	"strings"
 )
 
+// pkgToDir converts a module-qualified package path like
+// "social-network/internal/user" to its directory path.
+func pkgToDir(pkg string) string {
+	parts := strings.SplitN(pkg, "/", 2)
+	if len(parts) < 2 {
+		return ""
+	}
+	return parts[1]
+}
+
+// hasGoFiles returns true if the directory contains at least one .go file.
+func hasGoFiles(dir string) (bool, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return false, err
+	}
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ".go") {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 // CoverageGate compares branch coverage vs base branch (Gate #13).
 // Uses git worktree to avoid mutating the active workspace.
 type CoverageGate struct {
@@ -88,9 +112,25 @@ func getBaselineCoverage(baseBranch string) (float64, error) {
 		_ = ExecCommand("git", "worktree", "remove", "--force", tempDir).Run()
 	}()
 
-	// Run tests in worktree
+	// Run tests in worktree (only packages that exist in the worktree)
 	covFile := filepath.Join(tempDir, "coverage.out")
-	args := append([]string{"test", "-coverprofile=" + covFile}, NewPkgs...)
+	existingPkgs := make([]string, 0, len(NewPkgs))
+	for _, pkg := range NewPkgs {
+		dir := pkgToDir(pkg)
+		if dir == "" {
+			continue
+		}
+		pkgDir := filepath.Join(tempDir, dir)
+		info, err := os.Stat(pkgDir)
+		if err != nil || !info.IsDir() {
+			continue
+		}
+		hasGoFile, _ := hasGoFiles(pkgDir)
+		if hasGoFile {
+			existingPkgs = append(existingPkgs, pkg)
+		}
+	}
+	args := append([]string{"test", "-coverprofile=" + covFile}, existingPkgs...)
 	// #nosec G204
 	testCmd := ExecCommand("go", args...)
 	testCmd.Dir = tempDir
