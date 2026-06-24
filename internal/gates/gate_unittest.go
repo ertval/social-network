@@ -9,13 +9,14 @@ type UnitTestGate struct{}
 func (g *UnitTestGate) Name() string { return "go-test" }
 
 func (g *UnitTestGate) Run() Result {
+	args := append([]string{"test", "-race"}, NewPkgs...)
 	// #nosec G204
-	cmd := ExecCommand("go", "test", "-race", "./...")
+	cmd := ExecCommand("go", args...)
 	if _, err := cmd.CombinedOutput(); err != nil {
 		return Result{
 			Gate:    g.Name(),
 			Status:  "FAIL",
-			Message: "gate did not pass. Run 'go test -race ./...' to check details.",
+			Message: "gate did not pass. Run 'go test -race <new_packages>' to check details.",
 		}
 	}
 

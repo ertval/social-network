@@ -3,8 +3,9 @@ package ws
 import (
 	"encoding/json"
 	"log"
-	"social-network/internal/domain/chat"
 	"sync"
+
+	"social-network/internal/domain/chat"
 )
 
 // Hub manages all active WebSocket Connections.

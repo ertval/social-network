@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+
 	"social-network/internal/infra/logger"
 
 	chatcommands "social-network/internal/app/chat/commands"

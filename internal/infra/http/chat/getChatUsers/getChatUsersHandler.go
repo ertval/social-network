@@ -2,10 +2,11 @@ package getchatusers
 
 import (
 	"net/http"
+	"time"
+
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/pkg/helpers"
-	"time"
 
 	chatqueries "social-network/internal/app/chat/queries"
 )

@@ -3,13 +3,14 @@ package userregister
 import (
 	"context"
 	"net/http"
+	"strings"
+
 	"social-network/internal/app"
 	"social-network/internal/config"
 	"social-network/internal/domain/session"
 	"social-network/internal/infra/logger"
 	"social-network/internal/pkg/helpers"
 	"social-network/internal/pkg/validator"
-	"strings"
 
 	usercommands "social-network/internal/app/user/commands"
 )

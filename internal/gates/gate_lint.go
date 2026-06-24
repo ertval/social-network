@@ -5,7 +5,6 @@ package gates
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -14,47 +13,38 @@ type LintGate struct{}
 
 func (g *LintGate) Name() string { return "lint" }
 
-func getLintDirs() []string {
-	dirs := []string{"./cmd/server/...", "./cmd/gates/..."}
-	if entries, err := os.ReadDir("internal"); err == nil {
-		for _, e := range entries {
-			if e.IsDir() && e.Name() != "app" && e.Name() != "infra" {
-				dirs = append(dirs, fmt.Sprintf("./internal/%s/...", e.Name()))
-			}
-		}
-	}
-	return dirs
-}
-
 //nolint:nestif
 func (g *LintGate) Run() Result {
 	var errors []string
-	targets := getLintDirs()
 
 	if toolAvailable("golangci-lint") {
-		// Run golangci-lint on target directories
-		args := append([]string{"run", "--timeout=5m"}, targets...)
+		// golangci-lint uses directories with /... suffix
+		var lintDirs []string
+		for _, dir := range NewDirs {
+			lintDirs = append(lintDirs, dir+"/...")
+		}
+		args := append([]string{"run", "--timeout=5m"}, lintDirs...)
 		// #nosec G204
 		cmd := ExecCommand("golangci-lint", args...)
-		if _, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, "Run 'golangci-lint run' to check details.")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			errors = append(errors, fmt.Sprintf("golangci-lint error: %v (output: %q).", err, string(out)))
 		}
 	} else {
-		// Fallbacks: staticcheck and go vet
+		// Fallbacks: staticcheck and go vet use package paths (NewPkgs)
 		if toolAvailable("staticcheck") {
-			args := append([]string{}, targets...)
+			args := append([]string{}, NewPkgs...)
 			// #nosec G204
 			cmd := ExecCommand("staticcheck", args...)
-			if _, err := cmd.CombinedOutput(); err != nil {
-				errors = append(errors, "Run 'staticcheck ./...' to check details.")
+			if out, err := cmd.CombinedOutput(); err != nil {
+				errors = append(errors, fmt.Sprintf("staticcheck error: %v (output: %q).", err, string(out)))
 			}
 		}
 
-		args := append([]string{"vet"}, targets...)
+		args := append([]string{"vet"}, NewPkgs...)
 		// #nosec G204
 		cmd := ExecCommand("go", args...)
-		if _, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, "Run 'go vet ./...' to check details.")
+		if out, err := cmd.CombinedOutput(); err != nil {
+			errors = append(errors, fmt.Sprintf("go vet error: %v (output: %q).", err, string(out)))
 		}
 	}
 

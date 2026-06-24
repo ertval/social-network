@@ -2,6 +2,7 @@ package ws
 
 import (
 	"net/http"
+
 	"social-network/internal/infra/logger"
 	"social-network/internal/infra/middleware"
 	"social-network/internal/infra/ws"

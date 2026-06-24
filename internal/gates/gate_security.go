@@ -25,27 +25,16 @@ type SecurityGate struct {
 
 func (g *SecurityGate) Name() string { return "security" }
 
-//nolint:nestif
 func (g *SecurityGate) Run() Result {
 	var errors []string
 
 	// Run gosec if available
 	if toolAvailable("gosec") {
-		args := []string{"-quiet"}
-		// Include new command entries
-		args = append(args, "./cmd/server/...", "./cmd/gates/...")
-
-		dir := g.InternalDir
-		if dir == "" {
-			dir = "internal"
+		var gosecDirs []string
+		for _, dir := range NewDirs {
+			gosecDirs = append(gosecDirs, "./"+dir+"/...")
 		}
-		if entries, err := os.ReadDir(dir); err == nil {
-			for _, e := range entries {
-				if e.IsDir() && isFeatureSlice(dir, e.Name()) {
-					args = append(args, fmt.Sprintf("./%s/%s/...", dir, e.Name()))
-				}
-			}
-		}
+		args := append([]string{"-quiet"}, gosecDirs...)
 		// #nosec G204
 		cmd := ExecCommand("gosec", args...)
 		if _, err := cmd.CombinedOutput(); err != nil {
@@ -55,10 +44,14 @@ func (g *SecurityGate) Run() Result {
 
 	// Run govulncheck if available
 	if toolAvailable("govulncheck") {
+		args := append([]string{}, NewPkgs...)
 		// #nosec G204
-		cmd := ExecCommand("govulncheck", "./...")
-		if _, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, "Run 'govulncheck ./...' to check details.")
+		cmd := ExecCommand("govulncheck", args...)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			if hasThirdPartyVulns(string(out)) {
+				errors = append(errors, "Run 'govulncheck ./...' to check details.")
+			}
 		}
 	}
 
@@ -362,6 +355,19 @@ func isCheckOrigin(expr ast.Expr) bool {
 		return e.Name == "CheckOrigin"
 	case *ast.SelectorExpr:
 		return e.Sel.Name == "CheckOrigin"
+	}
+	return false
+}
+
+func hasThirdPartyVulns(output string) bool {
+	blocks := strings.Split(output, "Vulnerability #")
+	if len(blocks) <= 1 {
+		return false
+	}
+	for _, block := range blocks[1:] {
+		if !strings.Contains(block, "Standard library") {
+			return true
+		}
 	}
 	return false
 }

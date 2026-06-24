@@ -2,10 +2,11 @@ package chatqueries
 
 import (
 	"context"
-	"social-network/internal/domain/chat"
-	"social-network/internal/domain/user"
 	"sort"
 	"time"
+
+	"social-network/internal/domain/chat"
+	"social-network/internal/domain/user"
 
 	chatapp "social-network/internal/app/chat"
 )
