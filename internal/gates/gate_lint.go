@@ -31,12 +31,15 @@ func (g *LintGate) Run() Result {
 		dirs = NewDirs
 	}
 
+	what := "Go source code files static analysis (linting) and file line length limits check"
+	why := "to maintain code clean syntax rules, catch common bugs early, and restrict maximum file sizes for improved readability"
+
 	var errors []string
 	failFiles, warnings, walkErr := g.checkLineLimits(maxLines, dirs)
 	if walkErr != nil {
-		errors = append(errors, fmt.Sprintf("failed to scan line limits: %v.", walkErr))
+		errors = append(errors, fmt.Sprintf("failed to scan line limits: %v", walkErr))
 	} else if len(failFiles) > 0 {
-		errors = append(errors, fmt.Sprintf("files exceeding maximum line limit (%d by >20%%): %s.", maxLines, strings.Join(failFiles, ", ")))
+		errors = append(errors, fmt.Sprintf("files exceeding maximum line limit (%d by >20%%): %s", maxLines, strings.Join(failFiles, ", ")))
 	}
 
 	if toolAvailable("golangci-lint") {
@@ -49,7 +52,7 @@ func (g *LintGate) Run() Result {
 		// #nosec G204
 		cmd := ExecCommand("golangci-lint", args...)
 		if out, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, fmt.Sprintf("golangci-lint error: %v (output: %q).", err, string(out)))
+			errors = append(errors, fmt.Sprintf("golangci-lint error: %v (output: %q)", err, string(out)))
 		}
 	} else {
 		// Fallbacks: staticcheck and go vet use package paths (NewPkgs)
@@ -58,7 +61,7 @@ func (g *LintGate) Run() Result {
 			// #nosec G204
 			cmd := ExecCommand("staticcheck", args...)
 			if out, err := cmd.CombinedOutput(); err != nil {
-				errors = append(errors, fmt.Sprintf("staticcheck error: %v (output: %q).", err, string(out)))
+				errors = append(errors, fmt.Sprintf("staticcheck error: %v (output: %q)", err, string(out)))
 			}
 		}
 
@@ -66,7 +69,7 @@ func (g *LintGate) Run() Result {
 		// #nosec G204
 		cmd := ExecCommand("go", args...)
 		if out, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, fmt.Sprintf("go vet error: %v (output: %q).", err, string(out)))
+			errors = append(errors, fmt.Sprintf("go vet error: %v (output: %q)", err, string(out)))
 		}
 	}
 
@@ -74,7 +77,7 @@ func (g *LintGate) Run() Result {
 		return Result{
 			Gate:    g.Name(),
 			Status:  "FAIL",
-			Message: "gate did not pass. " + strings.Join(errors, " "),
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'golangci-lint run' to review lint warnings manually", what, why, strings.Join(errors, "; ")),
 		}
 	}
 
@@ -89,13 +92,13 @@ func (g *LintGate) Run() Result {
 
 	warnStr := ""
 	if len(warnings) > 0 {
-		warnStr = " WARNING: " + strings.Join(warnings, ", ") + " exceeds line limit by >10%."
+		warnStr = " | WARNING: " + strings.Join(warnings, ", ") + " exceeds line limit by >10%"
 	}
 
 	return Result{
 		Gate:    g.Name(),
 		Status:  "PASS",
-		Message: "lint OK (" + suffix + ")" + warnStr,
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - linters passed successfully (verified via %s)%s", what, why, suffix, warnStr),
 	}
 }
 

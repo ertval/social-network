@@ -26,9 +26,16 @@ func (g *TDDGate) Run() Result {
 		dir = "internal"
 	}
 
+	what := "presence of corresponding test files in commands/ directories for active feature packages"
+	why := "to enforce Test-Driven Development (TDD) rules ensuring every use case commands directory contains matching unit/integration tests"
+
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return Result{Gate: g.Name(), Status: "SKIP", Message: fmt.Sprintf("cannot read %s: %v", dir, err)}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "SKIP",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: SKIP - cannot read %s: %v", what, why, dir, err),
+		}
 	}
 
 	var errors []string
@@ -42,9 +49,17 @@ func (g *TDDGate) Run() Result {
 	}
 
 	if len(errors) > 0 {
-		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "FAIL",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'ls %s/<feature>/commands/' and create matching _test.go files", what, why, strings.Join(errors, "; "), dir),
+		}
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "TDD OK"}
+	return Result{
+		Gate:    g.Name(),
+		Status:  "PASS",
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - all active commands directories contain corresponding test files", what, why),
+	}
 }
 
 // checkTestCoverage verifies a directory has test files if it has Go source files.

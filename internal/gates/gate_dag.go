@@ -22,26 +22,41 @@ type DAGGate struct {
 func (g *DAGGate) Name() string { return "d6-dag" }
 
 func (g *DAGGate) Run() Result {
+	what := "feature package dependency graph and notification package import boundaries"
+	why := "to prevent circular feature imports and isolate notification subscriptions in accordance with D6 rules"
+
 	// Try go-arch-lint first
 	if toolAvailable("go-arch-lint") {
 		cmd := ExecCommand("go-arch-lint", "check")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
-			return Result{Gate: g.Name(), Status: "FAIL", Message: "go-arch-lint violations:\n" + string(out)}
+			return Result{
+				Gate:    g.Name(),
+				Status:  "FAIL",
+				Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - go-arch-lint violations:\n%s | debug: run 'go-arch-lint check'", what, why, string(out)),
+			}
 		}
 		// Still check notification imports (go-arch-lint doesn't enforce this)
 		if notifErrs := g.checkNotificationImports(); len(notifErrs) > 0 {
-			return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(notifErrs, "; ")}
+			return Result{
+				Gate:    g.Name(),
+				Status:  "FAIL",
+				Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'go list' and inspect imports", what, why, strings.Join(notifErrs, "; ")),
+			}
 		}
-		return Result{Gate: g.Name(), Status: "PASS", Message: "D6 DAG acyclic (go-arch-lint)"}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "PASS",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: OK - dependency graph is acyclic (verified via go-arch-lint)", what, why),
+		}
 	}
 
 	// Fallback: go list + DFS
-	return g.runFallback()
+	return g.runFallback(what, why)
 }
 
 //nolint:gocognit
-func (g *DAGGate) runFallback() Result {
+func (g *DAGGate) runFallback(what, why string) Result {
 	dir := g.InternalDir
 	if dir == "" {
 		dir = "internal"
@@ -49,7 +64,11 @@ func (g *DAGGate) runFallback() Result {
 
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return Result{Gate: g.Name(), Status: "SKIP", Message: fmt.Sprintf("cannot read %s: %v", dir, err)}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "SKIP",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: SKIP - cannot read %s: %v", what, why, dir, err),
+		}
 	}
 
 	var features []string
@@ -60,7 +79,11 @@ func (g *DAGGate) runFallback() Result {
 	}
 
 	if len(features) == 0 {
-		return Result{Gate: g.Name(), Status: "PASS", Message: "no feature slices yet (pre-migration)"}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "PASS",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: OK - no feature slices yet (pre-migration, verified via fallback)", what, why),
+		}
 	}
 
 	// Build dependency graph
@@ -127,9 +150,17 @@ func (g *DAGGate) runFallback() Result {
 	errors = append(errors, g.checkNotificationImports()...)
 
 	if len(errors) > 0 {
-		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "FAIL",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'go list -json' and inspect cycles", what, why, strings.Join(errors, "; ")),
+		}
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "D6 DAG acyclic (fallback)"}
+	return Result{
+		Gate:    g.Name(),
+		Status:  "PASS",
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - dependency graph is acyclic (verified via fallback)", what, why),
+	}
 }
 
 func (g *DAGGate) checkNotificationImports() []string {

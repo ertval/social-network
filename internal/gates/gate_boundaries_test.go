@@ -27,7 +27,7 @@ var _ = store.New
 	}
 
 	g := &BoundariesGate{InternalDir: dir}
-	result := g.runAST()
+	result := g.runAST("what", "why")
 	if result.Status != "FAIL" {
 		t.Errorf("expected FAIL for forbidden import, got %s: %s", result.Status, result.Message)
 	}
@@ -53,7 +53,7 @@ var _ = http.StatusOK
 	}
 
 	g := &BoundariesGate{InternalDir: dir}
-	result := g.runAST()
+	result := g.runAST("what", "why")
 	if result.Status != "PASS" {
 		t.Errorf("expected PASS for clean imports, got %s: %s", result.Status, result.Message)
 	}
@@ -112,7 +112,7 @@ var _ = store.New
 	}
 
 	g := &BoundariesGate{InternalDir: dir}
-	res := g.runAST()
+	res := g.runAST("what", "why")
 	if res.Status != "FAIL" {
 		t.Errorf("expected FAIL for root file importing store, got: %s", res.Status)
 	}

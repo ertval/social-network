@@ -23,6 +23,9 @@ func (g *FrontendGate) Run() Result {
 		root = "."
 	}
 
+	what := "frontend code quality validation checks (linting, formatting, typescript compiler typechecking, and tests)"
+	why := "to guarantee that frontend codebase conforms to Next.js styling guidelines, typescript types compile without errors, and frontend tests pass"
+
 	var dir string
 	if _, err := os.Stat(filepath.Join(root, "frontend-next", "package.json")); err == nil {
 		dir = filepath.Join(root, "frontend-next")
@@ -34,7 +37,7 @@ func (g *FrontendGate) Run() Result {
 		return Result{
 			Gate:    g.Name(),
 			Status:  "SKIP",
-			Message: "no frontend scaffolded yet",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: SKIP - no frontend scaffolded yet", what, why),
 		}
 	}
 
@@ -56,7 +59,7 @@ func (g *FrontendGate) Run() Result {
 			return Result{
 				Gate:    g.Name(),
 				Status:  "FAIL",
-				Message: fmt.Sprintf("gate did not pass. Run 'cd %s && %s' to check details.", dir, strings.Join(step.command, " ")),
+				Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - frontend %s check failed | debug: run 'cd %s && %s' to view error logs and debug", what, why, step.name, dir, strings.Join(step.command, " ")),
 			}
 		}
 	}
@@ -64,6 +67,6 @@ func (g *FrontendGate) Run() Result {
 	return Result{
 		Gate:    g.Name(),
 		Status:  "PASS",
-		Message: "frontend CI checks passed",
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - all frontend CI validation checks (lint, format, typecheck, tests) passed successfully", what, why),
 	}
 }

@@ -14,7 +14,7 @@ func TestBranchGate_Run(t *testing.T) {
 		t.Setenv("MOCK_REV_MAIN", "1")
 		g := &BranchGate{}
 		res := g.Run()
-		if res.Status != "PASS" || res.Message != "on main or detached HEAD" {
+		if res.Status != "PASS" || !strings.Contains(res.Message, "on main or detached HEAD") {
 			t.Errorf("expected PASS for main branch, got: %s (%s)", res.Status, res.Message)
 		}
 	})
@@ -45,7 +45,7 @@ func TestBranchGate_Run(t *testing.T) {
 		t.Setenv("MOCK_COMMIT_FAIL", "0")
 		g := &BranchGate{}
 		res := g.Run()
-		if res.Status != "FAIL" || !strings.Contains(res.Message, "doesn't match <username>") {
+		if res.Status != "FAIL" || !strings.Contains(res.Message, "doesn't match '<username>") {
 			t.Errorf("expected branch check FAIL for unapproved username, got: %s (%s)", res.Status, res.Message)
 		}
 	})

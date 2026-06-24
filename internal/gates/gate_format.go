@@ -15,16 +15,19 @@ type FormatGate struct{}
 func (g *FormatGate) Name() string { return "format" }
 
 func (g *FormatGate) Run() Result {
+	what := "Go source code files formatting conventions (using gofumpt and goimports)"
+	why := "to enforce a consistent codebase layout, structure, and import sorting styling rules"
+
 	var errors []string
 	var runDetails []string
 
 	// Determine check tool (gofumpt or fallback to gofmt)
 	tool := "gofumpt"
-	failMsg := "gofumpt found unformatted files. Run 'gofumpt -w <new_dirs>' or 'make format' to fix."
+	failMsg := "gofumpt found unformatted files"
 	detail := "gofumpt"
 	if !toolAvailable("gofumpt") {
 		tool = "gofmt"
-		failMsg = "gofmt found unformatted files. Run 'gofmt -w <new_dirs>' or 'make format' to fix."
+		failMsg = "gofmt found unformatted files"
 		detail = "gofmt (fallback)"
 	}
 
@@ -39,7 +42,7 @@ func (g *FormatGate) Run() Result {
 	// Check goimports formatting
 	if toolAvailable("goimports") {
 		argsImports := append([]string{"-l", "-local", "social-network"}, NewDirs...)
-		failMsgImports := "goimports found import issues. Run 'goimports -w -local social-network <new_dirs>' or 'make format' to fix."
+		failMsgImports := "goimports found import issues"
 		if msg, err := runFormatTool("goimports", argsImports, failMsgImports); err != nil {
 			errors = append(errors, err.Error()+".")
 		} else if msg != "" {
@@ -52,14 +55,14 @@ func (g *FormatGate) Run() Result {
 		return Result{
 			Gate:    g.Name(),
 			Status:  "FAIL",
-			Message: "gate did not pass. " + strings.Join(errors, " "),
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'make format' to format all unstyled Go source files", what, why, strings.Join(errors, "; ")),
 		}
 	}
 
 	return Result{
 		Gate:    g.Name(),
 		Status:  "PASS",
-		Message: fmt.Sprintf("code formatting OK (%s)", strings.Join(runDetails, " + ")),
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - all files are correctly styled (verified via %s)", what, why, strings.Join(runDetails, " + ")),
 	}
 }
 

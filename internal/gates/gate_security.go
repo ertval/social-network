@@ -26,7 +26,11 @@ type SecurityGate struct {
 func (g *SecurityGate) Name() string { return "security" }
 
 func (g *SecurityGate) Run() Result {
+	what := "source code for security vulnerabilities, bcrypt hashing cost, SQL query construction, and WebSocket check origin rules"
+	why := "to identify OWASP Top 10 risks (like SQL injection or CSRF) and enforce secure coding policies (bcrypt cost >= 12)"
+
 	var errors []string
+	var debugCmds []string
 
 	// Run gosec if available
 	if toolAvailable("gosec") {
@@ -38,7 +42,8 @@ func (g *SecurityGate) Run() Result {
 		// #nosec G204
 		cmd := ExecCommand("gosec", args...)
 		if _, err := cmd.CombinedOutput(); err != nil {
-			errors = append(errors, "Run 'gosec -quiet <new_dirs>' to check details.")
+			errors = append(errors, "gosec found potential vulnerabilities")
+			debugCmds = append(debugCmds, "gosec ./...")
 		}
 	}
 
@@ -50,7 +55,8 @@ func (g *SecurityGate) Run() Result {
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			if hasThirdPartyVulns(string(out)) {
-				errors = append(errors, "Run 'govulncheck <new_packages>' to check details.")
+				errors = append(errors, "govulncheck detected vulnerable third-party dependencies")
+				debugCmds = append(debugCmds, "govulncheck ./...")
 			}
 		}
 	}
@@ -58,14 +64,19 @@ func (g *SecurityGate) Run() Result {
 	// Always run custom AST checks (gosec doesn't cover bcrypt cost)
 	astErrors := g.runASTChecks()
 	if len(astErrors) > 0 {
-		errors = append(errors, "Check AST security violations in code (bcrypt cost, SQL concat, WebSocket CheckOrigin).")
+		errors = append(errors, "AST security violations: "+strings.Join(astErrors, "; "))
+		debugCmds = append(debugCmds, "review code for SQL concatenation, weak bcrypt costs, or WebSocket check origin bypasses")
 	}
 
 	if len(errors) > 0 {
+		debugStr := "run security checkers manually"
+		if len(debugCmds) > 0 {
+			debugStr = strings.Join(debugCmds, " OR ")
+		}
 		return Result{
 			Gate:    g.Name(),
 			Status:  "FAIL",
-			Message: "gate did not pass. " + strings.Join(errors, " "),
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: %s", what, why, strings.Join(errors, "; "), debugStr),
 		}
 	}
 
@@ -77,7 +88,11 @@ func (g *SecurityGate) Run() Result {
 	} else if !toolAvailable("govulncheck") {
 		suffix = "gosec + AST"
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("security OK (%s)", suffix)}
+	return Result{
+		Gate:    g.Name(),
+		Status:  "PASS",
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - no security issues found (verified via %s)", what, why, suffix),
+	}
 }
 
 func (g *SecurityGate) runASTChecks() []string {

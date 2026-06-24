@@ -30,17 +30,27 @@ func (g *CoverageGate) Run() Result {
 	}
 
 	base := FindBaseBranch()
+	what := "test coverage percentage delta between the current branch and the base branch"
+	why := "to guarantee that code additions do not degrade overall test coverage beyond the allowed threshold"
 
 	// Get base branch coverage via git worktree
 	baseCov, err := getBaselineCoverage(base)
 	if err != nil {
-		return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("could not compute baseline: %v", err)}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "PASS",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: OK - could not compute baseline: %v", what, why, err),
+		}
 	}
 
 	// Get current branch coverage
 	branchCov, err := getCurrentCoverage()
 	if err != nil {
-		return Result{Gate: g.Name(), Status: "PASS", Message: fmt.Sprintf("could not compute branch coverage: %v", err)}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "PASS",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: OK - could not compute branch coverage: %v", what, why, err),
+		}
 	}
 
 	delta := branchCov - baseCov
@@ -48,14 +58,14 @@ func (g *CoverageGate) Run() Result {
 		return Result{
 			Gate:    g.Name(),
 			Status:  "FAIL",
-			Message: fmt.Sprintf("coverage dropped by %.1f%% (%.1f%% → %.1f%%)", -delta, baseCov, branchCov),
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - coverage dropped by %.1f%% (base: %.1f%% -> current: %.1f%%) exceeding threshold %.1f%% | debug: run 'go test -coverprofile=coverage.out ./...' to inspect coverage and add missing tests", what, why, -delta, baseCov, branchCov, threshold),
 		}
 	}
 
 	return Result{
 		Gate:    g.Name(),
 		Status:  "PASS",
-		Message: fmt.Sprintf("coverage %.1f%% (delta: %+.1f%%)", branchCov, delta),
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - coverage is at %.1f%% (delta: %+.1f%%, base: %.1f%%)", what, why, branchCov, delta, baseCov),
 	}
 }
 

@@ -33,9 +33,16 @@ func (g *LayoutGate) Run() Result {
 		dir = "internal"
 	}
 
+	what := "presence of active feature packages and core vertical slice directories (commands, queries, transport, store)"
+	why := "to enforce the physical vertical slice layout pattern (CQRS + transport/store separation)"
+
 	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return Result{Gate: g.Name(), Status: "SKIP", Message: fmt.Sprintf("cannot read %s: %v", dir, err)}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "SKIP",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: SKIP - cannot read %s: %v", what, why, dir, err),
+		}
 	}
 
 	var errors []string
@@ -67,7 +74,15 @@ func (g *LayoutGate) Run() Result {
 	}
 
 	if len(errors) > 0 {
-		return Result{Gate: g.Name(), Status: "FAIL", Message: strings.Join(errors, "; ")}
+		return Result{
+			Gate:    g.Name(),
+			Status:  "FAIL",
+			Message: fmt.Sprintf("checked: %s | why: %s | status: FAIL - %s | debug: run 'tree %s' or verify vertical slice directory structure", what, why, strings.Join(errors, "; "), dir),
+		}
 	}
-	return Result{Gate: g.Name(), Status: "PASS", Message: "D1 layout OK"}
+	return Result{
+		Gate:    g.Name(),
+		Status:  "PASS",
+		Message: fmt.Sprintf("checked: %s | why: %s | status: OK - all active features contain expected vertical slice subfolders", what, why),
+	}
 }
