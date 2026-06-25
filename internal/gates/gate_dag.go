@@ -4,6 +4,7 @@ It uses 'go-arch-lint check' if available, or falls back to standard Go
 package list analysis with a depth-first search (DFS) cycle-detection algorithm.
 It also ensures no package imports the forbidden 'notification' package.
 */
+
 package gates
 
 import (

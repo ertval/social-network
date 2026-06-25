@@ -3,6 +3,7 @@ StackGate validates the Go compiler version, module configuration,
 SQLite database parameters, frontend scaffold (Next.js/Tailwind/Bun),
 and platform service directory structure (Gate #1).
 */
+
 package gates
 
 import (
@@ -120,11 +121,11 @@ func (g *StackGate) checkGoMod(goModPath string) (string, string, error) {
 	scanner := bufio.NewScanner(goModFile)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if strings.HasPrefix(line, "go ") {
-			goVersion = strings.TrimPrefix(line, "go ")
+		if val, ok := strings.CutPrefix(line, "go "); ok {
+			goVersion = val
 		}
-		if strings.HasPrefix(line, "module ") {
-			modulePath = strings.TrimPrefix(line, "module ")
+		if val, ok := strings.CutPrefix(line, "module "); ok {
+			modulePath = val
 		}
 	}
 

@@ -1,6 +1,7 @@
 package gates
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -93,8 +94,8 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 					// Locate coverprofile arg and touch it
 					covPath := ""
 					for _, arg := range args {
-						if strings.HasPrefix(arg, "-coverprofile=") {
-							covPath = strings.TrimPrefix(arg, "-coverprofile=")
+						if val, ok := strings.CutPrefix(arg, "-coverprofile="); ok {
+							covPath = val
 						}
 					}
 					if covPath != "" {
@@ -168,7 +169,7 @@ func mockExecCommand(command string, args ...string) *exec.Cmd {
 		script = "exit 0"
 	}
 
-	return exec.Command("sh", "-c", script)
+	return exec.CommandContext(context.Background(), "sh", "-c", script)
 }
 
 func createTempGoMod(t *testing.T, content string) string {

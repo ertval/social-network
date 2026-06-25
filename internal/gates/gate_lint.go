@@ -1,6 +1,7 @@
 /*
 LintGate runs Go linter tools (golangci-lint, staticcheck, go vet) to ensure code hygiene.
 */
+
 package gates
 
 import (

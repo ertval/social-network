@@ -295,7 +295,7 @@ func plainSummary(report gates.Report) string {
 
 	var b strings.Builder
 	b.WriteString("\n  ------------------------------------------------\n")
-	b.WriteString(fmt.Sprintf("  Results: %d passed, %d failed, %d skipped (%d total)\n", pass, fail, skip, total))
+	fmt.Fprintf(&b, "  Results: %d passed, %d failed, %d skipped (%d total)\n", pass, fail, skip, total)
 	if report.Overall == "PASS" {
 		b.WriteString("  All gates passed\n")
 	} else {

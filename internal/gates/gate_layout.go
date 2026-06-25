@@ -4,6 +4,7 @@ It ensures each feature folder under the internal directory has the required
 structure: a main feature file (<feature>.go) and subdirectories for commands,
 queries, transport, and store.
 */
+
 package gates
 
 import (

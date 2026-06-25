@@ -4,6 +4,7 @@ base branch (e.g. main). It runs tests in a temporary Git worktree to prevent
 mutating the current workspace, ensuring test coverage does not drop beyond
 a threshold.
 */
+
 package gates
 
 import (

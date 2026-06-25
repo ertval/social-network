@@ -231,7 +231,7 @@ func captureStdout(fn func()) string {
 	}()
 
 	fn()
-	w.Close()
+	_ = w.Close()
 	var buf strings.Builder
 	_, _ = io.Copy(&buf, r)
 	return buf.String()

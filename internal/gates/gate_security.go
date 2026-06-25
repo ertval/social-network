@@ -4,6 +4,7 @@ It executes 'gosec ./...' if available to find potential vulnerabilities, and
 performs custom AST-based verification of bcrypt costs (must be >= 12)
 and potential SQL string concatenation patterns.
 */
+
 package gates
 
 import (

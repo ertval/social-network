@@ -2,6 +2,7 @@
 FormatGate validates Go code formatting (gofumpt and goimports).
 If formatting violations are found, it directs the user to run 'make format'.
 */
+
 package gates
 
 import (

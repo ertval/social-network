@@ -4,6 +4,7 @@ It checks every vertical slice feature package to verify that if Go source files
 exist within the 'commands' directory, there are corresponding test files ('*_test.go')
 present in the same directory.
 */
+
 package gates
 
 import (

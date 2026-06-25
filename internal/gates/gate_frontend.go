@@ -3,6 +3,7 @@ FrontendGate runs frontend lint, format, typecheck, and test checks.
 It checks for the presence of frontend-next or frontend directories, and runs
 the corresponding package manager (bun) commands.
 */
+
 package gates
 
 import (

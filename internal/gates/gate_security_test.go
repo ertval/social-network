@@ -56,7 +56,7 @@ func TestSecurityGate_SQLConcat(t *testing.T) {
 import "fmt"
 
 func query(id string) string {
-	return fmt.Sprintf("SELECT * FROM users WHERE id = %s", id)
+	return fmt.Sprintf("SELECT id FROM users WHERE id = %s", id)
 }
 `
 	if err := os.WriteFile(filepath.Join(dir, "repo.go"), []byte(code), 0o600); err != nil {

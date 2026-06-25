@@ -3,6 +3,7 @@ MigrationsGate validates database schema migration files under the db/migrations
 It verifies that every '.up.sql' file has a matching '.down.sql' file, and parses SQL
 content to check for invalid delimiters (e.g., statements ending with ':' instead of ';').
 */
+
 package gates
 
 import (

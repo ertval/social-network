@@ -1,6 +1,7 @@
 package gates
 
 import (
+	"context"
 	"errors"
 	"os"
 	"os/exec"
@@ -159,7 +160,7 @@ func TestBoundariesAndDAGEdgeCases(t *testing.T) {
 
 	t.Run("getFeatureDeps command error", func(t *testing.T) {
 		ExecCommand = func(command string, args ...string) *exec.Cmd {
-			return exec.Command("sh", "-c", "exit 1")
+			return exec.CommandContext(context.Background(), "sh", "-c", "exit 1")
 		}
 		_, err := getFeatureDeps("internal", "user")
 		if err == nil {
@@ -169,7 +170,7 @@ func TestBoundariesAndDAGEdgeCases(t *testing.T) {
 
 	t.Run("getFeatureDeps invalid json", func(t *testing.T) {
 		ExecCommand = func(command string, args ...string) *exec.Cmd {
-			return exec.Command("sh", "-c", "echo 'invalid json'")
+			return exec.CommandContext(context.Background(), "sh", "-c", "echo 'invalid json'")
 		}
 		deps, err := getFeatureDeps("internal", "user")
 		if err != nil {
