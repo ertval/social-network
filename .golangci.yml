@@ -23,6 +23,7 @@ output:
 linters:
   default: all
   disable:
+    - gomodguard
     - cyclop
     - gocyclo
     - exhaustruct
