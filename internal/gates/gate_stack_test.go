@@ -197,3 +197,91 @@ func TestStackGate_Fail_InvalidFrontend(t *testing.T) {
 		t.Errorf("expected missing tailwind/lockfile errors, got: %s", res.Message)
 	}
 }
+
+func TestStackGate_HasDependency(t *testing.T) {
+	pkg := pkgJSON{
+		Dependencies:    map[string]string{"next": "^14.0.0"},
+		DevDependencies: map[string]string{"tailwindcss": "^3.0.0"},
+	}
+
+	if !hasDependency(pkg, "next") {
+		t.Error("expected next in dependencies")
+	}
+	if !hasDependency(pkg, "tailwindcss") {
+		t.Error("expected tailwindcss in devDependencies")
+	}
+	if hasDependency(pkg, "nonexistent") {
+		t.Error("expected false for missing dep")
+	}
+
+	// Nil maps
+	pkg2 := pkgJSON{}
+	if hasDependency(pkg2, "anything") {
+		t.Error("expected false for empty pkg")
+	}
+
+	// Nil Dependencies, non-nil DevDependencies
+	pkg3 := pkgJSON{DevDependencies: map[string]string{"typescript": "^5.0.0"}}
+	if !hasDependency(pkg3, "typescript") {
+		t.Error("expected typescript in devDependencies")
+	}
+}
+
+func TestStackGate_PostgresDriver(t *testing.T) {
+	goMod := "module social-network\ngo 1.25\n"
+	env := "DB_DRIVER=postgres\n"
+	dir := createMockStack(t, goMod, env, false, "", "", false)
+
+	g := &StackGate{
+		GoModPath: filepath.Join(dir, "go.mod"),
+		EnvPath:   filepath.Join(dir, ".env"),
+		RootDir:   dir,
+	}
+
+	res := g.Run()
+	// Should fail because platform dir missing, but postgres driver should not cause WAL/busy_timeout errors
+	if res.Status != "FAIL" {
+		t.Errorf("expected FAIL due to missing platform, got: %s (%s)", res.Status, res.Message)
+	}
+	if res.Status == "FAIL" && !strings.Contains(res.Message, "missing internal/platform directory") {
+		t.Errorf("expected platform error, got: %s", res.Message)
+	}
+}
+
+func TestStackGate_UnsupportedDriver(t *testing.T) {
+	goMod := "module social-network\ngo 1.25\n"
+	env := "DB_DRIVER=mysql\n"
+	dir := createMockStack(t, goMod, env, true, "", "", false)
+
+	g := &StackGate{
+		GoModPath: filepath.Join(dir, "go.mod"),
+		EnvPath:   filepath.Join(dir, ".env"),
+		RootDir:   dir,
+	}
+
+	res := g.Run()
+	if res.Status != "FAIL" {
+		t.Errorf("expected FAIL for unsupported driver, got: %s (%s)", res.Status, res.Message)
+	}
+	if !strings.Contains(res.Message, "unsupported DB_DRIVER") {
+		t.Errorf("expected unsupported driver error, got: %s", res.Message)
+	}
+}
+
+func TestStackGate_MissingGoMod(t *testing.T) {
+	dir := t.TempDir()
+
+	g := &StackGate{
+		GoModPath: filepath.Join(dir, "go.mod"),
+		EnvPath:   filepath.Join(dir, ".env"),
+		RootDir:   dir,
+	}
+
+	res := g.Run()
+	if res.Status != "FAIL" {
+		t.Errorf("expected FAIL for missing go.mod, got: %s (%s)", res.Status, res.Message)
+	}
+	if !strings.Contains(res.Message, "cannot open go.mod") {
+		t.Errorf("expected go.mod open error, got: %s", res.Message)
+	}
+}

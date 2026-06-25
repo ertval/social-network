@@ -264,16 +264,6 @@ func resolveCostExpr(f *ast.File, expr ast.Expr) (int, bool) {
 	if ident, ok := expr.(*ast.Ident); ok {
 		return findValueInFile(f, ident.Name)
 	}
-	// If it is bcrypt.DefaultCost or bcrypt.MinCost
-	if isBcryptDefaultCost(expr) {
-		sel := expr.(*ast.SelectorExpr) //nolint:forcetypeassert
-		if sel.Sel.Name == "DefaultCost" {
-			return 10, true
-		}
-		if sel.Sel.Name == "MinCost" {
-			return 4, true
-		}
-	}
 	return 0, false
 }
 

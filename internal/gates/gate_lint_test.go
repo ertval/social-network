@@ -2,6 +2,7 @@ package gates
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -75,5 +76,66 @@ func TestLintGate_LineLimit(t *testing.T) {
 	}
 	if !strings.Contains(res.Message, "exceeding maximum line limit") {
 		t.Errorf("expected error message to mention line limit, got: %s", res.Message)
+	}
+}
+
+func TestLintGate_CheckLineLimitsVariants(t *testing.T) {
+	dir := t.TempDir()
+
+	// File at warning threshold (340 lines for limit 300: 300*1.1=330, 300*1.2=360)
+	warnContent := strings.Repeat("line\n", 340)
+	if err := os.WriteFile(filepath.Join(dir, "warn.go"), []byte(warnContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// File at fail threshold (400 lines)
+	failContent := strings.Repeat("line\n", 400)
+	if err := os.WriteFile(filepath.Join(dir, "fail.go"), []byte(failContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	// File that passes (100 lines)
+	passContent := strings.Repeat("line\n", 100)
+	if err := os.WriteFile(filepath.Join(dir, "pass.go"), []byte(passContent), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	oldLook := lookPath
+	defer func() { lookPath = oldLook }()
+	lookPath = func(name string) (string, error) {
+		return "", os.ErrNotExist
+	}
+
+	g := &LintGate{MaxLines: 300, Dirs: []string{dir}}
+	res := g.Run()
+	// Should FAIL due to the 400-line file exceeding 360 (300*1.2)
+	if res.Status != "FAIL" {
+		t.Errorf("expected FAIL due to line limits, got: %s (%s)", res.Status, res.Message)
+	}
+	if !strings.Contains(res.Message, "exceeding maximum line limit") {
+		t.Errorf("expected message about line limit, got: %s", res.Message)
+	}
+}
+
+func TestLintGate_EmptyDir(t *testing.T) {
+	dir := t.TempDir()
+
+	oldLook := lookPath
+	defer func() { lookPath = oldLook }()
+	lookPath = func(name string) (string, error) {
+		return "", os.ErrNotExist
+	}
+
+	g := &LintGate{MaxLines: 300, Dirs: []string{dir}}
+	res := g.Run()
+	if res.Status != "PASS" {
+		t.Errorf("expected PASS for empty dir, got: %s (%s)", res.Status, res.Message)
+	}
+}
+
+func TestCountLines_Error(t *testing.T) {
+	_, err := countLines("/nonexistent-file-path")
+	if err == nil {
+		t.Error("expected error for nonexistent file")
 	}
 }

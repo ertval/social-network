@@ -3,6 +3,7 @@ package gates
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -40,6 +41,31 @@ func TestMigrationsGate_ValidPair(t *testing.T) {
 	result := g.Run()
 	if result.Status != "PASS" {
 		t.Errorf("expected PASS, got %s: %s", result.Status, result.Message)
+	}
+}
+
+func TestMigrationsGate_BadDelimiter(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "000001_init.up.sql"), []byte("CREATE TABLE t(id INT);"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "000001_init.down.sql"), []byte("DROP TABLE t;"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "000002_add_col.up.sql"), []byte("ALTER TABLE t ADD COLUMN x INT:"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "000002_add_col.down.sql"), []byte("ALTER TABLE t DROP COLUMN x;"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	g := &MigrationsGate{MigrationDir: dir}
+	result := g.Run()
+	if result.Status != "FAIL" {
+		t.Errorf("expected FAIL for bad delimiter, got %s: %s", result.Status, result.Message)
+	}
+	if !strings.Contains(result.Message, "bad delimiter") {
+		t.Errorf("expected bad delimiter error, got: %s", result.Message)
 	}
 }
 

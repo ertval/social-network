@@ -239,3 +239,69 @@ func test() {
 	g := &SecurityGate{InternalDir: dir}
 	_ = g.runASTChecks()
 }
+
+func TestSecurityGate_HasThirdPartyVulns(t *testing.T) {
+	tests := []struct {
+		name   string
+		output string
+		want   bool
+	}{
+		{"no vulnerabilities", "", false},
+		{"standard library only", "Vulnerability #1: Standard library", false},
+		{"third party found", "Vulnerability #1: some-lib@v1.0.0", true},
+		{"multiple with stdlib", "Vulnerability #1: Standard library\nVulnerability #2: third-party-lib", true},
+		{"third party found (different format)", "Vulnerability #1: golang.org/x/crypto", true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := hasThirdPartyVulns(tt.output)
+			if got != tt.want {
+				t.Errorf("hasThirdPartyVulns() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSecurityGate_RunProdPath(t *testing.T) {
+	oldExec := ExecCommand
+	oldLook := lookPath
+	defer func() {
+		ExecCommand = oldExec
+		lookPath = oldLook
+	}()
+	ExecCommand = mockExecCommand
+	lookPath = func(name string) (string, error) { return "", os.ErrNotExist }
+
+	g := &SecurityGate{}
+	t.Setenv("MOCK_FAIL", "0")
+
+	res := g.Run()
+	if res.Status != "PASS" && res.Status != "FAIL" {
+		t.Errorf("expected PASS or FAIL, got: %s (%s)", res.Status, res.Message)
+	}
+	if !strings.Contains(res.Message, "AST only") {
+		t.Errorf("expected 'AST only' suffix in message, got: %s", res.Message)
+	}
+}
+
+func TestSecurityGate_RunProdPath_WithTools(t *testing.T) {
+	oldExec := ExecCommand
+	oldLook := lookPath
+	defer func() {
+		ExecCommand = oldExec
+		lookPath = oldLook
+	}()
+	ExecCommand = mockExecCommand
+	lookPath = func(name string) (string, error) { return name, nil }
+
+	g := &SecurityGate{}
+	t.Setenv("MOCK_FAIL", "0")
+
+	res := g.Run()
+	if res.Status != "PASS" {
+		t.Errorf("expected PASS with tools, got: %s (%s)", res.Status, res.Message)
+	}
+	if !strings.Contains(res.Message, "gosec + govulncheck + AST") {
+		t.Errorf("expected all tools in message, got: %s", res.Message)
+	}
+}
