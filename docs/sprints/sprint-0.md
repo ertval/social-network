@@ -199,7 +199,7 @@
 - **Description:** Set up local docker compose environments for both development (hot reload) and production.
 - **Detailed Steps:**
   1. Create a `Dockerfile` for the Go backend (multi-stage build: builder -> final minimal alpine image).
-  2. Create a `frontend/Dockerfile` for the Next.js frontend.
+  2. Create a `frontend-next/Dockerfile` for the Next.js frontend.
   3. Create `docker-compose.dev.yml` to mount volumes (e.g. backend code, SQLite local file, node_modules) for hot-reloading development.
   4. Create a production `docker-compose.yml` that configures environment variables, ports (8080 for backend, 3000 for frontend), and volumes for persistence.
   5. Create `scripts/docker-build.sh` to automate building and launching.
@@ -259,7 +259,7 @@
   - Try to commit an unformatted file — commit gets blocked. Format it — succeeds.
   - Run `go run cmd/gates/main.go --all` — all gates pass with JSON output.
   - Run `go test -race -coverprofile=coverage_gates.out ./internal/gates/...` — coverage >90%.
-  - Run `make ci` — full pipeline green.
+  - Run `make gates` — full pipeline green.
 
 ---
 
