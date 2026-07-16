@@ -26,7 +26,6 @@ let _resolved = false;
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
-
 /**
  * Returns the currently logged-in user synchronously.
  * Returns null if not authenticated or if initAuth() hasn't been called yet.
@@ -64,24 +63,23 @@ export function setUser(user) {
   _resolved = true;
 }
 
-
 let _authCallInProgress = null;
 
 export async function authMiddleware() {
   if (_authCallInProgress) {
-    return _authCallInProgress
+    return _authCallInProgress;
   }
 
   _authCallInProgress = (async () => {
     try {
       const user = await fetchCurrentUser();
-      _currentUser = user
-      _resolved = true
-      return _currentUser
+      _currentUser = user;
+      _resolved = true;
+      return _currentUser;
     } catch (err) {
-      console.log('Auth Middleware: Failed to resolve current User:', err?.message ?? err)
+      console.log('Auth Middleware: Failed to resolve current User:', err?.message ?? err);
       _currentUser = null;
-      _resolved = true
+      _resolved = true;
       return null;
     } finally {
       _authCallInProgress = null;

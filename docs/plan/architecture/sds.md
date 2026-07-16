@@ -262,6 +262,7 @@ Each feature is standard Go code built inside `internal/<feature>/`. Features mu
 ### 2.1 File Organization & Content Rules
 
 #### 2.1.1 Entities and Store Definition (`<feature>.go`)
+
 Defines the struct representations of the business models, the `Repository` interface that commands/queries use to talk to the database, and domain-specific errors.
 
 ```go
@@ -293,6 +294,7 @@ type Repository interface {
 ```
 
 #### 2.1.2 Commands Layer (`commands/<use_case>.go`)
+
 Each write use case lives in its own file inside `commands/`. Each file contains the command struct, validation, business logic, event publishing, and a handler.
 
 ```go
@@ -353,6 +355,7 @@ func (h *FollowUserHandler) Execute(ctx context.Context, cmd *FollowUserCommand)
 ```
 
 #### 2.1.3 Queries Layer (`queries/<use_case>.go`)
+
 Each read use case lives in its own file inside `queries/`. Read-only queries that extract data projections and perform access checks.
 
 ```go
@@ -420,6 +423,7 @@ func NewHandler(
 `ws.go` exists only for features with WebSocket traffic (chat, group chat).
 
 #### 2.1.5 SQLite Adapter (`store/sqlite.go`)
+
 Implements the full `Repository` interface using standard SQL. All SQL for a feature domain lives in one file. Translates platform DB connection methods into feature actions.
 
 ```go
@@ -527,7 +531,8 @@ type Cache interface {
 Real-time interactions are controlled by a WebSocket Hub located in `internal/core/realtime/`.
 
 ### 4.1 Connection Flow
-1. **Authentication Handshake**: Next.js client initiates a WebSocket connection request. The gateway verifies the browser's auth token cookie *during the initial HTTP Upgrade request*. Unauthenticated sockets are rejected with a `401 Unauthorized` status (no anonymous sockets permitted).
+
+1. **Authentication Handshake**: Next.js client initiates a WebSocket connection request. The gateway verifies the browser's auth token cookie _during the initial HTTP Upgrade request_. Unauthenticated sockets are rejected with a `401 Unauthorized` status (no anonymous sockets permitted).
 2. **Origin Verification**: The `CheckOrigin` configuration on WebSocket Upgrader **must not** return `true` unconditionally. It must check the request header against configured allowed CORS origins (e.g., matching the server's `.env` origins) to mitigate Cross-Site WebSocket Hijacking.
 3. **Panic Recovery**: Spawning user-driven read/write pumps introduces panic risk. All client loops must catch internal failures:
    ```go
@@ -549,7 +554,9 @@ Real-time interactions are controlled by a WebSocket Hub located in `internal/co
    - Max message size: Limit incoming payload size (e.g., 512 KB) to prevent OOM exploits.
 
 ### 4.2 Messaging Contract
+
 Messages are framed in JSON format:
+
 ```json
 {
   "type": "chat_message",
@@ -569,10 +576,13 @@ Messages support Unicode text, including emojis, transmitted as UTF-8 encoded JS
 All middleware reside in `internal/core/middleware/` and compose standard HTTP routing filters.
 
 ### 5.1 Password Protection
+
 All user passwords must be hashed using `bcrypt` (with a cost factor of at least `12`) via the `golang.org/x/crypto/bcrypt` library. Plaintext password variables must be wiped immediately from memory when no longer needed.
 
 ### 5.2 Image Upload & MIME-Type Validation
+
 Do not rely on user-supplied HTTP `Content-Type` headers for uploads. Implement magic-byte validation using `http.DetectContentType` on the initial 512 bytes of the file content in the upload controller:
+
 ```go
 package imgutil
 
@@ -597,13 +607,15 @@ func ValidateImageHeader(data []byte) error {
 ```
 
 ### 5.3 Concurrency & Memory Safety
+
 - **Goroutine Leak Prevention**: Rate limiting modules or clean-up workers utilizing `time.Ticker` must include a `stop chan struct{}` closure channel to release system threads:
+
   ```go
   type RateLimiter struct {
       cleanupTicker *time.Ticker
       stop          chan struct{}
   }
-  
+
   func (rl *RateLimiter) Start() {
       go func() {
           for {
@@ -626,6 +638,7 @@ func ValidateImageHeader(data []byte) error {
 The user-facing client application is built with the Next.js App Router inside `frontend/` using HTML5, Tailwind CSS, and the `shadcn/ui` component library.
 
 ### 6.1 Component Library & Setup
+
 We use `shadcn/ui` to implement accessible, premium, styled interactive components.
 
 - **Configuration (`components.json`)**:
@@ -652,6 +665,7 @@ We use `shadcn/ui` to implement accessible, premium, styled interactive componen
   - Composite feature components (e.g., `chat-window.tsx`, `post-creator.tsx`, `follow-request-card.tsx`) reside in `src/components/features/`.
 
 ### 6.2 Unified CSS & Tailwind Configuration
+
 Tailwind utility classes form the basis of the visual design system, augmented by semantic CSS variables defined in `src/styles/globals.css`:
 
 ```css
@@ -678,7 +692,7 @@ Tailwind utility classes form the basis of the visual design system, augmented b
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
-    
+
     --glass-effect: backdrop-blur-md bg-slate-900/70 border border-white/10;
   }
 }
@@ -687,6 +701,7 @@ Tailwind utility classes form the basis of the visual design system, augmented b
 - **Aesthetic Styling Rules**: All custom layouts leverage modern fonts like Inter or Outfit. Use smooth hover and focus transitions on all custom Tailwind designs (`transition-all duration-200 ease-in-out`). Glassmorphism cards must use the `--glass-effect` style pattern.
 
 ### 6.3 Forms and Validations
+
 - **Registration Form Fields**:
   - `Email`: Text input with built-in regex pattern verification (`^[^\s@]+@[^\s@]+\.[^\s@]+$`).
   - `Password`: Enforced strength rules (minimum 8 characters, combination of uppercase, numbers, and symbols).
@@ -706,6 +721,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 ### 7.1 Go Backend Validation Pipeline
 
 #### 7.1.1 Static Analysis & Linting
+
 - **Linter**: `golangci-lint` acts as the primary quality gate.
   - Configuration: Defined in `.golangci.yml`. Enforces linters like `goimports`, `errcheck`, `staticcheck`, `revive`, and `govet`.
   - Execution command: `golangci-lint run`
@@ -713,6 +729,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 - **CVE Scan**: `govulncheck ./...` is run during CI and local builds to verify that third-party modules contain no known vulnerabilities.
 
 #### 7.1.2 Automated Testing
+
 - **Test suite runner**: `go test -race -v -coverprofile=coverage.out ./...`
   - Runs all unit and integration tests under the Go race detector to expose potential data races.
 - **Database Test Assertions**: Unit tests for SQL repository layers verify SQLite WAL settings and query isolation by ensuring the application runs migrations on a fresh memory/test DB file.
@@ -723,6 +740,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 ### 7.2 Next.js Frontend Validation Pipeline
 
 #### 7.2.1 Static Analysis & Code Style
+
 - **Linter & Formatter**: **Biome** is used as the unified tool for fast linting, formatting, and import sorting (replacing ESLint and Prettier).
   - Configuration: Defined in `biome.json` in the frontend root.
   - Linting command: `npx @biomejs/biome lint src/`
@@ -731,6 +749,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Execution command: `tsc --noEmit`
 
 #### 7.2.2 Automated Testing
+
 - **Unit & Component Testing**: **Vitest** paired with **React Testing Library** handles state, hook execution, and custom DOM element checks.
   - Execution command: `npm run test`
 - **End-to-End (E2E) Testing**: **Playwright** performs full-browser flow validation for cross-feature features:
@@ -738,7 +757,7 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
   - Real-time chat (spawning parallel browser contexts to test bidirectional messaging).
   - Notification receipt on events (group invitations, follow requests).
   - Profile locks and access permissions.
-   - Execution command: `npx playwright test`
+  - Execution command: `npx playwright test`
 
 ---
 
@@ -747,12 +766,14 @@ A multi-tiered testing and validation pipeline ensures security, correctness, an
 ### 8.1 Docker Compose
 
 Two Docker images are built via `docker-compose.yml`:
+
 - **backend**: Go server on port `8080`, SQLite volume mounted at `./data:/app/data`
 - **frontend**: Next.js app on port `3000`
 
 ### 8.2 Build Script (Bonus Feature)
 
 A convenience script `scripts/docker-build.sh` automates image building and container startup:
+
 ```bash
 #!/bin/sh
 docker compose build --parallel

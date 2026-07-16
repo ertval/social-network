@@ -196,17 +196,17 @@ type ChatRead struct {
 
 All database operations go through this interface:
 
-| Method | Description |
-|---|---|
-| `GetOrCreateChat(ctx, userID1, userID2)` | Idempotent — creates or fetches the chat between two users |
-| `GetChat(ctx, chatID)` | Fetch a single chat by its ID |
-| `GetChatsForUser(ctx, userID)` | All chats for a user, sorted by `last_message_at DESC` |
-| `SendMessage(ctx, chatID, senderID, content, clientMessageID)` | Insert message + update `direct_chats` + increment recipient unread count (single transaction) |
-| `GetMessagesForChat(ctx, chatID, limit)` | Latest N messages (newest first) |
-| `GetMessagesForChatBefore(ctx, chatID, beforeMessageID, limit)` | Paginate older messages before a cursor |
-| `MarkAsRead(ctx, chatID, userID, upToMessageID)` | Reset unread count to 0, record last read message |
-| `GetUnreadCount(ctx, chatID, userID)` | Single chat unread count for a user |
-| `GetAllUnreadCounts(ctx, userID)` | Map of `chatID → unreadCount` for all chats with unread messages |
+| Method                                                          | Description                                                                                    |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `GetOrCreateChat(ctx, userID1, userID2)`                        | Idempotent — creates or fetches the chat between two users                                     |
+| `GetChat(ctx, chatID)`                                          | Fetch a single chat by its ID                                                                  |
+| `GetChatsForUser(ctx, userID)`                                  | All chats for a user, sorted by `last_message_at DESC`                                         |
+| `SendMessage(ctx, chatID, senderID, content, clientMessageID)`  | Insert message + update `direct_chats` + increment recipient unread count (single transaction) |
+| `GetMessagesForChat(ctx, chatID, limit)`                        | Latest N messages (newest first)                                                               |
+| `GetMessagesForChatBefore(ctx, chatID, beforeMessageID, limit)` | Paginate older messages before a cursor                                                        |
+| `MarkAsRead(ctx, chatID, userID, upToMessageID)`                | Reset unread count to 0, record last read message                                              |
+| `GetUnreadCount(ctx, chatID, userID)`                           | Single chat unread count for a user                                                            |
+| `GetAllUnreadCounts(ctx, userID)`                               | Map of `chatID → unreadCount` for all chats with unread messages                               |
 
 ---
 
@@ -241,11 +241,13 @@ The server sends a WebSocket **ping frame** every **54 seconds** (`pingPeriod = 
 Additionally, the application layer supports explicit JSON pings:
 
 **Client → Server:**
+
 ```json
 { "type": "ping", "request_id": "optional-id" }
 ```
 
 **Server → Client:**
+
 ```json
 { "type": "pong", "request_id": "optional-id" }
 ```
@@ -262,15 +264,15 @@ Every message in both directions is a JSON object with this envelope:
 {
   "type": "string",
   "request_id": "optional-string",
-  "payload": { }
+  "payload": {}
 }
 ```
 
-| Field | Description |
-|---|---|
-| `type` | Identifies the message type (see tables below) |
+| Field        | Description                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| `type`       | Identifies the message type (see tables below)                                                                  |
 | `request_id` | Optional. Client-supplied identifier echoed back in the response. Use this to correlate request/response pairs. |
-| `payload` | A JSON object specific to the message type |
+| `payload`    | A JSON object specific to the message type                                                                      |
 
 The maximum message size the server accepts is **4096 bytes** per frame.
 
@@ -286,6 +288,7 @@ The maximum message size the server accepts is **4096 bytes** per frame.
   "request_id": "r1"
 }
 ```
+
 No payload required. Responds with `pong`.
 
 ---
@@ -304,13 +307,14 @@ No payload required. Responds with `pong`.
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `chat_id` | **Yes** | The UUID of the `direct_chats` row |
-| `content` | **Yes** | Message text (must not be empty) |
-| `client_message_id` | No | Dedup key. If you retry on reconnect, reuse the same value to prevent duplicates |
+| Field               | Required | Description                                                                      |
+| ------------------- | -------- | -------------------------------------------------------------------------------- |
+| `chat_id`           | **Yes**  | The UUID of the `direct_chats` row                                               |
+| `content`           | **Yes**  | Message text (must not be empty)                                                 |
+| `client_message_id` | No       | Dedup key. If you retry on reconnect, reuse the same value to prevent duplicates |
 
 **Server response** (type `chat.message`):
+
 - Sent to the **sender** as confirmation.
 - Also sent to the **recipient** if they have an active WebSocket connection.
 
@@ -330,11 +334,11 @@ No payload required. Responds with `pong`.
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `chat_id` | **Yes** | The UUID of the chat |
-| `before_message_id` | No | Pagination cursor. Omit (or set `0`) for the latest messages. Set to the oldest `id` you have to load older messages. |
-| `limit` | No | Number of messages to return. Default `10`, max `20`. |
+| Field               | Required | Description                                                                                                           |
+| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| `chat_id`           | **Yes**  | The UUID of the chat                                                                                                  |
+| `before_message_id` | No       | Pagination cursor. Omit (or set `0`) for the latest messages. Set to the oldest `id` you have to load older messages. |
+| `limit`             | No       | Number of messages to return. Default `10`, max `20`.                                                                 |
 
 **Messages are returned in reverse-chronological order (newest first).** The frontend should reverse them for display.
 
@@ -353,10 +357,10 @@ No payload required. Responds with `pong`.
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `chat_id` | **Yes** | The UUID of the chat |
-| `up_to_message_id` | **Yes** | The highest message ID the user has seen. Resets unread count to 0. |
+| Field              | Required | Description                                                         |
+| ------------------ | -------- | ------------------------------------------------------------------- |
+| `chat_id`          | **Yes**  | The UUID of the chat                                                |
+| `up_to_message_id` | **Yes**  | The highest message ID the user has seen. Resets unread count to 0. |
 
 No response payload is sent on success (the connection stays open). On error, an `error` message is sent.
 
@@ -367,6 +371,7 @@ No response payload is sent on success (the connection stays open). On error, an
 #### `chat.message` — New message delivered
 
 Sent in two scenarios:
+
 1. Back to the **sender** as confirmation after `chat.send`.
 2. To the **recipient** in real time if they are online.
 
@@ -426,15 +431,15 @@ Note: `request_id` is only present on the sender's confirmation. The push to the
 
 Common error messages:
 
-| Message | Cause |
-|---|---|
-| `"invalid message format"` | Malformed JSON envelope |
-| `"invalid payload"` | Payload JSON does not match expected shape |
-| `"chat_id and content are required"` | Missing required fields in `chat.send` |
-| `"failed to send message"` | Database error during insert |
-| `"failed to load messages"` | Database error during select |
-| `"failed to mark as read"` | Database error during upsert |
-| `"unknown message type"` | `type` field not recognized |
+| Message                              | Cause                                      |
+| ------------------------------------ | ------------------------------------------ |
+| `"invalid message format"`           | Malformed JSON envelope                    |
+| `"invalid payload"`                  | Payload JSON does not match expected shape |
+| `"chat_id and content are required"` | Missing required fields in `chat.send`     |
+| `"failed to send message"`           | Database error during insert               |
+| `"failed to load messages"`          | Database error during select               |
+| `"failed to mark as read"`           | Database error during upsert               |
+| `"unknown message type"`             | `type` field not recognized                |
 
 ---
 
@@ -463,9 +468,9 @@ Opens or retrieves the direct chat between the authenticated user and another us
 { "user_id": "uuid-of-the-other-user" }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `user_id` | **Yes** | The ID of the user you want to chat with. Must not be your own ID. |
+| Field     | Required | Description                                                        |
+| --------- | -------- | ------------------------------------------------------------------ |
+| `user_id` | **Yes**  | The ID of the user you want to chat with. Must not be your own ID. |
 
 **Response `200 OK`:**
 
@@ -488,11 +493,11 @@ The `data.ID` field is the `chat_id` to use for all subsequent WebSocket message
 
 **Error responses:**
 
-| Status | Reason |
-|---|---|
-| `400` | Missing `user_id`, or `user_id` is your own ID |
-| `401` | Not authenticated |
-| `500` | Database error |
+| Status | Reason                                         |
+| ------ | ---------------------------------------------- |
+| `400`  | Missing `user_id`, or `user_id` is your own ID |
+| `401`  | Not authenticated                              |
+| `500`  | Database error                                 |
 
 ---
 
@@ -525,6 +530,7 @@ Returns all registered users (except yourself), enriched with online presence an
 ```
 
 **Sorting rules:**
+
 1. Users you have **previously chatted with** (`last_message_at != null`) come first, sorted by most recent message (newest first — mirrors Discord).
 2. Users you have **never chatted with** (`last_message_at == null`) come after, sorted alphabetically by `nickname`.
 
@@ -568,20 +574,22 @@ const res = await fetch('/api/v1/chat/init', {
   body: JSON.stringify({ user_id: targetUserID }),
 });
 const { data } = await res.json();
-const chatID = data.ID;  // use this for all WebSocket messages
+const chatID = data.ID; // use this for all WebSocket messages
 ```
 
 ### Step 5: Load recent messages
 
 ```javascript
-ws.send(JSON.stringify({
-  type: 'chat.history',
-  request_id: 'hist-1',
-  payload: {
-    chat_id: 'uuid-of-chat',
-    limit: 10
-  }
-}));
+ws.send(
+  JSON.stringify({
+    type: 'chat.history',
+    request_id: 'hist-1',
+    payload: {
+      chat_id: 'uuid-of-chat',
+      limit: 10,
+    },
+  })
+);
 ```
 
 Handle the `chat.history_result` response and reverse the array before rendering (it arrives newest-first).
@@ -589,15 +597,17 @@ Handle the `chat.history_result` response and reverse the array before rendering
 ### Step 6: Send a message
 
 ```javascript
-ws.send(JSON.stringify({
-  type: 'chat.send',
-  request_id: 'send-1',
-  payload: {
-    chat_id: 'uuid-of-chat',
-    content: 'Hey, how are you?',
-    client_message_id: crypto.randomUUID()  // recommended for dedup
-  }
-}));
+ws.send(
+  JSON.stringify({
+    type: 'chat.send',
+    request_id: 'send-1',
+    payload: {
+      chat_id: 'uuid-of-chat',
+      content: 'Hey, how are you?',
+      client_message_id: crypto.randomUUID(), // recommended for dedup
+    },
+  })
+);
 ```
 
 Listen for `chat.message` responses. The same `chat.message` payload is pushed to the recipient if they are online.
@@ -622,14 +632,16 @@ ws.onmessage = (event) => {
 Call this when the user opens a chat, scrolls to the bottom, or the window gains focus:
 
 ```javascript
-ws.send(JSON.stringify({
-  type: 'chat.mark_read',
-  request_id: 'read-1',
-  payload: {
-    chat_id: 'uuid-of-chat',
-    up_to_message_id: 42  // highest message.id the user has seen
-  }
-}));
+ws.send(
+  JSON.stringify({
+    type: 'chat.mark_read',
+    request_id: 'read-1',
+    payload: {
+      chat_id: 'uuid-of-chat',
+      up_to_message_id: 42, // highest message.id the user has seen
+    },
+  })
+);
 ```
 
 ### Step 9: Load older messages (pagination)
@@ -637,15 +649,17 @@ ws.send(JSON.stringify({
 When the user scrolls to the top, request earlier messages:
 
 ```javascript
-ws.send(JSON.stringify({
-  type: 'chat.history',
-  request_id: 'hist-2',
-  payload: {
-    chat_id: 'uuid-of-chat',
-    before_message_id: 10,  // oldest message.id currently shown
-    limit: 10
-  }
-}));
+ws.send(
+  JSON.stringify({
+    type: 'chat.history',
+    request_id: 'hist-2',
+    payload: {
+      chat_id: 'uuid-of-chat',
+      before_message_id: 10, // oldest message.id currently shown
+      limit: 10,
+    },
+  })
+);
 ```
 
 Prepend the returned messages to the top of the chat view.
@@ -673,9 +687,9 @@ Hub.clients = map[string]map[*Client]bool
 
 Each `*Client` runs two goroutines:
 
-| Goroutine | Role |
-|---|---|
-| `ReadPump` | Reads frames from the WebSocket, calls `onMessage`, handles close/error |
+| Goroutine   | Role                                                                            |
+| ----------- | ------------------------------------------------------------------------------- |
+| `ReadPump`  | Reads frames from the WebSocket, calls `onMessage`, handles close/error         |
 | `WritePump` | Drains the `send` channel (buffered, size 256), sends frames, sends ping frames |
 
 The `send` channel being buffered means slow clients do not block message delivery to other users.
@@ -716,13 +730,13 @@ Page 3:  history(chat_id, before=31, 10)  → msgs [30..21]
 
 ## Key Design Decisions
 
-| Decision | Rationale |
-|---|---|
-| **Normalized user pair (low/high IDs)** | Ensures one unique row per pair in `direct_chats` without needing to query both orderings. |
-| **`INSERT OR IGNORE` for chat creation** | Makes `GetOrCreateChat` idempotent at the database level — safe to call concurrently. |
-| **`UNIQUE(sender_id, client_message_id)` on messages** | Client-side dedup: retrying a send on reconnect with the same `client_message_id` will not create a duplicate message. |
-| **Single transaction for send + unread increment** | The message insert and the recipient's unread count update are atomic — no partial state if either fails. |
-| **Hub with `sync.RWMutex`** | Allows many concurrent readers (message delivery to online users) with exclusive write locks only for register/unregister events. |
-| **`send` channel buffered to 256** | WritePump is non-blocking from the Hub's perspective; slow network clients do not stall delivery to others. |
-| **Session cookie for WS auth** | Reuses the same auth infrastructure as all HTTP routes. The cookie is validated once during the HTTP upgrade handshake; no token exchange inside the WebSocket protocol is needed. |
-| **Messages returned newest-first** | Simplifies pagination (cursor = smallest ID seen). The frontend reverses for display. |
+| Decision                                               | Rationale                                                                                                                                                                          |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Normalized user pair (low/high IDs)**                | Ensures one unique row per pair in `direct_chats` without needing to query both orderings.                                                                                         |
+| **`INSERT OR IGNORE` for chat creation**               | Makes `GetOrCreateChat` idempotent at the database level — safe to call concurrently.                                                                                              |
+| **`UNIQUE(sender_id, client_message_id)` on messages** | Client-side dedup: retrying a send on reconnect with the same `client_message_id` will not create a duplicate message.                                                             |
+| **Single transaction for send + unread increment**     | The message insert and the recipient's unread count update are atomic — no partial state if either fails.                                                                          |
+| **Hub with `sync.RWMutex`**                            | Allows many concurrent readers (message delivery to online users) with exclusive write locks only for register/unregister events.                                                  |
+| **`send` channel buffered to 256**                     | WritePump is non-blocking from the Hub's perspective; slow network clients do not stall delivery to others.                                                                        |
+| **Session cookie for WS auth**                         | Reuses the same auth infrastructure as all HTTP routes. The cookie is validated once during the HTTP upgrade handshake; no token exchange inside the WebSocket protocol is needed. |
+| **Messages returned newest-first**                     | Simplifies pagination (cursor = smallest ID seen). The frontend reverses for display.                                                                                              |

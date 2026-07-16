@@ -7,6 +7,7 @@
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
+
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them - don't pick silently.
 - If a simpler approach exists, say so. Push back when warranted.
@@ -29,12 +30,14 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 **Touch only what you must. Clean up only your own mess.**
 
 When editing existing code:
+
 - Don't "improve" adjacent code, comments, or formatting.
 - Don't refactor things that aren't broken.
 - Match existing style, even if you'd do it differently.
 - If you notice unrelated dead code, mention it - don't delete it.
 
 When your changes create orphans:
+
 - Remove imports/variables/functions that YOUR changes made unused.
 - Don't remove pre-existing dead code unless asked.
 
@@ -45,11 +48,13 @@ The test: Every changed line should trace directly to the user's request.
 **Define success criteria. Loop until verified.**
 
 Transform tasks into verifiable goals:
+
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
 For multi-step tasks, state a brief plan:
+
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]
@@ -74,6 +79,7 @@ All branches must follow the format `<username>/<type>-<detail>`.
 - **detail**: kebab-case description of the change
 
 Examples:
+
 - `ekaramet/feat-arch-proposal`
 - `arnald/fix-sqlite-busy-timeout`
 - `ekaramet/chore-update-deps`
@@ -81,6 +87,7 @@ Examples:
 ## Audit 2026-06-14: Social Network Codebase Audit
 
 ### Patterns
+
 - SQLite DSN must include `_journal_mode=WAL` and `_busy_timeout=5000`
 - SQL queries must use `?` placeholders (never `fmt.Sprintf` or `+` concat)
 - Password hashing must use `bcrypt` via `golang.org/x/crypto/bcrypt`
@@ -89,6 +96,7 @@ Examples:
 - Domain/ never imports infra/ — enforce clean architecture boundary
 
 ### Spec Compliance Checklist (every time)
+
 - [ ] Followers table exists? (follows, follow_requests)
 - [ ] Profile privacy column? (is_private on users)
 - [ ] Post privacy column? (visibility enum on topics)
@@ -102,6 +110,7 @@ Examples:
 - [ ] Migrations follow numbered up/down format
 
 ### Tool Invocations
+
 - `go vet ./...` — catches type errors, shadowing
 - `go mod graph` — verify allowed packages
 - `golangci-lint run` — full lint (install via `make tools`)
@@ -109,11 +118,13 @@ Examples:
 - `go test -race -coverprofile=coverage.out ./...` — full test suite
 
 ### Known False Positives
+
 - gorilla/websocket: allowed per spec, don't flag as unauthorized dep
 - Custom migration system: allowed per spec ("or other package"), but up/down format expected
 - Domain cross-imports (category→topic, topic→comment): acceptable in domain layer (only domain→domain)
 
 ### Spec Items Frequently Misread
+
 - "two Docker images" = 2 services in docker-compose, not 2 binaries in 1 image
 - "JS framework" — spec lists Next.js/Vue/Svelte/Mithril. Vanilla JS SPA may not qualify
 - "Nickname optional" — spec says optional, many impls make it required
@@ -122,6 +133,7 @@ Examples:
 - "Follow private profile" — requires notification (follow-request), not silent creation
 
 ### Post-Audit 2026-06-14: Patterns Discovered
+
 - Always check `Scan()` arg list — `ctx` is frequently accidentally passed as a scan target (found in `oauthRepo.go:182`)
 - SQLite migration delimiter: use `";"` NEVER `":"` — colon breaks SQL with `'\:'` or timestamps
 - WebSocket `CheckOrigin` must NOT be `return true` — this is a CSRF WebSocket vector
@@ -131,12 +143,14 @@ Examples:
 - Image MIME validation must check magic bytes, not just `Content-Type` header
 
 ### Common False Positives to Suppress
+
 - `gorilla/websocket // indirect` annotation: just a `go mod tidy` issue, not a bug
 - Migration file naming: spec's "other package" clause can justify custom migration (but up/down and numbered format still expected)
 - Google OAuth handler using `UserLoginGithub` service: service is generic via `Provider` interface, so it works — misleading name, not a logic bug
 - Unused imports in `infra/services.go`: dead code due to the server wiring through `bootstrap/` directly
 
 ### Tool Invocations That Worked Well
+
 - `govulncheck ./...` — caught 28 stdlib CVEs, zero noise
 - `go vet ./...` — caught build errors and test signature mismatches
 - `grep -rn '<pattern>' --include='*.go' internal/ cmd/ db/` — effective for feature presence/absence checks
@@ -144,6 +158,7 @@ Examples:
 - Judge agent with fresh context (no prior Phase 2 context) — caught `CheckOrigin` (JUDGE-FOUND-1) that Phase 2 missed
 
 ### Socratic Challenges Worth Documenting
+
 - Missing `_busy_timeout`: fix is trivial one-liner, prevents `database is locked` errors under WAL contention
 - `ctx` in `Scan()`: trivial fix, prevents runtime crash — highest priority
 - Follow/Group greenfield: high cost but unavoidable for spec compliance — these are core features, not optional
@@ -154,12 +169,14 @@ Examples:
 ## Audit Run 2 2026-06-14: Deeper Scans & Concurrency Audit
 
 ### Additional Patterns Discovered
+
 - **RateLimiter Goroutine Leaks**: Tickers must have a `stop` channel. Running `go rl.cleanup()` without a cancellation trigger creates permanent goroutine leaks.
 - **WebSocket Panic Recovery**: Spawning long-lived goroutines like `ReadPump` / `WritePump` requires `recover()` block. Standard HTTP handlers are recovered by the net/http server, but user-spawned goroutines will crash the process if they panic.
 - **Strict Framework Checks**: A project that uses standard DOM APIs and hand-rolled router instead of an allowed JS framework (e.g. Next.js, Vue, Svelte, Mithril) is a critical spec compliance failure.
 - **Client-Side MIME Spoofing**: Validate uploaded images using `http.DetectContentType` on file headers rather than relying solely on the client's `Content-Type` header.
 
 ### Tool Invocations That Worked Well
+
 - `~/go/bin/golangci-lint run --config scratch/golangci.yml` works around config v2 schema incompatibilities of older linters.
 - `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` compiles cleanly under Go 1.25.1.
 
@@ -170,6 +187,7 @@ This project has a knowledge graph at graphify-out/ with god nodes, community st
 When the user types `/graphify`, invoke the `skill` tool with `skill: "graphify"` before doing anything else.
 
 Rules:
+
 - For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
 - Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.

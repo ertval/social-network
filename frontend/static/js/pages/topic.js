@@ -754,7 +754,7 @@ function initVoteButtons(topic, user) {
   if (!user) return; // buttons are already disabled in the HTML for guests
 
   document.querySelectorAll('.like-btn, .dislike-btn').forEach((btn) => {
-    btn.addEventListener('click', async function() {
+    btn.addEventListener('click', async function () {
       if (this.disabled) return;
 
       const isLike = this.classList.contains('like-btn');

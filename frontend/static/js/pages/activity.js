@@ -58,17 +58,18 @@ function buildPageHTML(activity, user) {
         <div class="activity-header">
           <h2 class="activity-page-title">Activity</h2>
         </div>
-        ${isEmpty
-      ? buildEmptyHTML()
-      : buildSectionsHTML({
-        CreatedTopics,
-        LikedTopics,
-        DislikedTopics,
-        LikedComments,
-        DislikedComments,
-        UserComments,
-      })
-    }
+        ${
+          isEmpty
+            ? buildEmptyHTML()
+            : buildSectionsHTML({
+                CreatedTopics,
+                LikedTopics,
+                DislikedTopics,
+                LikedComments,
+                DislikedComments,
+                UserComments,
+              })
+        }
       </div>
     </div>
   `;
@@ -127,17 +128,17 @@ function buildSectionsHTML(activity) {
       : '',
     activity.LikedComments.length
       ? buildCommentVoteSection(
-        'Comments You Liked',
-        activity.LikedComments,
-        'You liked a comment in'
-      )
+          'Comments You Liked',
+          activity.LikedComments,
+          'You liked a comment in'
+        )
       : '',
     activity.DislikedComments.length
       ? buildCommentVoteSection(
-        'Comments You Disliked',
-        activity.DislikedComments,
-        'You disliked a comment in'
-      )
+          'Comments You Disliked',
+          activity.DislikedComments,
+          'You disliked a comment in'
+        )
       : '',
     activity.UserComments.length ? buildUserCommentsSection(activity.UserComments) : '',
   ];
@@ -152,8 +153,8 @@ function buildTopicSection(title, topics, verb) {
     <div class="activity-section">
       <h3 class="activity-section-title">${title}</h3>
       ${topics
-      .map(
-        (t) => /* html */ `
+        .map(
+          (t) => /* html */ `
         <div class="activity-row">
           <div class="activity-content">
             <p class="activity-text">
@@ -166,8 +167,8 @@ function buildTopicSection(title, topics, verb) {
           </div>
         </div>
       `
-      )
-      .join('')}
+        )
+        .join('')}
     </div>
   `;
 }
@@ -177,8 +178,8 @@ function buildCommentVoteSection(title, comments, verb) {
     <div class="activity-section">
       <h3 class="activity-section-title">${title}</h3>
       ${comments
-      .map(
-        (c) => /* html */ `
+        .map(
+          (c) => /* html */ `
         <div class="activity-row">
           <div class="activity-content">
             <p class="activity-text">
@@ -191,8 +192,8 @@ function buildCommentVoteSection(title, comments, verb) {
           </div>
         </div>
       `
-      )
-      .join('')}
+        )
+        .join('')}
     </div>
   `;
 }
@@ -202,8 +203,8 @@ function buildUserCommentsSection(comments) {
     <div class="activity-section">
       <h3 class="activity-section-title">Your Comments</h3>
       ${comments
-      .map(
-        (c) => /* html */ `
+        .map(
+          (c) => /* html */ `
         <div class="activity-row activity-row-comment">
           <div class="activity-content">
             <p class="activity-text">
@@ -219,8 +220,8 @@ function buildUserCommentsSection(comments) {
           </div>
         </div>
       `
-      )
-      .join('')}
+        )
+        .join('')}
     </div>
   `;
 }

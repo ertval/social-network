@@ -1,13 +1,19 @@
 # 🌐 Social Network - Clean Architecture SPA
 
-A full-stack social networking reference architecture demonstrating clean vertical-slice design in Go. Decoupled infrastructure (SQLite/PostgreSQL, Redis, RabbitMQ) behind abstract interfaces enables zero-code platform swaps.
-
 [![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go&logoColor=white)](https://golang.org)
 [![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://sqlite.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/ertval/social-network/ci.yml?style=flat-square&logo=github&logoColor=white)](https://github.com/ertval/social-network/actions)
+
+---
+
+**Problem:** Building robust, scalable social platforms requires decoupling business logic from infrastructure details (like message buses, database engines, or session caching) to prevent tight coupling.
+
+**Solution:** A clean vertical-slice architecture Go monolith with pluggable platform adapters (SQLite WAL ↔ PostgreSQL, memory ↔ Redis, in-memory ↔ RabbitMQ) behind clean interfaces.
+
+---
 
 A premium, high-performance social networking platform built with a **Go backend API server**, a **Go Backend-for-Frontend (BFF) proxy**, and a **custom client-side Vanilla JavaScript Single-Page Application (SPA)**.
 

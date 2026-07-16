@@ -29,28 +29,28 @@
 
 ## Spec Compliance Matrix
 
-| Requirement | Status | Location | Spec Ref |
-|---|---|---|---|
-| Allowed packages only | ✅ | `go.mod` | readme.md Allowed Packages |
-| WAL mode | ✅ | `config.go:142` default `_journal_mode=WAL` | readme.md Sqlite |
-| Busy timeout | ❌ | `config.go:142` — `_busy_timeout` absent | readme.md Sqlite |
-| Connection pooling (SQLite) | ❌** | `sqlite/init.go:59-61` — only `SetMaxOpenConns`, no `SetMaxIdleConns`/`SetConnMaxLifetime` | readme.md Sqlite |
-| Follower request flow | ❌ | Entirely missing — no `followers` table, no handlers | readme.md Followers |
-| Profile privacy (public/private) | ❌ | Entirely missing — no privacy column, no toggle, no enforcement | readme.md Profile |
-| Auto-follow on public | ❌ | Entirely missing | readme.md Followers |
-| Post privacy scopes (3 levels) | ❌ | Entirely missing — `topics` table has no privacy column | readme.md Posts |
-| Group lifecycle (browse/create/join/invite) | ❌ | Entirely missing — no `groups` table | readme.md Groups |
-| Group events (title/desc/time/RSVP) | ❌ | Entirely missing | readme.md Groups |
-| Group chat rooms | ❌ | Only direct chats exist (`direct_chats` table) | readme.md Chat |
-| WebSocket auth handshake | ✅ | `server.go:384-389` — wrapped in `Authorization.Required`, handler checks user in context | readme.md Chat |
-| Chat follow-based auth | ❌ | `chat/commands/initChat.go:28-33` — no follow check before creating chat | readme.md Chat |
-| Notification triggers (4 required) | ❌ | Only 2 types (reply/like). No follow-request/group-invite/group-join/event-creation | readme.md Notifications |
-| Startup migrations | ✅ | `sqlite/init.go:36-41` — `MigrateOnStart` default true | readme.md Migrate |
-| Registration form fields | ❌ | Missing Date of Birth (uses Age int), Avatar/Image, About Me | readme.md Authentication |
-| Docker (2 containers) | ⚠️ | Single `Dockerfile` builds both binaries; `docker-compose.yml` runs both as 1 container | readme.md docker |
-| Session cookies hardened | ✅ | `config.go:147-153` — HttpOnly default true, Secure configurable, SameSite Lax | readme.md Authentication |
+| Requirement                                 | Status | Location                                                                                   | Spec Ref                   |
+| ------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ | -------------------------- |
+| Allowed packages only                       | ✅     | `go.mod`                                                                                   | readme.md Allowed Packages |
+| WAL mode                                    | ✅     | `config.go:142` default `_journal_mode=WAL`                                                | readme.md Sqlite           |
+| Busy timeout                                | ❌     | `config.go:142` — `_busy_timeout` absent                                                   | readme.md Sqlite           |
+| Connection pooling (SQLite)                 | ❌\*\* | `sqlite/init.go:59-61` — only `SetMaxOpenConns`, no `SetMaxIdleConns`/`SetConnMaxLifetime` | readme.md Sqlite           |
+| Follower request flow                       | ❌     | Entirely missing — no `followers` table, no handlers                                       | readme.md Followers        |
+| Profile privacy (public/private)            | ❌     | Entirely missing — no privacy column, no toggle, no enforcement                            | readme.md Profile          |
+| Auto-follow on public                       | ❌     | Entirely missing                                                                           | readme.md Followers        |
+| Post privacy scopes (3 levels)              | ❌     | Entirely missing — `topics` table has no privacy column                                    | readme.md Posts            |
+| Group lifecycle (browse/create/join/invite) | ❌     | Entirely missing — no `groups` table                                                       | readme.md Groups           |
+| Group events (title/desc/time/RSVP)         | ❌     | Entirely missing                                                                           | readme.md Groups           |
+| Group chat rooms                            | ❌     | Only direct chats exist (`direct_chats` table)                                             | readme.md Chat             |
+| WebSocket auth handshake                    | ✅     | `server.go:384-389` — wrapped in `Authorization.Required`, handler checks user in context  | readme.md Chat             |
+| Chat follow-based auth                      | ❌     | `chat/commands/initChat.go:28-33` — no follow check before creating chat                   | readme.md Chat             |
+| Notification triggers (4 required)          | ❌     | Only 2 types (reply/like). No follow-request/group-invite/group-join/event-creation        | readme.md Notifications    |
+| Startup migrations                          | ✅     | `sqlite/init.go:36-41` — `MigrateOnStart` default true                                     | readme.md Migrate          |
+| Registration form fields                    | ❌     | Missing Date of Birth (uses Age int), Avatar/Image, About Me                               | readme.md Authentication   |
+| Docker (2 containers)                       | ⚠️     | Single `Dockerfile` builds both binaries; `docker-compose.yml` runs both as 1 container    | readme.md docker           |
+| Session cookies hardened                    | ✅     | `config.go:147-153` — HttpOnly default true, Secure configurable, SameSite Lax             | readme.md Authentication   |
 
-** \*Connection pooling partially implemented — only `SetMaxOpenConns` set, missing idle conns and max lifetime.
+\*\* \*Connection pooling partially implemented — only `SetMaxOpenConns` set, missing idle conns and max lifetime.
 
 ---
 
@@ -276,7 +276,7 @@
 - **Judge Verdict**: CONFIRMED
 - **Confidence**: HIGH
 
-### AUDIT-015 — OpenDB returns misleading double *sql.DB
+### AUDIT-015 — OpenDB returns misleading double \*sql.DB
 
 - **Severity**: LOW
 - **Location**: `internal/infra/storage/sqlite/init.go:53`
@@ -372,15 +372,15 @@
 
 ## Bonus Feature Inventory
 
-| Feature | Status | Location |
-|---|---|---|
-| OAuth (GitHub + Google) | ✅ PRESENT | `internal/pkg/oAuth/` — GitHub and Google OAuth providers fully implemented with state management |
-| DB seeding | ✅ PRESENT | `db/seeds/dev_data.sql`, executed on `InitializeDB` in dev/staging |
-| Confirmation popups (unfollow) | ❌ MISSING | No unfollow feature exists, so no confirmation. Search found zero popup implementations |
-| Confirmation popups (privacy toggle) | ❌ MISSING | No privacy toggle exists, so no confirmation |
-| Docker build scripts | ⚠️ PARTIAL | Single `Dockerfile` + `docker-compose.yml` + `entrypoint.sh` + `DOCKER_SETUP.md`. Builds both services in 1 image |
-| Extra notifications | ✅ PRESENT | `reply`, `like`, `dislike` types beyond the 4 required (but implemented as a forum, not SN context) |
-| Overall project quality | ⚠️ Fair | Clean architecture respected. App layer separate. SQL injection safe. But massive spec mismatch — project is a forum, not a social network. Tests sparse, largely out of date |
+| Feature                              | Status     | Location                                                                                                                                                                      |
+| ------------------------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OAuth (GitHub + Google)              | ✅ PRESENT | `internal/pkg/oAuth/` — GitHub and Google OAuth providers fully implemented with state management                                                                             |
+| DB seeding                           | ✅ PRESENT | `db/seeds/dev_data.sql`, executed on `InitializeDB` in dev/staging                                                                                                            |
+| Confirmation popups (unfollow)       | ❌ MISSING | No unfollow feature exists, so no confirmation. Search found zero popup implementations                                                                                       |
+| Confirmation popups (privacy toggle) | ❌ MISSING | No privacy toggle exists, so no confirmation                                                                                                                                  |
+| Docker build scripts                 | ⚠️ PARTIAL | Single `Dockerfile` + `docker-compose.yml` + `entrypoint.sh` + `DOCKER_SETUP.md`. Builds both services in 1 image                                                             |
+| Extra notifications                  | ✅ PRESENT | `reply`, `like`, `dislike` types beyond the 4 required (but implemented as a forum, not SN context)                                                                           |
+| Overall project quality              | ⚠️ Fair    | Clean architecture respected. App layer separate. SQL injection safe. But massive spec mismatch — project is a forum, not a social network. Tests sparse, largely out of date |
 
 ---
 
@@ -388,28 +388,28 @@
 
 ### Step 3.1 — Evidence Audit
 
-| Finding | Verdict | Notes |
-|---|---|---|
-| AUDIT-001 (Spec mismatch) | CONFIRMED | Zero matching code; schema confirms forum model |
-| AUDIT-002 (Colon split) | CONFIRMED | `strings.SplitSeq(content, ":")` at init.go:118 |
-| AUDIT-003 (Missing notifications) | CONFIRMED | Only 4 types in domain model, none SN-related |
-| AUDIT-004 (No follow check chat) | CONFIRMED | `initChat.go` has zero follow logic |
-| AUDIT-005 (Login info leak) | CONFIRMED | `err.Error()` returned verbatim at LoginEmailHandler.go:67 |
-| AUDIT-006 (Test compilation) | CONFIRMED | `go vet` confirmed the build error |
-| AUDIT-007 (Missing pool config) | CONFIRMED | Only SetMaxOpenConns called |
-| AUDIT-008 (Missing busy_timeout) | CONFIRMED | Default pragma verified at config.go:142 |
+| Finding                             | Verdict   | Notes                                                                 |
+| ----------------------------------- | --------- | --------------------------------------------------------------------- |
+| AUDIT-001 (Spec mismatch)           | CONFIRMED | Zero matching code; schema confirms forum model                       |
+| AUDIT-002 (Colon split)             | CONFIRMED | `strings.SplitSeq(content, ":")` at init.go:118                       |
+| AUDIT-003 (Missing notifications)   | CONFIRMED | Only 4 types in domain model, none SN-related                         |
+| AUDIT-004 (No follow check chat)    | CONFIRMED | `initChat.go` has zero follow logic                                   |
+| AUDIT-005 (Login info leak)         | CONFIRMED | `err.Error()` returned verbatim at LoginEmailHandler.go:67            |
+| AUDIT-006 (Test compilation)        | CONFIRMED | `go vet` confirmed the build error                                    |
+| AUDIT-007 (Missing pool config)     | CONFIRMED | Only SetMaxOpenConns called                                           |
+| AUDIT-008 (Missing busy_timeout)    | CONFIRMED | Default pragma verified at config.go:142                              |
 | AUDIT-009 (Incomplete registration) | CONFIRMED | Missing DOB, Avatar, AboutMe — confirmed in both frontend and backend |
-| AUDIT-010 (No auto-login) | CONFIRMED | Registration returns JSON, no session created |
-| AUDIT-011 (Wrong HTTP status) | CONFIRMED | 500 returned, not 409 |
-| AUDIT-012 (Password hash leak) | CONFIRMED | `password_hash` scanned into User.Password at sessionManager.go:216 |
-| AUDIT-013 (indirect mislabel) | CONFIRMED | go.mod line 6 verified |
-| AUDIT-014 (Middlware typo) | CONFIRMED | bootstrap.go:32 |
-| AUDIT-015 (Double *sql.DB) | CONFIRMED | OpenDB signature at init.go:53 |
-| AUDIT-016 (Unconditional delete) | CONFIRMED | sessionManager.go:244-255 |
-| AUDIT-017 (Rollback pattern) | CONFIRMED | init.go:102-136 reviewed |
-| AUDIT-018 (Migration format) | WEAKENED | Custom format works but doesn't match spec example |
-| AUDIT-019 (No goroutine recover) | CONFIRMED | client.go:40,67 no recover |
-| AUDIT-020 (Single Docker container) | CONFIRMED | docker-compose.yml:1 service |
+| AUDIT-010 (No auto-login)           | CONFIRMED | Registration returns JSON, no session created                         |
+| AUDIT-011 (Wrong HTTP status)       | CONFIRMED | 500 returned, not 409                                                 |
+| AUDIT-012 (Password hash leak)      | CONFIRMED | `password_hash` scanned into User.Password at sessionManager.go:216   |
+| AUDIT-013 (indirect mislabel)       | CONFIRMED | go.mod line 6 verified                                                |
+| AUDIT-014 (Middlware typo)          | CONFIRMED | bootstrap.go:32                                                       |
+| AUDIT-015 (Double \*sql.DB)         | CONFIRMED | OpenDB signature at init.go:53                                        |
+| AUDIT-016 (Unconditional delete)    | CONFIRMED | sessionManager.go:244-255                                             |
+| AUDIT-017 (Rollback pattern)        | CONFIRMED | init.go:102-136 reviewed                                              |
+| AUDIT-018 (Migration format)        | WEAKENED  | Custom format works but doesn't match spec example                    |
+| AUDIT-019 (No goroutine recover)    | CONFIRMED | client.go:40,67 no recover                                            |
+| AUDIT-020 (Single Docker container) | CONFIRMED | docker-compose.yml:1 service                                          |
 
 ### Step 3.2 — Gap Analysis (JUDGE-FOUND)
 

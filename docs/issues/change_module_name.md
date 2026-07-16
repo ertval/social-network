@@ -1,9 +1,11 @@
 # Issue: Rename Module from github.com/arnald/forum to social-network
 
 ## What to build
+
 Rename the Go module name in `go.mod` from `github.com/arnald/forum` to `social-network` and update all project imports inside `.go` files accordingly to align with the social network project's domain specification.
 
 ## Acceptance Criteria
+
 - [ ] `go.mod` contains the module definition `module social-network`.
 - [ ] All `.go` source files under `cmd/`, `internal/`, and `db/` have their imports updated from `"github.com/arnald/forum/...` to `"social-network/...`.
 - [ ] Running `go build ./cmd/server` and `go build ./cmd/client` compiles successfully.

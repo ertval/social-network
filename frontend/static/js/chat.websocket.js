@@ -6,10 +6,7 @@ import {
   getTimeAgo,
   normalizeMessage,
 } from './chat.js';
-import {
-  renderChatMessages,
-  renderActiveChatTypingState,
-} from './chat.render.js';
+import { renderChatMessages, renderActiveChatTypingState } from './chat.render.js';
 import {
   getHistoryState,
   clearPendingHistoryLoad,

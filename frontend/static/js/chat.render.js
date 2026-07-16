@@ -11,10 +11,8 @@ import {
   loadChatUsers,
   getTimeAgo,
 } from './chat.js';
-import {
-  disconnectHistoryObserver,
-} from './chat.history.js';
-import { sendChatViewEvent,sendTypingEvent } from './chat.websocket.js';
+import { disconnectHistoryObserver } from './chat.history.js';
+import { sendChatViewEvent, sendTypingEvent } from './chat.websocket.js';
 
 // ─── Chat Window (Message Interface) ─────────────────────────────────────────
 const CHAT_TYPING_THROTTLE_MS = 1000;

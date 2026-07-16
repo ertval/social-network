@@ -29,6 +29,7 @@ infra/http/<entity>/
 ```
 
 Every action file in the new package:
+
 - Has `package topic` (not `package createtopic`)
 - Defines a method on the shared Handler: `func (h *Handler) CreateTopic(...)`
 - Has no `Handler struct` or `NewHandler` — those live in `handler.go`
@@ -42,6 +43,7 @@ Do **one entity at a time**, run `go vet ./internal/infra/http/...` after each.
 ### 1. `topic/`
 
 **Delete directories** (5):
+
 ```
 internal/infra/http/topic/createTopic/
 internal/infra/http/topic/deleteTopic/
@@ -53,6 +55,7 @@ internal/infra/http/topic/updateTopic/
 **Create files** in `internal/infra/http/topic/`:
 
 #### `handler.go`
+
 ```go
 package topic
 
@@ -78,7 +81,9 @@ func NewHandler(userServices app.Services, config *config.ServerConfig, logger l
 ```
 
 #### `create.go`
+
 Copy content from `createTopicHandler.go`. Changes:
+
 - `package createtopic` → `package topic`
 - Remove `Handler struct` and `NewHandler`
 - Method receiver: `(h *Handler) CreateTopic(...)`
@@ -87,6 +92,7 @@ Copy content from `createTopicHandler.go`. Changes:
 **All topic action files** (`create.go`, `delete.go`, `get.go`, `get_all.go`, `update.go`) follow the same pattern — just paste the handler function body into `package topic` as a method on `*Handler`.
 
 `get.go` also moves content from `topic/getTopic/errors.go`:
+
 ```go
 package topic
 
@@ -96,6 +102,7 @@ var ErrTopicIDRequired = errors.New("topic id required")
 ```
 
 #### `routes.go`
+
 ```go
 package topic
 
@@ -124,6 +131,7 @@ func middlewareChain(next func(http.ResponseWriter, *http.Request), mws ...func(
 ### 2. `comment/`
 
 **Delete directories** (5):
+
 ```
 internal/infra/http/comment/createComment/
 internal/infra/http/comment/deleteComment/
@@ -135,7 +143,9 @@ internal/infra/http/comment/updateComment/
 **Create files** in `internal/infra/http/comment/`:
 
 #### `handler.go`
+
 Two Handler struct patterns coexist for comment — use the common one:
+
 ```go
 package comment
 
@@ -185,6 +195,7 @@ type Handler struct {
 But this creates a split: `createComment` accesses `h.CreateComment`, others access `h.UserServices.Commands.*`. Acceptable.
 
 **Files**:
+
 - `create.go` — `CreateComment` method (uses `h.CreateComment`)
 - `delete.go` — `DeleteComment` method (uses `h.UserServices`)
 - `get.go` — `GetComment` method
@@ -192,6 +203,7 @@ But this creates a split: `createComment` accesses `h.CreateComment`, others acc
 - `update.go` — `UpdateComment` method
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -207,6 +219,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 3. `category/`
 
 **Delete directories** (5):
+
 ```
 internal/infra/http/category/createCategory/
 internal/infra/http/category/deleteCategory/
@@ -222,6 +235,7 @@ internal/infra/http/category/updateCategory/
 **Files**: `create.go`, `delete.go`, `get.go`, `get_all.go`, `update.go`
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -237,6 +251,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 4. `vote/`
 
 **Delete directories** (3):
+
 ```
 internal/infra/http/vote/castVote/
 internal/infra/http/vote/deleteVote/
@@ -246,6 +261,7 @@ internal/infra/http/vote/getVoteCounts/
 **Create files** in `internal/infra/http/vote/`:
 
 `handler.go`:
+
 ```go
 package vote
 
@@ -281,6 +297,7 @@ func NewHandler(
 **Files**: `cast.go` (CastVote), `delete.go` (DeleteVote), `counts.go` (GetCounts — note: method is named `GetCounts`, not `GetVoteCounts`)
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -294,6 +311,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 5. `notification/`
 
 **Delete directories** (5):
+
 ```
 internal/infra/http/notification/getNotifications/
 internal/infra/http/notification/getUnreadCount/
@@ -307,6 +325,7 @@ internal/infra/http/notification/streamNotification/
 This entity uses the "single service interface" pattern exclusively — each handler takes one specific interface. That's fine, keep it.
 
 `handler.go`:
+
 ```go
 package notification
 
@@ -341,6 +360,7 @@ func NewHandler(
 ```
 
 **Files**:
+
 - `get.go` — `GetNotifications`
 - `unread_count.go` — `GetUnread`
 - `mark_all_read.go` — `MarkAllAsRead`
@@ -348,6 +368,7 @@ func NewHandler(
 - `stream.go` — `StreamNotifications`
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -363,6 +384,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 6. `chat/`
 
 **Delete directories** (2):
+
 ```
 internal/infra/http/chat/getChatUsers/
 internal/infra/http/chat/initChat/
@@ -371,6 +393,7 @@ internal/infra/http/chat/initChat/
 **Create files** in `internal/infra/http/chat/`:
 
 `handler.go`:
+
 ```go
 package chat
 
@@ -402,6 +425,7 @@ func NewHandler(
 **Files**: `init.go`, `users.go`
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -414,6 +438,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 7. `user/`
 
 **Delete directories** (4):
+
 ```
 internal/infra/http/user/getMe/
 internal/infra/http/user/login/
@@ -424,6 +449,7 @@ internal/infra/http/user/register/
 **Create files** in `internal/infra/http/user/`:
 
 `handler.go`:
+
 ```go
 package user
 
@@ -461,12 +487,14 @@ func NewHandler(
 ```
 
 **Files**:
+
 - `login.go` — both `UserLoginEmail` and `UserLoginUsername` methods (merge from `LoginEmailHandler.go` and `loginUsernameHandler.go`)
 - `register.go` — `UserRegister`
 - `logout.go` — `Logout`
 - `me.go` — `GetMe`
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     auth := mw.Authorization.Required
@@ -482,6 +510,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 8. `activity/`
 
 **Delete directories** (1):
+
 ```
 internal/infra/http/activity/getUserActivity/
 ```
@@ -489,6 +518,7 @@ internal/infra/http/activity/getUserActivity/
 **Create files** in `internal/infra/http/activity/`:
 
 `handler.go`:
+
 ```go
 package activity
 
@@ -516,6 +546,7 @@ func NewHandler(services app.Services, config *config.ServerConfig, logger logge
 **File**: `get.go` — `GetUserActivity`
 
 #### `routes.go`
+
 ```go
 func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
     mux.HandleFunc(apiContext+"/user/activity", middlewareChain(mw.Authorization.Required, h.GetUserActivity))
@@ -525,6 +556,7 @@ func RegisterRoutes(mux *http.ServeMux, h *Handler, mw *middleware.Middleware) {
 ### 9. Update `server.go`
 
 **Before** (35+ import lines + 280 lines of route registration):
+
 ```go
 import (
     createtopic "..."
@@ -538,6 +570,7 @@ import (
 ```
 
 **After**:
+
 ```go
 import (
     "github.com/arnald/forum/internal/infra/http/activity"
@@ -558,6 +591,7 @@ import (
 Keep imports that are NOT moving into entity packages (health, oauth, ws, authcookies).
 
 **`AddHTTPRoutes` replacement** — the 280-line method becomes:
+
 ```go
 func (server *Server) AddHTTPRoutes() {
     server.router.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("frontend/static"))))
@@ -615,6 +649,7 @@ OAuth and WS routes remain inline in `server.go` because their handler construct
 **Remove** `middlewareChain` from `server.go` — each entity's `routes.go` defines its own (or define it once in a shared helper package like `infra/http/middlewareutil/`).
 
 Better: Extract `middlewareChain` into `infra/http/middlewareutil/middleware.go` so all entity packages can import it:
+
 ```go
 package middlewareutil
 
@@ -631,6 +666,7 @@ func Chain(handler http.HandlerFunc, middlewares ...func(http.HandlerFunc) http.
 ### 10. Cleanup
 
 After all 8 entities are migrated:
+
 - `go vet ./internal/infra/http/...`
 - `go build ./...`
 - Remove any empty parent directories (e.g., `activity/` if it only had `getUserActivity/`, the old `topic/` dir is now replaced)
@@ -639,17 +675,17 @@ After all 8 entities are migrated:
 
 ## Summary of Changes
 
-| Entity | Packages removed | Files created | Imports saved in server.go |
-|--------|-----------------|---------------|---------------------------|
-| topic | 5 | 6+1 handler + routes | 4 |
-| comment | 5 | 6+1 handler + routes | 4 |
-| category | 5 | 6+1 handler + routes | 4 |
-| vote | 3 | 4+1 handler + routes | 2 |
-| notification | 5 | 6+1 handler + routes | 4 |
-| chat | 2 | 3+1 handler + routes | 1 |
-| user | 4 | 5+1 handler + routes | 3 |
-| activity | 1 | 2+1 handler + routes | 0 |
-| **Total** | **30** | **~42** | **-27 import lines** |
+| Entity       | Packages removed | Files created        | Imports saved in server.go |
+| ------------ | ---------------- | -------------------- | -------------------------- |
+| topic        | 5                | 6+1 handler + routes | 4                          |
+| comment      | 5                | 6+1 handler + routes | 4                          |
+| category     | 5                | 6+1 handler + routes | 4                          |
+| vote         | 3                | 4+1 handler + routes | 2                          |
+| notification | 5                | 6+1 handler + routes | 4                          |
+| chat         | 2                | 3+1 handler + routes | 1                          |
+| user         | 4                | 5+1 handler + routes | 3                          |
+| activity     | 1                | 2+1 handler + routes | 0                          |
+| **Total**    | **30**           | **~42**              | **-27 import lines**       |
 
 ## Error Handling
 

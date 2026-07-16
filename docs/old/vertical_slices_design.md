@@ -2,6 +2,7 @@
 
 > [!IMPORTANT]
 > **Superseded.** This document was an early exploration. The final design is captured in:
+>
 > - [arch_optimized_v2.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/arch_optimized_v2.md) — full plan with D1 layout, directory tree, and phased execution
 > - [architecture.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/architecture.md) — high-level architecture
 > - [sds.md](file:///home/ertval/code/zone-modules/social-network/docs/plan/architecture/sds.md) — detailed software design specification
@@ -16,7 +17,7 @@ This document details the transition from a module-centric package structure to 
 
 In `arch_optimized_v2.md`, features were grouped into directories (e.g., `internal/follow/`) containing large files representing layers: `commands.go`, `queries.go`, and `store/sqlite.go`. While localized, these are still **technical layers (modules)** rather than independent vertical slices. If the follow feature grows, `commands.go` becomes a dump for all write logic, violating the Single Responsibility Principle.
 
-A **True Vertical Slice** encapsulates everything needed to fulfill a single business request (use case)—from the HTTP/WebSocket transport layer, down through validation and business rules, to database operations. 
+A **True Vertical Slice** encapsulates everything needed to fulfill a single business request (use case)—from the HTTP/WebSocket transport layer, down through validation and business rules, to database operations.
 
 ```
                                VERTICAL SLICES (Use Cases)
@@ -40,10 +41,12 @@ To prevent package dependency hell in Go, we group slices into **feature domains
 Within each domain package (e.g., `internal/post`), each use case is defined by a pair of files: one for the **Request/Handler/Logic** and one for the **Repository/SQL Store implementation**.
 
 ### For Commands (Write Side)
+
 - `<use_case>_command.go`: Defines the command struct, request DTO, validation, event publishing, and handler.
 - `<use_case>_store.go`: Contains the database write implementation.
 
 ### For Queries (Read Side)
+
 - `<use_case>_query.go`: Defines the query parameters, DTO, response mapping, and resolver.
 - `<use_case>_store.go`: Contains database query execution (optimized for reading, bypassing domain constraints if necessary).
 
@@ -56,7 +59,7 @@ internal/
   auth/
     # Shared entity/session validation
     auth.go                      # Domain Entity: Session, User (subset)
-    
+
     # Slice: Register User
     register_command.go          # RegisterCommand, Validation, Handler, HTTP Endpoint
     register_store.go            # SQLite: INSERT user, verify uniqueness
@@ -71,7 +74,7 @@ internal/
 
   user/
     user.go                      # Domain Entity: User Profile, PrivacyState
-    
+
     # Slice: Get Profile
     get_profile_query.go         # GetProfileQuery, Privacy Lock checking, Handler
     get_profile_store.go         # SQLite: SELECT user details, follow counts
@@ -230,7 +233,7 @@ package post
 import (
 	"context"
 	"net/http"
-	
+
 	"social-network/internal/pkg/imgutil"
 	"social-network/internal/platform/database"
 	"social-network/internal/platform/eventbus"
@@ -358,7 +361,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	
+
 	"social-network/internal/pkg/uuid"
 	"social-network/internal/platform/database"
 )
@@ -427,7 +430,9 @@ func (s *SQLiteStore) InsertPost(ctx context.Context, cmd *CreatePostCommand) (s
 To ensure vertical slices remain independent and do not import each other's storage/handler concerns (which results in circular dependencies), we utilize Go's **implicit interface satisfaction (duck typing)** and the **in-process Event Bus**.
 
 ### Rule 1: No Direct Domain-to-Domain Imports for State Mutation
+
 If domain `follow` needs to notify domain `notification` that a request has been made:
+
 1. `follow` publishes an event on the event bus: `follow.requested`.
 2. `notification` registers a subscriber at boot time for `follow.requested`.
 3. The notification slice consumes the event and inserts a notification row in the database.
@@ -435,7 +440,9 @@ If domain `follow` needs to notify domain `notification` that a request has been
 This keeps `follow` completely decoupled from `notification`.
 
 ### Rule 2: Local Segregated Interfaces for Queries
+
 If domain `chat` needs to check if two users follow each other before initiating a connection:
+
 1. `chat` defines a local consumer interface inside `internal/chat/initiate_chat_query.go`:
    ```go
    type FollowChecker interface {
@@ -475,7 +482,7 @@ func WireApp(db database.DB, bus eventbus.EventBus, mux *http.ServeMux) {
 	followSvc := follow.NewService(followStore, bus) // implements post.FollowChecker
 
 	// 3. Initialize Commands/Queries and Register HTTP routes
-	
+
 	// Slice: Register
 	registerHandler := auth.MakeHTTPHandler(auth.NewCommandHandler(authStore, bus))
 	mux.HandleFunc("POST /api/auth/register", registerHandler)
@@ -499,12 +506,12 @@ func WireApp(db database.DB, bus eventbus.EventBus, mux *http.ServeMux) {
 
 Here is how the vertical slice architecture handles key spec items:
 
-| Spec Feature | Vertical Slice Location | Design / CQRS Handling |
-|---|---|---|
-| **WAL & Busy Timeout** | `internal/platform/database/` | Guaranteed in central SQLite factory; slices only consume `database.DB` wrapper. |
-| **Email/Username Duplicity** | `internal/auth/register_command.go` | SQL verification is isolated in `register_store.go`'s INSERT. |
-| **Profile Privacy Visibility** | `internal/user/get_profile_query.go` | Privacy lock logic evaluates follower relationship via local interface before returning details. |
-| **Post Privacy (3 Types)** | `internal/post/create_post_command.go` | Visibility state enum ("public", "almost_private", "private") is mapped and written alongside permitted user IDs in `create_post_store.go`. |
-| **Group Invites / Joins** | `internal/group/` | Separate command/query files manage requests, status transitions, and invite verification. |
-| **Group Chat & Private Chat** | `internal/chat/` | Chat validation queries follow relationships using local interface; real-time delivery routed by WS dispatcher. |
-| **Notifications** | `internal/notification/` | Driven by decoupled event subscriptions on the EventBus. |
+| Spec Feature                   | Vertical Slice Location                | Design / CQRS Handling                                                                                                                      |
+| ------------------------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **WAL & Busy Timeout**         | `internal/platform/database/`          | Guaranteed in central SQLite factory; slices only consume `database.DB` wrapper.                                                            |
+| **Email/Username Duplicity**   | `internal/auth/register_command.go`    | SQL verification is isolated in `register_store.go`'s INSERT.                                                                               |
+| **Profile Privacy Visibility** | `internal/user/get_profile_query.go`   | Privacy lock logic evaluates follower relationship via local interface before returning details.                                            |
+| **Post Privacy (3 Types)**     | `internal/post/create_post_command.go` | Visibility state enum ("public", "almost_private", "private") is mapped and written alongside permitted user IDs in `create_post_store.go`. |
+| **Group Invites / Joins**      | `internal/group/`                      | Separate command/query files manage requests, status transitions, and invite verification.                                                  |
+| **Group Chat & Private Chat**  | `internal/chat/`                       | Chat validation queries follow relationships using local interface; real-time delivery routed by WS dispatcher.                             |
+| **Notifications**              | `internal/notification/`               | Driven by decoupled event subscriptions on the EventBus.                                                                                    |

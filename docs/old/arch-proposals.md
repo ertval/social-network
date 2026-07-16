@@ -8,14 +8,14 @@ This document includes a deep review of each proposal verified against the live 
 
 ## Current Codebase: Quantified Pain Points
 
-| Metric | Actual |
-|--------|--------|
-| Handler packages under `infra/http/` | **32 directories** (one per action) |
-| Aliased imports in `internal/infra/http/server.go` | **38 aliased imports** (lines 15–53) |
-| CQRS command/query packages under `app/` | **27 directories** |
-| Total Go files in `internal/` | **182** |
-| Domain packages | **10** (each as its own subdirectory) |
-| Storage repo packages | **9** subdirectories under `infra/storage/sqlite/` |
+| Metric                                             | Actual                                             |
+| -------------------------------------------------- | -------------------------------------------------- |
+| Handler packages under `infra/http/`               | **32 directories** (one per action)                |
+| Aliased imports in `internal/infra/http/server.go` | **38 aliased imports** (lines 15–53)               |
+| CQRS command/query packages under `app/`           | **27 directories**                                 |
+| Total Go files in `internal/`                      | **182**                                            |
+| Domain packages                                    | **10** (each as its own subdirectory)              |
+| Storage repo packages                              | **9** subdirectories under `infra/storage/sqlite/` |
 
 > **Core problem**: 32 handler packages and 27 CQRS directories for ~10 entities. The ratio of packaging overhead to business logic is roughly 3:1.
 
@@ -206,66 +206,72 @@ internal/
 To ensure clear ownership and strict architectural boundaries, each component in the directory tree is categorized into one of four distinct conceptual layers:
 
 #### 1. Vertical Feature Slices
-*Located under `internal/<feature>/`*
-* **Responsibility**: Houses all code relating to a specific domain or feature area, keeping business logic, transport, and storage co-located.
-* **CQRS Structure**:
-  * `<feature>.go`: Domain definitions (structs, enums) and repository interfaces. Does not import anything from inner transport or storage layers.
-  * `commands.go`: Logic that mutates state (Write model). Dispatches events to RabbitMQ where applicable.
-  * `queries.go`: Logic that retrieves state (Read model), applying necessary security or privacy filters.
-  * `transport/http.go`: Exposes endpoints via HTTP handlers, translating HTTP request bodies/params to Commands/Queries.
-  * `store/sqlite.go`: Concrete implementation of the repository interface using SQLite driver queries.
-  * `store/postgres.go`: Concrete implementation of the repository interface using PostgreSQL driver queries.
+
+_Located under `internal/<feature>/`_
+
+- **Responsibility**: Houses all code relating to a specific domain or feature area, keeping business logic, transport, and storage co-located.
+- **CQRS Structure**:
+  - `<feature>.go`: Domain definitions (structs, enums) and repository interfaces. Does not import anything from inner transport or storage layers.
+  - `commands.go`: Logic that mutates state (Write model). Dispatches events to RabbitMQ where applicable.
+  - `queries.go`: Logic that retrieves state (Read model), applying necessary security or privacy filters.
+  - `transport/http.go`: Exposes endpoints via HTTP handlers, translating HTTP request bodies/params to Commands/Queries.
+  - `store/sqlite.go`: Concrete implementation of the repository interface using SQLite driver queries.
+  - `store/postgres.go`: Concrete implementation of the repository interface using PostgreSQL driver queries.
 
 #### 2. Cross-Cutting Core
-*Located under `internal/<package>/`*
-* **Responsibility**: Provides application-level services that span across multiple vertical slices.
-* **Key Components**:
-  * `session/`: Decoupled session manager implementing user identity tracking. Accessible by transport layers and auth middleware.
-  * `realtime/`: Manages live socket infrastructure (hubs, client read/write loops, message router) without tie-in to database storage.
-  * `middleware/`: HTTP middleware wrappers dealing with security (CORS), session-level authorization (Auth), rate-limiting (RateLimiter), and request tracing (Logging).
-  * `server/`: Orchestrates the HTTP listener lifecycle, binds endpoints, registers HTTP routes, and handles graceful shutdowns on system interrupts.
-  * `config/`: Central struct parsing environment configurations and parameters.
-  * `bootstrap/`: The application's composition root. Wires concrete implementations (e.g., SQLite repositories, RabbitMQ publisher) to their respective slice interfaces at boot time.
+
+_Located under `internal/<package>/`_
+
+- **Responsibility**: Provides application-level services that span across multiple vertical slices.
+- **Key Components**:
+  - `session/`: Decoupled session manager implementing user identity tracking. Accessible by transport layers and auth middleware.
+  - `realtime/`: Manages live socket infrastructure (hubs, client read/write loops, message router) without tie-in to database storage.
+  - `middleware/`: HTTP middleware wrappers dealing with security (CORS), session-level authorization (Auth), rate-limiting (RateLimiter), and request tracing (Logging).
+  - `server/`: Orchestrates the HTTP listener lifecycle, binds endpoints, registers HTTP routes, and handles graceful shutdowns on system interrupts.
+  - `config/`: Central struct parsing environment configurations and parameters.
+  - `bootstrap/`: The application's composition root. Wires concrete implementations (e.g., SQLite repositories, RabbitMQ publisher) to their respective slice interfaces at boot time.
 
 #### 3. Shared Infrastructure Services (Platform)
-*Located under `internal/platform/<service>/`*
-* **Responsibility**: Low-level database and message broker integrations.
-* **Key Components**:
-  * `platform/database/`: Encapsulates database connectivity. Configures WAL (Write-Ahead Logging) and busy timeout adjustments for SQLite, connection pools for Postgres, and runs migrations sequentially.
-  * `platform/redis/`: Exposes connection pooling and helpers for caching or pub/sub.
-  * `platform/eventbus/`: Defines standard interface definitions for the event-driven publish/subscribe model.
-  * `platform/rabbitmq/`: Orchestrates the AMQP message broker lifecycle, defines topology, publishes messages, and hosts background consumers.
+
+_Located under `internal/platform/<service>/`_
+
+- **Responsibility**: Low-level database and message broker integrations.
+- **Key Components**:
+  - `platform/database/`: Encapsulates database connectivity. Configures WAL (Write-Ahead Logging) and busy timeout adjustments for SQLite, connection pools for Postgres, and runs migrations sequentially.
+  - `platform/redis/`: Exposes connection pooling and helpers for caching or pub/sub.
+  - `platform/eventbus/`: Defines standard interface definitions for the event-driven publish/subscribe model.
+  - `platform/rabbitmq/`: Orchestrates the AMQP message broker lifecycle, defines topology, publishes messages, and hosts background consumers.
 
 #### 4. Shared Utilities (Package)
-*Located under `internal/pkg/<utility>/`*
-* **Responsibility**: Stateless, project-agnostic utility functions containing absolutely zero business logic or domain references.
-* **Key Components**:
-  * `pkg/bcrypt/`: Password hashing wrapper.
-  * `pkg/uuid/`: Identifier generation wrapper.
-  * `pkg/validator/`: Object field validator helper.
-  * `pkg/helpers/`: Small utility helpers for string or type conversions.
-  * `pkg/oauth/`: Independent HTTP oauth providers.
-  * `pkg/imgutil/`: Image MIME checker using magic-byte headers rather than unreliable content-type headers.
 
+_Located under `internal/pkg/<utility>/`_
 
+- **Responsibility**: Stateless, project-agnostic utility functions containing absolutely zero business logic or domain references.
+- **Key Components**:
+  - `pkg/bcrypt/`: Password hashing wrapper.
+  - `pkg/uuid/`: Identifier generation wrapper.
+  - `pkg/validator/`: Object field validator helper.
+  - `pkg/helpers/`: Small utility helpers for string or type conversions.
+  - `pkg/oauth/`: Independent HTTP oauth providers.
+  - `pkg/imgutil/`: Image MIME checker using magic-byte headers rather than unreliable content-type headers.
 
 ### How Redis Fits
 
-| Use Case | How |
-|----------|-----|
-| **Session cache** | `session/store/redis.go` — fast session lookups. DB is the source of truth, Redis is the hot cache with TTL-based expiry. |
-| **Rate limiting** | `middleware/ratelimiter.go` — uses Redis `INCR` + `EXPIRE` for distributed rate limiting across multiple backend instances. |
+| Use Case             | How                                                                                                                                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Session cache**    | `session/store/redis.go` — fast session lookups. DB is the source of truth, Redis is the hot cache with TTL-based expiry.                                                                      |
+| **Rate limiting**    | `middleware/ratelimiter.go` — uses Redis `INCR` + `EXPIRE` for distributed rate limiting across multiple backend instances.                                                                    |
 | **Realtime pub/sub** | `platform/redis/pubsub.go` — when a notification is created, publish to a Redis channel. The SSE/WS hub subscribes and pushes to connected clients. Enables horizontal scaling of the backend. |
-| **Online presence** | `realtime/hub.go` can use Redis sorted sets to track user online/offline status across multiple server instances. |
+| **Online presence**  | `realtime/hub.go` can use Redis sorted sets to track user online/offline status across multiple server instances.                                                                              |
 
 ### How RabbitMQ Fits
 
-| Use Case | How |
-|----------|-----|
+| Use Case                        | How                                                                                                                                                                                                                                                            |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Async notification dispatch** | When `follow/commands.go` creates a follow-request, it publishes a `follow.requested` event to RabbitMQ instead of calling `notification/commands.go` directly. The consumer picks it up and creates the notification asynchronously. This decouples features. |
-| **Group event broadcast** | When `event/commands.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response. |
-| **Email/push notifications** | Future consumers can subscribe to the same exchanges for email delivery, push notifications, etc. without changing the publisher. |
-| **Retry and dead-letter** | Failed notification dispatches go to a dead-letter queue for retry, instead of silently failing in a goroutine. |
+| **Group event broadcast**       | When `event/commands.go` creates an event, it publishes `event.created` to RabbitMQ. The consumer fans out notifications to all group members without blocking the HTTP response.                                                                              |
+| **Email/push notifications**    | Future consumers can subscribe to the same exchanges for email delivery, push notifications, etc. without changing the publisher.                                                                                                                              |
+| **Retry and dead-letter**       | Failed notification dispatches go to a dead-letter queue for retry, instead of silently failing in a goroutine.                                                                                                                                                |
 
 ### Database Factory Pattern
 
@@ -303,21 +309,21 @@ Each feature's `store/sqlite.go` and `store/postgres.go` implement the same `Rep
 
 ### Key Decisions Explained
 
-| Decision | Rationale |
-|----------|-----------|
-| **`activity` folded into `user`** | Activity is just "user's post + comment history" — a single query. Doesn't warrant its own slice. |
-| **`category` folded into `topic`** | Categories exist only to tag topics. No independent business logic. Reduces package count. |
-| **`transport/` kept (not `httpapi/`)** | Leaves room for future gRPC, NATS, or other transports. Industry-standard naming in Go service architecture. |
-| **`store/` kept (not bare `sqlite/`)** | With dual DB support, `store/sqlite.go` and `store/postgres.go` sit naturally under `store/`. |
-| **`session/` as standalone** | Session management is used by middleware and bootstrap. It's cross-cutting but has its own entity + store. |
-| **`server/` for HTTP server** | Replaces `infra/http/server.go`. Contains the mux, middleware chain, and route registration. |
-| **`ratelimiter.go` flattened** | The current `ratelimiter/` sub-package has exactly one file. A sub-package for one file violates Go conventions. |
-| **`pkg/oauth/` renamed** | `oAuth` → `oauth` follows Go naming (no camelCase in package names). `githubclient` → `github` removes stutter. |
-| **`imgutil/` added** | Merged plan requires magic-byte MIME validation. Shared utility, not feature-specific. |
-| **Group chat in `group/`** | Group chat messages are access-controlled by group membership. Semantically belongs with the group feature. |
-| **`platform/` for shared infra** | Database, Redis, and RabbitMQ are infrastructure services used by multiple features. Separating them from `pkg/` (which is pure utilities) makes the dependency direction clear. |
-| **RabbitMQ over direct calls** | Decouples notification creation from the feature that triggers it. Enables async processing, retries, and future consumers (email, push). |
-| **Redis for sessions + rate limiting** | Enables horizontal scaling. Multiple backend instances can share session state and rate limit counters. |
+| Decision                               | Rationale                                                                                                                                                                        |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`activity` folded into `user`**      | Activity is just "user's post + comment history" — a single query. Doesn't warrant its own slice.                                                                                |
+| **`category` folded into `topic`**     | Categories exist only to tag topics. No independent business logic. Reduces package count.                                                                                       |
+| **`transport/` kept (not `httpapi/`)** | Leaves room for future gRPC, NATS, or other transports. Industry-standard naming in Go service architecture.                                                                     |
+| **`store/` kept (not bare `sqlite/`)** | With dual DB support, `store/sqlite.go` and `store/postgres.go` sit naturally under `store/`.                                                                                    |
+| **`session/` as standalone**           | Session management is used by middleware and bootstrap. It's cross-cutting but has its own entity + store.                                                                       |
+| **`server/` for HTTP server**          | Replaces `infra/http/server.go`. Contains the mux, middleware chain, and route registration.                                                                                     |
+| **`ratelimiter.go` flattened**         | The current `ratelimiter/` sub-package has exactly one file. A sub-package for one file violates Go conventions.                                                                 |
+| **`pkg/oauth/` renamed**               | `oAuth` → `oauth` follows Go naming (no camelCase in package names). `githubclient` → `github` removes stutter.                                                                  |
+| **`imgutil/` added**                   | Merged plan requires magic-byte MIME validation. Shared utility, not feature-specific.                                                                                           |
+| **Group chat in `group/`**             | Group chat messages are access-controlled by group membership. Semantically belongs with the group feature.                                                                      |
+| **`platform/` for shared infra**       | Database, Redis, and RabbitMQ are infrastructure services used by multiple features. Separating them from `pkg/` (which is pure utilities) makes the dependency direction clear. |
+| **RabbitMQ over direct calls**         | Decouples notification creation from the feature that triggers it. Enables async processing, retries, and future consumers (email, push).                                        |
+| **Redis for sessions + rate limiting** | Enables horizontal scaling. Multiple backend instances can share session state and rate limit counters.                                                                          |
 
 ---
 
@@ -426,16 +432,16 @@ internal/
 
 ### What Changes vs Current
 
-| Current | Proposal 1 | Why |
-|---------|-----------|-----|
-| `internal/app/` | `internal/service/` | "app" is vague; "service" is the standard Go name for business logic orchestration |
-| `internal/infra/` | Split into `handler/`, `repository/`, `realtime/`, `middleware/` | Name packages by *what they are*, not their architectural role |
-| `infra/http/<entity>/<action>/` (32 packages) | `handler/<entity>.go` (~12 files) | One file per entity is the Go standard; 32 packages with aliased imports is noise |
-| `infra/storage/sqlite/<entity>/` | `repository/<entity>.go` | Flatter, fewer directories, same structure |
-| `infra/ws/` | `realtime/` | "WS" is too specific; "realtime" covers WS + SSE |
-| `infra/middleware/` | `middleware/` | Middleware is not "infrastructure", it's a first-class HTTP concern |
-| `infra/logger/` | (keep separate or merge) | Logger is fine but could live in `pkg/` |
-| `infra/services.go` | (n/a — handlers wire directly to service) | No more infra DI file — handlers are injected directly |
+| Current                                       | Proposal 1                                                       | Why                                                                                |
+| --------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `internal/app/`                               | `internal/service/`                                              | "app" is vague; "service" is the standard Go name for business logic orchestration |
+| `internal/infra/`                             | Split into `handler/`, `repository/`, `realtime/`, `middleware/` | Name packages by _what they are_, not their architectural role                     |
+| `infra/http/<entity>/<action>/` (32 packages) | `handler/<entity>.go` (~12 files)                                | One file per entity is the Go standard; 32 packages with aliased imports is noise  |
+| `infra/storage/sqlite/<entity>/`              | `repository/<entity>.go`                                         | Flatter, fewer directories, same structure                                         |
+| `infra/ws/`                                   | `realtime/`                                                      | "WS" is too specific; "realtime" covers WS + SSE                                   |
+| `infra/middleware/`                           | `middleware/`                                                    | Middleware is not "infrastructure", it's a first-class HTTP concern                |
+| `infra/logger/`                               | (keep separate or merge)                                         | Logger is fine but could live in `pkg/`                                            |
+| `infra/services.go`                           | (n/a — handlers wire directly to service)                        | No more infra DI file — handlers are injected directly                             |
 
 ### Pros
 
@@ -465,24 +471,24 @@ internal/
 
 ## Comparison Table
 
-| Criterion | Current (Baseline) | Proposal 1: Optimized Verticals | Proposal 2: Horizontal |
-|-----------|-------------------|---------------------------------|------------------------|
-| Package count | ~55 | **~30** | ~40 |
-| Handler imports in server.go | 32 aliased | **~10 clean** | ~12 clean |
-| Dirs to touch per feature | 4 (domain, app, infra/http, infra/sqlite) | **1** (feature dir) | 4 (domain, service, handler, repo) |
-| Import stuttering | `usercommands.CreateUserHandler` | `user.CreateUser` | `usersvc.CreateUser` |
-| Go-idiomatic naming | Low (infra, app, per-action handlers) | **High** | Medium (service, handler, repo) |
-| Migration effort | — | High | Low (rename + flatten only) |
-| CQRS clarity | High (explicit commands/queries) | **High** (commands/queries files) | Medium (merged into service) |
-| Feature isolation | Low (scattered) | **High** (co-located) | Low (scattered) |
-| Flat "god package" risk | Medium (`app/services.go`) | None | **High** (`service/`, `repository/`) |
-| Dual DB support | No | **Yes** (factory pattern) | No |
-| Horizontal scaling | No | **Yes** (Redis + RabbitMQ) | No |
-| Async event processing | No | **Yes** (RabbitMQ) | No |
-| Microservice readiness | No | **High** (isolated domains) | Low |
-| Kubernetes readiness | No | **Yes** (health probes + graceful shutdown) | No |
-| Broker swappability | No | **Yes** (EventBus interface abstraction) | No |
-| Missing merged-plan items | N/A | **0** | 2 |
+| Criterion                    | Current (Baseline)                        | Proposal 1: Optimized Verticals             | Proposal 2: Horizontal               |
+| ---------------------------- | ----------------------------------------- | ------------------------------------------- | ------------------------------------ |
+| Package count                | ~55                                       | **~30**                                     | ~40                                  |
+| Handler imports in server.go | 32 aliased                                | **~10 clean**                               | ~12 clean                            |
+| Dirs to touch per feature    | 4 (domain, app, infra/http, infra/sqlite) | **1** (feature dir)                         | 4 (domain, service, handler, repo)   |
+| Import stuttering            | `usercommands.CreateUserHandler`          | `user.CreateUser`                           | `usersvc.CreateUser`                 |
+| Go-idiomatic naming          | Low (infra, app, per-action handlers)     | **High**                                    | Medium (service, handler, repo)      |
+| Migration effort             | —                                         | High                                        | Low (rename + flatten only)          |
+| CQRS clarity                 | High (explicit commands/queries)          | **High** (commands/queries files)           | Medium (merged into service)         |
+| Feature isolation            | Low (scattered)                           | **High** (co-located)                       | Low (scattered)                      |
+| Flat "god package" risk      | Medium (`app/services.go`)                | None                                        | **High** (`service/`, `repository/`) |
+| Dual DB support              | No                                        | **Yes** (factory pattern)                   | No                                   |
+| Horizontal scaling           | No                                        | **Yes** (Redis + RabbitMQ)                  | No                                   |
+| Async event processing       | No                                        | **Yes** (RabbitMQ)                          | No                                   |
+| Microservice readiness       | No                                        | **High** (isolated domains)                 | Low                                  |
+| Kubernetes readiness         | No                                        | **Yes** (health probes + graceful shutdown) | No                                   |
+| Broker swappability          | No                                        | **Yes** (EventBus interface abstraction)    | No                                   |
+| Missing merged-plan items    | N/A                                       | **0**                                       | 2                                    |
 
 ---
 
@@ -500,6 +506,7 @@ Set up `platform/database/`, `platform/redis/`, `platform/rabbitmq/`. Wire throu
 
 **Phase C — Extract high-churn features**
 Move `user/`, `topic/`, `chat/`, `notification/` to vertical slices. Steps per feature:
+
 1. Create the new feature directory (e.g., `internal/user/`)
 2. Copy domain types from `domain/user/` → `internal/user/user.go`
 3. Copy CQRS logic from `app/user/commands` and `queries` → `internal/user/commands.go` and `queries.go`
@@ -539,28 +546,36 @@ event    → group, notification (events belong to groups, trigger notifications
 The optimized architecture is designed to support the seamless promotion of modules into standalone **Microservices** and the physical scaling of **Commands** and **Queries** independently. By keeping slices logically segregated and minimizing cross-slice references, this transition is treated as a routing and infrastructure concern rather than a code-rewrite task.
 
 ### 1. Promotion to Microservices (Requirement)
+
 Any feature slice (e.g., `user/`, `group/`, `notification/`) must be ready for promotion to an independent microservice:
+
 - **No Shared Storage:** Slices access only their own database tables. Cross-slice joins are forbidden.
-- **Strict Boundary Import Rules:** Slices interact only through whitelisted domain interfaces or clean APIs. 
+- **Strict Boundary Import Rules:** Slices interact only through whitelisted domain interfaces or clean APIs.
 - **Transition Path:** To extract a slice (e.g., `notification`) into its own microservice:
   1. Move the `internal/notification/` directory to a new Go service repository.
   2. Implement an HTTP/gRPC transport layer for its endpoints.
   3. Replace in-memory service calls in other slices with HTTP/gRPC API client calls.
 
 ### 2. Kubernetes Readiness (App Alignment)
+
 To ensure the application deploys reliably on Kubernetes and handles orchestrator lifecycle events:
+
 - **Liveness & Readiness Probes:** The HTTP server exposes `/healthz` (always returns `200 OK`) and `/readyz` (dynamically verifies active SQLite/Postgres connections, Redis connectivity, and RabbitMQ health). Traffic is routed only when `/readyz` is healthy.
 - **Graceful Shutdown (`SIGTERM` handling):** The Go binary traps orchestrator `SIGTERM`/`SIGINT` signals, halts the HTTP/WS listener, drains in-flight requests, gracefully closes RabbitMQ consumer channels, and releases database connection pools to prevent active connection dropouts.
 - **12-Factor Config:** Configuration is populated strictly via environment variables, aligning with Kubernetes `ConfigMaps` and `Secrets` injection.
 
 ### 3. Message Broker Swappability (RabbitMQ to Kafka)
+
 To prevent cloud-provider/vendor lock-in to RabbitMQ and allow dropping in Kafka or NATS in the future:
+
 - **Abstracted Event Bus:** Feature commands publish events strictly via a generic `EventBus` interface defined in `internal/platform/eventbus/`.
 - **Decoupled Business Logic:** Slices have zero import dependencies on RabbitMQ (`amqp`) libraries.
 - **Interchangeable Implementations:** The concrete RabbitMQ client resides in `platform/rabbitmq`. If you migrate to Kafka, you only need to create `platform/kafka`, implement the same `EventBus` interface, and update the wiring in `bootstrap/bootstrap.go`.
 
 ### 4. Path to Independent CQRS Scaling
+
 If read traffic heavily outweighs write traffic, the unified binary can be scaled asymmetrically in Kubernetes (e.g., running 10 replicas of Queries and 2 replicas of Commands) using these steps:
+
 - **Separate Entrypoints:** Create separate binaries under `cmd/commands/main.go` and `cmd/queries/main.go` using the same underlying code but wiring only the necessary controllers.
 - **Asymmetric Routing:** Configure Kubernetes Ingress, Nginx, or an API Gateway to forward read requests (`GET`) to query replicas and write requests (`POST`, `PUT`, `DELETE`) to command replicas.
 - **Database Replication:** Update the `platform/database` factory to accept write and read connection strings (DSNs), supplying the primary database to commands and read-replicas to queries.

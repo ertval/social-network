@@ -68,7 +68,7 @@ function buildNavbarHTML(user) {
 }
 
 function buildLoggedInNav(user) {
-  console.log(user.avatar_url)
+  console.log(user.avatar_url);
   const avatarSrc =
     user.avatar_url || user.AvatarURL
       ? escapeHTML(user.avatar_url || user.AvatarURL)
