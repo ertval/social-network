@@ -7,9 +7,9 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/ertval/social-network/ci.yml?style=flat-square&logo=github&logoColor=white)]()
 
-A full-stack social networking reference architecture demonstrating clean vertical-slice design in Go 1.25 with a Next.js glassmorphic frontend. Decoupled infrastructure (SQLite/PostgreSQL, Redis, RabbitMQ) behind abstract interfaces enables zero-code platform swaps.
+**Problem:** Full-stack social networking platforms require complex real-time capabilities (WebSockets presence, typing channels, group events), pluggable databases, caching, message queues, and clean architecture boundaries, which monolithic codebases often bundle into tightly-coupled, non-portable, and untestable code.
 
-> A premium, high-performance social networking platform built with a **Go 1.25 Backend API** organized around Feature-Based Vertical Slices, and a modern **Next.js App Router Frontend** powered by Bun and shadcn/ui.
+**Solution:** A reference Go backend utilizing clean vertical-slice architecture where each package encapsulates its HTTP/WebSocket handlers, business queries/commands (CQRS), and data storage adapters. Features a modern glassmorphic Next.js frontend and configuration-driven pluggable infrastructure (SQLite ↔ PostgreSQL, memory ↔ Redis, memory ↔ RabbitMQ).
 
 ---
 
